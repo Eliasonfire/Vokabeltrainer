@@ -135,6 +135,145 @@ export const laneVerweise = html => [...String(html).matchAll(/<a href="(\/word\
   .map(m => ({ pfad: m[1], nr: m[2], wort: ohneMarken(m[3]) }));
 export const laneFuehrtWurzel = html => laneVerweise(html).some(v => v.wort.split(' ').some(hatVokalzeichen));
 
+/* ---------- Lanes Artikel eines VERBSTAMMS (13.10.2026, Leser von Claude) ----------
+ * Die abgelegte Seite eines Stichworts (data-ersatz/quellen/lane/woerter/<Kennung>.html) druckt den Artikel zwischen der
+ * Überschrift „Full Definition" und dem Ende der Marke entryFree. Gemessen am 13.10.2026 an den 185 damals abgelegten
+ * Seiten (alle tragen die Überschrift und genau eine solche Marke):
+ *   · Lanes „aor." steht als Marke „Present.T", sein „inf. n." als Marke „Verbal.Noun" (Spanne der Klasse
+ *     arabic-text-tense) — darum findet eine Suche nach „inf. n." auf diesen Seiten nichts
+ *   · arabische Wörter stehen in Spannen der Klasse arabic-text (ein Wort, das anderswo Stichwort ist, noch einmal in
+ *     einer inneren Spanne arabic-text-arrow — oder NUR als Angabe target einer Marke ref, ohne sichtbaren Text)
+ *   · das Stichwort steht in display-word, die Nummer des Stammes in itype, eine Bedeutung fett (bold-black), die
+ *     Nummer eines Absatzes in b-entry/circle; Spannen sind verschachtelt (quranic-text umschließt ganze Absätze)
+ * laneArtikelStuecke zerlegt den Artikel in Stücke { art, t } in der Reihenfolge der Seite; art ist stichwort · form ·
+ * marke · wort · fett · nummer · text (alles, was in keiner dieser Spannen steht). */
+export function laneArtikelStuecke(html) {
+  const h = String(html ?? ''), i0 = h.indexOf('<h2>Full Definition</h2>');
+  if (i0 < 0) return [];
+  const i1 = h.indexOf('</entryFree>', i0);
+  const teil = h.slice(i0 + 24, i1 >= 0 ? i1 : undefined);
+  const klar = t => t.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim();
+  const stuecke = [], stapel = [];
+  const art = () => {
+    for (let i = stapel.length - 1; i >= 0; i--) {
+      const k = stapel[i];
+      if (/arabic-text-tense/.test(k)) return 'marke';
+      if (/arabic-text/.test(k)) return 'wort';
+      if (/bold-black/.test(k)) return 'fett';
+      if (/display-word/.test(k)) return 'stichwort';
+      if (/itype/.test(k)) return 'form';
+      if (/circle|b-entry|a-entry/.test(k)) return 'nummer';
+    }
+    return 'text';
+  };
+  let pos = 0;
+  const text = bis => { const t = klar(teil.slice(pos, bis)); if (t) stuecke.push({ art: art(), t }); };
+  for (const m of teil.matchAll(/<(\/?)([a-zA-Z]+)\b([^>]*)>/g)) {
+    text(m.index);
+    pos = m.index + m[0].length;
+    const name = m[2].toLowerCase();
+    if (name === 'span' || name === 'orth') {
+      if (m[1]) stapel.pop();
+      else stapel.push(name === 'orth' ? 'arabic-text' : (m[3].match(/class="([^"]*)"/) || ['', ''])[1]);
+    } else if (name === 'ref' && !m[1]) {
+      const ziel = m[3].match(/target="([^"]*)"/);
+      if (ziel && klar(ziel[1])) stuecke.push({ art: 'wort', t: klar(ziel[1]), verweis: true });
+    }
+  }
+  text(teil.length);
+  return stuecke;
+}
+/* Ein Wort aus Lanes Druck gegen ein Wort von heute: vergleich(), dazu zwei Eigenheiten des Drucks (gemessen am
+ * 12.10.2026 an den abgelegten Seiten) — langes a vor Hamza steht als Alif mit Madda, und das Ya am Wortende steht ohne
+ * Punkte. Beides zählt beim Vergleich gleich, auf beiden Seiten. */
+const LANE_MADDA_VOR_HAMZA = new RegExp(Z(0x622) + '(?=[' + Z(0x621) + Z(0x624) + Z(0x626) + '])', 'g');
+export const laneVergleich = w => vergleich(String(w ?? '').normalize('NFC').replace(LANE_MADDA_VOR_HAMZA, ALIF)).replaceAll(Z(0x649), Z(0x64A));
+/* Dasselbe Wort in heutiger Rechtschreibung, wenn es auf eine Karte kommt (Regel von Claude, nur diese zwei Eingriffe):
+ *   · Alif mit Madda vor Hamza wird Alif
+ *   · das Ya ohne Punkte am Wortende wird Ya — erkannt daran, dass es selbst ein Zeichen trägt (Vokal, Dammatan,
+ *     Kasratan, Verdopplung) oder hinter Kasra oder Sukun steht. Hinter Fatha, blank oder mit Fathatan, ist es das
+ *     Alif maqsura und bleibt. */
+export function laneHeutig(wort) {
+  let t = String(wort ?? '').normalize('NFC').trim().replace(LANE_MADDA_VOR_HAMZA, ALIF);
+  const traegt = '[' + KURZ.join('') + TANWIN[1] + TANWIN[2] + SHADDA + SUKUN + ']';
+  t = t.replace(new RegExp(Z(0x649) + '(' + traegt + '+)$'), Z(0x64A) + '$1');
+  t = t.replace(new RegExp('([' + KASRA + SUKUN + '])' + Z(0x649) + '$'), '$1' + Z(0x64A));
+  return t;
+}
+/* Die Verbalsubstantive, die ein solcher Artikel NENNT: je Marke „Verbal.Noun" ein Lauf { quasi, zu, woerter, fortsetzung }.
+ *   woerter  die arabischen Wörter, die UNMITTELBAR folgen, getrennt nur durch Komma, „and" oder „or". Der Lauf endet
+ *            am ersten anderen Text und am ersten Wort, das nicht wie ein Nomen endet. Ein Strichpunkt beendet ihn:
+ *            hinter „; and" beginnt bei Lane ein neues Verb (gemessen am 13.10.2026: „…; and ↓ <Verb mit Fürwort>").
+ *   fortsetzung  die FORTSETZUNG der Aufzählung hinter einer Zwischenbemerkung, im selben Satz (bis zur nächsten
+ *            Bedeutung, Marke oder Absatznummer). Lane unterbricht oft („…, or this is a simple subst., and …",
+ *            „… (S, K [in the CK … is erroneously put for …]) and …"). Ein Wort zählt nur, wenn der Text unmittelbar
+ *            davor auf „and" oder „or" endet UND das Nomen davor selbst zählte; ein Wort in einer Klammer zählt nicht
+ *            und unterbricht nicht; ein Verb beendet die Aufzählung. Gemessen am 13.10.2026, was sonst hereinkäme:
+ *            Wörter, die Lane gerade NICHT als Verbalsubstantiv nennt („nor is the inf. n. used, … being used in its
+ *            stead, i. e., instead of …"), das Maß eines Wortes („like … and …"), Beispielsätze.
+ *   zu       die Fügung, zu der die Angabe gehört, wenn unmittelbar vor ihr (und vor „aor.") arabische Wörter stehen
+ *            („… and ↓ <anderer Stamm>, inf. n. …", „<Verb> <Subjekt>, aor. …, inf. n. …"); sonst '' — dann gilt sie
+ *            dem Verb des Artikels. Ein Wort unmittelbar hinter „aor." ist die Gegenwart und zählt nicht dazu.
+ *            Wer die Läufe verwendet, prüft, ob in der Fügung das eigene Verb steht (ersatz-lane.mjs).
+ *   quasi    die Marke steht hinter „quasi" (Lanes „quasi-inf. n.": ein Nomen an Stelle des Verbalsubstantivs).
+ * Es zählen nur Wörter mit Vokalzeichen, die wie ein Nomen enden (laneNomenEnde): mit Tanwin, oder auf langes a nach
+ * dem Maß fuʿlā. So bleibt ein Verb draußen, das auf Fatha, auf ein Fürwort oder auf Alif maqsura endet — sein
+ * Schluss gliche in der Vergleichsform dem eines Verbalsubstantivs auf Fathatan. */
+export const laneNomenEnde = wort => /[NFK][~AY]?$|[AY]F$|o[^aiuo~AY]a[AY]$/.test(nachBW(String(wort ?? '').normalize('NFC')));
+const LANE_BINDER = /^,?\s*(?:and|or)?$/;
+const LANE_VOR_DER_MARKE = new RegExp('^(?:[\\s,;:\\[\\]()' + TATWEEL + KURZ.join('') + ']|and|or)*$');
+export function laneVerbalsubstantive(html) {
+  const st = laneArtikelStuecke(html), laeufe = [];
+  const taugt = s => s.art === 'wort' && hatVokalzeichen(s.t) && laneNomenEnde(s.t);
+  for (let i = 0; i < st.length; i++) {
+    if (st[i].art !== 'marke' || !/Verbal\.Noun/.test(st[i].t)) continue;
+    const davor = i > 0 && st[i - 1].art === 'text' ? st[i - 1].t : '';
+    const lauf = { quasi: /quasi\W*$/.test(davor), zu: '', woerter: [], fortsetzung: [] };
+    const beiwerk = s => s.art === 'text' && LANE_VOR_DER_MARKE.test(s.t);
+    for (let j = i - 1; j >= 0; j--) {
+      if (st[j].art === 'wort') {
+        // ein Wort unmittelbar hinter „aor." ist die Gegenwart selbst (so bei verdoppelten und schwachen Verben), nicht
+        // das Verb, dem die Angabe gilt — weiter zurück
+        let k = j - 1;
+        while (k >= 0 && beiwerk(st[k])) k--;
+        if (k >= 0 && st[k].art === 'marke' && /Present/.test(st[k].t)) { j = k; continue; }
+        // die ganze Fügung: Lane druckt Verb, Subjekt und Objekt oft als mehrere Stücke hintereinander
+        const fuegung = [];
+        let f = j;
+        for (; f >= 0 && st[f].art === 'wort'; f--) fuegung.unshift(st[f].t.normalize('NFC'));
+        // steht die Fügung unmittelbar hinter Stichwort und Stammnummer, ist sie das Objekt des Stichworts selbst
+        while (f >= 0 && beiwerk(st[f])) f--;
+        lauf.zu = f >= 0 && ['form', 'stichwort'].includes(st[f].art) ? '' : fuegung.join(' ');
+        break;
+      }
+      if (!(beiwerk(st[j]) || (st[j].art === 'marke' && /Present/.test(st[j].t)))) break;
+    }
+    let j = i + 1;
+    for (; j < st.length; j++) {
+      if (taugt(st[j])) lauf.woerter.push(st[j].t.normalize('NFC'));
+      else if (!(st[j].art === 'text' && LANE_BINDER.test(st[j].t))) break;
+    }
+    // die Fortsetzung der Aufzählung hinter einer Zwischenbemerkung
+    let tiefe = 0, davor2 = '', zaehlte = lauf.woerter.length > 0;
+    for (; j < st.length && !['fett', 'marke', 'nummer', 'stichwort'].includes(st[j].art); j++) {
+      const s = st[j];
+      if (s.art === 'text') {
+        for (const c of s.t) { if (c === '(' || c === '[') tiefe++; else if ((c === ')' || c === ']') && tiefe > 0) tiefe--; }
+        davor2 = s.t;
+        continue;
+      }
+      if (s.art !== 'wort' || tiefe > 0) continue;              // ein Wort in einer Klammer zählt nicht und unterbricht nicht
+      if (!taugt(s)) { zaehlte = false; davor2 = ''; continue; } // ein Verb (oder ein Wort ohne Vokalzeichen): die Aufzählung ist zu Ende
+      const t = s.t.normalize('NFC');
+      zaehlte = zaehlte && /(?:^|[\s,;\])])(?:and|or)$/.test(davor2);
+      if (zaehlte && !lauf.woerter.includes(t) && !lauf.fortsetzung.includes(t)) lauf.fortsetzung.push(t);
+      davor2 = '';
+    }
+    laeufe.push(lauf);
+  }
+  return laeufe;
+}
+
 /* Dieselben Suchschlüssel, erweitert um die zwei Schreibungen, unter denen Lanes Seiten eine Wurzel sonst noch führen
  * (gemessen am 12.10.2026 an den abgelegten Seiten und an den Fehlabrufen: „An" ist da, „>nf" und „'nf" nicht;
  * „H*w" ist da, „bny", „vny" und „fty" nicht):

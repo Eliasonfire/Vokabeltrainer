@@ -34,7 +34,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { abzugOrdner, istErsatzkarte } from './datenquelle.mjs';
-import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel, bamaMehrzahlZurKarte, bamaSchreibweise, bamaVerbformenZurKarte, bamaMasdarZurKarte } from './ersatz-bama-lib.mjs';
+import { vergleich as wortform, ladeBama, standardDatei, geruest, nachBW, ausBW, wurzelSchluessel, wurzelWert, laneDateiname, laneFuehrtWurzel, laneVergleich, laneHeutig, bamaMehrzahlZurKarte, bamaSchreibweise, bamaVerbformenZurKarte, bamaMasdarZurKarte } from './ersatz-bama-lib.mjs';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const REPO = process.env.ERSATZ_REPO || path.join(HIER, '..');
@@ -329,6 +329,48 @@ function verbformenAusStammliste(felder, s, altK, h) {
     }
   }
 }
+/* VERBALSUBSTANTIV AUS LANES LEXIKON (13.10.2026, Regel von Claude). Für die Grundform gibt es kein Muster, und weder
+ * die Stammliste noch arabdict nennen das Verbalsubstantiv. Lane nennt es im Artikel des Verbstamms hinter „inf. n.";
+ * „ersatz-lane.mjs --verben" liest das und schreibt data-ersatz/arbeit/lane-verben.json (fehlt die Datei, ändert sich
+ * nichts). Hier wird eingetragen — nur als LÜCKE (nach Wiktionary und Stammliste), und nur unter drei Bedingungen:
+ *   · die Vergangenheit der Karte ist noch das Wort, mit dem der Artikel gefunden wurde
+ *   · die bisherige Karte führt ein Verbalsubstantiv: sie ist SCHLÜSSEL UND EINSPRUCH, nie Quelle. Lane nennt oft
+ *     mehrere, und sein Artikel beginnt nicht immer mit der Bedeutung der Karte (gemessen an „wohnen": zuerst steht
+ *     das Verbalsubstantiv von „ruhig sein"). Genommen wird, was Lane nennt UND die bisherige Karte führt — in Lanes
+ *     Schreibung, in heutiger Rechtschreibung (laneHeutig).
+ *   · nennt Lane keines der Wörter der bisherigen Karte, bleibt das Feld offen und wird gezählt (Einspruch)
+ * Führt die bisherige Karte keines, bleibt das Feld ebenfalls offen: „das erste, das Lane nennt" wäre geraten. */
+const laneVerben = liesJson(path.join(ERSATZ, 'arbeit', 'lane-verben.json'), {}).eintraege || {};
+const laneVerb = { eintraege: Object.keys(laneVerben).length, gesetzt: 0, fortsetzung: 0, einspruch: 0, ohneSchluessel: 0, anderesWort: 0, hatSchon: 0, leerVonHand: 0 };
+function verbalsubstantivAusLane(felder, s, altK, h) {
+  const e = laneVerben[s.id];
+  if (!e) return;
+  if ((h.leer || []).includes('masdar')) { laneVerb.leerVonHand++; return; }
+  if (felder.masdar) { laneVerb.hatSchon++; return; }
+  const past = nfc((felder.past && felder.past.w) || (felder.ar && felder.ar.w));
+  if (!past || past !== nfc(e.ar)) { laneVerb.anderesWort++; return; }
+  const will = altK ? stuecke(altK.masdar) : [];
+  if (!will.length) { laneVerb.ohneSchluessel++; return; }
+  // zuerst die Wörter unmittelbar hinter „inf. n."; nur wenn dort keines passt, die Fortsetzung der Aufzählung hinter
+  // einer Zwischenbemerkung Lanes (laneVerbalsubstantive in ersatz-bama-lib.mjs) — der Beleg sagt, welches von beiden
+  const nah = (e.verbalsubstantive || []).map(nfc).filter(Boolean), fern = (e.fortsetzung || []).map(nfc).filter(Boolean);
+  const trifft = liste => liste.filter(w => will.some(p => laneVergleich(w) === laneVergleich(p)));
+  const nennt = [...nah, ...fern];
+  let gleich = trifft(nah);
+  const fortgesetzt = !gleich.length;
+  if (fortgesetzt) gleich = trifft(fern);
+  if (!gleich.length) { laneVerb.einspruch++; return; }
+  if (fortgesetzt) laneVerb.fortsetzung++;
+  const werte = [...new Set(gleich.map(laneHeutig))];
+  felder.masdar = {
+    w: werte.join(String(altK.masdar).includes('/') ? ' / ' : '|'),
+    wo: `Lane, Arabic-English Lexicon: im Artikel des Verbstamms „${e.stichwort}“ (${e.nr}, Stamm ${e.form}) unter der Wurzel „${ausBW(e.bw)}“ steht ${werte.length > 1 ? 'jedes dieser Wörter' : 'das Wort'} ${fortgesetzt ? 'in der Aufzählung hinter „inf. n.“ (Verbalsubstantiv), nach einer Zwischenbemerkung Lanes' : 'unmittelbar hinter „inf. n.“ (Verbalsubstantiv)'}`
+      + ({ 'im Artikel': '; das Stichwort hat andere oder keine Vokalzeichen, der Artikel nennt die Vergangenheit der Karte selbst', 'mit Fürwort': '; Lane druckt das Stichwort mit angehängtem Fürwort', Zweizahl: '; Lane druckt das Stichwort in der Zweizahl', weiblich: '; Lane druckt das Stichwort in der weiblichen Form' }[e.wie] || '')
+      + ` — laneslexicon.com, abgelegt ${e.abgelegt}. Lane nennt dort ${nennt.length === 1 ? 'dieses eine' : nennt.length + ' Verbalsubstantive'}; genommen ist, was auch die bisherige Karte führt (sie ist nur Schlüssel und Einspruch). Geschrieben in heutiger Rechtschreibung`,
+    q: 'lane',
+  };
+  laneVerb.gesetzt++;
+}
 /* WURZEL AUS BUCKWALTERS STAMMLISTE (12.10.2026, Regel von Claude). Die Stammliste (BAMA 1.0, liegt nur lokal) führt
  * ihre Lemmata unter Wurzelzeilen („;--- Wurzel"). Roh taugen die nicht als Quelle — gemessen: an 582 von 2893 Karten
  * mit bekannter Wurzel nennt die Zeile eine andere (sie steht nicht vor jedem Lemma, manche Lemmata hängen unter der
@@ -540,6 +582,8 @@ for (const buch of BUECHER) {
       }
       // Verbformen aus der Stammliste (verbformenAusStammliste, oben): Gegenwart, Befehl, Verbalsubstantiv — nur als Lücke
       if (felder.type && felder.type.w === 'verb') verbformenAusStammliste(felder, s, altK, h);
+      // Verbalsubstantiv aus Lanes Lexikon (verbalsubstantivAusLane, oben) — nach der Stammliste, nur als Lücke
+      if (felder.type && felder.type.w === 'verb') verbalsubstantivAusLane(felder, s, altK, h);
     }
     for (const f of h.leer || []) delete felder[f];
     // „Wie die Karte" (siehe wieDieKarte oben): gilt für jeden Platz, auch nach einer Entscheidung von Hand — nennen die
@@ -610,6 +654,7 @@ stand.laneWurzeln = lane;
 stand.stammliste = { gesetzt: stammliste.gesetzt, warten: stammliste.warten, fehlendeSeiten: Object.keys(stammliste.fehlend).length };
 stand.mehrzahlListe = { gesetzt: mehrzahlListe.gesetzt, unklar: mehrzahlListe.unklar };
 stand.verbListe = { ...verbListe };
+stand.laneVerben = { ...laneVerb };
 // Die Schlüssel der Wurzelseiten, nach denen bei Lane noch nie gefragt wurde (wurzelAusStammliste, oben) — immer
 // geschrieben, auch leer: sonst holte „ersatz-lane.mjs --seiten" nach einem späteren Bau die Liste von gestern.
 schreibe(path.join(ERSATZ, 'arbeit', 'lane-fehlende-seiten.json'), JSON.stringify({
@@ -640,6 +685,7 @@ if (stammliste.warten) console.log(`Wurzel aus der Stammliste OFFEN an ${stammli
 if (endung.gesetzt) console.log(`Geschlecht aus der Endung (Ta marbuta am Wort in der Einzahl, keine Quelle nennt es): ${endung.gesetzt} Nomen weiblich`);
 if (Object.values(verbListe).some(Boolean)) console.log(`Verbformen aus Buckwalters Stammliste (keine andere Quelle nennt sie): Gegenwart an ${verbListe.gegenwart} Verben, Befehl nach der Regel an ${verbListe.befehl}, Verbalsubstantiv an ${verbListe.masdar} (dazu nur nach dem Muster, wo die bisherige Karte dasselbe führt: ${verbListe.muster})`
   + ` · offen gelassen: ${verbListe.einspruch} Gegenwart (keine Zeile der Liste gleicht der bisherigen Karte), ${verbListe.unklar} Gegenwart (gleich geschriebene Lemmata nennen Verschiedenes), ${verbListe.ohneBefehlImBestand} Befehl (die bisherige Karte führt eine Gegenwart, aber keinen Befehl)`);
+if (laneVerb.eintraege) console.log(`Verbalsubstantiv aus Lanes Lexikon (inf. n. im Artikel des Verbstamms): ${laneVerb.gesetzt} eingetragen (davon ${laneVerb.fortsetzung} aus der Fortsetzung der Aufzählung hinter einer Zwischenbemerkung) · offen gelassen: ${laneVerb.leerVonHand}, weil das Feld von Hand leer gesetzt ist, ${laneVerb.einspruch}, weil Lane keines der Wörter der bisherigen Karte nennt, ${laneVerb.ohneSchluessel}, weil die bisherige Karte keines führt, ${laneVerb.anderesWort}, weil die Vergangenheit der Karte nicht mehr das Wort des Eintrags ist · ${laneVerb.hatSchon} übergangen, weil eine andere Quelle es nennt (von ${laneVerb.eintraege} Einträgen in data-ersatz/arbeit/lane-verben.json)`);
 if (mehrzahlListe.gesetzt || mehrzahlListe.unklar) console.log(`Mehrzahl aus Buckwalters Stammliste (keine andere Quelle nennt eine): ${mehrzahlListe.gesetzt} Nomen` + (mehrzahlListe.unklar ? ` · offen gelassen an ${mehrzahlListe.unklar}: gleich geschriebene Lemmata nennen verschiedene Mehrzahlen, und die Bedeutung entscheidet nicht` : ''));
 if (selbst.sg || selbst.past || selbst.pl) console.log(`Das Wort selbst: Einzahl an ${selbst.sg} Nomen, Mehrzahl an ${selbst.pl} Nomen und Vergangenheit an ${selbst.past} Verben gesetzt (die bisherige Karte nennt dort ihr eigenes Wort)`);
 if (lane.eintraege) console.log(`Wurzeln aus Lanes Lexikon: ${lane.gesetzt} eingetragen · ${lane.hatSchon} übergangen, weil eine andere Quelle die Wurzel nennt · ${lane.anderesWort} übergangen, weil das Arabisch der Karte nicht mehr das Stichwort ist (von ${lane.eintraege} Einträgen in data-ersatz/arbeit/lane-wurzeln.json)`);
