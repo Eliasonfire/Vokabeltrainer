@@ -8719,3 +8719,133 @@ Erledigt seit dem 07.10. (nachgemessen):
 - Folge 22 und 24: drei Regeln seit v660 in der App (Sitzung 11.10.).
 - Folge 26: beurteilt (10.10.), gilt als ausgewertet.
 - Folge 15, 17, 20: vier Regeln in diesem Lauf → `rueckstand.mjs` Exit 0.
+
+## 2026-10-14 22:00 – Wöchentliche Wartung (Mi-Check) — **nichts ausgeliefert, nichts war zu liefern** (v685 bleibt live)
+
+Dieser Lauf hat weder Code noch Lerndaten der App geändert, eine Auslieferung war also nicht nötig. `pruefe-erreichbarkeit.js` meldet v685 als aktuell ausgeliefert. Geändert haben sich ein Werkzeug (`werkzeuge/regelkategorien-seite.mjs`), die Gerätestände aus 1c.1, zwei Seiten im Wurzelordner, der Backlog, die To-Do und die Projektnotiz. Zwischen den Läufen haben Sitzungen 66 Commits gemacht (v664 bis v685, dazu `3e37935`).
+
+### Schritt 0 — Marke, Repo, Prompt-Wächter
+
+`git pull --ff-only`: „Already up to date.“ Die Marke `arbeit.mjs --beginne "Wartungslauf" --schritte 7` ist gesetzt. `pruefe-volles-programm.mjs` endete mit Exit **0**; es gab nichts anzugleichen.
+
+### Schritt 0a — Vorige Läufe
+
+`pruefe-laeufe.mjs --tage 30` endete mit Exit **2**, wieder nur wegen **einer** Lücke: `eingang-einsortieren` am **26.09.2026, 03:00** („OAuth session expired“), weiter nicht quittiert. Drei Lücken sind quittiert. Für `vokabeltrainer-wartung` gibt es keine Lücke; die Statusnotiz hängt 3 Tage zurück (Notiz 11.10., Log 14.10.).
+
+### Schritt 0b — Samsung Notes
+
+`samsung-notes-sicherung.mjs` meldete „Ein anderer Lauf ist noch aktiv“, weil die Windows-Aufgabe um 22:00 zeitgleich startete. Ich habe auf `.sicherung.lock` gewartet; die Sperre war gegen 22:03 weg, vorher habe ich die unabhängigen Schritte erledigt. Laut `sicherung-log.txt`: *„Abgeholt: **0** Notiz(en) in 2 Runde(n), 165 s — Hintergrundteil lief nicht, gestartet“* und „Archiv: **1 neu**, 0 geändert, 1109 unverändert · 0 Fehler“. Das Abholen hat nicht versagt.
+`export-index.mjs --sicherung` endete mit Exit **2**: **neue Notiz „Plural“** in `Arabisch\Grammatik` (13.10.2026, 04:18, 3 Seiten, davon 2 mit Inhalt, getippt). Gelesen habe ich die Textebene (`Plural.md`, 8 Punkte) und die Seiten bei 80 dpi:
+- Punkte 1–6 (zwei Arten, -ūna, -āt, gebrochen, Erkennen, hāʾulāʾi/hum) decken die vorhandenen Regeln `jam-salim-taksir-01`, `jam-mudhakkar-salim-01`, `jam-muannath-salim-01`, `jam-taksir-01` und `ismul-isara-haulai-01` ab.
+- Punkt 7 („Satz in den Plural“) ist die Übungsanleitung aus Folge 26; als Fundstellen `f26-1045` und `f26-1545` schon mit „weg“ beurteilt.
+- Punkt 8 (Hamza auf Wāw bei أَبْنَاؤُكَ) ist die offene Frage `f26-2115` (unbelegt) auf seiner Warteseite.
+- **Daraus wird keine neue Regel und kein Satz**, denn die Sätze des Zettels haben keine Buchstelle. Danach habe ich `--sicherung --gesehen` aufgerufen.
+
+### Schritt 1 — Aufzeichnungen
+
+`get_recordings`: **27 Einträge, neu ist Folge 27 „MB1 Kapitel 13 (3) Plural“** (eingestellt 14.10.2026, 18:57 UTC, https://youtu.be/GDCDdJ3u7Ck). Sie ist im Backlog nachgetragen (Zeile 27, Status offen, noch kein Rohmaterial), und `.aufnahmen.json` hat einen Eintrag mehr.
+
+### Schritt 1b — Rückstand: **keiner**
+
+`rueckstand.mjs --knapp` endete mit Exit **0**: „kein Rueckstand. (1 ausser Wertung: 21)“. Folge 27 hat noch kein Rohmaterial. `kandidaten-bewerten.mjs` endete mit Exit **0**: noch einzubauen 0, mein Rückstand 0, für Elias 4 (abweichung 1, unbelegt 3). Es wurde nichts eingebaut.
+
+#### 1b.8 — Satzmodus
+
+`pruefe-satzmodus-aktuell.mjs` endete mit Exit **0** („alles aktuell“). Von 21 Wörtern der neuesten Kapitel steht keines außerhalb eines Satzes. **Balance: 9,9 % (47 von 473 Sätzen)**; der Richtwert von 20 % ist **mein** Vorschlag. Übung 17: 25 Aufgaben, 12 von 13 Personen, die Lücke ist weiter **„sie beide (zwei Frauen)“**. Sie ist bekannt und steht in der To-Do (Buchseiten 68–72 bringen keine weitere Person); ich habe nicht weiter gesucht. Übung 18: 33 Aufgaben in seiner Auswahl, also über der Grenze von 15.
+
+#### 1b.9 — Abendlisten
+
+`export-index.mjs --sicherung --abendlisten` endete mit Exit **0**: alle zehn Listen unverändert. `abendlisten.mjs`: 10 Listen, 37 Einträge, kein Wort auf mehr als einer Liste.
+
+#### 1b.10 — Lernlast
+
+`lernlast.mjs` endete mit Exit **0**: **„15 am Tag reichen noch.“**
+
+| | |
+|---|---|
+| Karten je Box | Box 1 **419** · 2 3 · 3 14 · 4 19 · 5 69 · 6 15 · 7 9 |
+| **Schlange Box 1** | **411** (297 nie beantwortet · 114 falsch) — am 11.10. waren es 188 |
+| Heute fällig | Box 1 419 · Box 2–7 28 |
+| Am spätesten je Box | Box 2 1 T · 3 2 T · 4 3 T · 5 5 T |
+
+Die Schlange ist um 223 Karten gewachsen, weil 297 Karten noch nie beantwortet wurden; vermutlich sind das die Karten der Gruppe „Koran häufigste“ (v680–v683). Das ist nicht einzeln nachgezählt.
+**Trefferquote je Box seit v603:** Box 1 12/79 = 15 % · Box 2 22/28 = 79 % · Box 3 28/54 = 52 % · Box 4 23/32 = 72 % · Box 5 12/55 = 22 % · **Box 6 und 7 haben noch keine Antwort.** Die Abstandsfrage geht frühestens ab dem 23.10. an ihn.
+**Vorgezogen:** 0 Karten markiert.
+⏰ Seine Erinnerung „Tagesziel wieder auf 10“ war am **11.10.2026** fällig; das Tagesziel steht weiter auf **15**. Ich habe nur gemeldet, nichts angefasst.
+
+### Schritt 1c — Vorrat: **keine Lücke**
+
+`get_unlocked_chapters`: **bayna-yadayk-1 1–4 · madina-1 1–13**, unverändert.
+`vorrat.mjs --stand .stand-roots.json --app auto` endete mit Exit 0: eigene Wörter **14**, auswendig **18 Suren + 1 Vers**, abgelehnte Vorschläge **67 an 31 Wörtern**, Leitner-Boxen **4750 Wörter** (4615 in Box 1), App-Auswahl aus dem KV erreichbar (Stand 14.10.2026, 18:32:20). **Kein „Lernstand automatisch mitgewachsen“.**
+⚠️ **„Nicht zugemacht“:** `madina-2` Kapitel 1–24 bleiben stehen, `--auch-schliessen` habe ich nicht benutzt.
+`pruefe-buecher-aktuell.mjs` endete mit Exit **0** (Hinweis H1 madina-2). `get_learning_progress` (559.609 Zeichen) habe ich als Datei weitergereicht, nicht gelesen; `vorrat.mjs --lernstand` meldet „unverändert“.
+1c.1b Tajweed: Exit 0. 1c.1c: `neue-kapitel.mjs` hat zuletzt am 14.10. um 21:35 nachgesehen, kein Auftrag, nichts „aufgegeben“.
+`vorrat.mjs` endete mit Exit **0**: **334 geprüft, 334 vollständig** (vorher 331, dazu die drei Plural-Namenskarten aus v671). Die Wurzel von أَمَامَ geht weiter nicht auf.
+
+**1c.5:** `pruefe-saetze.js` **0** (642 Sätze) · `pruefe-funktionen.js` **0** · `pruefe-duplikate.js` **0** · `pruefe-eigene-vorrang.mjs` **0** (alle messen 334) · `validate.js` **0** (36 Prüfungen, 2 Hinweise).
+
+#### 1c.5b — Mehrzahl (erster Wartungslauf des Prüfers)
+
+`pruefe-plural.mjs` endete mit Exit **0**, Eichung 15/15, 320 Karten in seiner Auswahl, 175 davon mit Mehrzahl.
+- **A** Schreibweise: 0 Befunde (7 Felder nur mit anderer Reihenfolge von Schadda und Vokal, kein Befund)
+- **B** regelmäßig: 22 männlich, 24 weiblich, 0 männlich mit anderem Stamm; ⓘ 1 weiblich mit geändertem Stammvokal (45990 وَحْدَةٌ → وَحَدَاتٌ)
+- **C** 32 von 131 ohne Klang-Partner: 8 in `PLURAL_FERN`, 9 warten auf ihn, 15 nah, **0 NEU**; ⓘ 45986 steht in `GESEHEN`, ist aber nicht mehr in seinem Bestand
+- **D** 1 Befund: „Endung fehlt“ bei 45782 أَلْبَان (Pausalform, kein Fehler)
+- **E** 2 Nomen ohne Mehrzahl: **50285 بَعْضٌ** und **50172 تَعَارُفٌ** (beide einzeln freigeschaltet). arabdict nennt für beide **keine** Mehrzahl. Als Frage in die To-Do unter „🔴 Wartet auf Elias“ eingetragen, nichts selbst eingetragen.
+
+**Die Seiten (veröffentlichen kann die Routine keine — jede unter IHRER Adresse):**
+- `wartungsfragen-artefakt.mjs`: „Nichts offen“ → https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3
+- `wartet-auf-elias.mjs` endete mit Exit **2**: **10 Entscheidungen** (1 mit Stückarbeit, 9 nur ansehen und wählen), dazu 3 Zeilen aus der To-Do; gemessen um 22:07:35; keine Meldung des Artefakt-Wächters → `artefakte/wartet-auf-elias.html`, https://claude.ai/artifact/Hukk2F5jbFqnLsnW5H9QfN
+- `freigabe-artefakt.mjs`: **4 von 160** für ihn, 7 unter „Eingebaut“ → https://claude.ai/artifact/2GJFK49B8LvWJaBu337qU4
+- **`regelauswahl.html` GEÄNDERT** (115 Regeln, 15 Kategorien) → `da4af296-67c5-4055-a2e7-35defc375007`
+- **`verschmelzung.html` GEÄNDERT** (Regeltexte aus den Sitzungen, 8 Gruppen, 21 Regeln) → `LMHMc79nzyNS3BZpm76kqW`
+- `artefakte/regelpruefung.html`: unverändert gegenüber dem letzten Bau
+- `aussenbelege.mjs`: 0 Feldbelege · `woerterbuch-belege.mjs`: 11 Belege, vorher 11
+
+### Schritt 1d — Regelsammlung
+
+`regeln-holen.mjs` endete mit Exit 0: letzter Abgleich 14.10.2026, 18:35:30, **keine Regelsammlung im abgeglichenen Stand**; `--merken` endete mit Exit 1 („Nichts zu merken“).
+`regelsammlung-wache.mjs` endete mit Exit **2**: neue Grammatik-Notiz „Plural“ (siehe 0b, gelesen). Die Wiedervorlage `asma-khamsa-vollstaendig-01` hat keinen Treffer. Folge 19 hat ihre Karten. `--merken` ist gesetzt.
+`regelkategorien-seite.mjs` endete **zuerst mit Exit 1**: „23 markierte Sätze aus keiner bekannten Quelle (gram-jam-…, kh-…)“. Das sind zwei Satzquellen aus den Sitzungen vom 12. und 13.10. Laut Auftrag habe ich die Quellen im Werkzeug aufgenommen, statt die Prüfung zu lockern:
+1. **„Koran häufigste“** (`kh-…`) wird dort wie ein Buch behandelt (`koran-haeufig-data.js`, Kapitel = `kap`), so wie `koranKarten()` in `js/buecher.js` es tut. Gezählt wird es erst, wenn es in `data/lernstand.json` eine Angabe dazu gibt.
+2. **Die drei Plural-Namenskarten** (`gram-jam-…`) zählt das Werkzeug nicht mit, meldet sie aber mit ⚠️. ⛔ **Befund:** Ihr Satz steht nur in `data/beispielsaetze.js`, und die App hängt Sätze von dort nur an Buchkarten und eigene Wörter (`saetzeNachtragen()`), nicht an Fachbegriffe. **Gelesen, nicht im Browser gemessen.** Die Regeln bleiben erreichbar, weil dieselben Sätze als `mb1-68-2`, `mb1-75-7` und `mb1-69-2` im Lehrbuch stehen. Der Punkt steht in der To-Do für eine Sitzung.
+Danach endete das Werkzeug mit Exit **0**. „Zuerst“-Kategorien: Nominalsatz (53) · اَلْ (45) · Schrift (39) · Plural (28). „Nicht zuordbar“ kommt nicht vor → https://claude.ai/artifact/DHhYFwtTNJADVwE2tVUDz3
+
+### Schritt 1e — Pflegeplan
+
+`pruefe-pflegeplan.mjs` endete mit Exit **0**: 67 über eine Routine · 6 in einer Sitzung · 55 ohne Pflegebedarf · 0 Lücken.
+
+### Schritt 1f — Fachbegriffe
+
+`fachbegriffe-finden.mjs` endete mit Exit **0**: 0 unentschieden. Ich habe nichts gefragt und nichts eingetragen.
+
+### Schritt 2 / 2b — Vokabelabzug und Ersatzdatenbank
+
+`hole-vokabeln.mjs`: **4433 Einträge, 11 eigene**, `behalten: 0` überall, unverändert. `baue-vokabelpaket.mjs`: **UNVERAENDERT**.
+`pruefe-ersatz.mjs --knapp` endete mit Exit 0: „ERSATZ VOLLSTÄNDIG: 4433 von 4433 Plätzen, 8 von 8 Büchern (davon 19 mit Grund nicht gefunden)“; der Bestand hat sich seit dem letzten Bau nicht geändert. `ersatz-wechsel.mjs --stand`: Die App läuft auf dem Abzug von arabicroots.
+
+### Schritt 3 / 4 / 5
+
+Schritt 3: `vocab-data.js` nicht angefasst. Schritt 4 ist durch 0b erledigt. Schritt 5: `get_personal_vocabulary` liefert 11 Wörter, keines neu; `get_weak_vocabulary` (0,2) liefert **17 Wörter**, dieselben wie am 11.10. Kein neues Muster.
+
+### Schritt 6 — Qualitätssicherung
+
+`alle-pruefer.mjs`: **177 Prüfer, 2 rot, keiner NEU ROT**. Beide sind Wartefälle für ihn: `pruefe-themen` (2) und `pruefe-buchtausch` (21).
+Einzeln nachgemessen, alle mit Exit 0: `pruefe-erreichbarkeit` („ausgelieferter Stand ist aktuell“), `pruefe-markierungen`, `pruefe-transkripte`, `pruefe-sprecher`, `pruefe-taschkil`, `taschkil-belegen`, `pruefe-wortfelder --fenster` (212 von 334), `pruefe-eselsbruecken` (2103 Einzelprüfungen, 1 Hinweis), `pruefe-quran`, `pruefe-schreibpfade`, `pruefe-artefakt-inhalt`, `pruefe-erreichbarkeit-eichung`, `pruefe-datumsangaben`, `test-satzmodus-schwerer`, `pruefe-volles-programm` (Abnahme) und `validate.js`.
+⚠️ **Zwei Alterungen:** `pruefe-oberflaeche.js` ist zuletzt am 09.09.2026 gelaufen (**35 Tage**), der Access-Nachweis `.access-geprueft.json` stammt vom 09.09.2026 (**35 Tage**).
+
+### ⬜ Offen nach diesem Lauf
+
+Neu:
+- **Folge 27** wartet auf Rohmaterial (Backfill-Retry), danach auf die Auswertung in 1b.
+- **Plural-Namenskarten ohne angezeigten Satz** (vermutlich, siehe 1d): für eine Sitzung, steht in der To-Do.
+- **Frage an ihn:** Mehrzahl von بَعْضٌ und تَعَارُفٌ — „gibt es nicht“? Steht in der To-Do.
+
+Geprüft und weiter offen (gemessen 14.10.2026):
+- Lücke `eingang-einsortieren` vom 26.09.2026 nicht quittiert.
+- madina-2 Kapitel 1–24 in `FREIGESCHALTET`, in keiner gemessenen Quelle.
+- 4 Regelkandidaten für ihn · `pruefe-themen` (2) · `pruefe-buchtausch` (21).
+- Übung 17: keine Satzlücke außer „sie beide (zwei Frauen)“.
+- Tagesziel steht auf 15, seine Erinnerung war am 11.10. fällig.
+- `pruefe-oberflaeche.js` und der Access-Nachweis sind je 35 Tage alt.
+- Die drei Änderungen in `js/irab.js` vom 11.10. (جلس, أكبر, Gottesname): Seitdem hat nur v679 `js/irab.js` geändert, ein Gegenlesen ist nicht vermerkt. Wurzel von أَمَامَ. Balance 9,9 %.

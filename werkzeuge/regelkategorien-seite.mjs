@@ -120,6 +120,16 @@ const buchFenster = {};
 for (const n of fs.readdirSync(path.join(REPO, 'data')).filter(n => /^vokabeln-.*\.js$/.test(n)))
   new Function('window', fs.readFileSync(path.join(REPO, 'data', n), 'utf8'))(buchFenster);
 const BUCH = buchFenster.VOKABELN || {};
+/* 14.10.2026 (Wartung): „Koran häufigste" (kh-…, seit v680) ist in der App ein
+   BUCH — js/buecher.js koranKarten(), slug koran-haeufig, Kapitel = `kap` —, und
+   seine Sätze aus data/beispielsaetze.js hängt saetzeNachtragen() erst an, wenn er
+   die Gruppe anhakt. Also hier wie jedes Buch: gezählt nur mit einer `angabe` in
+   data/lernstand.json. Ohne diese Zeile brach das Werkzeug mit „aus keiner
+   bekannten Quelle" ab. */
+try {
+  const KH = new Function(fs.readFileSync(path.join(REPO, 'koran-haeufig-data.js'), 'utf8') + ';return KORAN_HAEUFIG;')();
+  BUCH['koran-haeufig'] = KH.map(e => ({ id: e.id, chapter: e.kap }));
+} catch (e) { console.log('  ⛔ koran-haeufig-data.js nicht lesbar: ' + e.message); process.exit(1); }
 
 const lernIds = new Set(S.VD.map(w => String(w.id)));
 const ECHTE_SAETZE = new Set();
@@ -151,12 +161,19 @@ if (!ECHTE_SAETZE.size) {
    die dieses Werkzeug nicht kennt — genau so ist die Rangfolge vom 16.09.
    still falsch geworden (neue Quellen, alte Zählung). Dann lieber abbrechen. */
 const buchIds = new Set(Object.values(BUCH).flat().map(w => String(w.id)));
+/* 14.10.2026 (Wartung): Fachbegriffe, deren Satz NUR in data/beispielsaetze.js
+   steht (gram-jam-…, v671). In der App hängt saetzeNachtragen() Sätze nur an
+   Buchkarten und eigene Wörter (js/buecher.js), nicht an FACHBEGRIFF_VOKABELN —
+   gelesen, nicht im Browser gemessen. Deshalb nicht gezählt, aber GEMELDET. */
+const fbNurBs = new Set(S.FB.filter(w => w && !w.sentAr && S.BS[String(w.id)] && S.BS[String(w.id)].sentAr).map(w => String(w.id)));
+const ohneAnzeige = [];
 const marken = {};
 const fremd = [];
 for (const [satzId, liste] of Object.entries(TAGS)) {
   if (!liste || !liste.length) continue;
   if (!ECHTE_SAETZE.has(satzId)) {
-    if (!buchIds.has(satzId) || lernIds.has(satzId)) fremd.push(satzId);
+    if (fbNurBs.has(satzId)) ohneAnzeige.push(satzId);
+    else if (!buchIds.has(satzId) || lernIds.has(satzId)) fremd.push(satzId);
     continue;
   }
   for (const t of liste) marken[t.ruleId] = (marken[t.ruleId] || 0) + 1;
@@ -165,6 +182,10 @@ if (fremd.length) {
   console.log('  ⛔ ' + fremd.length + ' markierte Sätze aus keiner bekannten Quelle (z. B. ' + fremd.slice(0, 5).join(', ')
     + ') — erst klären, ob er sie sieht, sonst stimmt die Rangfolge nicht.');
   process.exit(1);
+}
+if (ohneAnzeige.length) {
+  console.log('  ⚠️ ' + ohneAnzeige.length + ' Fachbegriff-Satz/Sätze mit Markierung nicht gezählt (' + ohneAnzeige.join(', ')
+    + '): der Satz steht nur in data/beispielsaetze.js, und die App hängt Fachbegriffen von dort keinen an.');
 }
 
 /* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht.
