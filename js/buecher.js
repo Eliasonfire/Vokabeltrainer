@@ -1041,7 +1041,7 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      Der Aufruf ist gefahrlos, wenn der Schalter aus ist: dann raeumt er die
      Liste auf und legt nichts an. */
   if (typeof wendePluralKartenAn === 'function' && typeof SETTINGS !== 'undefined'){
-    wendePluralKartenAn(!!SETTINGS.pluralKarten);
+    wendePluralKartenAn(pluralKartenStufe(SETTINGS));
   }
 
   /* ---------- Lernstand fuer die Pluralkarten (21.08.2026) ----------------

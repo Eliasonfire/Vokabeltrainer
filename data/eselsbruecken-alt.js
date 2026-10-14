@@ -2052,6 +2052,7 @@ const ESELSBRUECKEN_ALT = {
     '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (سَيَّارَةٌ → سَيَّارَاتٌ) — بِنْتٌ → بَنَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
   ],
   '45846#pl': [   /* أُمٌّ → أُمَّهَاتٌ */
+    'أُمٌّ → أُمَّهَاتٌ. Dein Aufhänger: Ummahāt al-Muʾminīn — „die Mütter der Gläubigen“.',
     '⚠️ Hier trägt das Muster NICHT. Bei deinen anderen ـَات-Wörtern tritt ات einfach an die Stelle des ة (دَرَّاجَةٌ → دَرَّاجَاتٌ) — أُمٌّ → أُمَّهَاتٌ geht diesen Weg nicht: die Form ändert sich davor. ⭐ Genau deshalb ist dieses Wort einzeln zu merken, und genau deshalb steht es hier.'
   ],
   '45874#pl': [   /* مُسْتَشْفًى → مُسْتَشْفَيَاتٌ */
@@ -2132,6 +2133,7 @@ const ESELSBRUECKEN_ALT = {
     '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — اِسْمٌ → أَسْمَاءٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel فَمٌ → أَفْوَاهٌ und كُوبٌ → أَكْوَابٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45853#pl': [   /* أَفْعَال: فَمٌ → أَفْوَاهٌ */
+    'فَمٌ → أَفْوَاهٌ. Dasselbe Muster wie أَبْوَابٌ (Türen) und أَقْلَامٌ (Stifte) — nur tauchen das w und das h erst in der Mehrzahl auf.',
     '⭐ Die Form heißt أَفْعَال: vorne kommt ein أَ dazu, und vor den letzten Buchstaben ein ا — فَمٌ → أَفْوَاهٌ. ⚠️ 12 deiner Wörter bilden den Plural nach genau dieser Form, zum Beispiel كُوبٌ → أَكْوَابٌ und بَابٌ → أَبْوَابٌ. Wer eines davon sieht, kennt die anderen.'
   ],
   '45889#pl': [   /* أَفْعَال: كُوبٌ → أَكْوَابٌ */
@@ -3440,5 +3442,25 @@ const ESELSBRUECKEN_ALT = {
   'kh-100': [
     'Es ist der Täter zum Verb für „Unrecht tun“: mit langem ā nach dem ersten Buchstaben, wie kāfir (der leugnet) und ʿālim (der weiß).',
     '⚠️ Die Mehrzahl ist regelmäßig: ẓālimūn, im Koran meist aẓ-ẓālimīn — „die Ungerechten“. Viele Verse enden damit, dass Allah das ungerechte Volk nicht rechtleitet.'
+  ],
+
+  /* Paket A3 (14.10.2026): die weit entfernten Mehrzahlen bekommen eine eigene Eselsbrücke auf der
+     Pluralkarte, vor den geerbten. Elias auf die Liste der acht und ihre Brücken: „ich bin mit deinen
+     vorschlägen zufrieden, fang an zu arbeiten". Welche acht: PLURAL_FERN in js/kern.js. Mutter und Mund
+     stehen weiter oben bei ihren Pluraltexten vom 09.09.2026 (der neue Text als erster); Spiegel hat keine. */
+  '45779#pl': [   /* weit entfernt: إِمَامٌ → أَئِمَّةٌ */
+    'إِمَامٌ → أَئِمَّةٌ. Dein Aufhänger: al-Aʾimma al-Arbaʿa — „die vier Imame“.'
+  ],
+  '45847#pl': [   /* weit entfernt: أَبٌ → آبَاءٌ */
+    'أَبٌ → آبَاءٌ. Klingt wie أَبْنَاءٌ (Söhne), أَسْمَاءٌ (Namen) und أَبْوَابٌ (Türen) — nur ist bei آبَاءٌ das a vorn lang.'
+  ],
+  '45857#pl': [   /* weit entfernt: يَدٌ → أَيْدٍ / أَيَادٍ */
+    'يَدٌ → أَيْدٍ / أَيَادٍ. Dein Aufhänger steht im Thronvers, den du auswendig kannst: يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ — wörtlich „Er weiß, was zwischen ihren Händen ist“.'
+  ],
+  '45887#pl': [   /* weit entfernt: يَوْمٌ → أَيَّامٌ */
+    'يَوْمٌ → أَيَّامٌ. Dein Aufhänger: Ayyām at-Tashrīq — „die Tage nach dem Opferfest“.'
+  ],
+  '45919#pl': [   /* weit entfernt: امْرَأَةٌ → نِسَاءٌ */
+    'امْرَأَةٌ → نِسَاءٌ — ein ganz anderes Wort, kein Muster hilft. Dein Aufhänger: Sure 4 heißt an-Nisāʾ, „Die Frauen“.'
   ],
 };

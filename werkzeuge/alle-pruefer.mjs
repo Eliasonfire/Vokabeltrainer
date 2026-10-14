@@ -694,6 +694,7 @@ const PRUEFER = [
      sich nichts, das zweite Tippfeld steht nur bei regelmäßiger Mehrzahl, und die
      Einordnung bleibt an einer Stelle. 25 Fälle, 20 Störtests, dazu seine echten Karten. */
   ['test-plural-karte.mjs', []],
+  ['test-plural-fern.mjs', []],
   /* Übung 17 „Verb einsetzen" (13.10.2026): keine selbst konjugierte Form (jede
      der 169 gegen den Abzug der Nachschlagetabellen UND gegen Stamm + Endung des
      Lehrers), nichts geraten, das Dreierpaket in der Rückmeldung, Falsches kommt
