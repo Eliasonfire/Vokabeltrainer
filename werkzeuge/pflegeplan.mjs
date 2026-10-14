@@ -792,6 +792,23 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-plural-karte.mjs läuft im Sammellauf: fährt pluralMuster(), pluralKlangPartner(), den Formen-Block der Lernkarte, renderTippfeld(), pruefeTippen() und tippTaste() aus dem Quelltext gegen Probekarten und ein Doppel der Seite, prüft die Verdrahtung der zwei Schalter und misst an seinen echten Karten (Auswahl aus .stand-app.json), dass die Zeile „Klingt wie" dort Stoff hat und kein Partner regelmäßig, ein Zahlwort oder dasselbe Wort ist; 20 Störtests' },
   },
+  /* 14.10.2026, innerhalb von js/kern.js, js/einstellungen.js, js/buecher.js, index.html und
+     data/eselsbruecken-alt.js und deshalb von Hand hier: nur die weit entfernten Mehrzahlen
+     als eigene Karte (Paket A3). Elias auf die Liste der acht und ihre Eselsbrücken: „ich bin
+     mit deinen vorschlägen zufrieden, fang an zu arbeiten". Hinter dem neuen Schalter „Nur
+     weit entfernte Mehrzahl" (bei ihm AUS, eingeschaltet wird nur von ihm). */
+  {
+    funktion: 'Nur weit entfernte Mehrzahl als eigene Karte mit Eselsbrücke',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Liste PLURAL_FERN (js/kern.js) wächst nicht von selbst: acht Karten, die er am 14.10.2026 bestätigt hat. „Weit entfernt" erkennt keine Regel; neue Kandidaten aus neuen Kapiteln kommen nur auf sein Wort dazu. Die Pluralkarten selbst baut bauePluralKarte() bei jedem Start neu aus seinen Karten.' },
+    eingaben: { nein: 'Neu ist nur die Einstellung pluralFern in vt_settings; sie wird wie jede Einstellung mit dem Stand abgeglichen und von keinem Werkzeug gelesen. Der Fortschritt der acht Karten läuft wie bei allen Pluralkarten über PROGRESS.' },
+    /* ⛔ Still kaputtgehen kann das Paar in der Eselsbrücke: ändert sich das Feld pl einer der
+       acht Karten (Abzug, Ersatzdatenbank), nennt die Brücke ein Paar, das es nicht mehr gibt.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-plural-fern.mjs läuft im Sammellauf: fährt pluralKartenStufe() und wendePluralKartenAn() aus dem Quelltext gegen Probekarten (aus, nur die weit entfernten, alle; kein Doppel beim Wechsel), prüft, dass jede Karte der Liste in seinem Bestand eine Mehrzahl hat und dass ihre erste Eselsbrücke das Paar Einzahl → Mehrzahl genau so nennt wie die Karte, und die Verdrahtung des Schalters; neun Störtests. Dazu prüft pruefe-pluraltexte.mjs jedes Paar auch gegen die Buchkarten.' },
+  },
   /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
      arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für
      mein tablet wäre das praktisch, für mein handy will ich das nicht". */

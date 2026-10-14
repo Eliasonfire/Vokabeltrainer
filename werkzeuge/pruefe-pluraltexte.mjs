@@ -92,6 +92,22 @@ for (const w of V){
   for (const p of String(w.pl).split('/'))
     echt.add(String(w.ar).trim() + '→' + p.trim());
 }
+/* Auch die Paare der BUCHkarten (14.10.2026). Seit Paket A3 nennt eine Eselsbrücke das Paar
+   einer Buchkarte (Frau, 45919, madina-1) — die steht nicht in vocab-data.js, sondern in
+   data/vokabeln-*.js (nur lokal, nicht im Repo). NUR für die Paare: die Zahlen „N deiner
+   Wörter" zählen weiter an vocab-data.js. Fehlt eine Datei, fehlen ihre Paare — dann meldet
+   der Lauf das Paar als unbekannt, nie als richtig. */
+for (const datei of fs.readdirSync(path.join(REPO, 'data')).filter(n => n.startsWith('vokabeln-') && n.endsWith('.js'))){
+  const f = {};
+  try { new Function('window', lies('data', datei))(f); } catch (e) { continue; }
+  for (const liste of Object.values(f.VOKABELN || {})){
+    for (const w of (Array.isArray(liste) ? liste : [])){
+      if (!w || !w.pl) continue;
+      for (const p of String(w.pl).split('/'))
+        echt.add(String(w.ar).trim() + '→' + p.trim());
+    }
+  }
+}
 
 /* ---------- Lauf ---------- */
 console.log('--- Zahlen und Beispiele in den Eselsbruecken ---\n');

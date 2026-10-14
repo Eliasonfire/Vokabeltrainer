@@ -1181,14 +1181,50 @@ function wendePluralKartenAn(an){
     if (istPluralKarte(VOCAB_DATA[i].id)) VOCAB_DATA.splice(i, 1);
   }
   if (an){
+    /* 'fern' = nur die Karten aus PLURAL_FERN (siehe unten); true = alle. */
+    const nur = an === 'fern' ? new Set(PLURAL_FERN) : null;
     const neu = [];
-    VOCAB_DATA.forEach(w => { const p = bauePluralKarte(w); if (p) neu.push(p); });
+    VOCAB_DATA.forEach(w => {
+      if (nur && !nur.has(String(w.id))) return;
+      const p = bauePluralKarte(w); if (p) neu.push(p);
+    });
     VOCAB_DATA.push(...neu);
   }
   return { vorher, nachher: VOCAB_DATA.length };
 }
 
-wendePluralKartenAn(!!(LS.get('vt_settings', {}) || {}).pluralKarten);
+/* ---------- Nur die weit entfernten Mehrzahlen als eigene Karte (14.10.2026) ----------
+   Elias am 12.10.2026 über die Pluralformen: „… oder sie sind wirklich nicht so nah und
+   dann sind sie gefühlt wie neue wörter. also irgendwie brauche ich da eine lösung
+   langfristig". Stufe 3 des Vorschlags vom 12.10. (Paket A3 der Übergabe vom 13.10.):
+   die weit entfernten bekommen eine eigene Karte mit Eselsbrücke. Auf die Liste der
+   acht und ihre Brücken am 14.10.2026: „ich bin mit deinen vorschlägen zufrieden, fang
+   an zu arbeiten".
+
+   ⚠️ Die AUSWAHL ist MEINE (Claude), gemessen am 13.10.2026 an seinem Stand: 126 seiner
+   Karten haben eine nicht regelmäßige Mehrzahl, 30 davon keine andere Karte mit
+   demselben Klang, und von diesen 30 sind diese acht wirklich weit von der Einzahl
+   entfernt (Liste, sieben Grenzfälle und Gründe: To-Do Vokabeltrainer, Abschnitt 10 der
+   Übergabe vom 13.10.2026). „Weit" erkennt keine Regel — deshalb eine Liste, und sie
+   wächst nur auf sein Wort.
+
+   Die Eselsbrücken stehen in data/eselsbruecken-alt.js unter `<id>#pl` und kommen über
+   vorschlagsListe() (js/lernen.js) VOR den geerbten. Spiegel hat keine eigene: kein
+   ehrlicher Aufhänger gefunden. Bewacht von test-plural-fern.mjs. */
+const PLURAL_FERN = ['45919', '45846', '45779', '45887', '45857', '45847', '45853', '46020'];
+
+/* Welche Pluralkarten es gibt: true = alle (Schalter „Plural als eigene Karten"),
+   'fern' = nur PLURAL_FERN (Schalter „Nur weit entfernte Mehrzahl"), false = keine.
+   „Alle" schließt die acht ein. Beide Schalter stehen bei ihm auf AUS; eingeschaltet
+   wird nur von ihm. */
+function pluralKartenStufe(s){
+  s = s || {};
+  if (s.pluralKarten) return true;
+  if (s.pluralFern) return 'fern';
+  return false;
+}
+
+wendePluralKartenAn(pluralKartenStufe(LS.get('vt_settings', {}) || {}));
 
 /* ---------- Was sich beim Anlegen SICHER ableiten lässt (20.08.2026) ----------
 
@@ -2633,7 +2669,7 @@ let SETTINGS = Object.assign(
      hat keinen Vorrat, der leer werden könnte — ohne Zahl gäbe es wieder kein
      sichtbares Ende, und genau das hatte Elias am 17.08.2026 beanstandet
      („aktuell sieht es aus als gäbe es da kein ende"). */
-  { showPlural:false, pluralKarten:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], grammarHighlight:true },
+  { showPlural:false, pluralKarten:false, pluralFern:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------

@@ -6,6 +6,7 @@ function renderSettings(){
   const sw = document.getElementById('toggleShowPlural');
   sw.classList.toggle('on', SETTINGS.showPlural);
   document.getElementById('togglePluralKarten').classList.toggle('on', !!SETTINGS.pluralKarten);
+  document.getElementById('togglePluralFern').classList.toggle('on', !!SETTINGS.pluralFern);
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
@@ -569,7 +570,7 @@ document.getElementById('toggleShowPlural').addEventListener('click', ()=>{
 document.getElementById('togglePluralKarten').addEventListener('click', ()=>{
   SETTINGS.pluralKarten = !SETTINGS.pluralKarten;
   saveSettings();
-  const stand = wendePluralKartenAn(SETTINGS.pluralKarten);
+  const stand = wendePluralKartenAn(pluralKartenStufe(SETTINGS));
   PROGRESS = initProgress();
   renderSettings();
   if (typeof renderHome === 'function') renderHome();
@@ -578,6 +579,26 @@ document.getElementById('togglePluralKarten').addEventListener('click', ()=>{
   toast(SETTINGS.pluralKarten
     ? `${dazu} Pluralkarten sind dazugekommen — sie starten in Kasten 1.`
     : `${dazu} Pluralkarten ausgeblendet. Ihr Fortschritt bleibt gespeichert.`);
+});
+/* Nur die weit entfernten Mehrzahlen als eigene Karte (14.10.2026, Paket A3). Elias auf
+   die Liste der acht und ihre Eselsbrücken: „ich bin mit deinen vorschlägen zufrieden,
+   fang an zu arbeiten". Derselbe Ablauf wie beim Schalter darüber. Ist „Plural als
+   eigene Karten" an, sind die acht ohnehin dabei — dann ändert dieser Schalter am
+   Bestand nichts, und die Meldung sagt das. Welche acht: PLURAL_FERN in js/kern.js. */
+document.getElementById('togglePluralFern').addEventListener('click', ()=>{
+  SETTINGS.pluralFern = !SETTINGS.pluralFern;
+  saveSettings();
+  const stand = wendePluralKartenAn(pluralKartenStufe(SETTINGS));
+  PROGRESS = initProgress();
+  renderSettings();
+  if (typeof renderHome === 'function') renderHome();
+  if (typeof renderChapterCats === 'function') renderChapterCats();
+  const dazu = Math.abs(stand.nachher - stand.vorher);
+  toast(SETTINGS.pluralKarten
+    ? 'Alle Pluralkarten sind schon an — die weit entfernten sind dabei.'
+    : SETTINGS.pluralFern
+      ? `${dazu} Pluralkarten mit weit entfernter Mehrzahl sind dazugekommen — sie starten in Kasten 1.`
+      : `${dazu} Pluralkarten ausgeblendet. Ihr Fortschritt bleibt gespeichert.`);
 });
 /* Verbformen ein- und ausschalten (Elias' Wunsch vom 30.07.2026). Genau wie bei
    den Pluralformen: eine Umschaltung, kein eigener Bildschirm. */
