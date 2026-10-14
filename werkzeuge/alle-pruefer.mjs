@@ -260,6 +260,10 @@ const PRUEFER = [
      Pluralform korrigiert wird. Eine Zahl im Fliesstext ist die haltbarste Art,
      still falsch zu werden. [[zahlen_ohne_beleg]] */
   ['werkzeuge/pruefe-pluraltexte.mjs', []],
+  /* 14.10.2026 — die Mehrzahl auf seinen Karten (Schreibweise, „regelmäßig", Kandidaten für
+     PLURAL_FERN, Vokalzeichen, Nomen ohne Mehrzahl). Exit 2 nur bei einem Befund in UNSEREN
+     Daten — der sperrt das Ausliefern zu Recht; Befunde im Abzug färben den Exit nicht. */
+  ['werkzeuge/pruefe-plural.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, und der Anlass war der schwerste Fund der Nacht:
      „مَدْرَسَةٌ → مَدَارِسُ" stand auf dem Schirm RUECKWAERTS. Ein Pfeil
      zwischen zwei arabischen Laeufen ist ein neutrales Zeichen und bekommt

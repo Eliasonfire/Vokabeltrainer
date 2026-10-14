@@ -894,8 +894,17 @@ node werkzeuge/vorrat.mjs
 node werkzeuge/pruefe-buecher-aktuell.mjs
 node werkzeuge/pruefe-eigene-vorrang.mjs
 node werkzeuge/pruefe-satzmodus-aktuell.mjs
+node werkzeuge/pruefe-plural.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
+
+⭐ **`pruefe-plural.mjs`** (seit 14.10.2026) ist Elias' *„ich glaube wir brauchen einen
+prüfer auch für plural dann jetzt"*: seit v685 steht die Mehrzahl (A3, Feld `pl`) ohne
+Schalter auf jeder Lernkarte. Er prüft an seinem Bestand die Schreibweise, ob eine
+„regelmäßige" Mehrzahl wirklich den Stamm der Einzahl trägt, neue Kandidaten für die
+weit entfernten (nur melden), die Vokalzeichen (aus `pruefe-taschkil.js`) und Nomen
+ohne Mehrzahl. **Exit 2 = falsche Mehrzahl in unseren Daten** (nicht ausliefern);
+Befunde in seinem Abzug stehen unter „Für die Wartung" und färben den Exit nicht.
 
 ⭐ **`pruefe-buecher-aktuell.mjs`** (seit 24.09.2026) ist Elias' *„irgendwer soll
 auch gucken ob das meine kapitel hier auch aktuell sind und auch bücher"*: sie

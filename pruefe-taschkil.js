@@ -20,6 +20,8 @@
    Aufruf:   node pruefe-taschkil.js
              node pruefe-taschkil.js --alle       jeden Befund einzeln
              node pruefe-taschkil.js --buecher    dazu die data/vokabeln-*.js
+             node pruefe-taschkil.js --json       am Ende alle Befunde als eine Zeile
+                                                  (fuer werkzeuge/pruefe-plural.mjs)
    Rueckgabe: 0 = alles vokalisiert, 1 = mindestens eine Luecke IM REPO.
    Die Buchdateien faerben den Rueckgabewert nicht — Begruendung unten beim
    Abschnitt "Die acht Buchdateien". Ihr Umfang steht aber in JEDEM Lauf in
@@ -1013,6 +1015,14 @@ const SURAH_FELDER = ['arTaschkil'];
 let eigeneAnzahl = 0;   // fuer den Geltungsbereich-Satz weiter unten
 const BUCH_DIR = path.join(DIR, 'data');
 const buchBefunde = [];
+/* ⭐ --json (14.10.2026): am Ende EINE Zeile „@@TASCHKIL-BEFUNDE@@{…}" mit allen Befunden.
+   Für werkzeuge/pruefe-plural.mjs — der zählt die Lücken in der Mehrzahl SEINER Karten,
+   ohne die Erkennung hier nachzubauen. fs.writeSync, weil console.log bei process.exit()
+   in eine Pipe nicht sicher ankommt. Steht hier, weil erst ab hier beide Listen da sind;
+   ein Abbruch weiter oben (Daten nicht ladbar) liefert keine Zeile, und das merkt der Leser. */
+if (process.argv.includes('--json')) process.on('exit', () => {
+  fs.writeSync(1, '\n@@TASCHKIL-BEFUNDE@@' + JSON.stringify({ befunde, buchBefunde }) + '\n');
+});
 let buchWoerter = 0, buchEintraege = 0;
 let buchDateien = [];
 try {

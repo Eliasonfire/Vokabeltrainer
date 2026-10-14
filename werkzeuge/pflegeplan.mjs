@@ -811,6 +811,20 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-plural-fern.mjs läuft im Sammellauf: fährt pluralKartenStufe() und wendePluralKartenAn() aus dem Quelltext gegen Probekarten (ohne „alle" immer die acht, mit „alle" alle; kein Doppel beim Wechsel), prüft, dass jede Karte der Liste in seinem Bestand eine Mehrzahl hat und dass ihre erste Eselsbrücke das Paar Einzahl → Mehrzahl genau so nennt wie die Karte, und dass kein Plural-Schalter zurückkommt; acht Störtests. Dazu prüft pruefe-pluraltexte.mjs jedes Paar auch gegen die Buchkarten.' },
   },
+  /* 14.10.2026 — der Prüfer für die Mehrzahl. Elias: „ich glaube wir brauchen einen prüfer
+     auch für plural dann jetzt, passe die routinen warhscheinlich an oder" (die Mehrzahl steht
+     seit v685 ohne Schalter auf jeder Karte). Von Hand hier, weil er Daten bewacht, die mit
+     jedem neuen Kapitel wachsen, und weil seine Liste GESEHEN gepflegt werden muss. */
+  {
+    funktion: 'Prüfer für die Mehrzahl auf seinen Karten (werkzeuge/pruefe-plural.mjs)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1c.5b', beleg: 'node werkzeuge/pruefe-plural.mjs', werkzeug: 'werkzeuge/pruefe-plural.mjs',
+      wie: 'Jedes neue Kapitel bringt Mehrzahlen auf seine Karten. Der Prüfer meldet eine falsche Schreibweise (A), eine „regelmäßige" Mehrzahl mit anderem Stamm (B), neue Mehrzahlen ohne Klang-Partner (C — Kandidaten für PLURAL_FERN, nur auf sein Wort), Vokalzeichen-Lücken (D, aus pruefe-taschkil.js) und Nomen ohne Mehrzahl (E). Die Wartung legt neue Kandidaten ihm in die To-Do und trägt sie in GESEHEN als wartet ein.' },
+    eingaben: { nein: 'Er trägt nichts ein. Seine Antwort zu einem Kandidaten kommt im Chat und wird von Hand übernommen: weit → PLURAL_FERN (js/kern.js) mit Eselsbrücke, nah → GESEHEN als nah.' },
+    veralten: { routine: W, schritt: '1c.5b', beleg: 'node werkzeuge/pruefe-plural.mjs', werkzeug: 'werkzeuge/pruefe-plural.mjs',
+      wie: 'GESEHEN veraltet, wenn eine Karte verschwindet oder einen Klang-Partner bekommt — der Prüfer meldet sie als „nicht (mehr) ohne Partner"; eine Karte in PLURAL_FERN und GESEHEN zugleich ist Exit 1. Er läuft auch im Sammellauf (alle-pruefer.mjs) und eicht sich bei jedem Lauf an 15 Probekarten; vier Störtests (PRUEFE_PLURAL_STOER).' },
+  },
   /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
      arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für
      mein tablet wäre das praktisch, für mein handy will ich das nicht". */
