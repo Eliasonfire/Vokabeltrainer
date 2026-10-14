@@ -3,10 +3,9 @@
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== SETTINGS ===================== */
 function renderSettings(){
-  const sw = document.getElementById('toggleShowPlural');
-  sw.classList.toggle('on', SETTINGS.showPlural);
+  /* „Pluralformen anzeigen", „Mehrzahl mit eintippen" und „Nur weit entfernte Mehrzahl" gibt es
+     seit 14.10.2026 nicht mehr. Elias: „plural soll nciht hinter schaltern versteckt sein". */
   document.getElementById('togglePluralKarten').classList.toggle('on', !!SETTINGS.pluralKarten);
-  document.getElementById('togglePluralFern').classList.toggle('on', !!SETTINGS.pluralFern);
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
@@ -15,9 +14,6 @@ function renderSettings(){
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   zeigeRichtungHinweis();
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
-  /* Das zweite Tippfeld für die Mehrzahl (13.10.2026). Mit Abfrage: ein Prüfstand mit einem
-     älteren Doppel der Seite kennt den Schalter nicht. */
-  { const t = document.getElementById('toggleTippenPlural'); if (t) t.classList.toggle('on', !!SETTINGS.tippenPlural); }
   { const t = document.getElementById('toggleVerbKurzzeilen'); if (t) t.classList.toggle('on', !!SETTINGS.verbKurzzeilen); }
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
      `!== false` geprueft und nicht auf Wahrheit - ein fehlender Eintrag ist
@@ -522,19 +518,9 @@ document.getElementById('toggleTippen').addEventListener('click', ()=>{
      in js/lernen.js. [[widerspruch_liegt_in_der_beschriftung]] */
   if (SETTINGS.tippenAbBox4) toast('Ab Box 4: Fragt die Karte auf Deutsch, schreibst du das arabische Wort. Mit „Überspringen".');
 });
-/* ---------- „Mehrzahl mit eintippen" (13.10.2026) ----------
-   Elias, 12.10.2026: „man könnte auch ab box 4 den plural verlangen aber auch nur da wo
-   es regelmässig ist". Der Schalter allein tut nichts: das zweite Feld erscheint nur, wo
-   das erste dasteht (tippPluralDran() und renderTippfeld() in js/lernen.js). Deshalb sagt
-   die Meldung beim Einschalten, ob „Ab Box 4 eintippen" schon an ist. */
-document.getElementById('toggleTippenPlural').addEventListener('click', ()=>{
-  SETTINGS.tippenPlural = !SETTINGS.tippenPlural;
-  saveSettings();
-  renderSettings();
-  if (SETTINGS.tippenPlural) toast(SETTINGS.tippenAbBox4
-    ? 'Mehrzahl: Bei regelmäßiger Mehrzahl steht ab Box 4 ein zweites Feld unter dem Wort.'
-    : 'Mehrzahl: wirkt erst, wenn auch „Ab Box 4 eintippen" an ist.');
-});
+/* „Mehrzahl mit eintippen" (13.10.2026) gibt es seit 14.10.2026 nicht mehr: das zweite Feld steht
+   ab Box 4 bei regelmäßiger Mehrzahl immer da (tippPluralDran() in js/lernen.js). Elias: „plural
+   soll nciht hinter schaltern versteckt sein". */
 /* Satzübung 17: kurze Zeilen für Formen ohne Satz (13.10.2026). Voreinstellung AUS — er
    schaltet selbst ein. uebungenAufbauen() in js/uebung.js liest den Schalter bei jedem Aufbau
    und baut die Liste neu, wenn er sich geändert hat. */
@@ -545,11 +531,6 @@ document.getElementById('toggleVerbKurzzeilen').addEventListener('click', ()=>{
   if (SETTINGS.verbKurzzeilen) toast('Verb einsetzen: Für Formen ohne Satz kommen jetzt kurze Zeilen dazu.');
 });
 document.getElementById('btnSettings').addEventListener('click', ()=>showScreen('settings'));
-document.getElementById('toggleShowPlural').addEventListener('click', ()=>{
-  SETTINGS.showPlural = !SETTINGS.showPlural;
-  saveSettings();
-  renderSettings();
-});
 /* ---------- Pluralkarten ein- und ausschalten (18.08.2026) ----------
 
    Anders als die Schalter darueber aendert dieser nicht nur die Anzeige,
@@ -580,26 +561,9 @@ document.getElementById('togglePluralKarten').addEventListener('click', ()=>{
     ? `${dazu} Pluralkarten sind dazugekommen — sie starten in Kasten 1.`
     : `${dazu} Pluralkarten ausgeblendet. Ihr Fortschritt bleibt gespeichert.`);
 });
-/* Nur die weit entfernten Mehrzahlen als eigene Karte (14.10.2026, Paket A3). Elias auf
-   die Liste der acht und ihre Eselsbrücken: „ich bin mit deinen vorschlägen zufrieden,
-   fang an zu arbeiten". Derselbe Ablauf wie beim Schalter darüber. Ist „Plural als
-   eigene Karten" an, sind die acht ohnehin dabei — dann ändert dieser Schalter am
-   Bestand nichts, und die Meldung sagt das. Welche acht: PLURAL_FERN in js/kern.js. */
-document.getElementById('togglePluralFern').addEventListener('click', ()=>{
-  SETTINGS.pluralFern = !SETTINGS.pluralFern;
-  saveSettings();
-  const stand = wendePluralKartenAn(pluralKartenStufe(SETTINGS));
-  PROGRESS = initProgress();
-  renderSettings();
-  if (typeof renderHome === 'function') renderHome();
-  if (typeof renderChapterCats === 'function') renderChapterCats();
-  const dazu = Math.abs(stand.nachher - stand.vorher);
-  toast(SETTINGS.pluralKarten
-    ? 'Alle Pluralkarten sind schon an — die weit entfernten sind dabei.'
-    : SETTINGS.pluralFern
-      ? `${dazu} Pluralkarten mit weit entfernter Mehrzahl sind dazugekommen — sie starten in Kasten 1.`
-      : `${dazu} Pluralkarten ausgeblendet. Ihr Fortschritt bleibt gespeichert.`);
-});
+/* Die acht weit entfernten Mehrzahlen (Paket A3) brauchen keinen Klick: pluralKartenStufe()
+   in js/kern.js baut sie immer (seit 14.10.2026, Elias: „plural soll nciht hinter schaltern
+   versteckt sein"). Schaltet er „Plural als eigene Karten" aus, bleiben sie. */
 /* Verbformen ein- und ausschalten (Elias' Wunsch vom 30.07.2026). Genau wie bei
    den Pluralformen: eine Umschaltung, kein eigener Bildschirm. */
 document.getElementById('toggleVerbFormen').addEventListener('click', ()=>{
