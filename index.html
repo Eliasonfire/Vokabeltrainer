@@ -6937,13 +6937,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="switch" id="toggleGrammarHighlight" aria-label="Grammatik-Hinweise umschalten"><span class="knob"></span></button>
       </div>
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Pluralformen anzeigen</div>
-          <div class="setting-sub">Plural &amp; Femininum-Formen auf der Karte zeigen — beim Plural mit „regelmäßig" oder mit bis zu zwei Karten, die gleich klingen</div>
-        </div>
-        <button class="switch" id="toggleShowPlural" aria-label="Pluralformen umschalten"><span class="knob"></span></button>
-      </div>
+      <!-- „Pluralformen anzeigen" gibt es seit 14.10.2026 nicht mehr. Elias: „plural soll nciht
+           hinter schaltern versteckt sein". Plural- und Femininum-Formen stehen immer auf der
+           Karte (Formen-Block in js/lernen.js). -->
       <!-- Elias am 18.08.2026, zweimal und scheinbar gegensätzlich: „ich finde
            eigentlich, dass die plural formen eigene karteikarten bekommen
            sollten aber noch nicht jetzt" — und wenige Stunden später „du kannst
@@ -6958,18 +6954,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         </div>
         <button class="switch" id="togglePluralKarten" aria-label="Pluralkarten umschalten"><span class="knob"></span></button>
       </div>
-      <!-- Elias am 14.10.2026 auf die Liste der acht weit entfernten Mehrzahlen und
-           ihre Eselsbrücken: „ich bin mit deinen vorschlägen zufrieden, fang an zu
-           arbeiten" (Paket A3). Standard AUS — eingeschaltet wird nur von ihm. Ist
-           der Schalter darüber an, sind die acht ohnehin dabei. Welche acht:
-           PLURAL_FERN in js/kern.js. -->
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Nur weit entfernte Mehrzahl</div>
-          <div class="setting-sub">Eigene Karte mit Eselsbrücke nur für die Wörter, deren Mehrzahl ganz anders klingt (Frau, Mutter, Tag …). Mit „Plural als eigene Karten" sind sie ohnehin dabei</div>
-        </div>
-        <button class="switch" id="togglePluralFern" aria-label="Weit entfernte Mehrzahl umschalten"><span class="knob"></span></button>
-      </div>
+      <!-- Die acht weit entfernten Mehrzahlen (Paket A3) haben seit 14.10.2026 IMMER ihre
+           eigene Karte — ohne Schalter. Elias: „plural soll nciht hinter schaltern versteckt
+           sein". Welche acht: PLURAL_FERN in js/kern.js. -->
+
       <!-- Elias am 30.07.2026: „du solltest da die 4 zeitformen nicht zeigen.
            die sollen da raus. am besten machen wir sogar eine einstellung bei
            der ich wie die ‚plural einstellung‘ einstellen kann ob die
@@ -7154,18 +7142,9 @@ Teil 2</span>
         </div>
         <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
       </div>
-      <!-- 13.10.2026: das zweite Tippfeld für die Mehrzahl. Elias, 12.10.2026: „man könnte auch
-           ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist". Voreinstellung
-           AUS — MEINE Entscheidung (Claude): auf die Skizze kam kein ausdrückliches Ja, er
-           schaltet es selbst ein. Wirkt nur zusammen mit „Ab Box 4 eintippen"
-           (tippPluralDran() in js/lernen.js). -->
-      <div class="setting-row">
-        <div>
-          <div class="setting-title">Mehrzahl mit eintippen</div>
-          <div class="setting-sub">Nur bei regelmäßiger Mehrzahl (Endung -ūna oder -āt): unter dem Wort steht ein zweites Feld für die Mehrzahl. Wirkt nur, wenn „Ab Box 4 eintippen" an ist.</div>
-        </div>
-        <button class="switch" id="toggleTippenPlural" aria-label="Mehrzahl mit eintippen umschalten"><span class="knob"></span></button>
-      </div>
+      <!-- „Mehrzahl mit eintippen" (13.10.2026) gibt es seit 14.10.2026 nicht mehr. Elias: „plural
+           soll nciht hinter schaltern versteckt sein". Mit „Ab Box 4 eintippen" steht bei
+           regelmäßiger Mehrzahl immer ein zweites Feld da (tippPluralDran() in js/lernen.js). -->
 
       <!-- Satzübung 17 „Verb einsetzen": kurze Zeilen für Formen ohne Satz (13.10.2026,
            Paket B der Nachtschicht). Der Vorschlag war ihm gezeigt, seine Antwort war eine

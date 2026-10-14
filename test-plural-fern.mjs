@@ -2,7 +2,9 @@
  *
  * Elias auf die Liste der acht und ihre Eselsbrücken: „ich bin mit deinen vorschlägen zufrieden,
  * fang an zu arbeiten". Geprüft wird am Quelltext (ausgeschnitten wie in test-plural-karte.mjs):
- *   1. pluralKartenStufe(): beide aus → false · nur „weit entfernt" → 'fern' · „alle" schlägt „fern".
+ *   1. pluralKartenStufe(): ohne „Plural als eigene Karten" immer 'fern' — die acht sind seit dem
+ *      14.10.2026 ohne Schalter da (Elias: „plural soll nciht hinter schaltern versteckt sein") —,
+ *      mit ihm true (alle).
  *   2. wendePluralKartenAn(): 'fern' baut genau die Pluralkarten der Liste, true alle, false keine,
  *      und ein Wechsel hinterlässt keine doppelten Karten.
  *   3. Die Liste ist genau die bestätigte, und jede ihrer Karten steht in seinem Bestand mit Mehrzahl.
@@ -87,10 +89,10 @@ function pruefe(q){
   let w;
   try { w = welt(q); } catch (e) { return ['Quelltext nicht ausschneidbar: ' + e.message]; }
   /* 1 */
-  if (w.stufe({}) !== false) f.push('1: beide aus ergibt nicht false');
-  if (w.stufe(undefined) !== false) f.push('1: ohne Einstellungen nicht false');
-  if (w.stufe({ pluralFern: true }) !== 'fern') f.push('1: nur „weit entfernt" ergibt nicht fern');
-  if (w.stufe({ pluralKarten: true, pluralFern: true }) !== true) f.push('1: „alle" schlägt „fern" nicht');
+  if (w.stufe({}) !== 'fern') f.push('1: ohne Einstellungen sind die acht nicht da');
+  if (w.stufe(undefined) !== 'fern') f.push('1: ohne Einstellungen (undefined) sind die acht nicht da');
+  if (w.stufe({ pluralFern: false }) !== 'fern') f.push('1: ein alter Wert pluralFern:false versteckt die acht wieder');
+  if (w.stufe({ pluralKarten: true }) !== true) f.push('1: „Plural als eigene Karten" baut nicht alle');
   /* 3, die Liste */
   const liste = Array.from(w.PLURAL_FERN || []);
   if (JSON.stringify(liste) !== JSON.stringify(BESTAETIGT)) f.push('3: PLURAL_FERN ist nicht die bestätigte Liste: ' + liste.join(','));
@@ -127,13 +129,12 @@ function pruefe(q){
   }
   /* 5 */
   const zaehle = (t, s) => t.split(s).length - 1;
-  if (zaehle(q.html, 'id="togglePluralFern"') !== 1) f.push('5: der Schalter togglePluralFern steht nicht genau einmal in index.html');
-  if (!q.einst.includes("document.getElementById('togglePluralFern').classList.toggle('on', !!SETTINGS.pluralFern)")) f.push('5: renderSettings zeigt den Schalter nicht');
-  if (!q.einst.includes("document.getElementById('togglePluralFern').addEventListener('click'")) f.push('5: kein Klick auf den Schalter');
-  if (zaehle(q.einst, 'wendePluralKartenAn(pluralKartenStufe(SETTINGS))') !== 2) f.push('5: die zwei Schalter bauen die Karten nicht über pluralKartenStufe');
+  for (const id of ['togglePluralFern', 'toggleShowPlural', 'toggleTippenPlural'])
+    if (q.html.includes('id="' + id + '"')) f.push('5: der Schalter ' + id + ' steht wieder in index.html');
+  if (/SETTINGS\.(pluralFern|showPlural|tippenPlural)/.test(q.einst)) f.push('5: js/einstellungen.js liest wieder einen Plural-Schalter');
+  if (zaehle(q.einst, 'wendePluralKartenAn(pluralKartenStufe(SETTINGS))') !== 1) f.push('5: „Plural als eigene Karten" baut die Karten nicht über pluralKartenStufe');
   if (!q.buecher.includes('wendePluralKartenAn(pluralKartenStufe(SETTINGS))')) f.push('5: js/buecher.js baut die Pluralkarten nicht über pluralKartenStufe');
   if (!q.kern.includes("wendePluralKartenAn(pluralKartenStufe(LS.get('vt_settings', {}) || {}))")) f.push('5: der Start in js/kern.js baut nicht über pluralKartenStufe');
-  if (!q.kern.includes('pluralKarten:false, pluralFern:false,')) f.push('5: die Vorgabe pluralFern:false fehlt');
   return f;
 }
 
@@ -143,15 +144,14 @@ function ersetze(t, alt, neu){
   return t.replace(alt, neu);
 }
 const STOER = [
-  ['„weit entfernt" fällt weg', q => ({ ...q, kern: ersetze(q.kern, "if (s.pluralFern) return 'fern';", '') })],
+  ['die acht kommen wieder hinter einen Schalter', q => ({ ...q, kern: ersetze(q.kern, "return s.pluralKarten ? true : 'fern';", "return s.pluralKarten ? true : (s.pluralFern ? 'fern' : false);") })],
   ['fern baut alle', q => ({ ...q, kern: ersetze(q.kern, "const nur = an === 'fern' ? new Set(PLURAL_FERN) : null;", 'const nur = null;') })],
   ['Frau fehlt in der Liste', q => ({ ...q, kern: ersetze(q.kern, "const PLURAL_FERN = ['45919', ", 'const PLURAL_FERN = [') })],
   ['Brücke für Frau fehlt', q => ({ ...q, alt: Object.fromEntries(Object.entries(q.alt).filter(([k]) => k !== '45919#pl')) })],
   ['Brücke nennt ein falsches Paar', q => ({ ...q, alt: { ...q.alt, '45887#pl': ['x → y'] } })],
   ['js/buecher.js baut nur nach dem alten Schalter', q => ({ ...q, buecher: ersetze(q.buecher, 'wendePluralKartenAn(pluralKartenStufe(SETTINGS))', 'wendePluralKartenAn(!!SETTINGS.pluralKarten)') })],
-  ['Anzeige des Schalters fehlt', q => ({ ...q, einst: ersetze(q.einst, "classList.toggle('on', !!SETTINGS.pluralFern)", "classList.toggle('on', false)") })],
-  ['Schalter fehlt in index.html', q => ({ ...q, html: ersetze(q.html, 'id="togglePluralFern"', 'id="togglePluralFernWeg"') })],
-  ['Vorgabe fehlt', q => ({ ...q, kern: ersetze(q.kern, 'pluralKarten:false, pluralFern:false,', 'pluralKarten:false,') })]
+  ['ein Plural-Schalter steht wieder in den Einstellungen', q => ({ ...q, html: q.html + '<button class="switch" id="toggleShowPlural"></button>' })],
+  ['js/einstellungen.js liest wieder SETTINGS.tippenPlural', q => ({ ...q, einst: q.einst + '\nif (SETTINGS.tippenPlural) {}' })]
 ];
 
 let rot = 0;

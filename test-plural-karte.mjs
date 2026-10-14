@@ -207,7 +207,7 @@ const HOEHE_TABLET = { basis: 458, polster: 28, teile: [MARKEN, { h: 77 }, { h: 
 
 const TIPP_KARTEN = [KARTEN[7], KARTEN[8], KARTEN[0], KARTEN[9]];          /* Lehrer (regelmäßig m), Auto (regelmäßig f), Mann (gebrochen), fünf (Zahlwort) */
 const TIPP_STAND = { 8: { box: 5 }, 9: { box: 4 }, 1: { box: 6 }, 10: { box: 6 } };
-const SEIN = { direction: 'de-ar', tippenAbBox4: true };                    /* so steht es bei ihm (13.10.2026): das neue Feld gibt es dort nicht */
+const SEIN = { direction: 'de-ar', tippenAbBox4: true };                    /* so steht es bei ihm (13.10.2026); seit 14.10.2026 kommt dort das zweite Feld ohne eigenen Schalter */
 const BEIDE = { direction: 'de-ar', tippenAbBox4: true, tippenPlural: true };
 
 /* ---------- Die Fälle ---------- */
@@ -275,9 +275,9 @@ function laufe(kern, lernen, uebung){
   });
 
   const R = (einst, opt) => rueckseite(kern, lernen, uebung, einst, opt);
-  fall('L1 Ohne seinen Schalter „Pluralformen anzeigen" steht NICHTS da — so ist es bei ihm heute', () => {
+  fall('L1 Die Formen stehen IMMER da, auch bei einem alten Stand mit showPlural:false (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")', () => {
     const z = R({ showPlural: false });
-    return [1, 5, 8, 9, 10].every(id => z(id) === '') ? true : 'bei ausgeschaltetem Schalter steht etwas auf der Rückseite';
+    return [1, 8, 9, 10].every(id => z(id) !== '') ? true : 'ohne den alten Schalter fehlt die Formen-Zeile';
   });
   fall('L2 Regelmäßige Mehrzahl: die Zeile sagt „Plural · regelmäßig", ohne „Klingt wie"', () => {
     const z = R({ showPlural: true });
@@ -303,14 +303,12 @@ function laufe(kern, lernen, uebung){
   });
 
   const T = (einst, geraet) => tippWelt(kern, lernen, uebung, { einstellungen: einst, fortschritt: TIPP_STAND, karten: TIPP_KARTEN, geraet });
-  fall('T1 Bei SEINEN Einstellungen (ohne „Mehrzahl mit eintippen") gibt es kein zweites Feld, und geprüft wird nur das Wort', () => {
+  fall('T1 Bei SEINEN Einstellungen (nur „Ab Box 4 eintippen") steht bei regelmäßiger Mehrzahl das zweite Feld da — ohne eigenen Schalter (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")', () => {
     const u = T(SEIN); u.zeige(0);
     if (u.els.cardTippBox.classList.contains('hidden')) return 'das erste Feld fehlt — der Fall misst nichts';
-    if (!u.els.cardTippPlural.classList.contains('hidden')) return 'das zweite Feld steht da, obwohl sein Schalter aus ist';
-    const r = u.pruefe(0, ar('mdrs'), 'irgendwas');
-    return r === 'tipp-antwort richtig | Richtig — umdrehen und einordnen.' ? true : r;
+    return u.els.cardTippPlural.classList.contains('hidden') ? 'das zweite Feld fehlt bei seinen Einstellungen' : true;
   });
-  fall('T2 Mit beiden Schaltern, ab Box 4, auf Deutsch gefragt und bei regelmäßiger Mehrzahl steht das zweite Feld da — leer', () => {
+  fall('T2 Ab Box 4, auf Deutsch gefragt und bei regelmäßiger Mehrzahl steht das zweite Feld da — leer', () => {
     const u = T(BEIDE); u.els.cardTippPlural.value = 'alt';
     u.zeige(0);
     if (u.els.cardTippPlural.classList.contains('hidden')) return 'männlich regelmäßig: kein zweites Feld';
@@ -446,11 +444,10 @@ console.log('\n=== V  Verdrahtung ===');
   const hinweis = (feld.match(/placeholder="([^"]*)"/) || ['', ''])[1];
   sag(hinweis.length > 0 && hinweis.length <= 20, 'index.html: der Hinweistext des zweiten Felds ist höchstens 20 Zeichen lang (ein längerer wird am Handy abgeschnitten, dann sehen beide Felder gleich aus)  -> ' + hinweis.length + ' Zeichen');
   sag(!!feld && !feld.includes('inputmode'), 'index.html: das zweite Feld trägt kein festes inputmode (sonst ginge am Handy seine Tastatur nicht auf)');
-  sag(h.includes('id="toggleTippenPlural"') && h.includes('Mehrzahl mit eintippen'), 'index.html: der Schalter „Mehrzahl mit eintippen" steht in den Einstellungen');
-  sag(e.includes('SETTINGS.tippenPlural = !SETTINGS.tippenPlural;') && e.includes("classList.toggle('on', !!SETTINGS.tippenPlural)"), 'js/einstellungen.js: der Schalter schaltet SETTINGS.tippenPlural und zeigt seinen Stand');
-  const vorgabe = (k.match(/\{ showPlural:[^\n]*\}/) || [''])[0];
-  sag(/showPlural:false/.test(vorgabe) && !/tippenPlural/.test(vorgabe) && !/tippenAbBox4/.test(vorgabe), 'js/kern.js: in der Vorgabe ist „Pluralformen anzeigen" aus und kein Tipp-Schalter an — er schaltet selbst ein');
-  sag(!/SETTINGS\.(showPlural|tippenPlural)\s*=\s*true/.test(l + e + k), 'kein Code schaltet „Pluralformen anzeigen" oder „Mehrzahl mit eintippen" für ihn ein');
+  sag(!h.includes('id="toggleTippenPlural"') && !h.includes('id="toggleShowPlural"'), 'index.html: kein Schalter mehr für „Pluralformen anzeigen" und „Mehrzahl mit eintippen" (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")');
+  sag(!/SETTINGS\.(showPlural|tippenPlural)/.test(e + l), 'js/einstellungen.js und js/lernen.js lesen weder SETTINGS.showPlural noch SETTINGS.tippenPlural');
+  const vorgabe = (k.match(/\{ pluralKarten:[^\n]*\}/) || [''])[0];
+  sag(!!vorgabe && !/showPlural|tippenPlural|pluralFern/.test(vorgabe) && !/tippenAbBox4/.test(vorgabe), 'js/kern.js: die Vorgabe kennt keinen Plural-Schalter außer „Plural als eigene Karten", und kein Tipp-Schalter ist an');
   sag(l.includes("f.addEventListener('focus', merke);") && l.includes('kasten.dataset.ziel = id;'), 'js/lernen.js: ein Antippen merkt sich das Feld für die Tablet-Tasten');
   sag(l.includes("pl.addEventListener('click', (e)=>e.stopPropagation());") && l.includes("pl.addEventListener('pointerdown', (e)=>e.stopPropagation());"), 'js/lernen.js: ein Tippen ins zweite Feld dreht die Karte nicht um');
   sag(l.includes("typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w)") && !/function uebPluralArt\(/.test(l + k), 'die Einordnung regelmäßig/gebrochen steht nur in js/uebung.js — Lernkarte und Kern fragen dort');
@@ -531,14 +528,14 @@ const STOER = [
     kern: q => ersetze(q, ' || istPluralKarte(k.id) || pluralRegelmaessig(k)) continue;', ' || istPluralKarte(k.id)) continue;', 'S8') },
   { name: 'S9 Partner auch ohne die eine Stelle der Einordnung', muss: ['P6'],
     kern: q => ersetze(q, "  if (typeof uebPluralArt !== 'function') return [];", '', 'S9') },
-  { name: 'S10 die Rückseite zeigt die Zeilen ohne seinen Schalter', muss: ['L1'],
-    lernen: q => ersetze(q, "  let forms = [], klang = [];\n  if (SETTINGS.showPlural){", "  let forms = [], klang = [];\n  if (true){", 'S10') },
+  { name: 'S10 die Rückseite zeigt die Zeilen nur noch mit dem alten Schalter', muss: ['L1'],
+    lernen: q => ersetze(q, "  let forms = [], klang = [];\n  {", "  let forms = [], klang = [];\n  if (SETTINGS.showPlural){", 'S10') },
   { name: 'S11 der Vermerk „regelmäßig" fehlt', muss: ['L2'],
     lernen: q => ersetze(q, "+ (plRegel ? ' · regelmäßig' : '')", "+ ''", 'S11') },
   { name: 'S12 die Bedeutung des Partners geht unmaskiert ins HTML', muss: ['L5'],
     lernen: q => ersetze(q, '<i class="lbl wf-bed">${escapeHtml(k.de)}</i>', '<i class="lbl wf-bed">${k.de}</i>', 'S12') },
-  { name: 'S13 das zweite Feld ohne seinen Schalter', muss: ['T1'],
-    lernen: q => ersetze(q, '  return !!(SETTINGS.tippenPlural && w && w.pl && ', '  return !!(w && w.pl && ', 'S13') },
+  { name: 'S13 das zweite Feld nur noch mit einem Schalter', muss: ['T1'],
+    lernen: q => ersetze(q, '  return !!(w && w.pl && ', '  return !!(SETTINGS.tippenPlural && w && w.pl && ', 'S13') },
   { name: 'S14 das zweite Feld auch bei gebrochener Mehrzahl', muss: ['T3', 'T6'],
     lernen: q => ersetze(q, "w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w));", 'w.pl);', 'S14') },
   { name: 'S15 „richtig", sobald das Wort stimmt', muss: ['T5'],

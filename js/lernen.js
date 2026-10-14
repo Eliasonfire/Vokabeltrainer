@@ -671,11 +671,12 @@ function renderCard(){
     genusEl.classList.add('hidden');
   }
 
-  // Plural-/Femininum-Formen nur zeigen, wenn in den Einstellungen aktiviert.
+  // Plural-/Femininum-Formen stehen IMMER auf der Karte — seit 14.10.2026 ohne den Schalter
+  // „Pluralformen anzeigen". Elias: „plural soll nciht hinter schaltern versteckt sein".
   // Label und arabische Form getrennt ausgeben: das Label bleibt klein und
   // lateinisch, die Form selbst wird gross und arabisch gesetzt.
   let forms = [], klang = [];
-  if (SETTINGS.showPlural){
+  {
     /* formenAnzeige vereinheitlicht das Trennzeichen: der naechste
        arabicroots-Abzug bringt "|" mit, angezeigt wird immer " / ". */
     /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
@@ -1000,14 +1001,14 @@ function quranMitTreffer(vers, w){
    Unter dem Feld für das Wort steht dann ein zweites für die Mehrzahl — nur wenn das
    erste Feld dasteht (Schalter „Ab Box 4 eintippen", Kasten 4, die Karte fragt auf
    Deutsch), nur bei regelmäßiger Mehrzahl (pluralRegelmaessig() in js/kern.js, das
-   fragt uebPluralArt()) und nur mit dem eigenen Schalter „Mehrzahl mit eintippen"
-   (SETTINGS.tippenPlural). Der steht auf AUS, bis er ihn selbst einschaltet — MEINE
-   Entscheidung (Claude): auf die Skizze kam kein ausdrückliches Ja.
+   fragt uebPluralArt()). Einen eigenen Schalter („Mehrzahl mit eintippen", Feld
+   tippenPlural der Einstellungen) gab es vom 13. bis zum 14.10.2026; seitdem steht das Feld immer
+   da — Elias: „plural soll nciht hinter schaltern versteckt sein".
    Verglichen wird wie beim Wort ohne Vokalzeichen, gegen das Feld `pl` der Karte.
    Er bewertet sich weiter selbst; das Feld sagt nur „richtig" oder „noch nicht".
    Bewacht von test-plural-karte.mjs. */
 function tippPluralDran(w){
-  return !!(SETTINGS.tippenPlural && w && w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w));
+  return !!(w && w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w));
 }
 
 /* ---------- Die Karte wächst mit dem Tippkasten (13.10.2026) ----------

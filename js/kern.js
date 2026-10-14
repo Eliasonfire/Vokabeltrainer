@@ -1213,15 +1213,14 @@ function wendePluralKartenAn(an){
    ehrlicher Aufhänger gefunden. Bewacht von test-plural-fern.mjs. */
 const PLURAL_FERN = ['45919', '45846', '45779', '45887', '45857', '45847', '45853', '46020'];
 
-/* Welche Pluralkarten es gibt: true = alle (Schalter „Plural als eigene Karten"),
-   'fern' = nur PLURAL_FERN (Schalter „Nur weit entfernte Mehrzahl"), false = keine.
-   „Alle" schließt die acht ein. Beide Schalter stehen bei ihm auf AUS; eingeschaltet
-   wird nur von ihm. */
+/* Welche Pluralkarten es gibt: true = alle (Schalter „Plural als eigene Karten"), sonst
+   'fern' = nur PLURAL_FERN. Die acht sind seit 14.10.2026 IMMER da — Elias: „plural soll
+   nciht hinter schaltern versteckt sein"; am 14.10. standen sie kurz (v684) hinter dem
+   Schalter „Nur weit entfernte Mehrzahl". „Alle" schließt die acht ein.
+   wendePluralKartenAn(false) baut keine — das braucht nur noch der Prüfstand. */
 function pluralKartenStufe(s){
   s = s || {};
-  if (s.pluralKarten) return true;
-  if (s.pluralFern) return 'fern';
-  return false;
+  return s.pluralKarten ? true : 'fern';
 }
 
 wendePluralKartenAn(pluralKartenStufe(LS.get('vt_settings', {}) || {}));
@@ -2669,7 +2668,7 @@ let SETTINGS = Object.assign(
      hat keinen Vorrat, der leer werden könnte — ohne Zahl gäbe es wieder kein
      sichtbares Ende, und genau das hatte Elias am 17.08.2026 beanstandet
      („aktuell sieht es aus als gäbe es da kein ende"). */
-  { showPlural:false, pluralKarten:false, pluralFern:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], grammarHighlight:true },
+  { pluralKarten:false, showVerbFormen:false, showQuran:false, tagesDeckel:10, hoerZiel:5, voiceURI:null, direction:'ar-de', selectedChapters:[], grammarHighlight:true },
   LS.get('vt_settings', {})
 );
 /* ---------- Zeitstempel JE EINSTELLUNG (17.08.2026) ----------
