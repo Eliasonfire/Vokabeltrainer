@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* test-plural-karte.mjs — die Mehrzahl auf der Lernkarte: „regelmäßig", „Klingt wie" und das zweite Tippfeld.
+/* test-plural-karte.mjs — die Mehrzahl auf der Lernkarte: „regelmäßig", das zweite Tippfeld — und dass
+   „Klingt wie" weg bleibt (Elias, 15.10.2026: „dieses klingt wie ist quatsch, das soll raus").
  * ==========================================================================
  *
  * ⛔⛔ DIE SÄTZE, DIE DIESER PRÜFSTAND BEWACHT — VON ELIAS, 12.10.2026
@@ -123,7 +124,7 @@ function welt(kern, uebung, opt = {}){
 
 /* Die Rückseite: der Formen-Block der Lernkarte, herausgeschnitten und als Funktion gefahren. */
 function rueckseite(kern, lernen, uebung, einstellungen, opt){
-  const a = lernen.indexOf('  let forms = [], klang = [];'), b = lernen.indexOf('\n  renderVerbFormen(w);');
+  const a = lernen.indexOf('  let forms = [];'), b = lernen.indexOf('\n  renderVerbFormen(w);');
   if (a < 0 || b < a) throw new Error('der Formen-Block der Lernkarte wurde nicht gefunden');
   const w = welt(kern, uebung, opt);
   vm.runInContext('let SETTINGS = ' + JSON.stringify(einstellungen) + '; const __el = { innerHTML: "" }; const document = { getElementById(){ return __el; } };'
@@ -284,22 +285,21 @@ function laufe(kern, lernen, uebung){
     for (const id of [8, 9]){ const h = z(id); if (!h.includes('>Plural · regelmäßig</i>') || h.includes('Klingt wie')) return 'Karte ' + id + ': ' + h; }
     return true;
   });
-  fall('L3 Gebrochene Mehrzahl: „Plural" ohne Vermerk, dahinter EIN Kasten „Klingt wie" mit zwei Karten (Form und Bedeutung)', () => {
+  fall('L3 Gebrochene Mehrzahl: „Plural" ohne Vermerk — und KEIN „Klingt wie", obwohl die Karte Partner hätte (Elias, 15.10.2026: „dieses klingt wie ist quatsch, das soll raus")', () => {
     const h = R({ showPlural: true })(1);
     if (!h.includes('<i class="lbl">Plural</i>') || h.includes('regelmäßig')) return 'die Plural-Zeile stimmt nicht: ' + h;
-    if ((h.match(/<i class="lbl">Klingt wie<\/i>/g) || []).length !== 1 || (h.match(/<span class="wf-paar">/g) || []).length !== 2) return 'nicht EIN Kasten „Klingt wie" mit zwei Paaren: ' + h;
-    return h.includes('<span class="wf-paar"><span class="wf-ar">' + ar('kibArN') + '</span><i class="lbl wf-bed">groß</i></span>') ? true : 'Form oder Bedeutung des Partners fehlt: ' + h;
+    return !/Klingt wie|wf-klang|wf-paar/.test(h) ? true : '„Klingt wie" steht wieder auf der Karte: ' + h;
   });
-  fall('L4 Ohne Partner fällt die Zeile weg; beim Zahlwort bleibt „bei weiblichem Nomen" — ohne „regelmäßig" und ohne Partner', () => {
+  fall('L4 Auch ohne Wurzel kein „Klingt wie"; beim Zahlwort bleibt „bei weiblichem Nomen" — ohne „regelmäßig"', () => {
     const z = R({ showPlural: true });
     if (z(15).includes('Klingt wie')) return 'eine Karte ohne Wurzel bekommt „Klingt wie"';
     const h = z(10);
     return h.includes('>bei weiblichem Nomen</i>') && !h.includes('regelmäßig') && !h.includes('Klingt wie') ? true : 'Zahlwort: ' + h;
   });
-  fall('L5 Die Bedeutung des Partners wird maskiert (fremder Text im HTML)', () => {
-    const karten = KARTEN.map(k => k.id === '2' ? Object.assign({}, k, { de: '<b>groß' }) : k);
+  fall('L5 Die Mehrzahl selbst wird maskiert (fremder Text im HTML)', () => {
+    const karten = KARTEN.map(k => k.id === '1' ? Object.assign({}, k, { pl: '<b>' + k.pl }) : k);
     const h = R({ showPlural: true }, { karten })(1);
-    return h.includes('&lt;b&gt;groß') && !h.includes('<b>groß') ? true : h;
+    return h.includes('&lt;b&gt;') && !h.includes('<b>') ? true : h;
   });
 
   const T = (einst, geraet) => tippWelt(kern, lernen, uebung, { einstellungen: einst, fortschritt: TIPP_STAND, karten: TIPP_KARTEN, geraet });
@@ -494,10 +494,11 @@ console.log('\n=== R  Seine echten Karten (Auswahl aus .stand-app.json) ===');
         regelMitPartner: regel.filter(k => pluralKlangPartner(k, 2).length).length, verstoss };
     })())`));
     console.log('  gemessen: ' + m.mit + ' Karten mit Mehrzahl (ohne Zahlwörter) · ' + m.regel + ' regelmäßig · ' + m.rest + ' andere, davon ' + m.mitPartner
-      + ' mit „Klingt wie", ' + (m.rest - m.mitPartner) + ' ohne · ' + m.familien + ' Muster');
+      + ' mit Klang-Partner, ' + (m.rest - m.mitPartner) + ' ohne · ' + m.familien + ' Muster');
     sag(m.mit >= 100, 'in seiner Auswahl stehen mindestens 100 Karten mit Mehrzahl (sonst hat das Laden nicht geklappt): ' + m.mit);
     sag(m.regel >= 20, 'mindestens 20 davon sind regelmäßig — das zweite Tippfeld und der Vermerk haben Stoff: ' + m.regel);
-    sag(m.mitPartner >= 60, 'mindestens 60 nicht regelmäßige Karten bekommen „Klingt wie" — die Zeile ist auf seinen Karten nicht tot: ' + m.mitPartner);
+    /* Angezeigt wird der Partner seit 15.10.2026 nicht mehr; er ist das Maß für Teil C von werkzeuge/pruefe-plural.mjs. */
+    sag(m.mitPartner >= 60, 'mindestens 60 nicht regelmäßige Karten haben einen Klang-Partner — das Maß von pruefe-plural.mjs (Teil C) hat Stoff: ' + m.mitPartner);
     sag(m.regelMitPartner === 0, 'keine regelmäßige Karte bekommt einen Partner');
     sag(m.verstoss.length === 0, 'jeder Partner hat dasselbe Muster, ist ein anderes Wort und weder regelmäßig noch Zahlwort' + (m.verstoss.length ? ' — ' + m.verstoss.slice(0, 4).join(' · ') : ''));
   }
@@ -529,11 +530,13 @@ const STOER = [
   { name: 'S9 Partner auch ohne die eine Stelle der Einordnung', muss: ['P6'],
     kern: q => ersetze(q, "  if (typeof uebPluralArt !== 'function') return [];", '', 'S9') },
   { name: 'S10 die Rückseite zeigt die Zeilen nur noch mit dem alten Schalter', muss: ['L1'],
-    lernen: q => ersetze(q, "  let forms = [], klang = [];\n  {", "  let forms = [], klang = [];\n  if (SETTINGS.showPlural){", 'S10') },
+    lernen: q => ersetze(q, "  let forms = [];\n  {", "  let forms = [];\n  if (SETTINGS.showPlural){", 'S10') },
   { name: 'S11 der Vermerk „regelmäßig" fehlt', muss: ['L2'],
     lernen: q => ersetze(q, "+ (plRegel ? ' · regelmäßig' : '')", "+ ''", 'S11') },
-  { name: 'S12 die Bedeutung des Partners geht unmaskiert ins HTML', muss: ['L5'],
-    lernen: q => ersetze(q, '<i class="lbl wf-bed">${escapeHtml(k.de)}</i>', '<i class="lbl wf-bed">${k.de}</i>', 'S12') },
+  { name: 'S12 die Mehrzahl geht unmaskiert ins HTML', muss: ['L5'],
+    lernen: q => ersetze(q, '<span class="wf-ar">${escapeHtml(f.value)}</span>', '<span class="wf-ar">${f.value}</span>', 'S12') },
+  { name: 'S32 die Zeile „Klingt wie" kommt auf die Karte zurück', muss: ['L3'],
+    lernen: q => ersetze(q, "  ).join('');\n\n  renderVerbFormen(w);", "  ).join('') + '<span class=\"wf-klang\"><i class=\"lbl\">Klingt wie</i></span>';\n\n  renderVerbFormen(w);", 'S32') },
   { name: 'S13 das zweite Feld nur noch mit einem Schalter', muss: ['T1'],
     lernen: q => ersetze(q, '  return !!(w && w.pl && ', '  return !!(SETTINGS.tippenPlural && w && w.pl && ', 'S13') },
   { name: 'S14 das zweite Feld auch bei gebrochener Mehrzahl', muss: ['T3', 'T6'],

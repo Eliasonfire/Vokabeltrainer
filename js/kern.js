@@ -1015,7 +1015,7 @@ function plBeschriftung(w){
   return istZahlwort(w) ? 'bei weiblichem Nomen' : 'Plural';
 }
 
-/* ---------- Mehrzahl auf der Lernkarte: „regelmäßig" und „Klingt wie" (13.10.2026) ----------
+/* ---------- Mehrzahl auf der Lernkarte: „regelmäßig" — und der Klang als Maß (13.10.2026) ----------
 
    Elias, 12.10.2026: „lass uns auch überlegen wie ich in zukunft diese pluralformen mir
    einprägen kann weil teilweise sind sie sehr ähnlich zu den singularformen … oder sie
@@ -1025,9 +1025,15 @@ function plBeschriftung(w){
    wo es regelmässig ist" (das zweite Tippfeld, tippPluralDran() in js/lernen.js).
 
    Stufe 1: Die Rückseite der Lernkarte sagt bei einer regelmäßigen Mehrzahl
-   „regelmäßig" und nennt bei jeder anderen bis zu zwei ANDERE Karten von ihm, deren
-   Mehrzahl gleich klingt (rijāl wie kibār und kilāb). Beides hängt an seinem Schalter
-   „Pluralformen anzeigen" (renderCard in js/lernen.js) und liest nur die Karten.
+   „regelmäßig" (renderCard in js/lernen.js, seit 14.10.2026 ohne Schalter — Elias: „plural
+   soll nciht hinter schaltern versteckt sein") und liest nur die Karten.
+   ⛔ Vom 13. bis 15.10.2026 nannte sie bei jeder anderen Mehrzahl auch bis zu zwei ANDERE
+   Karten von ihm mit gleich klingender Mehrzahl („Klingt wie", rijāl wie kibār und kilāb) —
+   ebenso die Auflösung von Übung 18. Elias am 15.10.2026: „dieses klingt wie ist quatsch, das
+   soll raus". Angezeigt wird es nirgends mehr. pluralKlangPartner() bleibt als MASS stehen:
+   Teil C von werkzeuge/pruefe-plural.mjs findet damit Mehrzahlen, die wie keine andere seiner
+   Karten klingen (Kandidaten für PLURAL_FERN); pluralMuster() ordnet in Übung 18 die falschen
+   Antworten.
 
    ⛔ Was regelmäßig ist, steht an EINER Stelle: uebPluralArt() in js/uebung.js
    (Übung 16, dort begründet — streng, Zahlwörter ausgenommen). Hier wird nur gefragt.

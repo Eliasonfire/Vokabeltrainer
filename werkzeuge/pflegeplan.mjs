@@ -777,10 +777,10 @@ export const PFLEGEPLAN = [
      „Mehrzahl mit eintippen"). Seit 14.10.2026 stehen beide OHNE Schalter da — Elias: „plural
      soll nciht hinter schaltern versteckt sein". */
   {
-    funktion: 'Mehrzahl auf der Lernkarte: „regelmäßig", „Klingt wie" und das zweite Tippfeld',
+    funktion: 'Mehrzahl auf der Lernkarte: „regelmäßig" und das zweite Tippfeld (die Zeile „Klingt wie" ist seit 15.10.2026 weg)',
     dateien: [],
     bildschirme: [],
-    neuerInhalt: { nein: 'Die Zeilen werden bei jedem Zeigen der Karte aus seinen Karten gerechnet (pluralRegelmaessig(), pluralMuster() und pluralKlangPartner() in js/kern.js; die Partner kommen aus bekannteVokabeln()). Schaltet er ein Kapitel frei, sind dessen Karten sofort mögliche Partner — es gibt keine Liste, die jemand nachtragen müsste.' },
+    neuerInhalt: { nein: 'Der Vermerk wird bei jedem Zeigen der Karte aus der Karte gerechnet (pluralRegelmaessig() in js/kern.js, das fragt uebPluralArt()). „Klingt wie" ist seit 15.10.2026 weg — Elias: „dieses klingt wie ist quatsch, das soll raus"; pluralKlangPartner() ist nur noch das Maß für Teil C von werkzeuge/pruefe-plural.mjs. Es gibt keine Liste, die jemand nachtragen müsste.' },
     eingaben: { nein: 'Was er ins zweite Feld tippt, wird sofort gegen das Feld pl der Karte verglichen (pruefeTippen() in js/lernen.js) und nicht gespeichert. Eine Einstellung dafür gibt es seit 14.10.2026 nicht mehr (vorher tippenPlural in vt_settings).' },
     /* ⛔ Still kaputtgehen kann die Ausnahme: zeigt jemand das zweite Feld ohne
        seinen Schalter oder bei gebrochener Mehrzahl, oder rechnet die Lernkarte
@@ -791,7 +791,7 @@ export const PFLEGEPLAN = [
        deshalb an seinen echten Karten, dass mindestens 60 einen haben.
        Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
-      wie: 'test-plural-karte.mjs läuft im Sammellauf: fährt pluralMuster(), pluralKlangPartner(), den Formen-Block der Lernkarte, renderTippfeld(), pruefeTippen() und tippTaste() aus dem Quelltext gegen Probekarten und ein Doppel der Seite, prüft die Verdrahtung der zwei Schalter und misst an seinen echten Karten (Auswahl aus .stand-app.json), dass die Zeile „Klingt wie" dort Stoff hat und kein Partner regelmäßig, ein Zahlwort oder dasselbe Wort ist; 20 Störtests' },
+      wie: 'test-plural-karte.mjs läuft im Sammellauf: fährt pluralMuster(), pluralKlangPartner(), den Formen-Block der Lernkarte, renderTippfeld(), pruefeTippen() und tippTaste() aus dem Quelltext gegen Probekarten und ein Doppel der Seite, prüft, dass ohne Schalter alles dasteht und „Klingt wie" NICHT zurückkommt (L3, Störtest S32), und misst an seinen echten Karten (Auswahl aus .stand-app.json), dass das Klang-Maß für pruefe-plural.mjs Stoff hat und kein Partner regelmäßig, ein Zahlwort oder dasselbe Wort ist; 32 Störtests. test-mehrzahl-einsetzen.mjs (9k) bewacht dasselbe für die Auflösung von Übung 18.' },
   },
   /* 14.10.2026, innerhalb von js/kern.js, js/einstellungen.js, js/buecher.js, index.html und
      data/eselsbruecken-alt.js und deshalb von Hand hier: nur die weit entfernten Mehrzahlen

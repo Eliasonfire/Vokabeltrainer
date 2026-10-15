@@ -1130,7 +1130,7 @@ function uebMehrzahlDeKlar(bedeutungen){
   if (!bedeutungen || !bedeutungen.length) return null;
   return { test: w => { const k = uebMzFalten(w); return k.length > 1 && bedeutungen.some(x => uebMzGleich(k, x) >= Math.min(x.length, 4)); } };
 }
-/* ⚠️ Drei Aufrufe gehen in js/kern.js (istPluralKarte, pluralMuster, pluralKlangPartner). In der App
+/* ⚠️ Zwei Aufrufe gehen in js/kern.js (istPluralKarte, pluralMuster; pluralKlangPartner bis 15.10.2026). In der App
    sind sie immer da. Mehrere Prüfer laden js/kern.js aber nur ZUM TEIL: die Funktionen stehen dann
    schon im Kontext, ihre Konstanten (PLURAL_MARKE, PL_ZEICHEN …) noch nicht, und der Aufruf wirft
    („Cannot access 'PLURAL_MARKE' before initialization" — so stand die Übung am 13.10.2026 in
@@ -1215,8 +1215,10 @@ function uebMehrzahlAufloesung(st){
     const art = e.art ? UEB_PLURAL_WAHL.find(x => x.wert === e.art) : null;
     if (art) teile.push(`Art: ${art.text}.`);
   }
-  const klang = uebMzKern(() => ((typeof pluralKlangPartner === 'function') ? pluralKlangPartner(v, 2) : []), []);
-  if (klang.length) teile.push('Klingt wie ' + klang.map(p => `${p.form} (${p.de})`).join(' und ') + '.');
+  /* ⛔ Hier stand bis zum 15.10.2026 „Klingt wie …" mit denselben Partnern wie auf der Lernkarte.
+     Elias, 15.10.2026, zur Lernkarte: „dieses klingt wie ist quatsch, das soll raus" — es sind
+     dieselben Partner, also auch hier weg (MEINE Folgerung, ihm gesagt). Bewacht von
+     test-mehrzahl-einsetzen.mjs (9k). */
   return teile.join(' ');
 }
 
@@ -2205,8 +2207,8 @@ const UEBUNGEN = [
        Mehrzahl), entsteht keine Aufgabe.
 
      ⭐ Nach der Antwort: wie das Wort im Satz steht, Einzahl → Mehrzahl mit
-     Bedeutung, die Art und „Klingt wie" (dieselben Partner wie auf der
-     Rückseite der Lernkarte, pluralKlangPartner() in js/kern.js). Bei einer
+     Bedeutung und die Art („Klingt wie" stand hier bis zum 15.10.2026 — Elias:
+     „dieses klingt wie ist quatsch, das soll raus"). Bei einer
      falschen Wahl sagt ein Satz zuerst, wessen Mehrzahl die GEWÄHLTE Form ist
      (o.falsch). `falschNochmal`: was falsch war, kommt in derselben Runde nach
      drei anderen Aufgaben noch einmal, höchstens zweimal (uebungAuswerten).
