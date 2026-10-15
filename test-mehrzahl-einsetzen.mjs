@@ -23,7 +23,8 @@
  *   7. Dieselbe Mehrzahl zweimal im Satz: EINE Aufgabe, beide Stellen sind Lücke.
  *   8. Lösung und Auswahl tragen die Karte als Wert; die falschen Antworten bringen
  *      ihren Satz mit („… ist die Mehrzahl von …"), die richtige nicht.
- *   9. Die Auflösung: Form im Satz, Einzahl → Mehrzahl, Art, „Klingt wie".
+ *   9. Die Auflösung: Form im Satz, Einzahl → Mehrzahl, Art — und seit 15.10.2026 KEIN „Klingt wie"
+ *      (Elias zur Lernkarte: „dieses klingt wie ist quatsch, das soll raus").
  *  10. Von der Übersetzung bleibt das Wort der Karte lesbar — auch mit Umlaut.
  * Dann an SEINEM Satzvorrat (Auswahl aus .stand-app.json):
  *  11. Mindestens 15 Aufgaben; jede Knopf-Form steht auf einer seiner Karten, jede
@@ -192,7 +193,9 @@ function pruefe(quelle){
     const t = N(A.aufloesung);
     if (!t.includes(ar('rajulN') + ' → ' + ar('rijAlN') + ' (Mann)')) f.push('9: Einzahl → Mehrzahl (Bedeutung) fehlt');
     if (!/Art: gebrochen/.test(t)) f.push('9: die Art fehlt');
-    if (!/Klingt wie/.test(t) || !t.includes(ar('kibArN')) || !t.includes(ar('kilAbN'))) f.push('9k: „Klingt wie" mit seinen zwei Partnern fehlt');
+    /* 9k — seit 15.10.2026 OHNE „Klingt wie". Elias zur Lernkarte: „dieses klingt wie ist quatsch, das soll raus";
+       hier standen dieselben Partner. */
+    if (/Klingt wie/.test(t)) f.push('9k: „Klingt wie" steht wieder in der Auflösung');
     /* 10 — die Übersetzung */
     if (!A.deKlar || !A.deKlar.test('Männer.') || !A.deKlar.test('Mann')) f.push('10: „Männer" bleibt in der Übersetzung nicht lesbar');
     if (A.deKlar && (A.deKlar.test('man') || A.deKlar.test('sind'))) f.push('10: ein fremdes Wort der Übersetzung bleibt lesbar');
@@ -282,7 +285,7 @@ const STOER = [
   ['dieselbe Mehrzahl zweimal bleibt zwei Aufgaben', 'x.eintrag === st.eintrag) ? j : -1', 'false) ? j : -1', /^7:/],
   ['die Lösung ist die Form statt der Karte', "loesung: 'k' + v.id,", 'loesung: st.eintrag.formen[st.k],', /^8:|^11 /],
   ['kein Satz zur falschen Wahl', "              falsch: `${f.form} ist die Mehrzahl von ${f.einzahl} — ${f.de}.` }))]),", '            }))]),', /^8:/],
-  ['die Auflösung ohne „Klingt wie"', "  if (klang.length) teile.push('Klingt wie ' + klang.map(p => `${p.form} (${p.de})`).join(' und ') + '.');", '', /^9k:/],
+  ['„Klingt wie" kommt in die Auflösung zurück', "test-mehrzahl-einsetzen.mjs (9k). */\n  return teile.join(' ');", "test-mehrzahl-einsetzen.mjs (9k). */\n  teile.push('Klingt wie x.');\n  return teile.join(' ');", /^9k:/],
   ['die Auflösung ohne die Art', '    if (art) teile.push(`Art: ${art.text}.`);', '', /^9:/],
   ['Umlaute werden nicht mehr gefaltet', ".replace(/ä/g, 'a')", '', /^10:/],
   ['teilRang fehlt', 'teilRang:101,', '', /^11t:|^11v:/],

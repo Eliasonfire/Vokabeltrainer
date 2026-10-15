@@ -675,18 +675,19 @@ function renderCard(){
   // „Pluralformen anzeigen". Elias: „plural soll nciht hinter schaltern versteckt sein".
   // Label und arabische Form getrennt ausgeben: das Label bleibt klein und
   // lateinisch, die Form selbst wird gross und arabisch gesetzt.
-  let forms = [], klang = [];
+  let forms = [];
   {
     /* formenAnzeige vereinheitlicht das Trennzeichen: der naechste
        arabicroots-Abzug bringt "|" mit, angezeigt wird immer " / ". */
     /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
-    /* ⭐ Seit dem 13.10.2026 sagt die Zeile bei einer regelmäßigen Mehrzahl „regelmäßig", und bei
-       jeder anderen folgen bis zu zwei „Klingt wie"-Karten von ihm — Begründung, sein Wortlaut und
-       die Bauart bei pluralRegelmaessig() und pluralKlangPartner() in js/kern.js. Mit Abfrage,
-       weil Prüfstände diese Datei ohne den Kern laden. */
+    /* ⭐ Seit dem 13.10.2026 sagt die Zeile bei einer regelmäßigen Mehrzahl „regelmäßig" — Begründung
+       und sein Wortlaut bei pluralRegelmaessig() in js/kern.js. Mit Abfrage, weil Prüfstände diese
+       Datei ohne den Kern laden.
+       ⛔ Die Zeile „Klingt wie" (bis zu zwei andere Karten mit gleich klingender Mehrzahl, 13. bis
+       15.10.2026) ist WEG. Elias am 15.10.2026, zur Karte „leicht" mit „Klingt wie Klassenzimmer,
+       Haus": „dieses klingt wie ist quatsch, das soll raus". Bewacht von test-plural-karte.mjs (L3). */
     const plRegel = !!w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w);
     if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural') + (plRegel ? ' · regelmäßig' : ''), value:formenAnzeige(w.pl)});
-    if (w.pl && !plRegel && typeof pluralKlangPartner === 'function') klang = pluralKlangPartner(w, 2);
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
     if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }
@@ -701,13 +702,7 @@ function renderCard(){
      Textfluss, dort ist das Einfaerben gefahrlos. */
   document.getElementById('cardForms').innerHTML = forms.map(f=>
     `<span><i class="lbl">${escapeHtml(f.label)}</i><span class="wf-ar">${escapeHtml(f.value)}</span></span>`
-  ).join('') + (klang.length
-    /* EIN kleinerer Kasten für beide Partner, nicht je einer: zwei volle Zeilen schoben Bild und
-       Eselsbrücke 130 px nach unten (gemessen 13.10.2026 an „Haus", 375 px breit). */
-    ? `<span class="wf-klang"><i class="lbl">Klingt wie</i>` + klang.map(k=>
-        `<span class="wf-paar"><span class="wf-ar">${escapeHtml(k.form)}</span><i class="lbl wf-bed">${escapeHtml(k.de)}</i></span>`
-      ).join('') + `</span>`
-    : '');
+  ).join('');
 
   renderVerbFormen(w);
 
