@@ -767,6 +767,76 @@
     "f26-3915": {
       "urteil": "weg",
       "grund": "Nach dem Konjugieren von vier bekannten Verben in der Vergangenheit gibt der Lehrer fuenf neue Verben zum Ueben auf: helfen, schreiben, suchen (er nennt auch wollen und bestellen und legt sich auf suchen fest), sich niederwerfen, danken — 'fuehrt eine Liste wegen den Verben'. Dazu Ermutigung: wer das Muster kann, kann alles konjugieren und hat einen groesseren Wortschatz. Vokabelarbeit und Motivation, keine Regel; die Vergangenheitsformen selbst wurden in frueheren Folgen eingefuehrt."
+    },
+    "f27-045": {
+      "urteil": "schon-regel",
+      "grund": "Hausaufgabe 5, Satz 3 ('Wer sind diese Menschen? Sie sind Pilger aus der Tuerkei'). Der Lehrer verbessert die Uebersetzung: 'Weil es ist unbestimmt, also nicht die Pilger, sondern nur Pilger.' Unbestimmt mit Tanwin, bestimmt mit al- steht im Bestand.",
+      "quelle": "nakira-marifa-01"
+    },
+    "f27-715": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe 5 reihum: welche Woerter im Satz Mehrzahl sind und was ihre Einzahl ist (al-jududu von jadidun, tullabu, a'mami von 'amm). Dazu ba'duhum 'einige von ihnen' und ba'duhunna fuer Frauen — ein Schueler folgert, ba'd sei dann keine Mehrzahl; der Lehrer bestaetigt nur 'Genau'. Wortkunde und Uebungsabfrage. Am Rand fuer die offene Frage zur Mehrzahl von ba'dun (pruefe-plural, Teil E): auch hier nennt niemand eine Mehrzahl."
+    },
+    "f27-915": {
+      "urteil": "weg",
+      "grund": "Satz mit abna'uka (deine Soehne): der Lehrer laesst das Wort mehrmals nachsprechen, 'Damm mit Hemse und ein Kef'. Der Whisper-Text ist zerrissen ('Abnae. Uke. Abnue. Abnue'). Das ist derselbe Gegenstand wie f26-2115 (Hamza auf Waw vor einem angehaengten Fuerwort), dort schon als unbelegte Frage an Elias; hier sagt er keinen eigenen Regelsatz dazu, sondern verbessert nur die Aussprache. Keine zweite Frage."
+    },
+    "f27-1515": {
+      "urteil": "weg",
+      "grund": "Uebersetzung 'Diese Maenner sind Bauern aus meinem Dorf' (min qaryati). Der Lehrer erklaert qaryatun 'Dorf' und dass das angehaengte -i 'mein' heisst. Anwendung von possessiv-ya-01, Wortkunde, kein neuer Lehrsatz."
+    },
+    "f27-1745": {
+      "urteil": "schon-regel",
+      "grund": "Hausaufgabe 5: Einzahlformen nennen (tullab von talib, al-jududu von jadid, kharaju von kharaja, dhahabu von dhahaba, atibba' 'Aerzte'). Ein Schueler merkt an, das Alif vor kharaju gehoere nur zur Fragepartikel, nicht zum Verb — der Lehrer bestaetigt. Die Fragepartikel a- steht im Bestand.",
+      "quelle": "fragepartikel-alif-01"
+    },
+    "f27-2315": {
+      "urteil": "schon-regel",
+      "grund": "Weibliche Mehrzahl an zamil (Kamerad): erst Ta' marbuta anhaengen, dann wird sie durch Alif und Ta' ersetzt — 'zamilat', 'Arabisch hat schon frueh angefangen zu gendern'. Dazu die Mehrzahlen ikhwatun (Brueder) und akhawatun (Schwestern) als Wortkunde. Beide Schritte stehen im Bestand.",
+      "quelle": "fem-bildung-01 · jam-muannath-salim-01"
+    },
+    "f27-2445": {
+      "urteil": "schon-regel",
+      "grund": "Satz 'abuhunna ash-shaikhu bilal' (deren Vater ist Scheich Bilal): der Lehrer haengt -hunna wie die anderen Besitzendungen an, 'abuka, abuhu, abuhum, abuhunna, okay, genau gleich', und ergaenzt, das Buch wisse nicht, dass ihr schon konjugieren koennt. Dazu ustadhatun, qaribun min. Die Besitzendung als Mechanismus und hunna als Fuerwort stehen im Bestand; die Endung -hunna ist dort an azwajuhunna schon markiert.",
+      "quelle": "possessiv-endungen-01 · possessiv-ist-idafa-01 · huwa-hiya-weitere-01"
+    },
+    "f27-2745": {
+      "urteil": "schon-regel",
+      "grund": "Satz mit zawjatun -> zawjat (Ehefrauen, Mehrzahl auf -at): 'wir tauschen Ta-Marbuta mit Alif und Ta ... Zawja, das kommt weg, Alif kommt ran und ein T'; 'Tun ist immer unsere normale Endung'. Wortgleich mit der Regel aus Folge 25.",
+      "quelle": "jam-muannath-salim-01"
+    },
+    "f27-2915": {
+      "urteil": "unbelegt",
+      "grund": "Hausaufgabe 5, Satz mit fatayatun und judud. Ein Schueler setzt die weibliche Form 'jududatun' an; der Lehrer (28:56): 'Nein, passt. Jududun. Auch bei diesen Pluralformen gehen die sowohl fuer Mann als auch fuer Frau.' Danach (29:27) fragt ein Schueler: 'bei den letzten vier, die bleiben in der maennlichen Form wie in der weiblichen, richtig?' — 'Richtig' — 'man braucht Kontext, um zu wissen, wer hier gemeint ist.' Gesucht im Schluessel zu Band 1 (Vault-Notiz Schluessel-Regeln, Lektion 13): dort stehen die zwei gesunden Plurale, die gebrochenen und drei unregelmaessige (banat, akhawat, fatayat), aber nicht, dass ein gebrochener Plural fuer beide Geschlechter gilt. Im Bestand steht dazu keine Regel (jam-taksir-01 nennt judud nur als Mehrzahl von jadid). Wer die Rueckfrage bei 29:27 bestaetigt, ist ohne Sprecherspur-Abgleich nicht sicher; der Satz bei 28:56 ist vom Lehrer.",
+      "quelle": "Unterricht Folge 27 @ 28:56 und 29:27 — keine gedruckte Quelle in unserem Bestand",
+      "frage": "Dein Lehrer sagt in Folge 27 bei 'judud' (neu, Mehrzahl): 'Auch bei diesen Pluralformen gehen die sowohl fuer Mann als auch fuer Frau' — man braucht den Zusammenhang, um zu wissen, wer gemeint ist. In unseren Schluesseln steht das nicht. Regel daraus machen, oder warten, bis es gedruckt belegt ist?"
+    },
+    "f27-3145": {
+      "urteil": "schon-regel",
+      "grund": "'Man ha'ula'i al-fatayatu? Ha'ula'i banatu l-mudarrisati' — der Lehrer benennt mudaf und mudaf ilayhi und verbessert 'die Tochter' zu 'die Toechter'. Dazu die Wortkunde: banat ist die Mehrzahl von bint und von ibnatun, beide haben dieselbe. Die Genitivverbindung steht im Bestand, banat als unregelmaessiger Plural im Schluessel Lektion 13.",
+      "quelle": "mudaf-01 · mudaf-ilayh-01"
+    },
+    "f27-3545": {
+      "urteil": "schon-regel",
+      "grund": "Der Lehrer fragt, wovon der weibliche Plural gebildet wird: 'Von Talib, nicht von Tullab' — erst die weibliche Einzahl mit Ta' marbuta, dann Alif und Ta' (talibat). Das ist die Reihenfolge aus fem-bildung-01 und jam-muannath-salim-01 (ersetzt wird das Ta' marbuta der Einzahl). Danach Uebersetzung (sie gingen zur Buecherei).",
+      "quelle": "fem-bildung-01 · jam-muannath-salim-01"
+    },
+    "f27-3715": {
+      "urteil": "schon-regel",
+      "grund": "'amm/'ammatun (Onkel/Tante), jadd/jaddatun. Ein Schueler fragt, ob bei Familienbeziehungen die weibliche Form immer durch Ta' marbuta entsteht; der Lehrer: 'Ueberall wo es Personen sind, machst du meistens vom maennlichen einfach ein Ta' marbuta dran' (mudarris, muhandis, mu'allim, ustadh). Steht im Bestand, die Ausnahmen in fem-ohne-ta-marbuta-01.",
+      "quelle": "fem-bildung-01 · fem-ohne-ta-marbuta-01"
+    },
+    "f27-3845": {
+      "urteil": "weg",
+      "grund": "Schluss des Satzes von f27-3715 (gleicher Wortlaut), dann Uebersetzung 'Sind diese Krankenschwestern Musliminnen?' und Organisation (welche Seite, 'weniger als die Haelfte des Buches'). Kein neuer Lehrsatz."
+    },
+    "f27-4445": {
+      "urteil": "weg",
+      "grund": "Satz 'li banatun kibarun wa hunna talibatun bil-jami'a'. Der Whisper-Text ist ueber weite Strecken zerrissen ('Ishabik, wussat tajtah'). Der Lehrer uebersetzt bil-jami'a mit 'an der Uni' und fi l-jami'a mit 'in der Uni, oertlich' — eine Uebersetzungshilfe am einzelnen Satz, kein Regelsatz; bi- mit mehreren Bedeutungen steht ohnehin als harf-jarr-bi-01 im Bestand."
+    },
+    "f27-4745": {
+      "urteil": "weg",
+      "grund": "Hausaufgaben: Aufgabe 4 (hadha, hadhihi oder ha'ula'i einsetzen), Aufgabe 5 (huwa, hiya, hum oder hunna), Aufgabe 6 (die Mehrzahl aufschreiben, z. B. ukhtun -> akhawatun). Dazu Wortkunde: zawj/zawjatun, al-mar'a mit der Mehrzahl nisa', und als 'kleiner Trick' (48:27): unbestimmt heisst es imra'atun. Das ist eine Vokabelangabe zum einzelnen Wort, kein Regelsatz; der Rest ist Organisation."
     }
   }
 }
