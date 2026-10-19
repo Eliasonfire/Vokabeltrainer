@@ -2107,10 +2107,19 @@ const UEBUNGEN = [
         const istMehrzahl = formen.includes(uebungOhneEndung(v.pl));
         const istEinzahl = formen.includes(uebungOhneEndung(v.sg || v.ar)) || formen.includes(uebungOhneEndung(v.ar));
         if (istMehrzahl === istEinzahl) return null;
+        /* ⛔ DIE FRAGE SAGT, WELCHE FORM IM SATZ STEHT (19.10.2026). Bis dahin hieß es nur
+           „Welchen Plural hat das hervorgehobene Wort?" gegen „Welche Art Plural ist das
+           hervorgehobene Wort?". Elias, mit Bild von «al-bābu mughlaqun.» (mb1-37-2), Antwort
+           „gebrochen": „das ist falsch" und auf meine Rückfrage „die pluralform ist entweder
+           falsch oder ungerade weil sie endet nicht mit waw und nun". Er hatte den SINGULAR im
+           Satz für die Pluralform gehalten und die Probe seines Lehrers auf ihn angewandt —
+           der Unterschied „hat" / „ist" war zu klein. Jetzt steht er im ersten Satz, und die
+           Auflösung nennt beide Formen beim Namen. Bewacht von test-plural-uebung.mjs (5, 7). */
         return {
-          frage: istMehrzahl ? 'Welche Art Plural ist das hervorgehobene Wort?' : 'Welchen Plural hat das hervorgehobene Wort?',
+          frage: istMehrzahl ? 'Das hervorgehobene Wort steht im Plural. Welche Art Plural ist es?'
+                             : 'Das hervorgehobene Wort steht im Singular. Denk an seinen Plural: Welche Art ist er?',
           wortIdx:i, loesung:art, optionen:UEB_PLURAL_WAHL,
-          aufloesung:`${v.sg || v.ar} → ${v.pl} (${v.de}): ${UEB_PLURAL_GRUND[art]}`
+          aufloesung:`Singular ${v.sg || v.ar} → Plural ${v.pl} (${v.de}): ${UEB_PLURAL_GRUND[art]}`
         };
       }).filter(Boolean);
     }

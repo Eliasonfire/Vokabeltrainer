@@ -175,8 +175,9 @@ function pruefe(app, zahlen){
     if (soll !== a.loesung) falsch.push(`${s.id} ${v.ar} → ${v.pl}: Lösung ${a.loesung}, nach der Karte ${soll}`);
     if (!String(a.aufloesung).includes(String(v.pl))) ohneForm.push(s.id);
     const w = kern(t.wort), p = ohne(v.pl).replace(/^ال/, ''), e = ohne(v.sg || v.ar).replace(/^ال/, '');
-    if (w === p && !/^Welche Art Plural ist/.test(a.frage)) frage.push(`${s.id}: Mehrzahl im Satz, Frage „${a.frage}"`);
-    if (w === e && w !== p && !/^Welchen Plural hat/.test(a.frage)) frage.push(`${s.id}: Einzahl im Satz, Frage „${a.frage}"`);
+    /* Seit 19.10.2026 sagt die Frage, welche Form im Satz steht (Begründung in js/uebung.js). */
+    if (w === p && !/^Das hervorgehobene Wort steht im Plural\. Welche Art Plural ist es\?$/.test(a.frage)) frage.push(`${s.id}: Mehrzahl im Satz, Frage „${a.frage}"`);
+    if (w === e && w !== p && !/^Das hervorgehobene Wort steht im Singular\. Denk an seinen Plural/.test(a.frage)) frage.push(`${s.id}: Einzahl im Satz, Frage „${a.frage}"`);
     if (v.femSg && w === ohne(v.femSg).replace(/^ال/, '') && w !== e && w !== p) fem.push(`${s.id} ${t.wort}`);
   }
   ok('5 jede Lösung stimmt mit der Karte überein', !falsch.length, falsch.slice(0, 3).join(' | '));
@@ -185,7 +186,14 @@ function pruefe(app, zahlen){
   ok('5 die Frage passt zur Form im Satz', !frage.length, frage.slice(0, 2).join(' | '));
   const an = (satzId, geruest) => alle.find(x => String(x.s.id) === satzId && kern(x.z[x.a.wortIdx].wort) === geruest);
   const m = an('mb1-68-2', 'مجتهدون');
-  ok('7 die Mehrzahl im Satz selbst wird nach ihrer Art gefragt (mb1-68-2)', !!m && m.a.loesung === 'm' && /^Welche Art Plural ist/.test(m.a.frage));
+  ok('7 die Mehrzahl im Satz selbst wird nach ihrer Art gefragt (mb1-68-2)', !!m && m.a.loesung === 'm' && /steht im Plural\. Welche Art Plural ist es\?$/.test(m.a.frage));
+  /* 7b — sein Fall vom 19.10.2026: im Satz steht der Singular mughlaq, er hielt ihn für die
+     Pluralform („… weil sie endet nicht mit waw und nun"). Die Frage muss den Singular nennen,
+     die Auflösung beide Formen. Das Gerüst aus Codepunkten (Arabisch nie von Hand). */
+  const mu = an('mb1-37-2', String.fromCodePoint(0x645, 0x63A, 0x644, 0x642));
+  ok('7 sein Fall mb1-37-2: die Frage sagt „steht im Singular", die Auflösung nennt Singular und Plural',
+    !!mu && mu.a.loesung === 'm' && /steht im Singular\./.test(mu.a.frage) && /^Singular .+ → Plural /.test(String(mu.a.aufloesung)),
+    mu ? `${mu.a.frage} | ${mu.a.aufloesung}` : 'keine Aufgabe an mb1-37-2');
   const g = an('mb1-68-1', 'طلاب');
   ok('7 ein gebrochener Plural im Satz wird als gebrochen gefragt (mb1-68-1)', !!g && g.a.loesung === 'g');
   ok('8 die weibliche Form eines Wortes wird nicht gefragt', !fem.length, fem.slice(0, 3).join(', '));
@@ -234,7 +242,10 @@ const STOER = [
     () => tu('globalThis.__echtWarum = UEBUNG_WARUM.plural; delete UEBUNG_WARUM.plural;'),
     () => tu('UEBUNG_WARUM.plural = globalThis.__echtWarum;')],
   ['die Frage unterscheidet Einzahl und Mehrzahl nicht',
-    () => tu('globalThis.__echtBaue = UEBUNGEN.find(u => u.id === "plural").baue; UEBUNGEN.find(u => u.id === "plural").baue = function(z, s){ return globalThis.__echtBaue.call(this, z, s).map(a => ({ ...a, frage: "Welchen Plural hat das hervorgehobene Wort?" })); };'),
+    () => tu('globalThis.__echtBaue = UEBUNGEN.find(u => u.id === "plural").baue; UEBUNGEN.find(u => u.id === "plural").baue = function(z, s){ return globalThis.__echtBaue.call(this, z, s).map(a => ({ ...a, frage: "Das hervorgehobene Wort steht im Singular. Denk an seinen Plural: Welche Art ist er?" })); };'),
+    () => tu('UEBUNGEN.find(u => u.id === "plural").baue = globalThis.__echtBaue;')],
+  ['die alte Frage ohne „steht im Singular" (sein Fall vom 19.10.2026)',
+    () => tu('globalThis.__echtBaue = UEBUNGEN.find(u => u.id === "plural").baue; UEBUNGEN.find(u => u.id === "plural").baue = function(z, s){ return globalThis.__echtBaue.call(this, z, s).map(a => ({ ...a, frage: /steht im Singular/.test(a.frage) ? "Welchen Plural hat das hervorgehobene Wort?" : a.frage })); };'),
     () => tu('UEBUNGEN.find(u => u.id === "plural").baue = globalThis.__echtBaue;')],
   ['die Auflösung nennt die Mehrzahl nicht',
     () => tu('globalThis.__echtBaue = UEBUNGEN.find(u => u.id === "plural").baue; UEBUNGEN.find(u => u.id === "plural").baue = function(z, s){ return globalThis.__echtBaue.call(this, z, s).map(a => ({ ...a, aufloesung: "gebrochen" })); };'),
