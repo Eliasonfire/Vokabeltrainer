@@ -232,6 +232,10 @@ const PRUEFER = [
      U+06E1 (quranSchriftbild() in js/quran.js); der Test zählt alle 207
      Stellen am echten Korantext nach, mit fünf Störtests. */
   ['test-hamza-lamalif.mjs', []],
+  /* Elias 19.10.2026: „ich möchte übrigens einen slot in meinen 15 vokabeln
+     für die häufigsten koranwörter haben". Der Koran-Platz in
+     lerngruppeHeute() (js/kern.js); sieben Fälle, vier Störtests. */
+  ['test-koran-platz.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

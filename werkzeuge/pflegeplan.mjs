@@ -758,6 +758,13 @@ export const PFLEGEPLAN = [
     bildschirme: [],
     neuerInhalt: { nein: 'Die Gruppe wächst nur auf sein Wort — er hat 270 Zeilen seiner Tabelle bestellt. Dann wird werkzeuge/koran-haeufig-liste.txt von Hand erweitert und die Datendatei mit werkzeuge/koran-haeufig-bauen.mjs neu erzeugt; keine Routine schreibt hinein. Eselsbrücken und Beispielsätze für die Karten der Gruppe kommen über data/eselsbruecken.js und data/beispielsaetze.js unter den Kennungen kh-NNN (derselbe Weg wie für Buchkarten). Sie sind nicht getippt, sondern aus zwei Vorlagen mit Verweisen aufgelöst (seit dem 13.10.2026 im Repo: werkzeuge/koran-vorlagen/eselsbruecken.json und saetze.json, Werkzeuge koran-eb-aufloesen.mjs, koran-satz-aufloesen.mjs, koran-satz-einbauen.mjs, Nachschlagen mit koran-stellen-zeigen.mjs und koran-satz-blick.mjs) — das nächste Stück der Gruppe wird in DIESE Vorlagen geschrieben, nicht in die Datendateien. Wurzel, Geschlecht, Einzahl, Mehrzahl und Verbformen stehen seit dem 12.10.2026 mit Beleg in werkzeuge/koran-haeufig-felder.txt (zuerst für die Wörter, die bei ihm als Nächste neu kämen); der Erzeuger schreibt sie in die Datendatei, koranKarten() in js/buecher.js bringt sie an die Karte.' },
     eingaben: { nein: 'Er trägt nichts ein: er hakt die Gruppe und ihre Stücke an (SETTINGS.buecher, wie bei jedem Buch), sein Lernstand liegt unter den Kennungen kh-NNN in vt_progress und wird wie jeder andere abgeglichen.' },
+    /* 19.10.2026 (v688): DER KORAN-PLATZ. Elias: „ich möchte übrigens einen slot
+       in meinen 15 vokabeln für die häufigsten koranwörter haben damit ich immer
+       stück für stück neue koranwörter lerne" — und zur Gruppe: „ich hacke sie
+       jezt an". lerngruppeHeute() in js/kern.js hält in der Lerngruppe zwei Plätze
+       für Koranwörter (je Hälfte einer, also eines am Tag), das häufigste zuerst.
+       Kein neuer Inhalt, keine Eingabe, kein Schlüssel: es liest nur PROGRESS und
+       die Gruppe, die es schon gab. Bewacht von test-koran-platz.mjs (alle-pruefer). */
     /* ⛔ Still veralten kann die Spalte „gleich": nummeriert arabicroots eine Karte
        um, steht für das Wort plötzlich wieder die Karte der Gruppe — und er hätte
        es doppelt, ohne jede Meldung. */

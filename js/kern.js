@@ -3522,6 +3522,11 @@ function neueZuerst(liste){
        drei Wochen. Soll stattdessen jeden Tag ein Platz für ein Koranwort frei
        sein?" — Elias: „Nein, Unterricht zuerst". ⛔ Also keinen täglichen Platz
        für ein Koranwort einbauen, solange er es nicht anders sagt.
+       ⭐⭐ Am 19.10.2026 hat er es anders gesagt: „ich möchte übrigens einen slot in
+       meinen 15 vokabeln für die häufigsten koranwörter haben damit ich immer
+       stück für stück neue koranwörter lerne." Dieser EINE Platz steht in
+       lerngruppeHeute() unten (der Koran-Platz); diese Ordnung hier bleibt für
+       alle anderen Plätze, also weiter Unterricht zuerst.
      ⚠️ Erst „Gruppe ja/nein", dann innerhalb: sonst wäre es keine Ordnung (siehe
      die Warnung zum Buch darüber). Der Buchname steht hier als Text, weil
      Prüfstände nur diese Funktion aus dem Quelltext schneiden (KORAN_BUCH steht
@@ -3909,8 +3914,35 @@ function neuStellenEinmalig(){
    Neu aufgenommen werden nur so viele, wie heute Box-1-Plätze frei sind: so
    füllt sich eine leere Gruppe über zwei Tage, und die Hälften wechseln sich
    von selbst ab. `extra` = fällige Mitglieder über die Plätze hinaus (nach
-   einem ausgelassenen Tag), `andere` = die andere Hälfte (noch nicht fällig). */
+   einem ausgelassenen Tag), `andere` = die andere Hälfte (noch nicht fällig).
+
+   ⭐⭐ DER KORAN-PLATZ (19.10.2026)
+   Elias: „ich möchte übrigens einen slot in meinen 15 vokabeln für die
+   häufigsten koranwörter haben damit ich immer stück für stück neue
+   koranwörter lerne." Und, als ich ihm sagte, dass die Gruppe „Koran
+   häufigste" bei ihm nicht angehakt ist: „ich hacke sie jezt an". Sein
+   „Nein, Unterricht zuerst" vom 11.10.2026 (bei neueZuerst() oben) gilt
+   damit für EINEN Platz nicht mehr; alle anderen Plätze bleiben dabei.
+
+   So ist es gebaut — MEINE Lesart seines Satzes:
+   · Seine 15 sind die Runde des Tages. Neue Wörter kommen dort nur über die
+     Lerngruppe (bei 15: 5 Plätze am Tag, die zwei Hälften der Gruppe wechseln
+     sich ab). „Ein Platz in meinen 15" heißt deshalb: an jedem Tag ein
+     Koranwort unter den Gruppenwörtern. Dafür braucht die Gruppe ZWEI
+     (KORAN_PLAETZE), je Hälfte eines.
+   · Ist heute kein Koranwort fällig und stehen weniger als zwei in der Gruppe,
+     steht beim Aufnehmen das häufigste neue Koranwort VORNE (neueZuerst()
+     ordnet die Gruppe nach Rang). Höchstens eines am Tag. Es nimmt nur einen
+     FREIEN Platz — aus der Gruppe gedrängt wird niemand — und zählt zu den
+     Plätzen für neue Wörter wie jedes andere.
+   · Kennt er ein Koranwort schon aus seinen Büchern, steht dafür seine
+     Buchkarte (koranKartenEinordnen() in js/buecher.js): nichts kommt doppelt.
+   · Ohne Haken bei der Gruppe gibt es keine Kandidaten — dann ändert sich nichts.
+   Die beiden Namen stehen IN der Funktion: Prüfstände schneiden sie einzeln
+   aus dem Quelltext (test-tagesdeckel.mjs). Bewacht von test-koran-platz.mjs. */
 function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
+  const KORAN_PLAETZE = 2;
+  const koranwort = w => !!w && w.book === 'koran-haeufig';
   const G = 2 * platz1;
   const p = w => PROGRESS[w.id] || {};
   const nachTermin = (a, b) => String(p(a).nextReview || '').localeCompare(String(p(b).nextReview || ''));
@@ -3922,7 +3954,14 @@ function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
   if (beitritt){
     const kand = neu.filter(w => !istGruppenwort(w));
     const zurueckW = kand.filter(w => p(w).zurueck).sort((a, b) => String(p(a).zurueck).localeCompare(String(p(b).zurueck)));
-    const neuW = kand.filter(w => !p(w).zurueck && nieAbgefragt(w));
+    let neuW = kand.filter(w => !p(w).zurueck && nieAbgefragt(w));
+    /* Der Koran-Platz (Begründung über der Funktion): heute kein fälliges
+       Koranwort und weniger als KORAN_PLAETZE in der Gruppe → das häufigste
+       neue Koranwort vorne. Nur eines. */
+    if (!faellig.some(koranwort) && mitglieder.filter(koranwort).length < KORAN_PLAETZE){
+      const k = neuW.find(koranwort);
+      if (k) neuW = [k].concat(neuW.filter(w => w !== k));
+    }
     const frW = kand.filter(w => !p(w).zurueck && !nieAbgefragt(w));
     const neuPl = Math.round(G * 2 / 3);
     const alsNeu = mitglieder.filter(w => p(w).gruppeArt === 'neu').length;
