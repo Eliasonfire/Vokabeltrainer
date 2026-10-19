@@ -9019,3 +9019,35 @@ Neu:
 - ✅ **Nachgetragen 22:51: Die Seiten für ihn sind neu im Netz**, jede unter ihrer bisherigen Adresse. Vorher standen alle auf dem 11.10.2026, es fehlten die Frage `f27-2915` vom 18.10., die zwei neuen Regeln und die neue Zeile in seiner Warteliste. Alle acht Bauer liefen um 22:44 (`kandidaten-bewerten.mjs` schreibt `bewertung.json` nur **ohne** `--pruefen`). Veröffentlicht: Fragenseite `5ChpdN9n7PAiTY4B5ZHud3` (Version 5, nur das Datum) · Was auf dich wartet `Hukk2F5jbFqnLsnW5H9QfN` (Version 17: 5 Regelfragen, 9 eingebaut, seine neue Zeile zur weiblichen Mehrzahl) · Regelkategorien `DHhYFwtTNJADVwE2tVUDz3` (Version 11) und Regelprüfung `4iMdxRvKkFHj699cfyHbra` (Version 22), beide als Netzfassung mit neuer `inhalt-….js`, die alte entfernt; Code gleich, genau die zwei neuen Regeln dazu · Freigabe `2GJFK49B8LvWJaBu337qU4` (Version 5: 5 von 190, 9 eingebaut, Speicherschlüssel `regelkandidaten-v2` gleich) · Ähnliche Regeln zusammenfassen `LMHMc79nzyNS3BZpm76kqW` (Version 5, nur Markierungszahlen). Vor jedem Hochladen: Speicherschlüssel und Skript gegen die Netzfassung verglichen, jede neue Zeile gelesen, Marken ausgeglichen, NFC. `regelauswahl.html` neu gebaut (117 Regeln); ihre Adresse ist weiter tot.
 
 Gemessen am 18.10.2026 und nicht neu gemessen: Lücke `eingang-einsortieren` vom 26.09. nicht quittiert · madina-2 Kapitel 1–24 in `FREIGESCHALTET` · Übung 17: Lücke huma-f · Tagesziel steht auf 15 · `pruefe-oberflaeche.js` zuletzt am 09.09.
+
+
+## 2026-10-19 23:39 – Sitzung: Oberflächenprüfung nach 40 Tagen — **v694 ausgeliefert: vier Fachbegriffe bekommen ihren Satz, eine Markierung folgt der Schreibweise** (`453a8d4`)
+
+**Anlass.** Elias nach dem Komprimieren, auf meine Frage zum Zeichenbogen seiner Mutter: *„was heißt das sag kurz, und arbeite weiter wenns noch offene punkte gibt"*. Offen ohne ihn waren drei Punkte aus dem Wartungsbericht vom 18.10. („Weiter offen"): der Access-Nachweis und `pruefe-oberflaeche.js`, beide 39 Tage alt, und die Lücke `eingang-einsortieren` vom 26.09.
+
+**Access-Nachweis neu gemessen (23:20:36).** Von außen, ohne Cookies und ohne Zugangsdaten (Node `fetch` mit `redirect: 'manual'`): 9 von 9 Adressen gesperrt. Die eigene Domain antwortet mit 302 auf den Access-Login, auch für `vocab-data.js` und `data/vokabeln-madina-1.js`. `vokabeltrainer-cgv.pages.dev` antwortet mit 404 (Host-Sperre). Die Auslieferung `6b5de7d0` (v693) antwortet mit 302, ebenso die alte `3b9fd79c` vom 09.09. `.access-geprueft.json` ist neu geschrieben (über `.neu`). Die Regel selbst wurde auch diesmal nicht im Cloudflare-Konto gelesen, gemessen ist nur ihre Wirkung von außen. Auch die neue Auslieferung `ba260464` (v694) antwortet für `data/vokabeln-madina-1.js` mit 302.
+
+**`pruefe-oberflaeche.js` gelaufen**, zum ersten Mal seit dem 09.09.2026 (v460). Gelaufen ist er in einem eigenen Edge (Playwright aus `Quran Trainer/node_modules`, nur gelesen) und nicht im Pane. Der Dateiserver lief nur auf 127.0.0.1, Anfragen an fremde Rechner wurden abgebrochen, der Speicher war leer. Der Prüfer lief zweimal, weil die Bücher beim ersten Mal noch nicht eingehängt sind. Ergebnis: 47 Prüfungen, **2 FEHLER**.
+
+1. „Buch bayna-yadayk-1 — 286 Vokabeln, erwartet 288": **Der Prüfer war veraltet.** Seit v512 (16.09.) lässt `einhaengen()` die zwei Dubletten 45984 und 45986 weg, Bruder und Schwester (Elias' „ja"). `b.vokabeln` zählt sie als Zahl des Abzugs weiter mit. Gemessen wurden 231 roh, 229 im Bestand, und die zwei fehlenden sind genau diese beiden. Behoben in `pruefe-oberflaeche.js`: Der Sollwert zieht die ausgeblendeten Kennungen des Buchs ab. Außerdem stehen sie nicht mehr im Hinweis „noch nicht eingehängt", weil sie nie kommen.
+2. „Satzmarkierungen lösen auf", 6 Stück: **Das waren echte Fehler der App.**
+   - **Vier Fachbegriffe hatten in der laufenden App keinen Beispielsatz:** `gram-marfu`, `gram-jam-mudhakkar-salim`, `gram-jam-muannath-salim` und `gram-jam-taksir`. Ihre Sätze stehen in `data/beispielsaetze.js`, die drei Plural-Namen seit dem 13.10. `saetzeNachtragen()` lief aber nur mit der Buchliste und mit `PERSONAL_VOCAB`. Gemessen: 34 Fachbegriffe im Bestand, genau diese 4 ohne `sentAr`, und alle 4 haben einen Eintrag in `BEISPIELSAETZE`. Damit waren auch die 5 Markierungen an den drei Plural-Karten unsichtbar. `pruefe-beispielsaetze.mjs` zählt die Einträge nur und war deshalb grün. **Behoben in `js/buecher.js`:** `saetzeNachtragen(FACHBEGRIFF_VOKABELN)` läuft jetzt neben dem Aufruf für `PERSONAL_VOCAB`.
+   - **aiḍan (`0e23a52d…`, `tanwin-fath-alif-01`):** `schreibweisenErsetzen()` stellt den Satz zur Laufzeit auf seine bestätigte Schreibung um, also Tanwīn auf dem Ḍād (U+0636 U+064B U+0627). Der matchText in `grammar-data.js` blieb bei der alten Schreibung (U+0636 U+0627 U+064B), und `js/saetze.js` sucht ihn mit rohem `indexOf()`. In `vocab-data.js` steht noch die alte Schreibung, deshalb war `pruefe-markierungen.js` grün. **Behoben in `js/buecher.js`:** Dieselbe Ersetzung gilt jetzt auch für die Markierungen an diesem Satz.
+
+Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher, 20 `kh-…` noch nicht eingehängt, dazu drei „berührt und zurückgeschrieben"). Es gab 0 Seiten- und 0 Konsolenfehler, und keine Anfrage ging an einen fremden Rechner.
+
+**Neu: `werkzeuge/oberflaeche-lauf.mjs`.** Es lässt den Prüfer so laufen wie oben, ohne Pane. Mit `--stempel` schreibt es `data/oberflaeche-lauf.json` (dort steht jetzt `_wie_3`). Der Stempel lautet: 19.10.2026, v694, 47 Prüfungen, 0 Fehler, 5 Hinweise. Exit 3 bedeutet, dass Playwright fehlt.
+
+**Prüfen und Ausliefern.**
+- `validate.js`: 36 Prüfungen, 0 Fehler.
+- `alle-pruefer`: 182 Prüfer, davon 4 rot. Bekannt sind `pruefe-themen` und `pruefe-buchtausch` (Warteliste) sowie `pruefe-ausgeliefert` (vor dem Hochladen). **Neu rot war `notiz-umraeumen`**: In `Vokabeltrainer-Arabisch.md` stand der Block vom 18.10. vor dem vom 19.10. Mit dem Werkzeug umgeräumt (`--schreiben`), danach 0 Brüche.
+- `pruefe-sammellauf`, `pruefe-pflegeplan` und `pruefe-schreibpfade` sind grün.
+- CACHE v694, Commit `453a8d4`, `veroeffentlichen.mjs --mit-daten` (Access-Nachweis 0 Tage alt).
+- Cloudflare: Production auf main aus `453a8d4` (`ba260464`). Gepusht, main = origin/main, `pruefe-ausgeliefert` Exit 0.
+
+**Fehler unterwegs.** Ich habe zwei arabische Bruchstücke von Hand in die To-Do getippt. Die Codepunkte waren richtig (nachgemessen), sie sind trotzdem durch Codepunkt-Angaben ersetzt.
+
+**Offen.**
+- Die Lücke `eingang-einsortieren` vom 26.09. ist noch nicht angesehen.
+- Bei Elias: der Zeichenbogen an Maryam, die weibliche Mehrzahl auf den Karten, Kapitel 11 im Korantrainer und 5 Regelfragen.
+- Das Tagesziel 15 ist seine Erinnerung.
