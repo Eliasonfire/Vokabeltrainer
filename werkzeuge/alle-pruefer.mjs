@@ -228,10 +228,17 @@ const PRUEFER = [
   ['test-lesezaehlung.mjs', []],
   /* Elias 19.10.2026: „ich möchte, dass diese Hamza im lam alif nicht so
      darsteht wie sie aktuell in der app ist sondern so wie bei quran.com".
-     Der Leser tauscht dafür vor Alif + Hamza + Madda das Sukun U+0652 gegen
-     U+06E1 (quranSchriftbild() in js/quran.js); der Test zählt alle 207
-     Stellen am echten Korantext nach, mit fünf Störtests. */
+     Seit v692 steht U+06E1 vor Hamza-Alif + Madda im Text von quran.com selbst
+     (quranSchriftbild() ist entfallen); der Test zählt alle 207 Stellen am
+     echten Korantext nach und dass der Leser ihn unverändert zeigt, mit vier
+     Störtests. */
   ['test-hamza-lamalif.mjs', []],
+  /* Elias 19.10.2026: „stelle sicher das sie gleich sind damit keine fehler da
+     sind“ — der Korantext ist der Text von quran.com (werkzeuge/korantext-bauen.mjs).
+     Fingerabdruck je Sure, jedes Zeichen in der Muṣḥaf-Schrift, kein abgetrenntes
+     Alif, Wortzählung wie quran.com, Rückfall und zuStandard(); fünf Störtests.
+     Gegen das heutige quran.com (mit Netz): korantext-bauen.mjs --pruefen. */
+  ['test-korantext.mjs', []],
   /* Elias 19.10.2026: „ich möchte übrigens einen slot in meinen 15 vokabeln
      für die häufigsten koranwörter haben". Der Koran-Platz in
      lerngruppeHeute() (js/kern.js); sieben Fälle, vier Störtests. */

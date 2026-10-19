@@ -1597,9 +1597,11 @@ function segmenteJetzt(){
   if (!m || m === 'laedt' || m === 'fehlt') return null;
   const seg = m[QAUDIO.vers];
   if (!seg || !seg.length) return null;
-  /* ⛔⛔ DIE Pruefung, ohne die falsch markiert wuerde. Unser Text zaehlt bei
-     16 von 1193 gemessenen Versen anders als die Zeitmarken (Begruendung bei
-     quranWorte() in js/quran.js). Passt die Zahl nicht, bleibt es beim ganzen
+  /* ⛔⛔ DIE Pruefung, ohne die falsch markiert wuerde. Seit dem Text von
+     quran.com (v692) passt die Wortzahl in 6204 von 6236 Versen zu den
+     Zeitmarken, vorher in 6158; in 32 sind die Zeitmarken kuerzer als der Text
+     (gemessen am 19.10.2026, Rezitator 7, Begruendung bei quranWorte() in
+     js/quran.js). Passt die Zahl nicht, bleibt es beim ganzen
      Vers — eine Marke am falschen Wort waere schlimmer als keine.
      [[ausfall_ist_unsichtbar_gebaut]] */
   const el = document.querySelector('#verseList .verse-item[data-versnr="' + QAUDIO.vers + '"]');

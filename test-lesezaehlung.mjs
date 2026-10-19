@@ -52,7 +52,7 @@ const koran = fs.readFileSync(path.join(HIER, 'quran-text.js'), 'utf8');
    [[const_ist_im_vm_kontext_unsichtbar]] */
 const MARKEN = [
   ['const WDH_SEK_JE_WORT', '/* ---------- Der Haken am Ende der Sure'],
-  ['const QW_TANWIN_FATH', 'function quranWortSpans'],
+  ['function quranWorte(text){', 'function quranWortSpans'],
 ];
 const stuecke = [];
 for (const [a, b] of MARKEN){

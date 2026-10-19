@@ -54,7 +54,12 @@ const sureName = n => {
    damit eine Suche nach "هذا" auch "هَٰذَا" findet. Alif-Varianten und
    Ta marbuta werden zusaetzlich vereinheitlicht - der Lehrer schreibt oft
    ohne, der Korantext immer mit. */
-const ohneZeichen = s => s
+/* ⛔ Zuerst NFD (seit 19.10.2026): quran-text.js ist jetzt der Text von quran.com und schreibt die
+   Hamza-Buchstaben als EIN Zeichen (U+0624, U+0626 …), der alte Text schrieb sie zerlegt, und ein
+   abgeschriebenes Wort kann beides sein. Nach NFD fällt die Hamza mit den übrigen Zeichen weg — so
+   finden beide Schreibungen einander. Die Muṣḥaf-Zeichen U+0656/U+0657/U+065E/U+06E1 liegen schon in
+   den Bereichen darunter. [[arabisch_vergleichen_nfc]] */
+const ohneZeichen = s => s.normalize('NFD')
   .replace(/[ؐ-ًؚ-ٰٟۖ-ࣰۭ-ࣳ]/g, '')
   .replace(/ـ/g, '')
   .replace(/[آأإٱ]/g, 'ا')

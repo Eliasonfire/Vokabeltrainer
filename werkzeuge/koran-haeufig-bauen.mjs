@@ -207,7 +207,11 @@ export function wortPasst(karte, wort, wurzel){
   const ziel = buchstaben(String(karte.ar).split(' / ')[0]);
   /* Der Koran schreibt manches lange ā nur als Dolch-Alif über dem Buchstaben (al-kāfirūn); die Karte schreibt
      ein Alif. Beide Lesarten des Wortes gelten — wie in pruefe-quran.js („das Dolch-Alif wird zu einem ALIF"). */
-  const lesarten = [buchstaben(wort), buchstaben(String(wort).replace(DOLCH_G, Z(0x627)))];
+  /* Seit dem 19.10.2026 ist quran-text.js der Text von quran.com: das Trägeralif des Tanwīn Fatḥ hängt dort am
+     Wort (nāran in 111:3), bis v691 stand es abgetrennt. Es gehört zur Schreibung, nicht zum Wort der Karte —
+     also gilt auch die Lesart ohne es. Wie beim Dolch-Alif: eine Lesart mehr kann nur treffen, nie verfehlen. */
+  const lesarten = [buchstaben(wort), buchstaben(String(wort).replace(DOLCH_G, Z(0x627))),
+    buchstaben(String(wort).split(Z(0x64B) + Z(0x627)).join(Z(0x64B)))];   /* Z() nimmt hier EINEN Codepunkt */
   const moeglich = new Set();
   for (const w of lesarten) for (const roh of [w].concat(VORSILBEN.filter(v => w.startsWith(v) && w.length > 2).map(() => w.slice(1))))
     for (const o of [roh, roh.startsWith(ARTIKEL_B) ? roh.slice(2) : roh]){

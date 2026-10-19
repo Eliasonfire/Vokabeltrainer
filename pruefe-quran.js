@@ -56,7 +56,7 @@ const nfc = s => String(s).normalize('NFC');
    Zitat steht dort ein LEERZEICHEN (646 20 6da) -- wieder nur Schreibung. */
 const geruest = s => nfc(s)
   .replace(/\u0670/g, '\u0627')
-  .replace(/[\u064B-\u0653\u0640\u06D6-\u06ED\u06DD\u06DE\u06E9\u200F\u200E]/g, '')
+  .replace(/[\u064B-\u065F\u0640\u06D6-\u06ED\u06DD\u06DE\u06E9\u200F\u200E]/g, '')
   .replace(/[\u0623\u0625\u0622\u0671]/g, '\u0627')
   .replace(/\s+/g, '');
 const vers = (s, v) => {

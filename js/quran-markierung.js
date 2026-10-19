@@ -268,9 +268,10 @@ function tajweedJeWort(){
    samt allem, was darüber und darunter sitzt. Liefert je Buchstabe die
    Zeichenposition, die Länge und den Text.
 
-   ⚠️ Ein Wort kann ein Leerzeichen enthalten — quranWorte() fasst Tanwīn
-   Fatḥ und folgendes Alif zu EINEM Wort zusammen (siehe dort). Das
-   Leerzeichen bekommt keine eigene Stelle, es ist kein Buchstabe. */
+   ⚠️ Ein Wort kann Leerraum enthalten — seit dem Text von quran.com (v692)
+   steht zwischen dem Hizb-Zeichen und seinem Wort ein U+00A0 (bis v691 setzte
+   quranWorte() Tanwīn Fatḥ und abgetrenntes Alif zu einem Wort zusammen). Der
+   Leerraum bekommt keine eigene Stelle, er ist kein Buchstabe. */
 function tajweedCluster(text){
   const s = String(text || '');
   if (TJ_CLUSTER_CACHE.has(s)) return TJ_CLUSTER_CACHE.get(s);
