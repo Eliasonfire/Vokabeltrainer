@@ -606,11 +606,26 @@ if (STOER){
   VDL.pop();
   // 11. Die Wörter, die die App selbst für ihn freischaltet, zählen mit (25.09.2026):
   //     ohne sie meldet Übung 11 wieder „jene, Plural" — genau die falsche Lücke von damals.
+  //     ⭐ Seit dem 19.10.2026 (Folge 28) stehen drei Buchsätze mit „jene" (ulāʾika) im
+  //     Bestand (mb1-78-2, mb1-79-3, mb1-79-5). Buchsätze zählen über ihr Kapitel, nicht
+  //     über die Wörter — „jene" hätte damit auch ohne Freischaltung einen Satz, und der
+  //     Test schlüge nicht mehr an. Für die Messung nimmt er deshalb die Buchsätze mit
+  //     diesem Wort heraus und setzt sie danach an ihren Platz zurück.
   {
     const weg = VDL.filter(w => app.aufWunsch.has(String(w.id)));
     for (const w of weg){ VDL.splice(VDL.indexOf(w), 1); app.bekannt.delete(String(w.id)); }
+    const LB = app.hole('LEHRBUCH_SAETZE') || [];
+    const zeichen = new RegExp('[' + String.fromCodePoint(0x64B) + '-' + String.fromCodePoint(0x65F)
+      + String.fromCodePoint(0x670) + String.fromCodePoint(0x640) + ']', 'g');
+    const gerippe = weg.filter(w => /jene/.test(String(w.de))).map(w => String(w.ar).replace(zeichen, ''));
+    const lbWeg = [];
+    for (let i = LB.length - 1; i >= 0; i--){
+      const t = String(LB[i].sentAr || '').replace(zeichen, '');
+      if (gerippe.some(g => g && t.includes(g))) lbWeg.unshift([i, LB.splice(i, 1)[0]]);
+    }
     e = messen(app);
     ok(`ohne die ${weg.length} auf seinen Wunsch freigeschalteten Wörter fehlt „jene" wieder`, weg.length > 0 && e.uebungen.isara.ohneSatz.some(x => /jene/.test(String(x.de))));
+    for (const [i, s] of lbWeg) LB.splice(i, 0, s);
     for (const w of weg){ VDL.push(w); app.bekannt.add(String(w.id)); }
   }
   // 12. Ist die Liste in js/kern.js nicht mehr lesbar → Ladefehler statt still ohne sie.
