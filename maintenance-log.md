@@ -8965,3 +8965,57 @@ Gemessen am 18.10.2026 und weiter offen:
 - Tagesziel steht auf 15, seine Erinnerung war am 11.10. fällig.
 - `pruefe-oberflaeche.js` und der Access-Nachweis sind je 39 Tage alt.
 - Wurzel von أَمَامَ. Balance 9,9 %. Mehrzahl von بَعْضٌ und تَعَارُفٌ (Teil E).
+
+## 2026-10-19 22:13 – Sitzung: Folge 28 ausgewertet — **v693 ausgeliefert: zwei belegte Regeln eingebaut** (`d9d3eca`)
+
+Kein Wartungslauf, sondern eine Sitzung. Anlass war Elias' Frage vom 19.10.2026: *„sind übrigens die neuen folgen bereits ausgewertet?“* Folge 27 war es seit dem So-Check vom 18.10. (`5c0a2ea`). Folge 28 hatte der Backfill-Retry am 18.10. vorbereitet (YouTube-Spur `de-orig` bis 39:30, Whisper 462 Blöcke, Sprecherspur, 15 Fundstellen), ausgewertet war sie noch nicht. Ausgewertet habe ich sie nach seinem Auftrag vom 18.08.2026 (*„du sollst sie selber auswerten … allgemein gilt das so“*) und seinem „ja“ vom 11.10.2026: Belegte Regeln werden eingebaut, nicht vorgelegt. Seit dem So-Check gab es sechs Sitzungs-Commits davor (v687 bis v692: `397de55`, `711ba9f`, `a1abe53`, `a24d3ec`, `a81a419`, `b19c5e3`).
+
+### Schritt 1b — Folge 28: **zwei neue Regeln**
+
+Gelesen habe ich die YouTube-Spur ganz und den Whisper-Text an den Kernstellen. Alle **15 Fundstellen** sind beurteilt (`werkzeuge/kandidaten-urteile.json`, als eigene Gruppe angehängt, nichts Altes geändert):
+- **2× neue Regel:** `f28-3045` → `ismul-isara-ulaika-01` und `f28-3715` → `mamnu-min-as-sarf-plural-01` (Urteil „schon-regel“ mit „eingebaut 2026-10-19“).
+- **3× schon Regel:** `f28-1315` (`ismul-isara-haulai-01`), `f28-1445` (`isara-genus-kongruenz-01`), `f28-3215` (Fortsetzung von `ismul-isara-ulaika-01`).
+- **10× keine Regel:** `f28-045`, `f28-345`, `f28-1015`, `f28-1145`, `f28-1915`, `f28-2245`, `f28-2545`, `f28-2745`, `f28-2915`, `f28-3845`. Bei `f28-1145` steht ein ⚠️ im Urteil: In Übung 3 will der Lehrer zu den weiblichen Formen die gebrochene Mehrzahl hören (kibār, ṭiwāl, ǧudud; 11:22–12:25), die Karten nennen als weibliche Mehrzahl kabīrāt, ṭawīlāt und ǧadīdāt (arabicroots, Feld `femPl`). Beides ist richtiges Arabisch. Die Frage steht in der To-Do unter „🔴 Wartet auf Elias“.
+
+Die zwei neuen Regeln (über `uebernehmen.mjs`, Vorabprüfung grün):
+- **`ismul-isara-ulaika-01`** — ulāʾika ist der gemeinsame Plural von dhālika und tilka. Lehrer Folge 28, 31:01: „Und der Plural von beiden ist Ulaika“ (Whisper 31:14 gleichlautend). Buch: Madina 1, S. 79 Übung 1 (Muster) und S. 80 Übung 2. Kapitel 13, Farbe mubtada. ⚠️ in der Regel: Das Buch zeigt nur Personen als Beispiele.
+- **`mamnu-min-as-sarf-plural-01`** — Mehrzahlformen nach afʿilāʾ und fuʿalāʾ (aṭibbāʾu, fuqarāʾu, aġniyāʾu, wuzarāʾu) haben kein Tanwīn. Lehrer Folge 28, 37:19: „die haben kein Tanwin hinten“. Das Buch druckt aġniyāʾu und wuzarāʾu auf S. 79 mit einer Ḍamma; Schlüssel 3, Lektion 34, S. 264 nennt aṣdiqāʾu als Beispiel und warnt: asmāʾun und ābāʾun (Schema afʿāl) behalten ihr Tanwīn. Diese Warnung steht als ⚠️ aus dem Schlüssel in der Regel. Farbe fem.
+
+**Drei Buchsätze** von S. 78/79 in `lehrbuch-saetze.js`: `mb1-78-2`, `mb1-79-3` und `mb1-79-5`, alle Kapitel 13, `vokalisationErgaenzt: true` mit einer `gedruckt`-Beschreibung. Jedes Wort ist aus seinen Karten oder vorhandenen Sätzen zusammengesetzt, nichts getippt. Die Funktionswörter aus Kapitel 24 bei arabicroots (ulāʾika, hāʾulāʾi, hum, man) gelten als bekannt.
+
+**Markierungen** über `markierung-setzen.mjs` (höchstens drei je Satz, ohne Überlappung): ulāʾika und die Mehrzahl ohne Tanwīn auf allen drei Sätzen, dazu hāʾulāʾi auf `mb1-79-3`. Die Sicherung des Werkzeugs, `grammar-data.js.vor-markierung` (19.10.2026, 22:00:22), liegt untracked im Ordner.
+
+### Zahlen (nachgemessen 19.10.2026, 22:32–22:37)
+
+| | vorher | jetzt |
+|---|---|---|
+| Regeln | 115 | **117** |
+| Markierungen | 962 | **969** |
+| Buchsätze (`LEHRBUCH_SAETZE`) | 152 | **155** |
+| Urteile (`kandidaten-bewerten.mjs --pruefen`) | 170 von 175 | **185 von 190** (schon-regel 85, weg 100) |
+| für Elias | 5 | **5** (abweichung 1, unbelegt 4) |
+| `CACHE_NAME` | `vokabeltrainer-v692` | **`vokabeltrainer-v693`** |
+
+`rueckstand.mjs --knapp` endet mit Exit **0**: „kein Rueckstand. (1 ausser Wertung: 21)“.
+
+### Fehler unterwegs, alle vor dem Ausliefern behoben
+
+- **NFC:** Zwei neue Regelzeilen in `grammar-data.js` und `transcripts/kandidaten/entwuerfe.json` waren nicht NFC, weil die Kartentexte aus arabicroots es nicht sind (113 Zeilen in `data/vokabeln-madina-1.js`). Normalisiert; `grammar-data.js` ist wieder ganz NFC. Der Markierungsauftrag für `mb1-78-2` traf erst nach `.normalize('NFC')` des `matchText`.
+- **`pruefe-kreislaeufe`** war rot, weil `artefakte/regeln.json` älter war als `grammar-data.js`. Mit `regeln-sammeln.mjs` neu erzeugt (nicht im Repo).
+- **`pruefe-satzmodus-aktuell.mjs --stoertest`** war rot („ohne die 6 … fehlt „jene“ wieder“). Störtest 11 nimmt die Sätze mit „jene“ heraus und misst, ob das Wort dann fehlt; die neuen Buchsätze decken „jene“ aber über ihr Kapitel. Der Test nimmt jetzt für die Messung auch die Buchsätze mit diesem Wort heraus und setzt sie danach an ihren Platz zurück. **29 von 29 Störtests schlagen an.**
+
+### Prüfen und Ausliefern
+
+- `alle-pruefer.mjs`: **182 Prüfer**, rot nur die drei, die erst nach dem Ausliefern grün werden, und die bekannten Wartefälle. Nach dem Ausliefern `pruefe-ausgeliefert`, `pruefe-erreichbarkeit` und `pruefe-gedaechtnis-zahlen` je Exit **0** (22:16:11).
+- Einzeln nachgemessen um 22:37: `pruefe-markierungen.js` **0** (969 Markierungen, 0 unsichtbar, 0 mitten im Wort, 9 erlaubte Überschneidungen), `pruefe-duplikate.js` **0**, `pruefe-taschkil.js` **0**, `pruefe-themen.mjs` **2** und `pruefe-buchtausch.mjs` **2** (die Wartefälle wie am 18.10.).
+- `veroeffentlichen.mjs --mit-daten` endete mit Exit **0** (3 Dateien hochgeladen). Cloudflare (`wrangler pages deployment list --project-name vokabeltrainer`): **Production auf main aus `d9d3eca`, hochgeladen 22:13**. `.deploy/` hat CACHE v693, 117 Regeln und beide neuen Kennungen. Gepusht: main = origin/main.
+- ⚠️ Der Access-Nachweis `.access-geprueft.json` ist vom 09.09.2026 (**40 Tage**), nicht nachgemessen.
+
+### ⬜ Offen nach dieser Sitzung
+
+Neu:
+- **Frage an ihn** (To-Do, „🔴 Wartet auf Elias“): Soll die Karte bei der weiblichen Form beide Mehrzahlformen zeigen (kabīrāt und kibār)?
+- `lehrbuch-saetze.js` hat genau **eine** Zeile, die nicht NFC ist: das Feld `gedruckt` von `mb1-63-4` (Šadda vor Fatḥa in allatī; so seit `1e52374`, 25.08.2026). Ohne Wirkung: Kein Programm liest `gedruckt`, der Satz selbst und seine Markierung sind NFC, und `pruefe-markierungen.js` zeigt die Markierung an. Beim nächsten inhaltlichen Eingriff in die Datei mitnormalisieren; allein dafür lohnt kein Ausliefern.
+- Die Seiten für ihn stehen im Netz auf dem Stand vom 11.10.2026 (Freigabe, Warteseite, Regelkategorien, Regelprüfung): Es fehlen die Frage `f27-2915` vom 18.10., die zwei neuen Regeln und die neue Zeile in seiner Warteliste.
+
+Gemessen am 18.10.2026 und nicht neu gemessen: Lücke `eingang-einsortieren` vom 26.09. nicht quittiert · madina-2 Kapitel 1–24 in `FREIGESCHALTET` · Übung 17: Lücke huma-f · Tagesziel steht auf 15 · `pruefe-oberflaeche.js` zuletzt am 09.09.
