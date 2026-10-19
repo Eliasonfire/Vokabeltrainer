@@ -75,7 +75,9 @@ const kernTeile = kern => [
   schneideBis(kern, 'const PL_Z = c =>', '\n  return aus;\n}'),
   schneideFunktion(kern, 'function escapeHtml('),
 ];
-const artTeile = uebung => [zeile(SAETZE, 'function ohneTaschkil('), schneideFunktion(uebung, 'function uebPluralArt(')];
+const artTeile = uebung => [zeile(SAETZE, 'function ohneTaschkil('), schneideFunktion(uebung, 'function uebPluralArt('),
+  /* Seit 19.10.2026: die Anzeige „regelmäßig männlich / weiblich / unregelmäßig" (pluralArtText). */
+  zeile(uebung, 'const PL_ART_TEXT = '), schneideFunktion(uebung, 'function pluralFormArt('), schneideFunktion(uebung, 'function pluralArtText(')];
 
 /* ---------- Probekarten (Buckwalter → Schrift, als Codepunkte) ---------- */
 const BW = { "'": 0x621, '>': 0x623, '&': 0x624, '<': 0x625, '}': 0x626, A: 0x627, b: 0x628, p: 0x629, t: 0x62A, v: 0x62B, j: 0x62C,
@@ -280,14 +282,16 @@ function laufe(kern, lernen, uebung){
     const z = R({ showPlural: false });
     return [1, 8, 9, 10].every(id => z(id) !== '') ? true : 'ohne den alten Schalter fehlt die Formen-Zeile';
   });
-  fall('L2 Regelmäßige Mehrzahl: die Zeile sagt „Plural · regelmäßig", ohne „Klingt wie"', () => {
+  /* Seit 19.10.2026 sagt die Zeile die ART (Elias: „bei den plural vokabeln sollte noch irgendwie
+     gekennzeichnet werden ob sie regelmässig sind oder unregelmässig"), mit seinen Wörtern. */
+  fall('L2 Regelmäßige Mehrzahl: die Zeile sagt „Plural · regelmäßig männlich" bzw. „… weiblich", ohne „Klingt wie"', () => {
     const z = R({ showPlural: true });
-    for (const id of [8, 9]){ const h = z(id); if (!h.includes('>Plural · regelmäßig</i>') || h.includes('Klingt wie')) return 'Karte ' + id + ': ' + h; }
+    for (const [id, art] of [[8, 'männlich'], [9, 'weiblich']]){ const h = z(id); if (!h.includes('>Plural · regelmäßig ' + art + '</i>') || h.includes('Klingt wie')) return 'Karte ' + id + ': ' + h; }
     return true;
   });
-  fall('L3 Gebrochene Mehrzahl: „Plural" ohne Vermerk — und KEIN „Klingt wie", obwohl die Karte Partner hätte (Elias, 15.10.2026: „dieses klingt wie ist quatsch, das soll raus")', () => {
+  fall('L3 Gebrochene Mehrzahl: „Plural · unregelmäßig" — und KEIN „Klingt wie", obwohl die Karte Partner hätte (Elias, 15.10.2026: „dieses klingt wie ist quatsch, das soll raus")', () => {
     const h = R({ showPlural: true })(1);
-    if (!h.includes('<i class="lbl">Plural</i>') || h.includes('regelmäßig')) return 'die Plural-Zeile stimmt nicht: ' + h;
+    if (!h.includes('<i class="lbl">Plural · unregelmäßig</i>')) return 'die Plural-Zeile stimmt nicht: ' + h;
     return !/Klingt wie|wf-klang|wf-paar/.test(h) ? true : '„Klingt wie" steht wieder auf der Karte: ' + h;
   });
   fall('L4 Auch ohne Wurzel kein „Klingt wie"; beim Zahlwort bleibt „bei weiblichem Nomen" — ohne „regelmäßig"', () => {
@@ -295,6 +299,12 @@ function laufe(kern, lernen, uebung){
     if (z(15).includes('Klingt wie')) return 'eine Karte ohne Wurzel bekommt „Klingt wie"';
     const h = z(10);
     return h.includes('>bei weiblichem Nomen</i>') && !h.includes('regelmäßig') && !h.includes('Klingt wie') ? true : 'Zahlwort: ' + h;
+  });
+  fall('L6 Was die strenge Einordnung offen lässt, benennt die Anzeige trotzdem: tilfāzāt regelmäßig weiblich, zwei gebrochene Formen einmal „unregelmäßig", zwei Arten beide (19.10.2026)', () => {
+    const z = R({ showPlural: true });
+    const soll = [[15, 'Plural · regelmäßig weiblich'], [5, 'Plural · unregelmäßig'], [18, 'Plural · unregelmäßig und regelmäßig männlich']];
+    for (const [id, text] of soll){ const h = z(id); if (!h.includes('<i class="lbl">' + text + '</i>')) return 'Karte ' + id + ': ' + h; }
+    return true;
   });
   fall('L5 Die Mehrzahl selbst wird maskiert (fremder Text im HTML)', () => {
     const karten = KARTEN.map(k => k.id === '1' ? Object.assign({}, k, { pl: '<b>' + k.pl }) : k);
@@ -511,7 +521,8 @@ function ersetze(quelle, alt, neu, wo){
   return quelle.replace(alt, () => neu);
 }
 const STOER = [
-  { name: 'S1 nichts gilt mehr als regelmäßig', muss: ['L2', 'T2', 'P4'],
+  /* S1 trifft seit 19.10.2026 die Zeile nicht mehr: sie fragt pluralArtText(), nicht pluralRegelmaessig() — dafür S33/S34. */
+  { name: 'S1 nichts gilt mehr als regelmäßig', muss: ['T2', 'P4'],
     kern: q => ersetze(q, "  return art === 'm' || art === 'f';", '  return false;', 'S1') },
   { name: 'S2 die Kasusendung bleibt im Muster', muss: ['M2'],
     kern: q => ersetze(q, "return ri === r.length ? aus.replace(PL_ENDUNG, '') : null;", 'return ri === r.length ? aus : null;', 'S2') },
@@ -531,8 +542,12 @@ const STOER = [
     kern: q => ersetze(q, "  if (typeof uebPluralArt !== 'function') return [];", '', 'S9') },
   { name: 'S10 die Rückseite zeigt die Zeilen nur noch mit dem alten Schalter', muss: ['L1'],
     lernen: q => ersetze(q, "  let forms = [];\n  {", "  let forms = [];\n  if (SETTINGS.showPlural){", 'S10') },
-  { name: 'S11 der Vermerk „regelmäßig" fehlt', muss: ['L2'],
-    lernen: q => ersetze(q, "+ (plRegel ? ' · regelmäßig' : '')", "+ ''", 'S11') },
+  { name: 'S11 der Vermerk der Art fehlt', muss: ['L2', 'L3', 'L6'],
+    lernen: q => ersetze(q, "+ (plArt ? ' · ' + plArt : '')", "+ ''", 'S11') },
+  { name: 'S33 die Einzahl plus -āt gilt nicht mehr als regelmäßig weiblich', muss: ['L6'],
+    uebung: q => ersetze(q, "  if (p === s0 + ALIF + TA) return 'f';\n", '', 'S33') },
+  { name: 'S34 zwei Formen werden nicht mehr einzeln eingeordnet', muss: ['L6'],
+    uebung: q => ersetze(q, "const formen = String(pl || '').split(/[\\/|]/)", "const formen = [String(pl || '')]", 'S34') },
   { name: 'S12 die Mehrzahl geht unmaskiert ins HTML', muss: ['L5'],
     lernen: q => ersetze(q, '<span class="wf-ar">${escapeHtml(f.value)}</span>', '<span class="wf-ar">${f.value}</span>', 'S12') },
   { name: 'S32 die Zeile „Klingt wie" kommt auf die Karte zurück', muss: ['L3'],
@@ -579,7 +594,7 @@ const STOER = [
 console.log('\n=== S  Störtests: ohne die Regel MUSS der zuständige Fall scheitern ===');
 for (const s of STOER){
   let e;
-  try { e = laufe(s.kern ? s.kern(KERN) : KERN, s.lernen ? s.lernen(LERNEN) : LERNEN, UEBUNG); }
+  try { e = laufe(s.kern ? s.kern(KERN) : KERN, s.lernen ? s.lernen(LERNEN) : LERNEN, s.uebung ? s.uebung(UEBUNG) : UEBUNG); }
   catch (err){ rot++; console.log('  FEHL ' + s.name + '  -> ' + err.message); continue; }
   const gescheitert = [...e].filter(([, v]) => !v.ok).map(([n]) => n.split(' ')[0]);
   const fehlt = s.muss.filter(k => !gescheitert.includes(k));

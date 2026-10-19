@@ -236,6 +236,16 @@ const PRUEFER = [
      für die häufigsten koranwörter haben". Der Koran-Platz in
      lerngruppeHeute() (js/kern.js); sieben Fälle, vier Störtests. */
   ['test-koran-platz.mjs', []],
+  /* Elias 19.10.2026: „wir sollen jeden einzelnen plural als eigene vokabel
+     behandeln …", „… einen festen platz … von die singularvokabeln die ich
+     bereits kenne" und „… gekennzeichnet werden ob sie regelmässig sind oder
+     unregelmässig". Art an allen Mehrzahlen seiner Bücher, pluralBereit(),
+     der Mehrzahl-Platz in lerngruppeHeute(); 14 Störtests. */
+  ['test-plural-platz.mjs', []],
+  /* Elias 19.10.2026: „ich habe gerade wörter gelöscht und bin jetzt hier
+     gekommen. ich will aber eigentlich in die liste da zurück wo ich davor
+     war". zeichneHerkunftNeu() in js/kategorien.js; vier Störtests. */
+  ['test-wortkarte-herkunft.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

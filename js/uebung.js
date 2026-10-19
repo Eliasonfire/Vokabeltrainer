@@ -1064,6 +1064,60 @@ const UEB_PLURAL_GRUND = {
   g: 'gebrochen — am Ende steht weder ـُونَ noch ـَات, das Wort hat sein eigenes Muster.'
 };
 
+/* ⭐⭐ REGELMÄSSIG ODER UNREGELMÄSSIG — DIE ANZEIGE (19.10.2026)
+   Elias: „bei den plural vokabeln sollte noch irgendwie gekennzeichnet werden ob sie
+   regelmässig sind oder unregelmässig". Die Wörter sind seine, vom 12.10.2026: „den
+   begriff für regelmässig männlicher und weiblicher und unregelmässig …". Gezeigt auf der
+   Mehrzahlkarte (kapitelBeschriftung() in js/kern.js) und in der Plural-Zeile der Einzahl
+   (renderCard in js/lernen.js).
+
+   Übung 16 fragt nur, was eindeutig ist (uebPluralArt oben, streng). Die Anzeige muss aber
+   JEDE Mehrzahl benennen — deshalb steht sie hier, an derselben Stelle, und baut auf
+   uebPluralArt auf: jede Form für sich (zwei Formen wie buyūt / abyāt), zuerst
+   uebPluralArt; was die offen lässt, entscheidet die Probe seines Lehrers (Folge 25,
+   15:53) „Erkennst du hier eine der beiden Formen? Wenn nicht, dann ist es unregelmäßig."
+   — so, wie ICH sie auslege (19.10.2026):
+   · regelmäßig männlich: die Einzahl unverändert plus -ūn oder -īn (wālidūn | wālidīn,
+     dieselbe Mehrzahl in zwei Fällen)
+   · regelmäßig weiblich: die Einzahl ohne Tāʾ marbūṭa, sonst unverändert, plus -āt
+     (ḥammām → ḥammāmāt, tadrīb → tadrībāt), dazu die zwei Schreibregeln dieses Plurals:
+     -āʾ wird -āwāt (samāʾ → samāwāt), ein Alif am Ende wird -ayāt (fatāh → fatayāt,
+     mustashfā → mustashfayāt)
+   · alles andere unregelmäßig — auch bint → banāt und ukht → akhawāt: das Ende sieht
+     regelmäßig aus, der Schlüssel nennt sie unregelmäßig (Kommentar bei uebPluralArt).
+   Gemessen an seiner Auswahl (19.10.2026): 174 Mehrzahlen, uebPluralArt ordnet 149 ein,
+   die übrigen 25 entscheidet die Probe. Zahlwörter bekommen keinen Text — bei ihnen steht
+   im Feld keine Mehrzahl (istZahlwort in js/kern.js); das prüft der Aufrufer.
+   Die Zeichen stehen als Codepunkte da, nicht getippt. Bewacht von test-plural-platz.mjs. */
+const PL_ART_TEXT = { m: 'regelmäßig männlich', f: 'regelmäßig weiblich', g: 'unregelmäßig' };
+function pluralFormArt(sg, form){
+  const streng = uebPluralArt({ sg: sg, pl: form, de: '' });
+  if (streng) return streng;
+  const z = c => String.fromCodePoint(c);
+  const ALIF = z(0x627), TA = z(0x62A), TA_M = z(0x629), WAW = z(0x648), NUN = z(0x646),
+        YA = z(0x64A), MAQ = z(0x649), HAMZA = z(0x621), ARTIKEL = ALIF + z(0x644);
+  const p = ohneTaschkil(String(form || '').trim());
+  let s = ohneTaschkil(String(sg || '').trim());
+  if (s.startsWith(ARTIKEL)) s = s.slice(ARTIKEL.length);
+  if (!p || !s) return null;
+  const s0 = s.endsWith(TA_M) ? s.slice(0, -1) : s;
+  if (p === s0 + WAW + NUN || p === s0 + YA + NUN) return 'm';
+  if (p === s0 + ALIF + TA) return 'f';
+  if (s.endsWith(ALIF + HAMZA) && p === s.slice(0, -1) + WAW + ALIF + TA) return 'f';
+  if ((s0.endsWith(ALIF) || s0.endsWith(MAQ)) && p === s0.slice(0, -1) + YA + ALIF + TA) return 'f';
+  return 'g';
+}
+/** „regelmäßig männlich" · „regelmäßig weiblich" · „unregelmäßig" — bei zwei Formen
+    verschiedener Art beide, mit „und" (baqar / baqarāt). Leer ohne Mehrzahl. */
+function pluralArtText(sg, pl){
+  const einzahl = String(sg || '').split('/')[0].trim();
+  const formen = String(pl || '').split(/[\/|]/).map(t => t.trim()).filter(Boolean);
+  if (!einzahl || !formen.length) return '';
+  const arten = [];
+  for (const f of formen){ const a = pluralFormArt(einzahl, f); if (a && arten.indexOf(a) < 0) arten.push(a); }
+  return arten.map(a => PL_ART_TEXT[a]).join(' und ');
+}
+
 
 /* ⭐⭐ MEHRZAHL EINSETZEN (Übung 18, 13.10.2026) — die Karten mit einer Mehrzahl
 

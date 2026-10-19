@@ -816,7 +816,7 @@ export const PFLEGEPLAN = [
        acht Karten (Abzug, Ersatzdatenbank), nennt die Brücke ein Paar, das es nicht mehr gibt.
        Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
-      wie: 'test-plural-fern.mjs läuft im Sammellauf: fährt pluralKartenStufe() und wendePluralKartenAn() aus dem Quelltext gegen Probekarten (ohne „alle" immer die acht, mit „alle" alle; kein Doppel beim Wechsel), prüft, dass jede Karte der Liste in seinem Bestand eine Mehrzahl hat und dass ihre erste Eselsbrücke das Paar Einzahl → Mehrzahl genau so nennt wie die Karte, und dass kein Plural-Schalter zurückkommt; acht Störtests. Dazu prüft pruefe-pluraltexte.mjs jedes Paar auch gegen die Buchkarten.' },
+      wie: 'test-plural-fern.mjs läuft im Sammellauf: fährt pluralKartenStufe() und wendePluralKartenAn() aus dem Quelltext gegen Probekarten (seit 19.10.2026 immer alle — „fern" baut nur noch im Prüfstand die acht; kein Doppel beim Wechsel), prüft, dass jede Karte der Liste in seinem Bestand eine Mehrzahl hat und dass ihre erste Eselsbrücke das Paar Einzahl → Mehrzahl genau so nennt wie die Karte, und dass kein Plural-Schalter zurückkommt; acht Störtests. Dazu prüft pruefe-pluraltexte.mjs jedes Paar auch gegen die Buchkarten.' },
   },
   /* 14.10.2026 — der Prüfer für die Mehrzahl. Elias: „ich glaube wir brauchen einen prüfer
      auch für plural dann jetzt, passe die routinen warhscheinlich an oder" (die Mehrzahl steht
@@ -831,6 +831,26 @@ export const PFLEGEPLAN = [
     eingaben: { nein: 'Er trägt nichts ein. Seine Antwort zu einem Kandidaten kommt im Chat und wird von Hand übernommen: weit → PLURAL_FERN (js/kern.js) mit Eselsbrücke, nah → GESEHEN als nah.' },
     veralten: { routine: W, schritt: '1c.5b', beleg: 'node werkzeuge/pruefe-plural.mjs', werkzeug: 'werkzeuge/pruefe-plural.mjs',
       wie: 'GESEHEN veraltet, wenn eine Karte verschwindet oder einen Klang-Partner bekommt — der Prüfer meldet sie als „nicht (mehr) ohne Partner"; eine Karte in PLURAL_FERN und GESEHEN zugleich ist Exit 1. Er läuft auch im Sammellauf (alle-pruefer.mjs) und eicht sich bei jedem Lauf an 15 Probekarten; vier Störtests (PRUEFE_PLURAL_STOER).' },
+  },
+  /* 19.10.2026, innerhalb von js/kern.js, js/uebung.js, js/lernen.js, js/einstellungen.js,
+     js/wurzel.js, index.html und werkzeuge/lernlast.mjs und deshalb von Hand hier. Elias:
+     „wir sollen jeden einzelnen plural als eigene vokabel behandeln weil sonst merke ich es mir
+     nicht", „ein plural sollte am besten auch immer einen festen platz bekommen von die
+     singularvokabeln die ich bereits kenne" und „bei den plural vokabeln sollte noch irgendwie
+     gekennzeichnet werden ob sie regelmässig sind oder unregelmässig". Der Schalter „Plural als
+     eigene Karten" ist weg. */
+  {
+    funktion: 'Jede Mehrzahl eine eigene Karte — erst nach der Einzahl, mit festem Platz und ihrer Art',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Karten entstehen bei jedem Start aus dem Feld pl (bauePluralKarte(), wendePluralKartenAn(true)); ein neues Kapitel bringt seine Mehrzahlen von selbst mit. Die Art („regelmäßig männlich/weiblich", „unregelmäßig") wird bei jedem Zeigen aus Einzahl und Mehrzahl gerechnet (pluralArtText() in js/uebung.js). Wann eine Mehrzahl drankommt, entscheiden pluralBereit() (Einzahl mindestens Box 2 oder „Kenne ich schon") und der Mehrzahl-Platz in lerngruppeHeute() — nichts davon wird gespeichert.' },
+    eingaben: { nein: 'Er trägt nichts ein. Der Fortschritt der Mehrzahlkarten läuft über PROGRESS wie bei jeder Karte; initProgress() legt für jede einen Eintrag an, werkzeuge/lernlast.mjs zählt die noch wartenden nicht mit („Mehrzahl wartet auf die Einzahl").' },
+    /* ⛔ Still kaputtgehen kann die Art: rechnet die Anzeige an Übung 16 vorbei oder fällt eine
+       der Regeln für die offenen Fälle weg, steht auf der Karte still das Falsche. Und der Platz:
+       nimmt eine Mehrzahl wieder einen Platz des Unterrichts, kämen 174 Mehrzahlen vor seine
+       neuen Wörter. Ohne `werkzeug`: der Test läuft im Sammellauf mit (alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-plural-platz.mjs läuft im Sammellauf: A — jede Mehrzahl seiner Bücher bekommt eine gültige Art, gleich mit Übung 16, wo die entscheidet, die offenen Fälle wie begründet (Liste OFFEN_SOLL, meldet eine verschwundene Kennung); B — die Mehrzahlkarte nennt ihre Art vor „Plural von …"; C — pluralBereit() und seine Stelle in istBekannt(); D — der Mehrzahl-Platz in lerngruppeHeute() (eine am Tag, höchstens zwei in der Gruppe, nie auf Plätzen des Unterrichts); 14 Störtests. test-lernlast.mjs prüft die Zählung der wartenden.' }
   },
   /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
      arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für

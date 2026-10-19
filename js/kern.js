@@ -91,7 +91,13 @@ function kapitelBeschriftung(w){
 
      ⛔ Keine unsichtbaren Steuerzeichen (U+2068/U+2069) als Loesung. Die sieht
      man im Quelltext nicht, und was man nicht sieht, prueft man auch nicht. */
-  if (w.istPlural && w.sgAr) return `Plural von ${w.sgAr}`;
+  /* ⭐ Davor die Art der Mehrzahl (19.10.2026), Elias: „bei den plural vokabeln sollte
+     noch irgendwie gekennzeichnet werden ob sie regelmässig sind oder unregelmässig".
+     Entschieden in pluralArtText() (js/uebung.js); fehlt sie, bleibt die alte Zeile. */
+  if (w.istPlural && w.sgAr){
+    const art = (typeof pluralArtText === 'function') ? pluralArtText(w.sgAr, w.ar) : '';
+    return (art ? art + ' · ' : '') + `Plural von ${w.sgAr}`;
+  }
   if (w.chapter === 'personal') return 'Eigene Vokabel';
   /* „Koran häufigste" (11.10.2026): der Platz nach Häufigkeit statt der Nummer des
      Stücks — „Kap. 2" hieße hier nur „irgendwo zwischen Platz 31 und 60". */
@@ -167,6 +173,10 @@ const LERNBESTAND_IDS = new Set(VOCAB_DATA.map(w => w.id));
    Lernmodus sie nie angewandt. */
 function istBekannt(w){
   if (!w) return false;
+  /* ⭐ Eine Mehrzahlkarte gehört erst zu seinem Stand, wenn er ihre Einzahl kann
+     (19.10.2026, pluralBereit() weiter unten). VOR 'personal': eine Mehrzahl
+     seiner eigenen Wörter trägt deren Kapitel und käme sonst ungeprüft durch. */
+  if (typeof pluralBereit === 'function' && !pluralBereit(w)) return false;
   if (w.chapter === 'personal') return true;
   /* ⭐ Die Fachbegriffe seines Lehrers liefen bis zum 20.08.2026 unter
      chapter 'grammar' und brauchten hier eine eigene Zeile. Jetzt sind sie
@@ -973,6 +983,46 @@ function istPluralKarte(id){
   return typeof id === 'string' && id.endsWith(PLURAL_MARKE);
 }
 
+/* ⭐⭐ EINE MEHRZAHL KOMMT ERST, WENN ER DIE EINZAHL KANN (19.10.2026)
+   Elias, kurz hintereinander: „wir sollen jeden einzelnen plural als eigene vokabel
+   behandeln weil sonst merke ich es mir nicht" und „ein plural sollte am besten auch
+   immer einen festen platz bekommen von die singularvokabeln die ich bereits kenne".
+   Seitdem gibt es ALLE Pluralkarten (pluralKartenStufe() unten) — aber eine Mehrzahl,
+   deren Einzahl er noch nicht kann, gehört nicht zu seinem Stand: keine Runde, kein
+   Hörmodus, keine Zählung. Deshalb steht diese Prüfung in istBekannt(), der Wissensgrenze,
+   und wirkt über passtZurAuswahl() und bekannteVokabeln() überall zugleich.
+
+   „Kennen" heißt hier: die Einzahl ist mindestens in Box 2. MEINE Lesart — sie stützt sich
+   auf seinen Satz zur Lerngruppe (25.09.2026): „… bis sie bei mir sitzen und ich sie in box
+   2 rein mache". Ebenso zählt eine Einzahl, die er mit „Kenne ich schon" abgelegt hat.
+   Hat die Mehrzahlkarte selbst schon angefangen (beantwortet, in der Lerngruppe, über
+   Box 1), bleibt sie, auch wenn die Einzahl zurückfällt: sein Fortschritt verschwindet nie.
+   In die Runde kommt eine bereite Mehrzahl nur über den Mehrzahl-Platz in lerngruppeHeute().
+   Bewacht von test-plural-platz.mjs. */
+function pluralBereit(w){
+  /* ⚠️ Die Marke '#pl' steht hier als Text, nicht über istPluralKarte(): Prüfstände laden
+     js/kern.js oft nur bis zum ersten Fehler, danach steht PLURAL_MARKE in der Totzone — und
+     istBekannt(), das jede Liste fragt, stürzte mit ab (gemessen 19.10.2026: fünf Übungen in
+     werkzeuge/pruefe-hinweise.mjs bauten 0 Aufgaben). Dieselbe Marke wie PLURAL_MARKE;
+     test-plural-platz.mjs (C4) hält beide gleich. */
+  if (!w || typeof w.id !== 'string' || !w.id.endsWith('#pl')) return true;
+  /* ⛔ try statt typeof: PROGRESS und BEKANNT sind `let` weiter unten. Vor ihrer Zeile
+     wirft schon `typeof PROGRESS` (zeitliche Totzone, derselbe Fallstrick wie bei
+     SETTINGS in wendePluralKartenAn). Bis dahin ist eine Mehrzahl nicht bereit. */
+  try {
+    const eigen = PROGRESS[w.id];
+    if (eigen && (eigen.gruppe || (eigen.box || 1) > 1 || (eigen.correct || 0) + (eigen.wrong || 0) > 0)) return true;
+    const sgId = String(w.plVon || w.id.slice(0, -'#pl'.length));
+    if (typeof kennErSchon === 'function' && kennErSchon({ id: sgId })) return true;
+    const sg = PROGRESS[sgId];
+    return !!sg && (sg.box || 1) >= 2;
+  } catch (e){
+    /* Gewollt still: PROGRESS oder BEKANNT stehen noch in der Totzone (beim Start, vor
+       ihrer Zeile). Dann ist eine Mehrzahl nicht bereit — kein Messwert, ein Anfangszustand. */
+    return false;
+  }
+}
+
 /* Was die Sprachausgabe von einem Wort vorlesen soll.
 
    ⚠️ Sieben Woerter haben zwei Pluralformen, im Abzug mit Schraegstrich
@@ -1219,14 +1269,19 @@ function wendePluralKartenAn(an){
    ehrlicher Aufhänger gefunden. Bewacht von test-plural-fern.mjs. */
 const PLURAL_FERN = ['45919', '45846', '45779', '45887', '45857', '45847', '45853', '46020'];
 
-/* Welche Pluralkarten es gibt: true = alle (Schalter „Plural als eigene Karten"), sonst
-   'fern' = nur PLURAL_FERN. Die acht sind seit 14.10.2026 IMMER da — Elias: „plural soll
-   nciht hinter schaltern versteckt sein"; am 14.10. standen sie kurz (v684) hinter dem
-   Schalter „Nur weit entfernte Mehrzahl". „Alle" schließt die acht ein.
-   wendePluralKartenAn(false) baut keine — das braucht nur noch der Prüfstand. */
-function pluralKartenStufe(s){
-  s = s || {};
-  return s.pluralKarten ? true : 'fern';
+/* Welche Pluralkarten es gibt.
+   ⭐⭐ SEIT 19.10.2026: ALLE, OHNE SCHALTER. Elias: „wir sollen jeden einzelnen plural als
+   eigene vokabel behandeln weil sonst merke ich es mir nicht" — und schon am 14.10.:
+   „plural soll nciht hinter schaltern versteckt sein". Der Schalter „Plural als eigene
+   Karten" ist deshalb weg (index.html, js/einstellungen.js); SETTINGS.pluralKarten wird
+   nicht mehr gelesen. WANN eine Mehrzahl drankommt, entscheiden pluralBereit() (erst,
+   wenn er die Einzahl kann) und der Mehrzahl-Platz in lerngruppeHeute().
+   Bis 18.10.2026 gab es ohne den Schalter nur die acht aus PLURAL_FERN ('fern', seit
+   14.10.2026). wendePluralKartenAn() kennt 'fern' und false weiter — das braucht nur
+   noch der Prüfstand. PLURAL_FERN bleibt die Liste der weit entfernten Mehrzahlen mit
+   eigener Eselsbrücke. */
+function pluralKartenStufe(){
+  return true;
 }
 
 wendePluralKartenAn(pluralKartenStufe(LS.get('vt_settings', {}) || {}));
@@ -3939,10 +3994,36 @@ function neuStellenEinmalig(){
      Buchkarte (koranKartenEinordnen() in js/buecher.js): nichts kommt doppelt.
    · Ohne Haken bei der Gruppe gibt es keine Kandidaten — dann ändert sich nichts.
    Die beiden Namen stehen IN der Funktion: Prüfstände schneiden sie einzeln
-   aus dem Quelltext (test-tagesdeckel.mjs). Bewacht von test-koran-platz.mjs. */
+   aus dem Quelltext (test-tagesdeckel.mjs). Bewacht von test-koran-platz.mjs.
+
+   ⭐⭐ DER MEHRZAHL-PLATZ (19.10.2026)
+   Elias: „wir sollen jeden einzelnen plural als eigene vokabel behandeln weil
+   sonst merke ich es mir nicht" und gleich danach „ein plural sollte am besten
+   auch immer einen festen platz bekommen von die singularvokabeln die ich
+   bereits kenne".
+   MEINE Lesart, wie beim Koran-Platz: zwei Plätze (PLURAL_PLAETZE), je Hälfte
+   einer, also an jedem Tag eine Mehrzahl unter den Gruppenwörtern.
+   · Eine Mehrzahl kommt NUR über diesen Platz in die Gruppe, nie auf einen Platz
+     des Unterrichts — sonst stünden 174 Mehrzahlen vor seinen neuen Wörtern.
+     Ausnahme: eine Mehrzahl, die aus Box 2 zurückgefallen ist, geht wie jedes
+     Wort ganz nach vorn (sein Satz vom 25.09.2026, zurueckW unten).
+   · In der Runde steht ohnehin nur eine bereite Mehrzahl: die Einzahl ist
+     mindestens in Box 2 (pluralBereit() bei istPluralKarte()).
+   · Welche zuerst: die, deren Einzahl er am sichersten kann (höchste Box) —
+     MEINE Entscheidung; bei Gleichstand das frühere Kapitel, dann die Kennung.
+     Fest, nicht die Mischung des Pools: sonst zeigte die Startseite eine andere
+     Mehrzahl als die Runde, die „Jetzt lernen" danach baut (gesehen in der
+     Probe am 19.10.2026: zwei Ladevorgänge, zwei verschiedene Mehrzahlen).
+   · Ist heute eine Mehrzahl fällig oder stehen schon zwei in der Gruppe, kommt
+     keine dazu. Auch sie nimmt nur einen FREIEN Platz und zählt zu den Plätzen
+     für neue Wörter: von den sieben gehen dann bis zu zwei an Koranwörter, bis
+     zu zwei an Mehrzahlen und der Rest an den Unterricht.
+   Bewacht von test-plural-platz.mjs. */
 function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
   const KORAN_PLAETZE = 2;
   const koranwort = w => !!w && w.book === 'koran-haeufig';
+  const PLURAL_PLAETZE = 2;
+  const pluralwort = w => !!w && typeof istPluralKarte === 'function' && istPluralKarte(String(w.id));
   const G = 2 * platz1;
   const p = w => PROGRESS[w.id] || {};
   const nachTermin = (a, b) => String(p(a).nextReview || '').localeCompare(String(p(b).nextReview || ''));
@@ -3954,7 +4035,15 @@ function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
   if (beitritt){
     const kand = neu.filter(w => !istGruppenwort(w));
     const zurueckW = kand.filter(w => p(w).zurueck).sort((a, b) => String(p(a).zurueck).localeCompare(String(p(b).zurueck)));
-    let neuW = kand.filter(w => !p(w).zurueck && nieAbgefragt(w));
+    /* Der Mehrzahl-Platz (Begründung über der Funktion): Mehrzahlen nur hier, die
+       sicherste Einzahl zuerst, eine am Tag. */
+    const sgBox = w => (PROGRESS[String(w.plVon || '')] || {}).box || 1;
+    const plW = kand.filter(w => pluralwort(w) && !p(w).zurueck).sort((a, b) => (sgBox(b) - sgBox(a))
+      || ((Number(a.chapter) || 0) - (Number(b.chapter) || 0))
+      || String(a.id).localeCompare(String(b.id), 'de', { numeric: true }));
+    let neuW = kand.filter(w => !p(w).zurueck && nieAbgefragt(w) && !pluralwort(w));
+    if (plW.length && !faellig.some(pluralwort) && mitglieder.filter(pluralwort).length < PLURAL_PLAETZE)
+      neuW = [plW[0]].concat(neuW);
     /* Der Koran-Platz (Begründung über der Funktion): heute kein fälliges
        Koranwort und weniger als KORAN_PLAETZE in der Gruppe → das häufigste
        neue Koranwort vorne. Nur eines. */
@@ -3962,7 +4051,7 @@ function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
       const k = neuW.find(koranwort);
       if (k) neuW = [k].concat(neuW.filter(w => w !== k));
     }
-    const frW = kand.filter(w => !p(w).zurueck && !nieAbgefragt(w));
+    const frW = kand.filter(w => !p(w).zurueck && !nieAbgefragt(w) && !pluralwort(w));
     const neuPl = Math.round(G * 2 / 3);
     const alsNeu = mitglieder.filter(w => p(w).gruppeArt === 'neu').length;
     let neuFrei = Math.max(0, neuPl - alsNeu);
