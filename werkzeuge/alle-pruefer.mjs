@@ -226,6 +226,12 @@ const PRUEFER = [
      das nicht prüfbar: dort steht `document.hidden` auf true und jedes
      getBoundingClientRect() liefert Nullen. [[leere_liste_ist_keine_messung]] */
   ['test-lesezaehlung.mjs', []],
+  /* Elias 19.10.2026: „ich möchte, dass diese Hamza im lam alif nicht so
+     darsteht wie sie aktuell in der app ist sondern so wie bei quran.com".
+     Der Leser tauscht dafür vor Alif + Hamza + Madda das Sukun U+0652 gegen
+     U+06E1 (quranSchriftbild() in js/quran.js); der Test zählt alle 207
+     Stellen am echten Korantext nach, mit fünf Störtests. */
+  ['test-hamza-lamalif.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

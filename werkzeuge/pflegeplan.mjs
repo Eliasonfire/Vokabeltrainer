@@ -1102,6 +1102,15 @@ export const PFLEGEPLAN = [
        data/auswendig.json; vt_suraGelesen wertet die App selbst aus (Ringe). */
     eingaben: { routine: W, schritt: '1c.1b', beleg: 'node werkzeuge/tajweed-markierungen.mjs', werkzeug: 'werkzeuge/tajweed-markierungen.mjs',
       wie: 'seine Tajweed-Markierungen (vt_tajweed) wandern aus dem Abgleich in data/tajweed-archiv.json, das nur wächst — auch ausgeblendete bleiben dort' },
+    /* 19.10.2026 (v687): das Hamza im Lam-Alif wie bei quran.com. Elias: „ich
+       möchte, dass diese Hamza im lam alif nicht so darsteht wie sie aktuell in
+       der app ist sondern so wie bei quran.com. das soll bei jedem hamza in der
+       position gelten". Der Leser zeigt vor Alif + Hamza + Madda das Sukun als
+       U+06E1 statt U+0652 (quranSchriftbild() in js/quran.js) — nur in der
+       Anzeige, quran-text.js bleibt. Kein neuer Inhalt, keine Eingabe, nichts,
+       das veraltet: die Regel gilt für jede Stelle des Textes, keine Liste.
+       Wird quran-text.js je neu erzeugt, zählt test-hamza-lamalif.mjs (in
+       alle-pruefer.mjs) die Stellen am neuen Text nach. */
     /* 16.09.2026 abends (v505): eine heute als auswendig abgehakte Sure zählt
        heute nicht als Wiederholung (sie hatte az-Zalzala vom Ring verdrängt).
        Liest nur HIFZ_ZEIT, das es schon gab; neu ist lerntagVon() in js/kern.js.

@@ -1589,13 +1589,61 @@ function quranWorte(text){
   return out;
 }
 
+/* ============================================================================
+   ⭐ DAS HAMZA IM LAM-ALIF WIE BEI QURAN.COM                     (19.10.2026)
+   ============================================================================
+
+   Elias, mit zwei Bildschirmfotos von 93:4 (quran.com und die App):
+   „ich möchte, dass diese Hamza im lam alif nicht so darsteht wie sie aktuell
+   in der app ist sondern so wie bei quran.com. das soll bei jedem hamza in der
+   position gelten. es verwirrt mich sonst mit dem mad drüber"
+
+   Die Ursache liegt im Bau von quran-text.js, nicht in der Schrift. Die Quelle
+   (King Fahd Complex) schreibt jedes Sukun als U+06E1; beim Erzeugen wurde es
+   für Amiri gegen U+0652 getauscht (siehe Kopf von quran-text.js). Seit dem
+   08.09.2026 zeigt der Leser aber nur noch die Muṣḥaf-Schrift (quranSchrift()).
+   Die zeichnet die Folge Alif + Hamza + Madda nach einem Lam NUR DANN als
+   Hamza mit Fatha, wenn davor ihr eigenes Sukun U+06E1 steht. Mit U+0652
+   zeichnet sie die Madda — im Muṣḥaf das Zeichen für eine lange Dehnung, die
+   hier (al-ākhira, al-āyāt …) gar nicht gilt.
+
+   Gemessen am 19.10.2026 in der Vorschau, 93:4 und 2:4 in der Muṣḥaf-Schrift:
+     U+0652 vor Alif + Hamza + Madda → Hamza mit Madda (sein Bild aus der App)
+     U+06E1 vor Alif + Hamza + Madda → Hamza mit Fatha (sein Bild von quran.com)
+   Gezählt in quran-text.js: 277 Stellen mit Alif + Hamza + Madda, alle nach
+   einem Lam. 207 davon tragen das Sukun — nur die sind betroffen. Die übrigen
+   70 stehen nach Lam mit Fatha, Kasra oder Schadda (la-āyātin 2:164,
+   li-ādama 2:34) und zeichnet die Schrift schon richtig.
+
+   ⛔ Getauscht wird nur dieses EINE Zeichen und nur hier in der Anzeige —
+   das ist MEINE Entscheidung, nicht seine:
+   · quran-text.js bleibt, wie sie ist. Die Zählung (quranWorte), die Suche
+     (werkzeuge/vers.mjs) und die Koranstellen der Vokabeln sehen weiter
+     denselben Text.
+   · U+0652 und U+06E1 sind gleich lang. Die Fehlermarkierungen (vt_tajweed)
+     merken sich die ZEICHENPOSITION im Wort und bleiben auf ihrem Buchstaben.
+   · Was man dabei sieht: Auf genau diesem Lam steht das Sukun jetzt in der
+     Form von quran.com statt als runder Kreis. Alle anderen Sukun im Leser
+     bleiben, wie sie waren.
+   Bewacht von test-hamza-lamalif.mjs (mit Störtests). */
+const QW_SUKUN        = String.fromCodePoint(0x0652);
+const QW_SUKUN_MUSHAF = String.fromCodePoint(0x06E1);
+const QW_HAMZA_MADDA  = String.fromCodePoint(0x0627, 0x0654, 0x0653);
+
+/** Der Verstext so, wie die Muṣḥaf-Schrift ihn zeichnen soll (siehe oben). */
+function quranSchriftbild(text){
+  return String(text || '')
+    .split(QW_SUKUN + QW_HAMZA_MADDA)
+    .join(QW_SUKUN_MUSHAF + QW_HAMZA_MADDA);
+}
+
 /** Derselbe Text, jedes Wort in einem `<span>`. Die Nummer ist 1-basiert und
  *  entspricht der Nummer der Zeitmarke.
  *  ⚠️ Die Spans stehen IMMER im Markup, auch wenn wortweises Mitlesen aus ist —
  *  dasselbe Prinzip wie bei `.verse-en` und `.ayah-schluss`: ein DOM für alle
  *  Ansichten, und das Umschalten braucht keinen Neuaufbau. */
 function quranWortSpans(text){
-  return quranWorte(text)
+  return quranWorte(quranSchriftbild(text))
     .map((w, i) => '<span class="qw" data-w="' + (i + 1) + '">' + w + '</span>')
     .join(' ');
 }
