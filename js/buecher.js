@@ -521,6 +521,21 @@ function schreibweisenErsetzen(){
         && w.sentAr.includes(e.sentArVon)){
       w.sentAr = w.sentAr.split(e.sentArVon).join(e.sentArNach); n++;
     }
+    /* ⛔ UND DIE MARKIERUNGEN AN DIESEM SATZ (19.10.2026). Bis dahin blieb ihr
+       matchText bei der alten Schreibung stehen — und js/saetze.js sucht ihn
+       mit einem rohen indexOf() im Satz. Die Markierung war damit unsichtbar,
+       ohne jede Meldung: gefunden hat es pruefe-oberflaeche.js in der laufenden
+       App (aiḍan, tanwin-fath-alif-01), nicht pruefe-markierungen.js, das die
+       Dateien liest und die Ersetzung nicht kennt. Eine Schreibung, die er
+       bestätigt hat, gilt für Satz UND Markierung.
+       [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+    const marken = (e.sentArVon && e.sentArNach && typeof SENTENCE_TAGS !== 'undefined')
+      ? SENTENCE_TAGS[String(w.id)] : null;
+    if (Array.isArray(marken)) marken.forEach(t => {
+      if (t && typeof t.matchText === 'string' && t.matchText.includes(e.sentArVon)){
+        t.matchText = t.matchText.split(e.sentArVon).join(e.sentArNach); n++;
+      }
+    });
     /* Auch die Singularform, falls sie dieselbe Schreibung traegt. */
     if (e.ar && w.sg === e.sentArVon){ w.sg = e.ar; n++; }
   });
@@ -980,6 +995,18 @@ document.addEventListener('DOMContentLoaded', async ()=>{
        das schon ein `sentAr` hat, und jede Id ohne Eintrag. */
     saetzeNachtragen(PERSONAL_VOCAB);
   }
+
+  /* ⛔⛔ UND DIE FACHBEGRIFFE — dieselbe Lücke zum dritten Mal (19.10.2026).
+     Ihre Sätze stehen zum Teil in data/beispielsaetze.js (die drei Plural-Namen
+     vom 13.10.2026, dazu gram-marfu), aber saetzeNachtragen() lief nur mit der
+     Buchliste und mit PERSONAL_VOCAB. In der laufenden App hatten diese vier
+     Karten deshalb KEINEN Beispielsatz, und die fünf Markierungen daran waren
+     unsichtbar. Gefunden von pruefe-oberflaeche.js; pruefe-beispielsaetze.mjs
+     zählt die Einträge nur und war grün. [[werkzeug_ohne_aufrufer]]
+     ⚠️ Gefahrlos, wenn nichts passt: vorhandene Sätze gewinnen, Kennungen ohne
+     Eintrag oder ohne Karte werden übersprungen. */
+  if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN))
+    saetzeNachtragen(FACHBEGRIFF_VOKABELN);
 
   /* ---------- Seine Korrekturen NACH den Buechern anwenden (21.08.2026) ----
 
