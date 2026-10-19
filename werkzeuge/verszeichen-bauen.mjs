@@ -27,6 +27,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
+import { zuStandard } from './korantext-lib.mjs';
 
 const WURZEL = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -43,8 +44,13 @@ const SEITEN = ladeAusSkript('quran-seiten.js', 'QURAN_SEITEN');
 const SUREN  = JSON.parse(fs.readFileSync(path.join(WURZEL, 'surah-data.js'), 'utf8')
   .replace(/^[\s\S]*?(\[)/, '$1').replace(/;\s*$/, ''));
 
-/* Taschkil, Tatwil und Leerraum raus. */
-const skelett = s => String(s || '')
+/* Taschkil, Tatwil und Leerraum raus.
+   ⛔ Seit dem 19.10.2026 ist quran-text.js der Text von quran.com in der Kodierung der Muṣḥaf-Schrift
+   (werkzeuge/korantext-lib.mjs). Erst zuStandard(), dann dieselbe Klasse wie vorher — sonst zählten
+   U+0656/U+0657/U+065E als Buchstaben, und jedes Hamza-Alif einmal statt zweimal. Neu erzeugt am
+   19.10.2026: 820 Verse haben je ein Zeichen weniger — der alte Text trug dort U+200F, und das
+   zählte als Buchstabe (gesamt 348247 → 347426, je Sure höchstens 3,36 %, Sure 88). */
+const skelett = s => zuStandard(String(s || ''))
   .replace(/[ً-ْٰۖ-ۭـ]/g, '')
   .replace(/\s+/g, '');
 

@@ -54,8 +54,10 @@ const W_ALLAH = ch(0x0671, 0x0644, 0x0644, 0x064E, 0x0651, 0x0647, 0x064F); // �
 const W_QUL   = ch(0x0642, 0x064F, 0x0644, 0x0652);                          // قُلْ  — 2 Buchstaben, 4 Zeichen
 const DAMMA   = ch(0x064F);
 const LAM_SCH = ch(0x0644, 0x064E, 0x0651);                                   // لَّ — Lām mit Fatḥa und Šadda
-/* Ein Wort, das quranWorte() aus zwei Stücken zusammengesetzt hat: Tanwīn
-   Fatḥ, Leerzeichen, Alif. Das Leerzeichen ist kein Buchstabe. */
+/* Ein Wort mit Leerraum darin: bis v691 setzte quranWorte() so Tanwīn Fatḥ,
+   Leerzeichen und Alif zusammen. Seit dem Text von quran.com (19.10.2026) trägt
+   nur noch das Wort hinter dem Hizb-Zeichen ein U+00A0 — die Regel bleibt: Leerraum
+   ist kein Buchstabe und bekommt keine Stelle. */
 const W_GETEILT = ch(0x062F, 0x064B) + ch(0x0627) + ' ' + ch(0x0627);
 
 /* ⛔ Verbote im Quelltext werden im KOMMENTARFREIEN Text gesucht. Sonst

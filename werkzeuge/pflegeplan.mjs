@@ -1143,7 +1143,7 @@ export const PFLEGEPLAN = [
        möchte, dass diese Hamza im lam alif nicht so darsteht wie sie aktuell in
        der app ist sondern so wie bei quran.com. das soll bei jedem hamza in der
        position gelten". Der Leser zeigt vor Alif + Hamza + Madda das Sukun als
-       U+06E1 statt U+0652 (quranSchriftbild() in js/quran.js) — nur in der
+       U+06E1 statt U+0652 (quranSchriftbild() in js/quran.js; seit v692 entfallen, der Text von quran.com trägt U+06E1 selbst) — nur in der
        Anzeige, quran-text.js bleibt. Kein neuer Inhalt, keine Eingabe, nichts,
        das veraltet: die Regel gilt für jede Stelle des Textes, keine Liste.
        Wird quran-text.js je neu erzeugt, zählt test-hamza-lamalif.mjs (in
@@ -1246,7 +1246,22 @@ export const PFLEGEPLAN = [
        sich nicht. Deshalb kein Routineschritt: eine Wartung, die nie etwas zu
        tun hat, ist eine, die niemand mehr liest. Das Werkzeug bricht ab, wenn
        ein Vers ohne Text bleibt, und das ist der einzige Fall, der zählt. */
-    veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht. quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs), quran-verszeichen.js aus dem Qurantext (verszeichen-bauen.mjs) — beide nur neu zu erzeugen, wenn sich ihre Quelle ändert; neue Wurzeln brächte nur ein neues Lehrwerk.' },
+    /* ⭐ 19.10.2026 (v692): quran-text.js ist der Text von quran.com, Zeichen für
+       Zeichen. Elias: „stelle sicher das sie gleich sind damit keine fehler da
+       sind“. Gebaut von werkzeuge/korantext-bauen.mjs (Feld text_qpc_hafs, das
+       Deutsch bleibt), Hilfen in werkzeuge/korantext-lib.mjs (zuStandard() für
+       Karten und Vergleiche), bewacht von test-korantext.mjs in alle-pruefer.mjs
+       (Fingerabdruck je Sure in werkzeuge/korantext-fingerabdruck.json, jedes Zeichen
+       in der Muṣḥaf-Schrift, kein abgetrenntes Alif, Wortzählung wie quran.com).
+       Neuer Inhalt: keiner. Eingaben: keine. Veralten: nur, wenn quran.com selbst
+       ein Zeichen ändert — das zeigt Korantext gegen quran.com (frisch von api.quran.com): 6236 Verse, 6236 gleich, 0 verschieden
+  ✅ Fingerabdruck passt
+       (mit Netz; am 19.10.2026: 6236 von 6236 gleich). MEINE Entscheidung: kein
+       Routineschritt dafür — der Text des King-Fahd-Komplexes ist festgelegt, und
+       ein Schritt, der nie etwas findet, wird nicht gelesen (dieselbe Überlegung wie
+       beim Verszeichen darüber). Wird der Text neu gebaut: danach
+       verszeichen-bauen.mjs, koran-haeufig-bauen.mjs --pruefen und alle-pruefer. */
+    veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht (der Qurantext ist seit 19.10.2026 der von quran.com; korantext-bauen.mjs --pruefen zeigt, ob quran.com je etwas ändert). quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs), quran-verszeichen.js aus dem Qurantext (verszeichen-bauen.mjs) — beide nur neu zu erzeugen, wenn sich ihre Quelle ändert; neue Wurzeln brächte nur ein neues Lehrwerk.' },
   },
   {
     funktion: 'Hörverstehen',

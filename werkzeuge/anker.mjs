@@ -89,7 +89,10 @@ console.log('Auswendiger Bereich: ' + umfang(AUSW)
    Bereiche: Koranzeichen · Harakat · hochgestelltes Alif · weitere Zeichen. */
 const ZEICHEN = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u08F0-\u08F3]/g;
 
-const flach = s => String(s)
+/* ⛔ Zuerst NFD (seit 19.10.2026): quran-text.js ist jetzt der Text von quran.com mit
+   zusammengesetzten Hamza-Buchstaben (U+0624, U+0626 …); der alte Text war zerlegt. Nach NFD fällt
+   die Hamza mit den Zeichen darunter weg, und beide Schreibungen haben dasselbe Gerüst. */
+const flach = s => String(s).normalize('NFD')
   .replace(ZEICHEN, '')
   .replace(/\u0640/g, '')                                /* Tatwil */
   .replace(/[\u0622\u0623\u0625\u0671]/g, '\u0627')   /* Alif-Varianten -> Alif */

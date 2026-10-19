@@ -1539,111 +1539,76 @@ function quranSchrift(){
 }
 
 /* ============================================================================
-   WORTGRENZEN IM VERSTEXT                              (08.09.2026)
+   WORTGRENZEN IM VERSTEXT                  (08.09.2026, neu gefasst 19.10.2026)
    ============================================================================
 
    Elias: „füge noch die option hinzu wort für wort hervorhebung". Dafür muss
    jedes Wort ein eigenes Element sein — an einem durchgehenden Textknoten
-   lässt sich nichts hervorheben.
+   lässt sich nichts hervorheben. Die Nummer eines Wortes ist die Nummer seiner
+   Zeitmarke (js/quran-audio.js) und seiner Markierungen (vt_tajweed).
 
-   ⛔⛔ UNSER TEXT ZÄHLT ANDERS ALS DIE ZEITMARKEN — und das ist der Grund,
-   warum hier eine Regel steht und kein schlichtes `split`.
+   ⭐ Seit dem 19.10.2026 ist quran-text.js der Text von quran.com, Zeichen für
+   Zeichen (Elias: „stelle sicher das sie gleich sind damit keine fehler da
+   sind"; Bau und Prüfung: werkzeuge/korantext-bauen.mjs). Ein Wort ist dort,
+   was zwischen zwei LEERZEICHEN (U+0020) steht — so zählt quran.com selbst:
+   gemessen an der Wortliste von 2:26, 39 Wörter, das erste ist das
+   Hizb-Zeichen U+06DE samt „inna".
 
-   Gemessen am 08.09.2026 über 1193 Verse aus 15 Suren: bei **235** stimmte
-   die Zahl der Leerzeichen-Wörter nicht mit der Zahl der Zeitmarken überein.
-   Nebeneinandergelegt zeigte sich immer dasselbe Bild (67:2):
+   ⛔ Nur an U+0020 trennen, NICHT an `\s`. Zwischen dem Hizb-Zeichen und
+   seinem Wort steht bei quran.com ein U+00A0 (199 Verse), und `\s` trennt auch
+   dort: das Zeichen wäre ein eigenes „Wort", und das Mitlesen läge ab dort um
+   eins daneben.
 
-       unser Text   …  أَحْسَنُ · عَمَلً · اۚ · وَهُوَ  …
-       quran.com    …  أَحْسَنُ · عَمَلًۭا ۚ  · وَهُوَ  …
+   Bis v691 stand hier eine Regel, die ein abgetrenntes Alif an das Wort davor
+   hängte: die alte Textdatei schrieb an 2417 Stellen ein Alif als eigenes Wort
+   (ʿamalan in 67:2, hudan in 2:2). Im Text von quran.com gibt es das nicht;
+   dort hätte die Regel an drei Stellen zwei echte Wörter zusammengeklebt
+   (18:88, 22:25, 57:27: Tanwīn Fatḥ ohne Alif vor dem Waṣla-Alif).
 
-   Das Trägeralif der Tanwīn-Fatḥ-Schreibung steht bei uns durch ein
-   Leerzeichen getrennt. Orthographisch ist `عَمَلًا` EIN Wort — also wird es
-   auch als eines gezählt: endet ein Stück auf Tanwīn Fatḥ und beginnt das
-   nächste mit einem Alif, gehören sie zusammen.
-
-   ⭐ Damit passten **1177 von 1193** Versen. Die Regel ist keine Schätzung,
-   sondern die Schreibregel selbst.
-
-   ⚠️ Die restlichen 16 weichen in BEIDE Richtungen ab (mal eines zu viel,
-   mal eines zu wenig) — dort greift der Rückfall in js/quran-audio.js: passt
-   die Zahl nicht, wird der Vers als Ganzes markiert. Ein falsch markiertes
-   Wort wäre schlimmer als gar keines. [[ausfall_ist_unsichtbar_gebaut]]
-
-   ⛔ Der Text wird NICHT verändert. Zwei zusammengehörende Stücke teilen sich
-   ein Element und behalten ihr Leerzeichen — sonst stünde im Leser ein anderer
-   Wortlaut als im Muṣḥaf. [[zitieren_am_original]] */
-const QW_TANWIN_FATH = /\u064B[\u0670\u06E1\u06DF]?$/;
-const QW_START_ALIF  = /^[\u0627\u0649\u0671]/;
+   Gemessen am 19.10.2026 gegen die Zeitmarken von quran.com (Rezitator 7, alle
+   6236 Verse): die Wortzahl passt jetzt in 6204 Versen, vorher in 6158, und in
+   keinem Vers schlechter als vorher. Wo sie nicht passt (32 Verse, dort sind
+   die Zeitmarken kürzer als der Text), greift der Rückfall in
+   js/quran-audio.js: der Vers wird als Ganzes markiert. Ein falsch markiertes
+   Wort wäre schlimmer als gar keines. [[ausfall_ist_unsichtbar_gebaut]] */
 
 /** Die Wörter eines Verses — als Liste, ohne HTML. Auch von der Prüfung in
  *  js/quran-audio.js benutzt, damit beide dieselbe Zählung sehen.
  *  [[dieselbe_frage_zwei_antworten]] */
 function quranWorte(text){
-  const roh = String(text || '').trim().split(/\s+/).filter(Boolean);
-  const out = [];
-  for (const t of roh){
-    const v = out.length ? out[out.length - 1] : null;
-    if (v && QW_TANWIN_FATH.test(v) && QW_START_ALIF.test(t)) out[out.length - 1] = v + ' ' + t;
-    else out.push(t);
-  }
-  return out;
+  return String(text || '').trim().split(/ +/).filter(Boolean);
 }
 
-/* ============================================================================
-   ⭐ DAS HAMZA IM LAM-ALIF WIE BEI QURAN.COM                     (19.10.2026)
-   ============================================================================
-
-   Elias, mit zwei Bildschirmfotos von 93:4 (quran.com und die App):
-   „ich möchte, dass diese Hamza im lam alif nicht so darsteht wie sie aktuell
-   in der app ist sondern so wie bei quran.com. das soll bei jedem hamza in der
-   position gelten. es verwirrt mich sonst mit dem mad drüber"
-
-   Die Ursache liegt im Bau von quran-text.js, nicht in der Schrift. Die Quelle
-   (King Fahd Complex) schreibt jedes Sukun als U+06E1; beim Erzeugen wurde es
-   für Amiri gegen U+0652 getauscht (siehe Kopf von quran-text.js). Seit dem
-   08.09.2026 zeigt der Leser aber nur noch die Muṣḥaf-Schrift (quranSchrift()).
-   Die zeichnet die Folge Alif + Hamza + Madda nach einem Lam NUR DANN als
-   Hamza mit Fatha, wenn davor ihr eigenes Sukun U+06E1 steht. Mit U+0652
-   zeichnet sie die Madda — im Muṣḥaf das Zeichen für eine lange Dehnung, die
-   hier (al-ākhira, al-āyāt …) gar nicht gilt.
-
-   Gemessen am 19.10.2026 in der Vorschau, 93:4 und 2:4 in der Muṣḥaf-Schrift:
-     U+0652 vor Alif + Hamza + Madda → Hamza mit Madda (sein Bild aus der App)
-     U+06E1 vor Alif + Hamza + Madda → Hamza mit Fatha (sein Bild von quran.com)
-   Gezählt in quran-text.js: 277 Stellen mit Alif + Hamza + Madda, alle nach
-   einem Lam. 207 davon tragen das Sukun — nur die sind betroffen. Die übrigen
-   70 stehen nach Lam mit Fatha, Kasra oder Schadda (la-āyātin 2:164,
-   li-ādama 2:34) und zeichnet die Schrift schon richtig.
-
-   ⛔ Getauscht wird nur dieses EINE Zeichen und nur hier in der Anzeige —
-   das ist MEINE Entscheidung, nicht seine:
-   · quran-text.js bleibt, wie sie ist. Die Zählung (quranWorte), die Suche
-     (werkzeuge/vers.mjs) und die Koranstellen der Vokabeln sehen weiter
-     denselben Text.
-   · U+0652 und U+06E1 sind gleich lang. Die Fehlermarkierungen (vt_tajweed)
-     merken sich die ZEICHENPOSITION im Wort und bleiben auf ihrem Buchstaben.
-   · Was man dabei sieht: Auf genau diesem Lam steht das Sukun jetzt in der
-     Form von quran.com statt als runder Kreis. Alle anderen Sukun im Leser
-     bleiben, wie sie waren.
-   Bewacht von test-hamza-lamalif.mjs (mit Störtests). */
-const QW_SUKUN        = String.fromCodePoint(0x0652);
-const QW_SUKUN_MUSHAF = String.fromCodePoint(0x06E1);
-const QW_HAMZA_MADDA  = String.fromCodePoint(0x0627, 0x0654, 0x0653);
-
-/** Der Verstext so, wie die Muṣḥaf-Schrift ihn zeichnen soll (siehe oben). */
-function quranSchriftbild(text){
-  return String(text || '')
-    .split(QW_SUKUN + QW_HAMZA_MADDA)
-    .join(QW_SUKUN_MUSHAF + QW_HAMZA_MADDA);
+/* Die Versnummer am Ende des quran.com-Feldes `text_qpc_hafs`: Leerzeichen oder
+   U+00A0, dann arabisch-indische Ziffern. Nur für den Rückfall beim Laden —
+   quran-text.js ist schon ohne sie gebaut (werkzeuge/korantext-lib.mjs, dieselbe
+   Regel). */
+const QW_VERSNUMMER = new RegExp('[ ' + String.fromCodePoint(0xA0) + ']*['
+  + String.fromCodePoint(0x660) + '-' + String.fromCodePoint(0x669) + ']+$');
+function quranOhneVersnummer(text){
+  return String(text || '').replace(QW_VERSNUMMER, '');
 }
+
+/* ⭐ Das Hamza im Lam-Alif wie bei quran.com (19.10.2026). Elias, mit zwei
+   Bildschirmfotos von 93:4: „ich möchte, dass diese Hamza im lam alif nicht so
+   darsteht wie sie aktuell in der app ist sondern so wie bei quran.com. das
+   soll bei jedem hamza in der position gelten. es verwirrt mich sonst mit dem
+   mad drüber". Die Muṣḥaf-Schrift zeichnet Hamza-Alif + Madda nach einem Lam
+   nur dann als Hamza mit Fatha, wenn davor ihr eigenes Sukun U+06E1 steht. Bis
+   v691 tauschte hier quranSchriftbild() deshalb an 207 Stellen U+0652 gegen
+   U+06E1 — die alte Textdatei war für Amiri umgewandelt. Im Text von quran.com
+   steht U+06E1 dort von selbst (gemessen: 207 Stellen Lam + U+06E1 + U+0623 +
+   U+0653, keine mit U+0652), der Tausch ist entfallen. Bewacht weiter von
+   test-hamza-lamalif.mjs, jetzt am Text selbst. */
 
 /** Derselbe Text, jedes Wort in einem `<span>`. Die Nummer ist 1-basiert und
  *  entspricht der Nummer der Zeitmarke.
+ *  ⛔ Der Verstext geht UNVERÄNDERT hinein — er ist der Text von quran.com.
  *  ⚠️ Die Spans stehen IMMER im Markup, auch wenn wortweises Mitlesen aus ist —
  *  dasselbe Prinzip wie bei `.verse-en` und `.ayah-schluss`: ein DOM für alle
  *  Ansichten, und das Umschalten braucht keinen Neuaufbau. */
 function quranWortSpans(text){
-  return quranWorte(quranSchriftbild(text))
+  return quranWorte(text)
     .map((w, i) => '<span class="qw" data-w="' + (i + 1) + '">' + w + '</span>')
     .join(' ');
 }
@@ -2595,18 +2560,24 @@ async function openSurah(id, opt){
     if (!zurueckZu || !zeigeVersNachAufbau(zurueckZu)) anDenAnfang();
   }catch(err){
     /* Rueckfallebene: wenn die lokale Datei fehlt oder beschaedigt ist, holt die
-       App die Verse wie frueher von quran.com. Dann braucht sie aber Internet. */
+       App die Verse wie frueher von quran.com. Dann braucht sie aber Internet.
+       ⛔ Seit dem 19.10.2026 dasselbe Feld wie quran-text.js (`text_qpc_hafs`,
+       siehe werkzeuge/korantext-bauen.mjs) — vorher `text_uthmani`, eine andere
+       Kodierung, die die Muṣḥaf-Schrift nicht so zeichnet wie quran.com. Das
+       Feld trägt am Ende die Versnummer (U+00A0 und Ziffern); die kommt weg wie
+       beim Bau, sonst stünde sie zweimal im Leser. Gelesen wird der Vers weiter
+       über `text_uthmani`, den Namen, den der ganze Leser benutzt. */
     try{
       let verses = [], page = 1, totalPages = 1;
       do{
-        const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?language=de&translations=27&fields=text_uthmani&per_page=50&page=${page}`);
+        const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?language=de&translations=27&fields=text_qpc_hafs&per_page=50&page=${page}`);
         if (!res.ok) throw new Error('HTTP '+res.status);
         const data = await res.json();
         verses = verses.concat(data.verses||[]);
         totalPages = (data.pagination && data.pagination.total_pages) || 1;
         page++;
       } while(page <= totalPages);
-      VERSE_CACHE[id] = verses;
+      VERSE_CACHE[id] = verses.map(v => ({ ...v, text_uthmani: quranOhneVersnummer(v.text_qpc_hafs) }));
       renderVerses(id);
       anDenAnfang();
     }catch(err2){

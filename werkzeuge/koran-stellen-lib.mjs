@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
+import { zuStandard } from './korantext-lib.mjs';
 export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const ARBEIT = path.join(REPO, 'data-ersatz', 'arbeit', 'koran-zwischenordner');
 export const VORLAGEN = path.join(REPO, 'werkzeuge', 'koran-vorlagen');
@@ -18,7 +19,14 @@ const kl = (...b) => '[' + b.map(x => Array.isArray(x) ? Z(x[0]) + '-' + Z(x[1])
 const BUCHSTABE = new RegExp(kl([0x0621, 0x064A], [0x0671, 0x06D3]));
 export const woerterVon = text => String(text).split(/\s+/).filter(w => BUCHSTABE.test(w));
 let _q = null, _a = null;
-export const quran = () => _q || (_q = lade('quran-text.js', 'QURAN_TEXT'));
+/* ⛔ Seit dem 19.10.2026 ist quran-text.js der Text von quran.com in der Kodierung der Muṣḥaf-Schrift
+   (werkzeuge/korantext-lib.mjs). Was diese Werkzeuge daraus zitieren, steht auf Karten in Amiri, und
+   Amiri zeichnet U+0657 als umgekehrte Ḍamma. Deshalb sehen alle Werkzeuge hier den Text nach
+   zuStandard(): dieselbe Kodierung wie quran-text.js bis v691, ohne deren Fehler (abgetrennte Alif,
+   U+200F). Die Wortzählung ändert sich dadurch in Versen mit abgetrenntem Alif — die Vorlagen sind am
+   19.10.2026 darauf umgerechnet worden (Wort für Wort gegengeprüft, siehe Projektnotiz). */
+const standardKoran = k => Object.fromEntries(Object.entries(k).map(([s, l]) => [s, l.map(([ar, de]) => [zuStandard(ar), de])]));
+export const quran = () => _q || (_q = standardKoran(lade('quran-text.js', 'QURAN_TEXT')));
 export const bereich = () => { if (!_a){ const { auswendigLesen } = require('./werkzeuge/auswendig.js'); _a = auswendigLesen(REPO); } return _a; };
 export const { kannStelle, umfang } = require('./werkzeuge/auswendig.js');
 /* Liefert { w: [Wörter], de, art } für "S:V" oder "D<nr>.<text>" — oder wirft. */
@@ -41,7 +49,8 @@ export function stelle(wo){
   throw new Error('Stelle nicht lesbar: ' + wo);
 }
 /* Koran-Lesezeichen (Pausen, Sajda, Rub) aus einem Zitat nehmen; die Schreibzeichen des Wortes bleiben.
-   Tanwin-Fatha mit abgesetztem Alif (so steht es in quran-text.js) wird zusammengezogen. */
+   Tanwin-Fatha mit abgesetztem Alif (so stand es in quran-text.js bis v691) wird zusammengezogen — im Text
+   von quran.com kommt das nicht mehr vor; die Regel bleibt für Dua-Texte, die so abgeschrieben sind. */
 const PAUSE = new RegExp(kl([0x06D6, 0x06DC], 0x06DD, 0x06DE, 0x06E9, 0x200F, 0x200E), 'g');
 const TANWIN_LUECKE = new RegExp(Z(0x064B) + ' ' + Z(0x0627), 'g');
 export function zitat(wo, von, bis){
