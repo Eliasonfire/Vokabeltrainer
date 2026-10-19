@@ -236,6 +236,10 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
     Object.entries(SENTENCE_TAGS).forEach(([id, tags])=>{
       const w = alle.find(x=>String(x.id)===id);
       if (!w){
+        /* ⛔ Eine ausgeblendete Dublette (BUCHDUBLETTEN_AUSBLENDEN, v512) kommt
+           NIE — „gleich noch einmal starten" fuehrte ins Leere (19.10.2026:
+           45984 und 45986 standen im Hinweis „noch nicht eingehaengt"). */
+        if (typeof BUCHDUBLETTEN_AUSBLENDEN !== 'undefined' && BUCHDUBLETTEN_AUSBLENDEN.has(id)) return;
         if (ausBeispielen.includes(id)) nochNichtDa.push(id); else fehlend.push(`${id}: kein Satz`);
         return;
       }
@@ -400,7 +404,17 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
          validate.js grün blieb — das kennt die Summe je Buch nicht.
          Ihr `book` ist weiterhin 'grammar'; wer sie zählen will, fragt danach
          und NICHT nach `chapter`. */
-      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand;
+      /* ⛔ AUSGEBLENDETE DUBLETTEN (19.10.2026). Seit v512 (16.09.2026) laesst
+         einhaengen() die Kennungen aus BUCHDUBLETTEN_AUSBLENDEN weg — Elias' „ja"
+         zu Bruder und Schwester aus Bayna Yadayk 1 (45984, 45986), die er seit
+         Madina 1 Kapitel 6 als Karte hat. `b.vokabeln` zaehlt sie weiter mit,
+         denn es ist die Zahl des Abzugs. Ohne diesen Abzug meldete der erste
+         Lauf nach 40 Tagen „286 Vokabeln, erwartet 288" — ein Fehler des
+         Pruefers, nicht der App. [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+      const rohListe = (window.VOKABELN && window.VOKABELN[b.slug]) || [];
+      const ausgeblendet = (typeof BUCHDUBLETTEN_AUSBLENDEN !== 'undefined')
+        ? rohListe.filter(w => BUCHDUBLETTEN_AUSBLENDEN.has(String(w.id))).length : 0;
+      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand - ausgeblendet;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
       else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);
