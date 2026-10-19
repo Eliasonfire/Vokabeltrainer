@@ -2073,6 +2073,32 @@ function speichereWortAenderung(id, felder){
     if (!(f in WORT_ORIGINAL[id])) WORT_ORIGINAL[id][f] = w[f];
     w[f] = sauber[f];
   });
+  pluralKarteNachziehen(id);
+  return true;
+}
+
+/* ⛔ DIE MEHRZAHL-KARTE FOLGT IHREM WORT, AUCH SOFORT (20.10.2026).
+   Elias um 00:22, mit dem Bild von ustāḏ (Bayna Yadayk 1, Kap. 11): „ich habe das
+   von lehrer in professor geändert, ändere den plural auch".
+   Beim Start stimmte es schon: js/buecher.js baut mit wendePluralKartenAn() alle
+   Mehrzahl-Karten NACH seinen Änderungen neu. Im laufenden Betrieb änderte
+   speichereWortAenderung() aber nur das Wort selbst. Im Nachbau mit seinem
+   Gerätestand gemessen: Einzahl „Professor PROBE", die Mehrzahl-Karte blieb bei
+   „Professor (Plural)" stehen, bis die App neu startete.
+   Übernommen wird, was bauePluralKarte() aus dem Wort ableitet. Ausgenommen sind
+   die Felder, die er an der Mehrzahl-Karte selbst geändert hat, denn seine eigene
+   Änderung gewinnt. Eine NEUE Mehrzahl (vorher kein `pl`) bekommt ihre Karte erst
+   beim nächsten Start, zusammen mit ihrem Fortschrittseintrag.
+   [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
+function pluralKarteNachziehen(id){
+  const w = VOCAB_DATA.find(x => x.id === id);
+  const pk = VOCAB_DATA.find(x => x.id === String(id) + PLURAL_MARKE);
+  if (!w || !pk) return false;
+  const neu = bauePluralKarte(w);
+  if (!neu) return false;
+  const eigene = hatWortAenderung(pk.id) ? WORT_AENDERUNGEN[pk.id] : {};
+  ['ar', 'de', 'type', 'root'].forEach(f => { if (typeof eigene[f] !== 'string') pk[f] = neu[f]; });
+  pk.sgAr = neu.sgAr;
   return true;
 }
 
