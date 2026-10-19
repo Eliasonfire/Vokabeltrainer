@@ -966,6 +966,36 @@ const LEHRBUCH_SAETZE = [
     gedruckt: 'Übung 2, Nr. 11: النِّساءُ mit Kasra und Damma, der Rest ohne Zeichen',
     sentAr: 'مَنْ هَؤُلَاءِ النِّسَاءُ الطِّوَالُ؟ هُنَّ طَبِيبَاتٌ مِنْ أَمْرِيكَا.',
     sentDe: 'Wer sind diese großen Frauen? Sie sind Ärztinnen aus Amerika.' },
+  /* ⭐ Kapitel 13, Teil C (Folge 28, 19.10.2026) — Belegsätze für die zwei Regeln aus
+     Folge 28: ulāʾika als gemeinsame Mehrzahl von dhālika und tilka, und die Mehrzahl
+     nach afʿilāʾ und fuʿalāʾ ohne Tanwīn. Ohne sie hätten beide Regeln keinen Satz
+     gehabt: im ganzen Bestand stand ulāʾika nur in einem verfassten Satz (50165),
+     dessen einziger Platz schon belegt ist, und keines der acht Wörter der Übung 4.
+
+     Quelle: sein beschriftetes Buch, PDF-Seiten 100 und 101 = Buchseiten 78 und 79,
+     gelesen bei 150 dpi. Die Zahl hinter der Seite zählt die Stücke des Lesetexts
+     (Frage und Antwort zusammen). Jedes Wort steht vokalisiert auf seinen Karten
+     (rajul, ṭabīb, faqīr, ġanī, wazīr mit ihren Mehrzahlformen, Amerika) oder in
+     schon vorhandenen Sätzen dieses Kapitels (mb1-68-1, mb1-76-11, 50165).
+
+     ⭐ Das Buch selbst druckt أَغْنِيَاءُ und وُزَرَاءُ mit EINER Ḍamma am Ende —
+     der gedruckte Beleg dafür, dass diese Mehrzahlformen kein Tanwīn haben.
+
+     ⛔ NICHT genommen: Seite 78 Stück 1 (Brüder, Freunde: keine Karte in seiner
+     Auswahl), Stück 3 bis 5 (Mütter, Väter, Tanten), Seite 79 Stück 2 (Ingenieure)
+     und Stück 4 (ḍiʿāf). */
+  { id: 'mb1-78-2', seite: 78, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'أولئك mit Kasra und Fatha (über dem gedehnten Lam ein kleines Zeichen), أطبّاء nur mit Schadda; من, الرجال, الطوال, هم, من أمريكا ohne Zeichen',
+    sentAr: 'مَنْ أُولَئِكَ الرِّجَالُ الطِّوَالُ؟ هُمْ أَطِبَّاءُ مِنْ أَمْرِيكَا.',
+    sentDe: 'Wer sind jene großen Männer? Sie sind Ärzte aus Amerika.' },
+  { id: 'mb1-79-3', seite: 79, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'فُقَراء mit Damma und Fatha, وأُولئِكَ mit Damma, Kasra und Fatha, أَغْنِيَاءُ vollständig mit einfacher Damma am Ende; هؤلاء الرجال ohne Zeichen',
+    sentAr: 'هَؤُلَاءِ الرِّجَالُ فُقَرَاءُ وَأُولَئِكَ أَغْنِيَاءُ.',
+    sentDe: 'Diese Männer sind arm, und jene sind reich.' },
+  { id: 'mb1-79-5', seite: 79, kapitel: 13, vokalisationErgaenzt: true,
+    gedruckt: 'وُزَراءُ mit Damma, Fatha und einfacher Damma am Ende; من أولئك الرجال und هم ohne Zeichen',
+    sentAr: 'مَنْ أُولَئِكَ الرِّجَالُ؟ هُمْ وُزَرَاءُ.',
+    sentDe: 'Wer sind jene Männer? Sie sind Minister.' },
 
   /* ===================== Zwei Belegsätze für Regeln aus Folge 17 und 20 ====
      Eingetragen am 11.10.2026 (Wartung). Beide Regeln hätten sonst keinen

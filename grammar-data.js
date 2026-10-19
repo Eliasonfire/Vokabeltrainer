@@ -1623,6 +1623,32 @@ const GRAMMAR_RULES = [
       "chapter": 12
     }
   },
+  {
+    "id": "ismul-isara-ulaika-01",
+    "name": "أُولَئِكَ — der gemeinsame Plural von ذَلِكَ und تِلْكَ",
+    "shortExplanation": "ذَلِكَ und تِلْكَ zeigen auf EINEN in der Ferne — einen Mann oder eine Frau. Für mehrere in der Ferne gibt es nur noch ein Wort. Dein Lehrer (Folge 28, 31:01): „Wir lernen jetzt Ulaika. Das ist jetzt Ismu Ishara lil baʿīd, Ismu Ishara für die Ferne. Und wir haben Dhalika … und Tilka. Und der Plural von beiden ist Ulaika.“\n\nUnd er stellt es gleich neben das, was ihr in Folge 25 hattet: „wir hatten Hadha und Hadhihi, die beide einen gemeinsamen Plural Haʾulaʾi … Und Dhalika und Tilka haben auch einen gemeinsamen Plural Ulaika … Das sind dann für die Ferne.“\n\nNähe: هَذَا · هَذِهِ → هَؤُلَاءِ\nFerne: ذَلِكَ · تِلْكَ → أُولَئِكَ\n\nAm ersten Satz des Lesetexts zeigt er, was das heißt — hāʾulāʾi iḫwatī wa-ulāʾika aṣdiqāʾī: „die Brüder sind neben ihm und die Freunde stehen … weiter weg.“ Bei der Hausaufgabe noch einmal: „Dalika ist männlich, Tilika ist weiblich und Ulaika ist Plural.“\n\nIm Satz: مَنْ أُولَئِكَ الرِّجَالُ؟ هُمْ وُزَرَاءُ. — „Wer sind jene Männer? Sie sind Minister.“\n\nDas Buch zeigt es in Übung 1 von Teil C (Seite 79) als Muster: aus dhālika r-raǧulu mudarrisun wird ulāʾika r-riǧālu mudarrisūna. Und Übung 2 (Seite 80) verlangt zu jedem Wort das Hinweiswort für die Ferne — ذَلِكَ, تِلْكَ oder أُولَئِكَ —, bei Männern wie bei Frauen.\n\n⚠️ Alle Beispiele in der Folge und im Buch sind Personen. Wie man auf mehrere Dinge in der Ferne zeigt, kam nicht vor. Die Mehrzahl für die Nähe steht in ismul-isara-haulai-01.",
+    "color": "mubtada",
+    "kapitel": 13,
+    "source": {
+      "folge": 28,
+      "video": "Folge 28",
+      "approxTimestamp": "31:01",
+      "chapter": 13
+    }
+  },
+  {
+    "id": "mamnu-min-as-sarf-plural-01",
+    "name": "أَطِبَّاءُ, فُقَرَاءُ — Mehrzahlformen ohne Tanwīn",
+    "shortExplanation": "Manche Mehrzahlformen enden auf -āʾ und haben nur EINE Ḍamma — auch wenn sie unbestimmt sind. Dein Lehrer (Folge 28, 37:19) bei Übung 4: „das ist Muster Afʿilāʾ … und das ist von Fuʿalāʾ. Und diese beiden Muster, die sind … min aṣ-ṣarf, die haben kein Tanwin hinten.“ (Das erste Wort ist in beiden Mitschriften verstümmelt; gemeint ist mamnūʿ min aṣ-ṣarf.) Dann Wort für Wort: „Aṣdiqāʾu, nicht aṣdiqāʾun … Freunde. Aġniyāʾu, reich. Aqwiyāʾu, stark. Aṭibbāʾu, Ärzte … Alle nach Afʿilāʾ, die haben kein Tanwin.“ Und die vier nach Fuʿalāʾ: „Fuqarāʾu, zumalāʾu, wuzarāʾu, ʿulamāʾ … auch hier, die haben kein Tanwin.“\n\nVier davon kennst du von deinen Karten:\nأَطِبَّاءُ — Ärzte (von طَبِيبٌ)\nأَغْنِيَاءُ — reich (von غَنِيٌّ)\nفُقَرَاءُ — arm (von فَقِيرٌ)\nوُزَرَاءُ — Minister (von وَزِيرٌ)\n\nIm Satz: هَؤُلَاءِ الرِّجَالُ فُقَرَاءُ وَأُولَئِكَ أَغْنِيَاءُ. — „Diese Männer sind arm, und jene sind reich.“ Das Buch druckt أَغْنِيَاءُ dort mit einer einzigen Ḍamma (Seite 79), ebenso وُزَرَاءُ.\n\nDer Name ist derselbe wie in mamnu-min-as-sarf-01. Der Schlüssel zu Band 3 (Lektion 34, Seite 264) nennt den Grund: das Alif, „welches feminin bedeutet“, hier als „ein langes -ā dem ein hamzah folgt“, zusätzlich hinter dem dritten Radikal — sein Beispiel ist aṣdiqāʾu, „Plural von“ ṣadīqun.\n\n⚠️ Aus dem Schlüssel, nicht aus dem Unterricht: nicht jedes Wort auf -āʾ gehört dazu. Wörter wie asmāʾun und ābāʾun sind nach dem Schlüssel nicht mamnūʿ min aṣ-ṣarf, weil sie dem Schema afʿālun folgen (wie aqlāmun, awlādun) — dort ist das Hamza „der dritte Radikal, und nicht zusätzlich“. Sie behalten ihr Tanwīn.",
+    "color": "fem",
+    "kapitel": 13,
+    "source": {
+      "folge": 28,
+      "video": "Folge 28",
+      "approxTimestamp": "37:19",
+      "chapter": 13
+    }
+  },
 ];
 
 const SENTENCE_TAGS = {
@@ -3654,6 +3680,19 @@ const SENTENCE_TAGS = {
   "kh-083": [
     { ruleId: "mudaf-01", matchText: "عَبْدُ" },
     { ruleId: "lafz-al-jalala-01", matchText: "اللهِ" }
+  ],
+  "mb1-78-2": [
+    { ruleId: "ismul-isara-ulaika-01", matchText: "أُولَئِكَ" },
+    { ruleId: "mamnu-min-as-sarf-plural-01", matchText: "أَطِبَّاءُ" }
+  ],
+  "mb1-79-3": [
+    { ruleId: "mamnu-min-as-sarf-plural-01", matchText: "فُقَرَاءُ" },
+    { ruleId: "ismul-isara-ulaika-01", matchText: "أُولَئِكَ" },
+    { ruleId: "ismul-isara-haulai-01", matchText: "هَؤُلَاءِ" }
+  ],
+  "mb1-79-5": [
+    { ruleId: "ismul-isara-ulaika-01", matchText: "أُولَئِكَ" },
+    { ruleId: "mamnu-min-as-sarf-plural-01", matchText: "وُزَرَاءُ" }
   ]
 };
 

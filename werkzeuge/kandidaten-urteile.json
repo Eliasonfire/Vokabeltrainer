@@ -837,6 +837,76 @@
     "f27-4745": {
       "urteil": "weg",
       "grund": "Hausaufgaben: Aufgabe 4 (hadha, hadhihi oder ha'ula'i einsetzen), Aufgabe 5 (huwa, hiya, hum oder hunna), Aufgabe 6 (die Mehrzahl aufschreiben, z. B. ukhtun -> akhawatun). Dazu Wortkunde: zawj/zawjatun, al-mar'a mit der Mehrzahl nisa', und als 'kleiner Trick' (48:27): unbestimmt heisst es imra'atun. Das ist eine Vokabelangabe zum einzelnen Wort, kein Regelsatz; der Rest ist Organisation."
+    },
+
+    "f28-045": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe 4 reihum: hadha akhi, hadhihi ukhti, ha'ula'i rijalun, ha'ula'i mudarrisuna, ha'ula'i talibatun. Anwendung der Hinweiswoerter fuer die Naehe (ismul-isara-haulai-01), Uebungsabfrage, kein neuer Lehrsatz."
+    },
+    "f28-345": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe 5: 'hum abna'u l-mudarrisi' — der Lehrer: 'Hum, ja. Nicht hunna. Fuer die Maenner.' Dazu: madrasa wird mit Ta marbuta geschrieben. Verbesserung beim Vorlesen und Wortkunde; hum und hunna fuer die Mehrzahl nennt der Schluessel zu Lektion 13, ein eigener Lehrsatz faellt hier nicht."
+    },
+    "f28-1015": {
+      "urteil": "weg",
+      "grund": "Uebung 3 reihum: Mehrzahlformen (zawj — azwaj, fata — fityatun, fatatun — fatayatun) und eine Ermahnung zum Nachschlagen. Wortkunde, die Mehrzahl gehoert zur Karte; fatayat nennt auch der Schluessel zu Lektion 13 als unregelmaessig."
+    },
+    "f28-1145": {
+      "urteil": "weg",
+      "grund": "Uebung 3: kabiratun — kibarun, tawilatun — tiwalun, jadidatun — jududun. Ein Schueler folgert 'Jududun ist auch fuer maennlich und weiblich gleich', der Lehrer: 'Ja' und nennt die Aufgabe einen 'kleinen Trick, um euch zu nerven'. Wortkunde zu einzelnen Woertern, kein allgemeiner Lehrsatz. ⚠️ Am Rand fuer die Karten: arabicroots fuehrt als weibliche Mehrzahl kabiratun, tawilatun, jadidatun (femPl), der Lehrer wollte hier die gebrochene Form — als Frage an Elias in der To-Do, nicht als Regel."
+    },
+    "f28-1315": {
+      "urteil": "schon-regel",
+      "grund": "Die Tafel 'asma'u l-ishara li-l-qarib': hadha talibun, hadhihi talibatun und ha'ula'i als 'Plural fuer beide, sowohl fuer maennlich als auch fuer weiblich'. Steht in ismul-isara-haulai-01 (Folge 25, 9:11). Davor die uebersprungene Umformuebung hunna kharajna, dhahabna (verb-madi-endungen-01).",
+      "quelle": "ismul-isara-haulai-01"
+    },
+    "f28-1445": {
+      "urteil": "schon-regel",
+      "grund": "Er erwaehnt nur, dass es fuer zwei eigene Hinweiswoerter gibt ('z.B. hadhani und hatani', auch fuer tilka und ulaika) — ohne sie zu lehren. Die Formen stehen als Buchregel isara-genus-kongruenz-01 (Schluessel 3, S. 58). Danach Wiederholung der Konjugation (nasara, kataba, talaba, sajada, shakara), Uebung.",
+      "quelle": "isara-genus-kongruenz-01"
+    },
+    "f28-1915": {
+      "urteil": "weg",
+      "grund": "Konjugation von sajada reihum, der Lehrer verbessert die Reihenfolge der Buchstaben und 'ohne Schadde' (sajadtuma). Uebung und Aussprache, kein Lehrsatz."
+    },
+    "f28-2245": {
+      "urteil": "weg",
+      "grund": "Ende der Konjugationsrunde (shakara) und fuenf neue Verben als Hausaufgabe: khalaqa (erschaffen), nazara (schauen), taraka (lassen, verlassen), hadara (teilnehmen, 'hadartum ad-darsa'), razaqa (versorgen, von rizq). Wortschatz, kein Lehrsatz."
+    },
+    "f28-2545": {
+      "urteil": "weg",
+      "grund": "Uebersetzungsuebung: antuma dhahabtuma ila l-masjidi, kharajna min al-bayti — der Lehrer fragt nach der Praeposition zu kharaja ('Min'). Anwendung von verb-madi-endungen-01, kein neuer Lehrsatz."
+    },
+    "f28-2745": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe (zehn Saetze vom Deutschen ins Arabische) und Ermutigung: 'wer keine Fehler macht, der lernt nicht'. Organisation und Motivation."
+    },
+    "f28-2915": {
+      "urteil": "weg",
+      "grund": "Idee des Lehrers: zu jeder Folge eine kurze Aufzeichnung (5 bis 10 Minuten) oder eine einseitige PDF zum Nachholen — 'es ist auf jeden Fall notiert'. Organisation, kein Lehrsatz."
+    },
+    "f28-3045": {
+      "urteil": "schon-regel",
+      "grund": "Teil C: 'Wir lernen jetzt Ulaika. Das ist jetzt Ismu Ishara lil ba'id … Und der Plural von beiden ist Ulaika' (31:01; Whisper 31:14 gleichlautend), dazu der Vergleich mit ha'ula'i. Belegt: Madina 1, S. 79 Uebung 1 (Muster dhalika r-rajulu mudarrisun — ulaika r-rijalu mudarrisuna) und S. 80 Uebung 2 (dhalika, tilka, ulaika). Eingebaut mit drei Buchsaetzen von S. 78/79 (mb1-78-2, mb1-79-3, mb1-79-5).",
+      "quelle": "Madina 1, S. 79/80",
+      "regel": "ismul-isara-ulaika-01",
+      "eingebaut": "2026-10-19"
+    },
+    "f28-3215": {
+      "urteil": "schon-regel",
+      "grund": "Fortsetzung von Teil C: Wortschatz (da'if — di'af, umm — ummahat, ab — aba', qawiyy — aqwiya', 'alim — 'ulama'), die Verbformen dhahaba, dhahabat, dhahabu, dhahabna ('also ab drei', verb-madi-endungen-01) und der Satz ha'ula'i ikhwati wa-ula'ika asdiqa'i ('die Brueder sind neben ihm und die Freunde stehen weiter weg'). Der Lehrsatz dazu ist ismul-isara-ulaika-01 (aus f28-3045).",
+      "quelle": "ismul-isara-ulaika-01"
+    },
+    "f28-3715": {
+      "urteil": "schon-regel",
+      "grund": "Uebung 4: 'das ist Muster Af'ila' … von Fu'ala'. Und diese beiden Muster, die sind … min as-sarf, die haben kein Tanwin hinten' (37:19, Whisper gleichlautend), mit allen acht Woertern. Belegt: Madina 1 druckt aghniya'u und wuzara'u auf S. 79 mit einer Damma; Schluessel 3, Lektion 34, S. 264 nennt asdiqa'u als Beispiel (Alif der Weiblichkeit) und warnt, dass Woerter nach af'al wie asma'un und aba'un Tanwin behalten. Davor Uebung 2 mit dhalika, tilka, ulaika.",
+      "quelle": "Madina 1, S. 79/80; Schluessel 3, S. 264",
+      "regel": "mamnu-min-as-sarf-plural-01",
+      "eingebaut": "2026-10-19"
+    },
+    "f28-3845": {
+      "urteil": "weg",
+      "grund": "Uebung 1 (dhalika rajulun mudarrisun — ulaika rijalun mudarrisuna) als freiwillige Hausaufgabe, dann Verabschiedung und Aufruf, online dabei zu sein. Anwendung von ismul-isara-ulaika-01, kein neuer Lehrsatz."
     }
   }
 }
