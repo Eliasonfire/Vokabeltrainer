@@ -9051,3 +9051,21 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - Die Lücke `eingang-einsortieren` vom 26.09. ist noch nicht angesehen.
 - Bei Elias: der Zeichenbogen an Maryam, die weibliche Mehrzahl auf den Karten, Kapitel 11 im Korantrainer und 5 Regelfragen.
 - Das Tagesziel 15 ist seine Erinnerung.
+
+
+## 2026-10-20 00:28 – Sitzung: Mehrzahl-Karte folgt seiner Änderung sofort — **v695 ausgeliefert** (`9caed2b`)
+
+**Anlass.** Elias um 00:22 schickte ein Bild der Karte ustāḏ (Bayna Yadayk 1, Kap. 11, Kennung 46119) und schrieb dazu: *„ich habe das von lehrer in professor geändert, ändere den plural auch"*.
+
+**Gemessen.** Seine Änderung steht in seinem Gerätestand (KV, nur gelesen) unter `vt_wortAenderungen["46119"]` mit `de: "Professor"`. Für die Mehrzahl-Karte `46119#pl` gibt es keinen eigenen Eintrag. Geprüft habe ich im Nachbau mit diesem Stand: eigener Edge, Dateiserver nur auf 127.0.0.1, fremde Rechner gesperrt.
+- **Nach dem Start** steht auf der Mehrzahl-Karte schon „Professor (Plural)“. `js/buecher.js` baut die Mehrzahl-Karten mit `wendePluralKartenAn()` erst nach `wendeWortAenderungenAn()` neu.
+- **Im laufenden Betrieb** ändert `speichereWortAenderung()` dagegen nur das Wort selbst. Probe mit „Professor PROBE“: Die Einzahl wurde geändert, die Mehrzahl-Karte blieb bis zum nächsten Start bei der alten Bedeutung. So hat er nach seiner Änderung weiter „Lehrer (Plural)“ gesehen.
+
+**Behoben in `js/kern.js`.** Die neue Funktion `pluralKarteNachziehen(id)` wird am Ende von `speichereWortAenderung()` aufgerufen. Sie übernimmt, was `bauePluralKarte()` aus dem Wort ableitet: `ar` (= `pl`), `de`, `type`, `root` und `sgAr`. Felder, die er an der Mehrzahl-Karte selbst geändert hat, bleiben unberührt. Eine neue Mehrzahl, bei der vorher `pl` fehlte, bekommt ihre Karte erst beim nächsten Start. Danach im Nachbau gemessen: „Professor PROBE (Plural)“ steht sofort da. Das Zurücksetzen (`verwirfWortAenderung`) wirkt wie bisher erst beim nächsten Start, und das sagt der Hinweis dort auch.
+
+**Prüfen und Ausliefern.**
+- `validate.js`: 0 Fehler. `pruefe-bearbeiten`, `test-plural-platz` und `test-plural-fern` sind grün.
+- `oberflaeche-lauf.mjs --stempel`: 47 Prüfungen, 0 Fehler, 5 Hinweise (Stempel v695).
+- CACHE v695, `veroeffentlichen.mjs --mit-daten`. Cloudflare: Production auf main aus `9caed2b` (`e54ff429`). Gepusht, `pruefe-ausgeliefert` Exit 0.
+
+**Offen (meins).** Ein Prüfer-Abschnitt mit Störtest für `pluralKarteNachziehen()` fehlt noch. Er gehört am ehesten in `werkzeuge/pruefe-bearbeiten.mjs`.
