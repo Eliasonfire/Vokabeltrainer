@@ -246,7 +246,10 @@ function renderRegelStand(){
 function renderUebungStand(){
   const kasten = document.getElementById('uebungStand');
   if (!kasten) return;
-  const modi = (typeof UEBUNGEN !== 'undefined' && Array.isArray(UEBUNGEN)) ? UEBUNGEN : [];
+  /* Eine ruhende Übung (`ruht:true`, seit 19.10.2026 Übung 1) steht hier nicht — die Liste zeigt,
+     was er üben kann, und die kann er gerade nicht wählen. Ihr Stand bleibt gespeichert. */
+  const modi = (typeof UEBUNGEN !== 'undefined' && Array.isArray(UEBUNGEN))
+    ? UEBUNGEN.filter(m => (typeof uebungAktiv === 'function') ? uebungAktiv(m) : !m.ruht) : [];
   const stand = (typeof UEBUNG_STAND !== 'undefined' && UEBUNG_STAND) ? UEBUNG_STAND : {};
   if (!modi.length){
     kasten.innerHTML = '<div class="regel-hinweis">Die Übungsliste ist noch nicht geladen.</div>';

@@ -1279,6 +1279,19 @@ function uebMehrzahlAufloesung(st){
 const UEBUNGEN = [
   {
     id:'mubtada-khabar', nr:1, name:'مُبْتَدَأٌ / خَبَرٌ — Satzteile', art:'mehrfach',
+    ruht:true,
+    /* ⛔⛔ RUHT SEIT DEM 19.10.2026. Elias, mit Bild dieser Übung (Teil 2, „Tippe alle khabar
+       (Aussage über das Subjekt) an"): „die satzübung können wir erstmal einstellen weil wir sie
+       meine ich noch nicht offiziell besprochen haben und sie für mich noch keinen sinn macht.
+       guck ob sich bei teil 1 und 2 die sortierung ändert dadurch das eines weniger ist."
+       `ruht:true` nimmt sie aus „Gemischt", aus dem Tagesziel, aus der Auswahl-Liste und aus der
+       Übungsstatistik (uebungAktiv()). Gebaut wird sie weiter, und nichts von seinem Stand wird
+       gelöscht. Wieder einschalten heißt: die Zeile `ruht:true` löschen — nur auf sein Wort.
+       ⭐ Seine Frage, gemessen an seinem Stand (KV 19.10.2026, 05:05; jede Zeit noch geschätzt):
+       fiele sie einfach weg, wechselten fünf andere den Teil (Übung 4, 5, 6, 7 und 8). Deshalb
+       verteilt satzTeile() weiter MIT ihr und nimmt sie erst danach heraus; so bleibt jede
+       andere, wo sie war (MEINE Entscheidung, ihm gesagt). Teil 2 hat dadurch 10 statt 11
+       Übungen, Teil 1 bleibt bei 9. Bewacht von werkzeuge/pruefe-satz-teile.mjs (Abschnitt 8). */
     /* ⭐ Dieser Modus ist aus Elias' eigener Rueckfrage vom 30.07. entstanden:
        "war es nicht so, dass mubtadi (nomen) und baat (adjektiv) zusammen
        sind?" Er hatte مُبْتَدَأ+خَبَر mit مَنْعُوت+نَعْت verwechselt. Der
@@ -2667,6 +2680,12 @@ const UEB_GRUPPEN = [
   ['Bauen',            'bauen']
 ];
 
+/* ⛔ Eine Übung mit `ruht:true` (seit 19.10.2026, Übung 1 — Begründung an ihrem Eintrag) steht
+   nicht in der Auswahl-Liste und nicht in der Übungsstatistik. Ihre Nummer bleibt: Elias nennt
+   die Übungen beim Namen ihrer Zahl („Übung 16"), und keine andere rückt nach. In „Gemischt"
+   und im Tagesziel fehlt sie schon über satzTeile(). */
+function uebungAktiv(m){ return !!m && !m.ruht; }
+
 function renderUebungsLeiste(){
   const blatt = document.getElementById('uebBlatt');
   if (!blatt) return;
@@ -2704,12 +2723,12 @@ function renderUebungsLeiste(){
      verschwinden — und das ist die Sorte Fehler, die niemand meldet. */
   const vergeben = new Set();
   let html = UEB_GRUPPEN.map(([titel, art])=>{
-    const teil = UEBUNGEN.filter(m=>m.art===art);
+    const teil = UEBUNGEN.filter(m=>m.art===art && uebungAktiv(m));
     teil.forEach(m=>vergeben.add(m.id));
     if (!teil.length) return '';
     return `<div class="gruppe">${escapeHtml(titel)}</div>` + teil.map(zeile).join('');
   }).join('');
-  const rest = UEBUNGEN.filter(m=>!vergeben.has(m.id));
+  const rest = UEBUNGEN.filter(m=>!vergeben.has(m.id) && uebungAktiv(m));
   if (rest.length) html += '<div class="gruppe">Weitere</div>' + rest.map(zeile).join('');
 
   /* Gemischt steht GANZ OBEN und in einer eigenen Gruppe — es ist keine der
@@ -2735,7 +2754,7 @@ function renderUebungsLeiste(){
                              : (UEB.modus===UEB_GEMISCHT ? 'Gemischt' : 'Modus wählen');
   if (zahl) zahl.textContent = jetzt ? `${uebungAnzahl(alle[jetzt.id])} Fragen`
                              : (UEB.modus===UEB_GEMISCHT ? `${gesamt} Fragen`
-                                                         : `${UEBUNGEN.length} Modi`);
+                                                         : `${UEBUNGEN.filter(uebungAktiv).length} Modi`);
 
 }
 
@@ -3783,7 +3802,18 @@ function satzTeile(){
     teil[wo].push(m.id); summe[wo] += zeit[m.id];
   }
   teil[1].sort((a, b) => nr(a) - nr(b)); teil[2].sort((a, b) => nr(a) - nr(b));
-  return { 1: teil[1], 2: teil[2], zeit, quelle, summe };
+  /* ⛔ EINE RUHENDE ÜBUNG (`ruht:true`, seit 19.10.2026) wird oben MIT verteilt und erst hier
+     herausgenommen. Elias fragte dazu: „guck ob sich bei teil 1 und 2 die sortierung ändert
+     dadurch das eines weniger ist" — fiele sie schon vor dem Verteilen weg, wechselten bei
+     seinem Stand fünf andere den Teil. So steht sie in keinem Teil, und jede andere bleibt, wo
+     sie war (MEINE Entscheidung). Kommt sie zurück, steht sie wieder an ihrem alten Platz.
+     ⚠️ Hier drinnen, nicht als Liste daneben — die Prüfer schneiden satzTeile() allein aus. */
+  const ruht = UEBUNGEN.filter(m => m.ruht).map(m => m.id);
+  for (const k of [1, 2]){
+    teil[k] = teil[k].filter(id => !ruht.includes(id));
+    summe[k] = teil[k].reduce((s, id) => s + zeit[id], 0);
+  }
+  return { 1: teil[1], 2: teil[2], zeit, quelle, summe, ruht };
 }
 /* ⭐⭐ v618 — DIE TEILE LAUFEN VON SELBST (25.09.2026)
    Elias, wörtlich: „ich stelle mir das so vor das die app automatisch meinen

@@ -171,10 +171,17 @@ function laufe(quelle, still){
      renderUebungsLeiste(): erst die Gruppen in ihrer Reihenfolge, dann der Rest. */
   const gruppen = (quelle.match(/const UEB_GRUPPEN = \[[\s\S]*?\n\];/) || [''])[0];
   const arten = [...gruppen.matchAll(/\[\s*'[^']*',\s*'([^']+)'\s*\]/g)].map(m => m[1]);
-  const angezeigt = arten.flatMap(a => U.filter(m => m.art === a))
-    .concat(U.filter(m => !arten.includes(m.art))).map(m => m.nr);
-  pruefe('auf dem Bildschirm (nach Gruppen) laufen die Nummern von 1 bis ' + U.length,
-    arten.length > 0 && angezeigt.every((n, i) => n === i + 1), arten.length ? angezeigt.join(',') : 'UEB_GRUPPEN nicht gefunden');
+  /* Seit 19.10.2026 ohne die ruhenden (`ruht:true`, Übung 1 — Elias: „die satzübung können wir
+     erstmal einstellen …"): sie stehen nicht in der Liste, ihre Nummer bleibt frei, keine rückt
+     nach. Aufsteigend und ohne Salat muss der Rest trotzdem laufen. */
+  const inListe = U.filter(m => !m.ruht);
+  const angezeigt = arten.flatMap(a => inListe.filter(m => m.art === a))
+    .concat(inListe.filter(m => !arten.includes(m.art))).map(m => m.nr);
+  const erwartet = inListe.map(m => m.nr).sort((a, b) => a - b);
+  pruefe('auf dem Bildschirm (nach Gruppen) laufen die Nummern von ' + (erwartet[0] || 1) + ' bis ' + U.length
+    + (inListe.length < U.length ? ' (ruhend: ' + U.filter(m => m.ruht).map(m => m.nr).join(', ') + ')' : ''),
+    arten.length > 0 && angezeigt.length === erwartet.length && angezeigt.every((n, i) => n === erwartet[i]),
+    arten.length ? angezeigt.join(',') : 'UEB_GRUPPEN nicht gefunden');
   const zuordnung = ohneKommentare(quelle).match(/const UEBUNG_WARUM\s*=\s*\{[\s\S]*?\};/);
   pruefe('„Warum?" kennt keine Übung bestimmtheit mehr',
     !!zuordnung && !zuordnung[0].includes("'bestimmtheit'"), zuordnung ? 'steht noch drin' : 'UEBUNG_WARUM fehlt');
