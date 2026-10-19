@@ -686,8 +686,14 @@ function renderCard(){
        ⛔ Die Zeile „Klingt wie" (bis zu zwei andere Karten mit gleich klingender Mehrzahl, 13. bis
        15.10.2026) ist WEG. Elias am 15.10.2026, zur Karte „leicht" mit „Klingt wie Klassenzimmer,
        Haus": „dieses klingt wie ist quatsch, das soll raus". Bewacht von test-plural-karte.mjs (L3). */
-    const plRegel = !!w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w);
-    if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural') + (plRegel ? ' · regelmäßig' : ''), value:formenAnzeige(w.pl)});
+    /* ⭐ Seit dem 19.10.2026 steht hier die ART jeder Mehrzahl, nicht nur „regelmäßig": „regelmäßig
+       männlich", „regelmäßig weiblich" oder „unregelmäßig" — dieselbe Angabe wie auf der Mehrzahlkarte.
+       Elias: „bei den plural vokabeln sollte noch irgendwie gekennzeichnet werden ob sie regelmässig sind
+       oder unregelmässig". Entschieden in pluralArtText() (js/uebung.js). Zahlwörter bekommen keinen
+       Text: bei ihnen ist `pl` die Form beim weiblichen Nomen. */
+    const plArt = (!!w.pl && typeof pluralArtText === 'function'
+      && !(typeof istZahlwort === 'function' && istZahlwort(w))) ? pluralArtText(w.sg || w.ar, w.pl) : '';
+    if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural') + (plArt ? ' · ' + plArt : ''), value:formenAnzeige(w.pl)});
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
     if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }

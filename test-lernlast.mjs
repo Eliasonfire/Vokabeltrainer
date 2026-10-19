@@ -13,7 +13,7 @@
  * bei jedem Lauf der Wartung seit dem 25.09.
  *
  * Dieser Test baut SEINEN Fall als kleinen Stand nach (eine echte Karte 12 Tage
- * zu spät, daneben sechs Einträge, die die App nicht vorlegt) und lässt das
+ * zu spät, daneben sieben Einträge, die die App nicht vorlegt) und lässt das
  * echte Werkzeug darauf laufen (`--stand`). Die Störtests nehmen je eine Regel
  * aus einer Kopie des Quelltexts und verlangen, dass der Test das merkt.
  *
@@ -98,7 +98,8 @@ function stand(echtSpaet){
       [F_FEHLT]:       { box: 2, nextReview: vor(25), correct: 1, wrong: 0 },         /* steht nicht mehr in der Datei */
       [F_ZURUECK]:     { box: 2, nextReview: vor(2),  correct: 1, wrong: 0 },         /* zurückgeholt (an:false) — ZÄHLT */
       'eigen-alt':     { box: 1, nextReview: vor(5),  correct: 0, wrong: 0, uebertragen: B_ECHT },
-      'eigen-1':       { box: 3, nextReview: vor(1),  correct: 2, wrong: 0 }          /* eigenes Wort — ZÄHLT */
+      'eigen-1':       { box: 3, nextReview: vor(1),  correct: 2, wrong: 0 },         /* eigenes Wort — ZÄHLT */
+      'wartet-sg#pl':  { box: 1, nextReview: vor(1),  correct: 0, wrong: 0 }          /* Mehrzahl, Einzahl noch nicht gekonnt (19.10.2026) */
     }
   } };
 }
@@ -118,7 +119,7 @@ function abweichungen(r){
     ['älteste echte Wiederholung: 12 Tage', r.aus.includes('älteste fällige Wiederholung wartet 12 Tag(e)')],
     ['fällig: 3 Wiederholungen (Box 2 1 · Box 3 1 · Box 5 1)', r.aus.includes('Heute fällig: Box 1 0 · Box 2–7 3 (Box 2 1 · Box 3 1 · Box 4 0 · Box 5 1 · Box 6 0 · Box 7 0)')],
     ['Karten: nur die drei, Box 1 leer', r.aus.includes('Karten: Box 1 0 · Box 2 1 · Box 3 1 · Box 4 0 · Box 5 1 · Box 6 0 · Box 7 0')],
-    ['die Zeile „Nicht mitgezählt" nennt 6 und ihre Gründe', r.aus.includes('Nicht mitgezählt, weil die App sie nicht vorlegt: 6 (gelöscht 1 · Fachbegriff nicht in der Kartei 3 · „kenne ich schon" 1 · auf eine andere Karte übertragen 1)')],
+    ['die Zeile „Nicht mitgezählt" nennt 7 und ihre Gründe', r.aus.includes('Nicht mitgezählt, weil die App sie nicht vorlegt: 7 (gelöscht 1 · Fachbegriff nicht in der Kartei 3 · „kenne ich schon" 1 · auf eine andere Karte übertragen 1 · Mehrzahl wartet auf die Einzahl 1)')],
     ['sie nennt die ausgeblendete Karte mit 28 Tagen', r.aus.includes(`${F_WEG} (Box 2, 28 T)`)],
     ['sie nennt gram-marfu mit 16 Tagen', r.aus.includes('gram-marfu (Box 3, 16 T)')],
     ['„reichen noch"', r.aus.includes('✅ 15 am Tag reichen noch.')]
@@ -127,10 +128,10 @@ function abweichungen(r){
 }
 
 try {
-  console.log('\nA. Sein Fall: eine echte Karte 12 Tage zu spät, sechs Einträge, die die App nicht vorlegt');
+  console.log('\nA. Sein Fall: eine echte Karte 12 Tage zu spät, sieben Einträge, die die App nicht vorlegt');
   const a = lauf(WERKZEUG, stand(12));
   const offen = abweichungen(a);
-  if (!offen.length) gut('8 von 8 Erwartungen erfüllt (Exit 0, 12 Tage, 3 fällig, 6 nicht mitgezählt)');
+  if (!offen.length) gut('8 von 8 Erwartungen erfüllt (Exit 0, 12 Tage, 3 fällig, 7 nicht mitgezählt)');
   else { offen.forEach(t => schlecht(t)); console.log(a.aus.split('\n').slice(0, 14).map(z => '      ' + z.slice(0, 200)).join('\n')); }
 
   console.log('\nB. Der Alarm geht noch: dieselbe echte Karte 15 Tage zu spät');
@@ -151,7 +152,8 @@ try {
     ['Fachbegriffe außerhalb der Kartei zählen wieder mit', '!FACH.get(String(id))', 'false'],
     ['ein Fachbegriff, den die Datei nicht führt, zählt wieder mit', "String(id).startsWith('gram-')", 'false'],
     ['übertragene Einträge zählen wieder mit', "  if (x.uebertragen != null) return 'uebertragen';", ''],
-    ['eine zurückgeholte Karte (an:false) gilt als ausgeblendet', 'return !!(e && e.an);', 'return !!e;']
+    ['eine zurückgeholte Karte (an:false) gilt als ausgeblendet', 'return !!(e && e.an);', 'return !!e;'],
+    ['eine Mehrzahl, deren Einzahl er nicht kann, zählt wieder mit', "    if (!angefangen && !an(BEK, sgId) && !(sg && (Number(sg.box) || 1) >= 2)) return 'mehrzahl';", '']
   ];
   STOERUNGEN.forEach(([name, alt, neu], i) => {
     if (!QUELLE.includes(REPO_ZEILE) || QUELLE.split(alt).length !== 2){
@@ -169,5 +171,5 @@ try {
   fs.rmSync(TMP, { recursive: true, force: true });
 }
 
-console.log(fehler ? `\n⛔ ${fehler} Befund(e).` : '\n✅ lernlast.mjs zählt nur, was die App vorlegt; sechs Störtests rot.');
+console.log(fehler ? `\n⛔ ${fehler} Befund(e).` : '\n✅ lernlast.mjs zählt nur, was die App vorlegt; sieben Störtests rot.');
 process.exit(fehler ? 1 : 0);

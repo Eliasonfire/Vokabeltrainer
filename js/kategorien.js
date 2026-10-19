@@ -1004,7 +1004,7 @@ function speichereOffenesFormular(){
       sentAr: wert('wkSentAr'), sentDe: wert('wkSentDe'),
       ...(typ !== null ? { type: typ } : {})
     });
-    if (typeof openWordList === 'function' && AKTUELLE_LISTE) openWordList(AKTUELLE_LISTE);
+    zeichneHerkunftNeu();
     toast('Gespeichert');
     return 'gespeichert';
   }
@@ -1032,6 +1032,28 @@ function speichereOffenesFormular(){
     return 'gespeichert';
   }
   return 'nichts';
+}
+
+/* ⭐ NACH LÖSCHEN UND SPEICHERN BLEIBT ER, WO ER WAR (19.10.2026)
+   Elias, mit Bild einer leeren Liste ohne Überschrift („Keine Wörter in dieser Kategorie."):
+   „ich habe gerade wörter gelöscht und bin jetzt hier gekommen. ich will aber eigentlich in
+   die liste da zurück wo ich davor war".
+   Ursache: nach dem Löschen (und nach dem Speichern einer Änderung) rief die Wortkarte fest
+   openWordList(AKTUELLE_LISTE) — und das WECHSELT auf den Bildschirm der Wortliste. Kam die
+   Karte aus einer der beiden Suchen, hatte er dort nie eine Liste geöffnet: AKTUELLE_LISTE war
+   leer, und er landete in einer leeren Liste ohne Titel (oder in einer alten Liste).
+   Jetzt wird nur neu gezeichnet, was gerade zu sehen ist — gewechselt wird nie. Die
+   Wortliste zeichnet openWordList() neu (dort ist er schon, showScreen legt nichts ab), die
+   Suchen zeichnen ihre Treffer neu, damit das gelöschte Wort verschwindet. */
+function zeichneHerkunftNeu(){
+  const aktiv = document.querySelector('.screen.active');
+  if (aktiv && aktiv.id === 'screen-wordlist'){
+    if (AKTUELLE_LISTE) openWordList(AKTUELLE_LISTE);
+    return;
+  }
+  const sichtbar = id => { const el = document.getElementById(id); return !!el && !el.classList.contains('hidden'); };
+  if (sichtbar('sucheTreffer') && typeof zeichneSuche === 'function') zeichneSuche();
+  if (sichtbar('alleSucheTreffer') && typeof zeichneAlleSuche === 'function') zeichneAlleSuche();
 }
 
 function schliesseWortKarte(){
@@ -1154,7 +1176,7 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     if (!confirm(`„${w.ar}" (${w.de}) wirklich löschen? Das lässt sich nicht rückgängig machen.`)) return;
     if (loeschePersonalVocab(w.id)){
       schliesseWortKarte();
-      openWordList(AKTUELLE_LISTE);
+      zeichneHerkunftNeu();
       if (typeof renderCategories === 'function') renderCategories();
       toast('Vokabel gelöscht');
     } else {

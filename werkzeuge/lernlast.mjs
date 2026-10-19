@@ -73,8 +73,10 @@ for (const f of fs.readdirSync(path.join(REPO, 'data')).filter(f => /^vokabeln-.
 const buchVon = new Map();
 for (const [b, l] of Object.entries(ctx.window.VOKABELN || {})) for (const w of l) buchVon.set(String(w.id), [b, Number(w.chapter)]);
 const einzelnFrei = id => { const e = FREI[id]; return !!(e && (e === true || e.an)); };
-const drin = id => {
-  const x = buchVon.get(String(id));
+const drin = roh => {
+  /* Eine Mehrzahlkarte (`<id>#pl`) steht im Kapitel ihrer Einzahl (bauePluralKarte). */
+  const id = String(roh).endsWith('#pl') ? String(roh).slice(0, -3) : String(roh);
+  const x = buchVon.get(id);
   if (!x) return true;                                  /* eigene Wörter, Fachbegriffe */
   const k = auswahl[x[0]];
   return (Array.isArray(k) && k.includes(x[1])) || einzelnFrei(id);
@@ -126,6 +128,16 @@ const nichtVorgelegt = (id, x) => {
   /* Ein Fachbegriff, den die Datei nicht (mehr) führt, ist auch keine Karte:
      die Datei ist die einzige Tür in die App. */
   if (FACH.has(String(id)) ? !FACH.get(String(id)) : String(id).startsWith('gram-')) return 'fachbegriff';
+  /* ⭐ Eine Mehrzahlkarte, deren Einzahl er noch nicht kann (19.10.2026): seit es alle
+     Pluralkarten gibt, legt initProgress() für jede einen Eintrag an — vorgelegt wird sie
+     erst, wenn die Einzahl mindestens in Box 2 ist, er sie mit „Kenne ich schon" abgelegt
+     hat oder die Mehrzahl schon angefangen ist. Dieselbe Regel wie pluralBereit() in
+     js/kern.js; bewacht von test-lernlast.mjs. */
+  if (String(id).endsWith('#pl')){
+    const angefangen = x.gruppe || (Number(x.box) || 1) > 1 || (Number(x.correct) || 0) + (Number(x.wrong) || 0) > 0;
+    const sgId = String(id).slice(0, -3), sg = PROG[sgId];
+    if (!angefangen && !an(BEK, sgId) && !(sg && (Number(sg.box) || 1) >= 2)) return 'mehrzahl';
+  }
   return null;
 };
 
@@ -138,7 +150,7 @@ let neu = 0, vorgezogeneKarten = 0;
 /* v604: die Lerngruppe (Mitglieder = Box 1 mit `gruppe`) */
 const gruppe = { alle: 0, neu: 0, frueher: 0, faellig: 0, neuInSchlange: 0 };
 const wdhFaellig = [];   // { v, b } der fälligen Wiederholungen
-const draussen = { geloescht: 0, fachbegriff: 0, bekannt: 0, uebertragen: 0 };
+const draussen = { geloescht: 0, fachbegriff: 0, bekannt: 0, uebertragen: 0, mehrzahl: 0 };
 const draussenFaellig = [];   // die fälligen Wiederholungen darunter, damit man SIEHT, was nicht mitzählt
 for (const [id, x] of Object.entries(PROG)){
   if (!x || !drin(id)) continue;
@@ -182,7 +194,7 @@ console.log(`Karten: ${zeile(1, b => box[b])}`);
 {
   const summe = Object.values(draussen).reduce((a, n) => a + n, 0);
   if (summe)
-    console.log(`Nicht mitgezählt, weil die App sie nicht vorlegt: ${summe} (gelöscht ${draussen.geloescht} · Fachbegriff nicht in der Kartei ${draussen.fachbegriff} · „kenne ich schon" ${draussen.bekannt} · auf eine andere Karte übertragen ${draussen.uebertragen})`
+    console.log(`Nicht mitgezählt, weil die App sie nicht vorlegt: ${summe} (gelöscht ${draussen.geloescht} · Fachbegriff nicht in der Kartei ${draussen.fachbegriff} · „kenne ich schon" ${draussen.bekannt} · auf eine andere Karte übertragen ${draussen.uebertragen} · Mehrzahl wartet auf die Einzahl ${draussen.mehrzahl})`
       + (draussenFaellig.length ? ` — darunter fällige Wiederholungen: ${draussenFaellig.join(', ')}` : ''));
 }
 /* v604: Box 1 = Lerngruppe + Schlange. Gruppe = 2 × Box-1-Plätze. */

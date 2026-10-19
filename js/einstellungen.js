@@ -5,7 +5,7 @@
 function renderSettings(){
   /* „Pluralformen anzeigen", „Mehrzahl mit eintippen" und „Nur weit entfernte Mehrzahl" gibt es
      seit 14.10.2026 nicht mehr. Elias: „plural soll nciht hinter schaltern versteckt sein". */
-  document.getElementById('togglePluralKarten').classList.toggle('on', !!SETTINGS.pluralKarten);
+  /* „Plural als eigene Karten" ist seit 19.10.2026 ebenfalls weg — alle Mehrzahlen sind eigene Karten. */
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
   if (typeof zeigeTagesDeckel === 'function') zeigeTagesDeckel();
@@ -548,22 +548,12 @@ document.getElementById('btnSettings').addEventListener('click', ()=>showScreen(
    ⭐ Der Fortschritt bleibt beim Ausschalten erhalten. initProgress loescht
    nichts, es traegt nur Fehlendes nach - wer die Karten wieder einschaltet,
    findet seine Kaesten so vor, wie er sie verlassen hat. */
-document.getElementById('togglePluralKarten').addEventListener('click', ()=>{
-  SETTINGS.pluralKarten = !SETTINGS.pluralKarten;
-  saveSettings();
-  const stand = wendePluralKartenAn(pluralKartenStufe(SETTINGS));
-  PROGRESS = initProgress();
-  renderSettings();
-  if (typeof renderHome === 'function') renderHome();
-  if (typeof renderChapterCats === 'function') renderChapterCats();
-  const dazu = Math.abs(stand.nachher - stand.vorher);
-  toast(SETTINGS.pluralKarten
-    ? `${dazu} Pluralkarten sind dazugekommen — sie starten in Kasten 1.`
-    : `${dazu} Pluralkarten ausgeblendet. Ihr Fortschritt bleibt gespeichert.`);
-});
-/* Die acht weit entfernten Mehrzahlen (Paket A3) brauchen keinen Klick: pluralKartenStufe()
-   in js/kern.js baut sie immer (seit 14.10.2026, Elias: „plural soll nciht hinter schaltern
-   versteckt sein"). Schaltet er „Plural als eigene Karten" aus, bleiben sie. */
+/* ⛔ DER SCHALTER IST SEIT 19.10.2026 WEG. Elias: „wir sollen jeden einzelnen plural als
+   eigene vokabel behandeln weil sonst merke ich es mir nicht" (und am 14.10.: „plural soll
+   nciht hinter schaltern versteckt sein"). pluralKartenStufe() in js/kern.js baut alle
+   Pluralkarten immer; wann eine drankommt, entscheiden pluralBereit() und der Mehrzahl-Platz
+   in lerngruppeHeute(). Bis dahin stand hier der Klick, der VOCAB_DATA umbaute — die drei
+   Schritte oben gelten jetzt beim Start (wendePluralKartenAn, initProgress, Zählungen). */
 /* Verbformen ein- und ausschalten (Elias' Wunsch vom 30.07.2026). Genau wie bei
    den Pluralformen: eine Umschaltung, kein eigener Bildschirm. */
 document.getElementById('toggleVerbFormen').addEventListener('click', ()=>{

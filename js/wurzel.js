@@ -248,6 +248,11 @@ function wzBaueFamilien(){
   });
 
   liste.forEach(function(w){
+    /* ⭐ Eine Mehrzahlkarte ist kein eigenes Wort der Familie, sondern eine Form ihrer
+       Einzahl — und die steht schon darin. Seit 19.10.2026 gibt es ALLE Pluralkarten
+       (pluralKartenStufe() in js/kern.js); ohne diese Zeile stünde jede Familie mit ihren
+       Mehrzahlen doppelt da. MEINE Entscheidung, wie in der Wortliste weiter unten. */
+    if (w.istPlural) return;
     var r = w.root && String(w.root).trim();
     if (!r) return;
     if (WZ_LEHNWORT.indexOf(wzVergleichsform(w.ar)) >= 0) return;
