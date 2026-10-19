@@ -32,7 +32,10 @@
  *      nehmen den Teil — und niemand liest mehr SETTINGS.satzZiel,
  *   6. verwandte Übungen stehen in verschiedenen Teilen (27.09.2026, sein Paar
  *      10/12 und drei weitere), mit Störtest,
- *   7. ein Durchgang von „Gemischt" nimmt keinen Satz doppelt, mit Störtest.
+ *   7. ein Durchgang von „Gemischt" nimmt keinen Satz doppelt, mit Störtest,
+ *   8. eine ruhende Übung (`ruht:true`, seit 19.10.2026 Übung 1) steht in keinem Teil, in
+ *      keiner Auswahl-Liste und in keiner Statistik, und keine andere wechselt ihretwegen den
+ *      Teil — an jeder Übung geprüft, mit vier Störtests.
  * Exit 0 = alles richtig · 1 = Befund.
  */
 import fs from 'node:fs';
@@ -56,8 +59,23 @@ function schneide(text, name){
   for (; i < text.length; i++){ if (text[i] === '{') t++; else if (text[i] === '}' && !--t) return text.slice(a, i + 1); }
   return null;
 }
-const UEBUNGEN = [...ueb.matchAll(/^ {4}id:'([a-z0-9-]+)', nr:(\d+), name:'[^']*', art:'([a-z]+)'/gm)]
-  .map(m => ({ id: m[1], nr: Number(m[2]), art: m[3] }));
+/* Mit den zwei Feldern, die satzTeile() außerdem liest — je eine eigene Zeile direkt unter der
+   Kopfzeile des Eintrags: `teilRang` (04.10.2026) und `ruht` (19.10.2026, Abschnitt 8). Bis zum
+   19.10.2026 las dieser Prüfer `teilRang` nicht mit und teilte deshalb anders als die App. */
+const UEB_ZEILEN = ueb.split('\n');
+const UEBUNGEN = [];
+UEB_ZEILEN.forEach((z, i) => {
+  const m = /^ {4}id:'([a-z0-9-]+)', nr:(\d+), name:'[^']*', art:'([a-z]+)'/.exec(z);
+  if (!m) return;
+  const u = { id: m[1], nr: Number(m[2]), art: m[3] };
+  for (const folge of UEB_ZEILEN.slice(i + 1, i + 3)){
+    const r = /^ {4}teilRang:(\d+),/.exec(folge);
+    if (r) u.teilRang = Number(r[1]);
+    if (/^ {4}ruht:true,/.test(folge)) u.ruht = true;
+  }
+  UEBUNGEN.push(u);
+});
+const AKTIV = UEBUNGEN.filter(u => !u.ruht), RUHEND = UEBUNGEN.filter(u => u.ruht);
 const mSchaetzung = ueb.match(/const UEB_ZEIT_SCHAETZUNG = (\{[^}]+\});/);
 const NAMEN = ['satzTeile', 'satzTag', 'satzTagSpeichern', 'satzTeilZustand', 'satzTeilStand', 'satzTeilHeute',
                'satzTageszielHeute', 'satzTeilAuswahl', 'uebungWeiter'];
@@ -97,8 +115,9 @@ console.log('pruefe-satz-teile.mjs — Satzmodus in zwei Teilen (' + UEBUNGEN.le
 const c = kontext(code, UEBUNGEN);
 const t = c.lauf('satzTeile()');
 const alle = t[1].concat(t[2]);
-pruefe('jede Übung in genau einem Teil', alle.length === UEBUNGEN.length && new Set(alle).size === UEBUNGEN.length
-  && UEBUNGEN.every(u => alle.includes(u.id)), JSON.stringify({ 1: t[1], 2: t[2] }));
+pruefe('jede Übung in genau einem Teil' + (RUHEND.length ? ` — die ruhende (Übung ${RUHEND.map(u => u.nr).join(', ')}) in keinem` : ''),
+  alle.length === AKTIV.length && new Set(alle).size === AKTIV.length
+  && AKTIV.every(u => alle.includes(u.id)) && RUHEND.every(u => !alle.includes(u.id)), JSON.stringify({ 1: t[1], 2: t[2] }));
 const groesste = Math.max(...Object.values(t.zeit));
 pruefe(`gleich lang: Teil 1 ${Math.round(t.summe[1])} s, Teil 2 ${Math.round(t.summe[2])} s je Runde (Unterschied höchstens eine Übung, ${Math.round(groesste)} s)`,
   Math.abs(t.summe[1] - t.summe[2]) <= groesste, Math.abs(t.summe[1] - t.summe[2]));
@@ -268,6 +287,93 @@ else {
   const ohneZiehen = echt.replace('raus.push(uebungZiehen(koerbe[i], imDurchgang));', 'raus.push(koerbe[i].pop());');
   const r3 = gemischt(ohneZiehen, { a: ['s1', 's2'], b: ['s3', 's2'] });
   pruefe('STÖRTEST — ohne uebungZiehen käme derselbe Satz zweimal', ohneZiehen !== echt && r3[0] === r3[1], r3.join(' '));
+}
+
+/* 8: eine RUHENDE Übung (`ruht:true`, 19.10.2026). Elias, mit Bild von Übung 1: „die
+   satzübung können wir erstmal einstellen weil wir sie meine ich noch nicht offiziell
+   besprochen haben und sie für mich noch keinen sinn macht. guck ob sich bei teil 1 und 2 die
+   sortierung ändert dadurch das eines weniger ist." Gemessen an seinem Stand (KV 19.10.2026,
+   05:05): fiele Übung 1 schon vor dem Verteilen weg, wechselten fünf andere den Teil. Geprüft
+   an JEDER Übung: ruht sie allein, steht sie in keinem Teil, und jede andere bleibt in ihrem.
+   Dazu die Auswahl-Liste und die Übungsstatistik, beide an den echten Funktionen. */
+console.log('\n8. Eine ruhende Übung steht in keinem Teil und verschiebt keine andere');
+const teilVon = (tt, id) => tt[1].includes(id) ? 1 : tt[2].includes(id) ? 2 : 0;
+const ohneRuhe = liste => liste.map(u => { const v = { ...u }; delete v.ruht; return v; });
+const wanderer = (quelltext, liste) => {
+  const vorher = kontext(quelltext, ohneRuhe(liste)).lauf('satzTeile()');
+  const mit = kontext(quelltext, liste).lauf('satzTeile()');
+  return { gewechselt: liste.filter(u => !u.ruht && teilVon(mit, u.id) !== teilVon(vorher, u.id)).map(u => u.nr + ' ' + u.id),
+           ruhtDrin: liste.filter(u => u.ruht && teilVon(mit, u.id) !== 0).map(u => u.nr + ' ' + u.id) };
+};
+const alleinRuht = id => ohneRuhe(UEBUNGEN).map(u => (u.id === id ? { ...u, ruht: true } : u));
+{
+  const echt = wanderer(code, UEBUNGEN);
+  pruefe(`seine ruhende Übung (${RUHEND.map(u => u.nr + ' ' + u.id).join(', ') || 'keine'}) steht in keinem Teil, keine andere wechselt`,
+    !echt.gewechselt.length && !echt.ruhtDrin.length, JSON.stringify(echt));
+  const jede = UEBUNGEN.map(u => [u, wanderer(code, alleinRuht(u.id))]).filter(([, r]) => r.gewechselt.length || r.ruhtDrin.length);
+  pruefe(`… und bei JEDER Übung, die allein ruht (${UEBUNGEN.length} Läufe)`, !jede.length,
+    jede.map(([u, r]) => u.nr + ': ' + JSON.stringify(r)).join(' · '));
+  const probe = alleinRuht(UEBUNGEN[0].id);
+  const vorAus = 'for (const m of reihe){';
+  const kaputt1 = code.split(vorAus).length === 2 ? code.replace(vorAus, 'for (const m of reihe.filter(x => !x.ruht)){') : code;
+  const r1 = kaputt1 === code ? null : wanderer(kaputt1, probe);
+  pruefe(`STÖRTEST — fällt die ruhende Übung VOR dem Verteilen weg, wechseln andere den Teil → rot`,
+    !!r1 && r1.gewechselt.length > 0, r1 ? JSON.stringify(r1) : 'Ersetzung griff nicht — Quelltext geändert?');
+  const ruhLinie = 'const ruht = UEBUNGEN.filter(m => m.ruht).map(m => m.id);';
+  const kaputt2 = code.split(ruhLinie).length === 2 ? code.replace(ruhLinie, 'const ruht = [];') : code;
+  const r2 = kaputt2 === code ? null : wanderer(kaputt2, probe);
+  pruefe('STÖRTEST — ohne das Herausnehmen bliebe die ruhende in ihrem Teil → rot',
+    !!r2 && r2.ruhtDrin.length > 0, r2 ? JSON.stringify(r2) : 'Ersetzung griff nicht — Quelltext geändert?');
+
+  /* Die Auswahl-Liste: die echte renderUebungsLeiste() mit einem Blatt, in das sie schreibt. */
+  const gruppen = (ueb.match(/const UEB_GRUPPEN = \[[\s\S]*?\n\];/) || [''])[0];
+  const leiste = schneide(ueb, 'renderUebungsLeiste'), aktivF = schneide(ueb, 'uebungAktiv');
+  const zeichne = (quelle, liste) => {
+    const el = { uebBlatt: { innerHTML: '' }, uebWert: { textContent: '' }, uebZahl: { textContent: '' } };
+    const tt = kontext(code, liste).lauf('satzTeile()');
+    const k = { UEBUNGEN: liste, document: { getElementById: id => el[id] || null }, UEB: { modus: null }, UEB_GEMISCHT: 'gemischt',
+                uebungenAufbauen: () => Object.fromEntries(liste.map(m => [m.id, [1, 2, 3]])), uebungAnzahl: l => (l || []).length,
+                escapeHtml: s => String(s), arabischHervor: s => String(s), satzTeilStand: () => ({ jetzt: 1 }), satzTeile: () => tt, Set, String, Object };
+    vm.createContext(k);
+    vm.runInContext(gruppen + '\n' + aktivF + '\n' + quelle + '\nrenderUebungsLeiste();', k);
+    const html = el.uebBlatt.innerHTML;
+    return { fehlt: liste.filter(m => !m.ruht && !html.includes(`data-uebmodus="${m.id}"`)).map(m => m.nr),
+             zuviel: liste.filter(m => m.ruht && html.includes(`data-uebmodus="${m.id}"`)).map(m => m.nr),
+             modi: el.uebZahl.textContent };
+  };
+  if (!gruppen || !leiste || !aktivF) pruefe('renderUebungsLeiste/uebungAktiv/UEB_GRUPPEN im Quelltext', false, 'nicht gefunden');
+  else {
+    const z = zeichne(leiste, probe);
+    pruefe(`die Auswahl-Liste zeigt jede andere Übung, die ruhende nicht, und zählt ${UEBUNGEN.length - 1} Modi`,
+      !z.fehlt.length && !z.zuviel.length && z.modi === (UEBUNGEN.length - 1) + ' Modi', JSON.stringify(z));
+    const filterAlt = 'UEBUNGEN.filter(m=>m.art===art && uebungAktiv(m))';
+    const kaputt3 = leiste.split(filterAlt).length === 2 ? leiste.replace(filterAlt, 'UEBUNGEN.filter(m=>m.art===art)') : leiste;
+    const z3 = kaputt3 === leiste ? null : zeichne(kaputt3, probe);
+    pruefe('STÖRTEST — ohne den Filter stünde die ruhende in der Liste → rot', !!z3 && z3.zuviel.length > 0,
+      z3 ? JSON.stringify(z3) : 'Ersetzung griff nicht — Quelltext geändert?');
+  }
+
+  /* Die Übungsstatistik: die echte renderUebungStand() aus js/statistik.js. */
+  const stat = schneide(lies('js/statistik.js'), 'renderUebungStand');
+  const zaehle = (quelle, liste) => {
+    const kasten = { innerHTML: '' };
+    const k = { UEBUNGEN: liste, UEBUNG_STAND: Object.fromEntries(liste.map(m => [m.id, { gestellt: 4, richtig: 2, zuletzt: '2026-10-18' }])),
+                document: { getElementById: id => (id === 'uebungStand' ? kasten : null) }, tageHer: () => 'gestern',
+                arabischHervor: s => String(s), escapeHtml: s => String(s), Array };
+    vm.createContext(k);
+    vm.runInContext(aktivF + '\n' + quelle + '\nrenderUebungStand();', k);
+    return (kasten.innerHTML.match(/<div class="rz/g) || []).length;
+  };
+  if (!stat) pruefe('renderUebungStand in js/statistik.js', false, 'nicht gefunden');
+  else {
+    const n = zaehle(stat, probe);
+    pruefe(`die Übungsstatistik zeigt ${UEBUNGEN.length - 1} Zeilen, die ruhende nicht`, n === UEBUNGEN.length - 1, n);
+    const statFilter = "UEBUNGEN.filter(m => (typeof uebungAktiv === 'function') ? uebungAktiv(m) : !m.ruht)";
+    const kaputt4 = stat.split(statFilter).length === 2 ? stat.replace(statFilter, 'UEBUNGEN') : stat;
+    const n4 = kaputt4 === stat ? null : zaehle(kaputt4, probe);
+    pruefe('STÖRTEST — ohne den Filter stünde sie in der Statistik → rot', n4 !== null && n4 === UEBUNGEN.length,
+      n4 === null ? 'Ersetzung griff nicht — Quelltext geändert?' : n4);
+  }
 }
 
 console.log('\n' + (fehler ? `X  ${fehler} Befund(e)` : '✅ Satzmodus in zwei Teilen: alles richtig'));

@@ -395,7 +395,10 @@ function messen(app){
       try { const a = U.baue(z, s) || []; if (a.length){ liste.push(...a); mitAufgabe.push(s); } } catch (e){ /* B/F melden baue()-Fehler */ }
     }
     const imTeil = teile ? [1, 2].filter(t => (teile[t] || []).includes(U.id)) : [];
-    if (teile && imTeil.length !== 1) ergebnis.verstoesse.push(`${U.id}: steht in ${imTeil.length} Teilen statt in genau einem (satzTeile)`);
+    /* Eine ruhende Übung (`ruht:true`, seit 19.10.2026 Übung 1 — Elias: „die satzübung können
+       wir erstmal einstellen …") steht in KEINEM Teil; gebaut und gezählt wird sie hier weiter. */
+    const sollTeile = U.ruht ? 0 : 1;
+    if (teile && imTeil.length !== sollTeile) ergebnis.verstoesse.push(`${U.id}: steht in ${imTeil.length} Teilen statt in ${sollTeile ? 'genau einem' : 'keinem (sie ruht)'} (satzTeile)`);
     if (!liste.length){ ergebnis.pflichtLuecken.push(`${U.nr} ${U.id}: keine Aufgabe in seiner Auswahl`); continue; }
     /* J: kommen die Wörter der neuesten Kapitel in DIESER Übung an? Gezählt wird
        jedes neue Wort, das in einem Satz steht, aus dem die Übung eine Aufgabe
@@ -424,7 +427,7 @@ function messen(app){
         ergebnis.verstoesse.push(`${U.id}: nicht reihum — in den ersten ${k} Aufgaben nur ${new Set(erste).size} verschiedene Fragen`);
     }
     if (liste.length < MIN_JE) ergebnis.pflichtLuecken.push(`${U.nr} ${U.id}: nur ${liste.length} Aufgaben (Pflicht: mindestens ${MIN_JE})`);
-    ergebnis.pflicht.push(`${U.nr} ${U.id}: ${liste.length} Aufgaben` + (imTeil.length === 1 ? ` · Teil ${imTeil[0]}` : ''));
+    ergebnis.pflicht.push(`${U.nr} ${U.id}: ${liste.length} Aufgaben` + (imTeil.length === 1 ? ` · Teil ${imTeil[0]}` : '') + (U.ruht ? ' · ruht' : ''));
   }
   const nummern = UEB.map(u => u.nr).sort((a, b) => a - b);
   if (nummern.some((n, i) => n !== i + 1)) ergebnis.verstoesse.push(`Nummern nicht linear 1–${UEB.length}: ${nummern.join(',')}`);

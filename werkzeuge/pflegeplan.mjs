@@ -266,7 +266,17 @@ export const PFLEGEPLAN = [
      neuer Inhalt — nein, eine neue Übung verschiebt nur die Teilgröße ·
      Eingaben — nur die App liest den Zustand, nichts zu verarbeiten ·
      veralten — nein. Bewacht von pruefe-satz-teile.mjs (Fälle a–f mit
-     Störtests). */
+     Störtests).
+     19.10.2026 (v690, ebenfalls in js/uebung.js und js/statistik.js): eine
+     Übung kann ruhen (`ruht:true`, zuerst Übung 1). Elias: „die satzübung
+     können wir erstmal einstellen weil wir sie meine ich noch nicht offiziell
+     besprochen haben …". Pflegebedarf, geprüft: neuer Inhalt — nein ·
+     Eingaben — nein, kein Schalter, keine Speicherung · veralten — ja, das
+     „erstmal": sobald sein Unterricht mubtadaʾ/khabar bespricht, gehört die
+     Frage „wieder einschalten?" zu ihm. Sie steht in der To-Do unter
+     „Wartet auf Elias", und jeder Wartungslauf zeigt die ruhende Übung in
+     Schritt 1b.8 an („· ruht" in pruefe-satzmodus-aktuell.mjs, Teil H).
+     Bewacht von pruefe-satz-teile.mjs (Abschnitt 8, vier Störtests). */
   /* 25.09.2026 (v603), innerhalb von js/kern.js und js/lernen.js und deshalb
      von Hand hier: Box 6 (30 T) und Box 7 (60 T), Box 1 mindestens ein Drittel,
      Wiederholungen nach Verspätung ÷ Abstand, freie Plätze an noch nicht fällige
