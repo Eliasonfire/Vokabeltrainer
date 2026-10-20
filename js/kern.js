@@ -967,10 +967,12 @@ function fachbegriffBestelltAm(id){
    Abfragerichtung Deutsch→Arabisch waere aus „Haus" sonst بَيْتٌ statt بُيُوتٌ
    geworden, ohne dass die Karte etwas falsch macht.
 
-   ⛔ Der deutsche Plural wird NICHT gebildet. „Haus" → „Häuser" ginge, „Lehrer"
-   → „Lehrer" auch, aber es gibt keinen Weg, das ohne Raten zu tun (Regel 6,
-   Goal-Prompt E.1). Die Karte fragt die arabische Form ab, und dafuer genuegt
-   die Bedeutung mit dem Vermerk.
+   ⭐ Seit 20.10.2026 steht die deutsche MEHRZAHL da („Felder (Plural)"). Elias:
+   „und bei den plural karten soll direkt der plural stehen also nicht ,,feld
+   (plural)" sondern ,,felder (Plural)"". Gebildet wird sie weiter NICHT (das
+   ginge nicht ohne Raten, Regel 6, Goal-Prompt E.1), sondern nachgeschlagen:
+   deMehrzahl() unten fragt das Verzeichnis data/de-mehrzahl.js. Fehlt dort eine
+   Teilbedeutung, bleibt die alte Form „Feld (Plural)".
 
    ⛔ Kein Beispielsatz, kein Koranbeleg, keine Eselsbruecke wird uebernommen -
    die stehen alle im Singular und waeren auf einer Pluralkarte irrefuehrend.
@@ -1190,12 +1192,43 @@ function pluralKlangPartner(w, hoechstens){
   return aus;
 }
 
+/* ⭐ DIE DEUTSCHE MEHRZAHL AUF DER MEHRZAHLKARTE (20.10.2026).
+   Elias um 02:23: „und bei den plural karten soll direkt der plural stehen also nicht
+   ,,feld (plural)" sondern ,,felder (Plural)"".
+   Jede Teilbedeutung (Trenner „/") wird im Verzeichnis DE_MEHRZAHL (data/de-mehrzahl.js)
+   nachgeschlagen, genau so, wie sie dasteht. Fehlt EINE, gibt es null, und die Karte behält
+   die alte Form — nie eine halb übersetzte Zeile. Ein Adjektiv bleibt immer, wie es ist: im
+   Deutschen hat es ohne Nomen keine eigene Mehrzahl („die Häuser sind groß"); MEINE
+   Entscheidung (Claude), ihm gesagt.
+   Weil bauePluralKarte() das hier fragt, folgt die Mehrzahlkarte auch einer Änderung, die er
+   an der Bedeutung der Einzahl macht (pluralKarteNachziehen() weiter unten) — sofern die neue
+   Bedeutung im Verzeichnis steht. Bewacht von werkzeuge/pruefe-de-mehrzahl.mjs. */
+function deMehrzahl(w){
+  const de = String((w && w.de) || '');
+  if (!de || !w || w.type === 'adjective') return null;
+  if (typeof DE_MEHRZAHL !== 'object' || !DE_MEHRZAHL) return null;
+  /* Eine GANZE Bedeutung kann eigens stehen, wenn ein Wort je nach Karte eine andere Mehrzahl
+     hat: „Rat" (Versammlung) → „Räte", aber „Rat / Ratschlag" → „Ratschläge". */
+  const ganz = (typeof DE_MEHRZAHL_GANZ === 'object' && DE_MEHRZAHL_GANZ) ? DE_MEHRZAHL_GANZ[de.trim().normalize('NFC')] : null;
+  if (typeof ganz === 'string' && ganz) return ganz;
+  const aus = [];
+  for (const teil of de.split('/')){
+    const wort = teil.trim(), schluessel = wort.normalize('NFC');
+    const v = wort && Object.prototype.hasOwnProperty.call(DE_MEHRZAHL, schluessel) ? DE_MEHRZAHL[schluessel] : null;
+    if (typeof v !== 'string' || !v) return null;
+    aus.push(teil.replace(wort, () => v));
+  }
+  return aus.join('/');
+}
+
 function bauePluralKarte(w){
   if (!w || !w.pl || istPluralKarte(w.id) || istZahlwort(w)) return null;
+  /* Mit Abfrage: Prüfstände schneiden diese Funktion allein aus dem Quelltext. */
+  const mehrzahl = typeof deMehrzahl === 'function' ? deMehrzahl(w) : null;
   return {
     id: w.id + PLURAL_MARKE,
     ar: w.pl,
-    de: (w.de || '') + ' (Plural)',
+    de: (mehrzahl || w.de || '') + ' (Plural)',
     /* ⛔ `book` MUSS mit. Ohne das Feld faellt jede Pluralkarte in
        passtZurAuswahl() durch:  `const kapitel = karte[w.book]` liefert bei
        undefined nichts, und `if (!Array.isArray(kapitel)) return false` wirft

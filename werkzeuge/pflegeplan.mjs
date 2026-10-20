@@ -207,6 +207,20 @@ export const PFLEGEPLAN = [
     ],
   },
   {
+    /* ⭐ 20.10.2026 (v698) — die deutsche Mehrzahl auf den Mehrzahlkarten. Elias: „und bei den
+       plural karten soll direkt der plural stehen also nicht ,,feld (plural)" sondern
+       ,,felder (Plural)"". deMehrzahl() in js/kern.js schlägt jede Teilbedeutung in
+       data/de-mehrzahl.js nach; fehlt eine, bleibt still die alte Form. */
+    funktion: 'Deutsche Mehrzahl auf den Mehrzahlkarten („Felder (Plural)")',
+    dateien: ['data/de-mehrzahl.js'],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1c.5c', beleg: 'node werkzeuge/pruefe-de-mehrzahl.mjs', werkzeug: 'werkzeuge/pruefe-de-mehrzahl.mjs',
+      wie: 'Ein neuer Abzug oder ein neues Buch bringt neue deutsche Bedeutungen. Der Prüfer liest ALLE Quellen der App (alle Bücher, Eigenliste, Koran häufigste, Nachträge) und meldet jede Teilbedeutung ohne Eintrag (Teil A); die Wartung trägt die deutsche Mehrzahl nach Duden nach, unsicher nach Wiktionary.' },
+    eingaben: { nein: 'Er trägt nichts ein. Ändert er die Bedeutung einer Einzahl auf dem Gerät, folgt die Mehrzahlkarte, wenn die neue Bedeutung im Verzeichnis steht; sonst zeigt sie die alte Form „… (Plural)". Seine eigene Änderung an der Mehrzahlkarte selbst gewinnt (pluralKarteNachziehen()).' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'werkzeuge/pruefe-de-mehrzahl.mjs',
+      wie: 'pruefe-de-mehrzahl.mjs läuft im Sammellauf: Teil A (Deckung aller Quellen), B (Verzeichnis sauber: NFC, kein Trenner, kein „(Plural)" im Wert, nichts doppelt), C (deMehrzahl, bauePluralKarte und pluralKarteNachziehen am echten Quelltext), D (index.html und sw.js laden die Datei); zehn Störtests.' },
+  },
+  {
     /* ⭐ 23.09.2026 (v573) — das Bild zur Eselsbrücke. Elias: „Eselsbrücken-Bild:
        C · Mischung · die 72 + die 14 Beziehungswörter · nur Rückseite". */
     funktion: 'Bild zur Eselsbrücke (Emoji und Zeichnungen auf der Rückseite)',
