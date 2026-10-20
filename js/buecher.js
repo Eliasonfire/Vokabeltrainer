@@ -1144,6 +1144,15 @@ document.addEventListener('DOMContentLoaded', async ()=>{
     wendePluralKartenAn(pluralKartenStufe(SETTINGS));
   }
 
+  /* ---------- Seine Änderungen an den Mehrzahlkarten (20.10.2026) ----------
+     wendePluralKartenAn() baut die Mehrzahlkarten eben frisch, aus der Einzahl und OHNE das,
+     was er an einer Mehrzahlkarte selbst geändert hat. wendeWortAenderungenAn() weiter oben
+     kam dafür zu früh. Im eigenen Edge gemessen, bevor es diesen Aufruf gab: Änderung an der
+     Mehrzahlkarte gespeichert, nach dem Neustart stand wieder „Felder (Plural)" da.
+     Elias um 02:24: „außerdem will ich auch direkt die pluralkarten bearbeiten können …"
+     Bewacht von validate.js (Startlauf-Nachträge) und werkzeuge/pruefe-bearbeiten.mjs. */
+  if (typeof wendePluralAenderungenAn === 'function') wendePluralAenderungenAn();
+
   /* ---------- Lernstand fuer die Pluralkarten (21.08.2026) ----------------
 
      Diese Schleife stand bis heute INLINE und INNERHALB der Bedingung darueber.

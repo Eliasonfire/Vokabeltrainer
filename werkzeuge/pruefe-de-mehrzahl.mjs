@@ -150,7 +150,8 @@ function wirkung(kern, tabellenText){
     zeile(kern, 'const ZAHLWORT_DE = '), schneide(kern, 'function istZahlwort('),
     zeile(kern, 'const PLURAL_MARKE = '), schneide(kern, 'function istPluralKarte('),
     schneide(kern, 'function deMehrzahl('), schneide(kern, 'function bauePluralKarte('),
-    zeile(kern, 'const AENDERBAR = '), schneide(kern, 'function hatWortAenderung('), schneide(kern, 'function pluralKarteNachziehen('),
+    zeile(kern, 'const AENDERBAR = '), zeile(kern, 'const MEHRZAHL_EIGENE = '),
+    schneide(kern, 'function hatWortAenderung('), schneide(kern, 'function pluralKarteNachziehen('),
     'let VOCAB_DATA = []; let WORT_AENDERUNGEN = {};'].join('\n'), ctx);
   const hole = c => vm.runInContext(c, ctx);
   const karte = (de, type) => hole('(bauePluralKarte(' + JSON.stringify({ id: '1', de, ar: 'a', pl: 'b', type: type || 'noun' }) + ') || {}).de');
@@ -166,8 +167,12 @@ function wirkung(kern, tabellenText){
   hole('VOCAB_DATA = [{ id: "7", de: "Lehrer", ar: "a", pl: "b", type: "noun" }]; VOCAB_DATA.push(bauePluralKarte(VOCAB_DATA[0]));'
     + ' VOCAB_DATA[0].de = "Professor"; pluralKarteNachziehen("7");');
   soll(hole('VOCAB_DATA[1].de'), 'Professoren (Plural)', 'C5 Änderung an der Einzahl, danach pluralKarteNachziehen()');
-  hole('WORT_AENDERUNGEN = { "7#pl": { de: "meine Lehrer" } }; VOCAB_DATA[1].de = "meine Lehrer"; VOCAB_DATA[0].de = "Feld"; pluralKarteNachziehen("7");');
-  soll(hole('VOCAB_DATA[1].de'), 'meine Lehrer', 'C6 seine eigene Änderung an der Mehrzahlkarte gewinnt');
+  /* C6 seit 20.10.2026 (Mehrzahlkarten bearbeiten) OHNE die Bedeutung vorher an die Karte zu
+     schreiben: nach einem Neustart ist die Karte frisch gebaut, und pluralKarteNachziehen() muss
+     seine Änderung selbst darauflegen. Vorher stand hier `VOCAB_DATA[1].de = "meine Lehrer"`,
+     und damit prüfte C6 nur, dass die Funktion die Karte in Ruhe lässt. */
+  hole('WORT_AENDERUNGEN = { "7#pl": { de: "meine Lehrer" } }; VOCAB_DATA[0].de = "Feld"; pluralKarteNachziehen("7");');
+  soll(hole('VOCAB_DATA[1].de'), 'meine Lehrer', 'C6 seine eigene Änderung an der Mehrzahlkarte gewinnt, auch an einer frisch gebauten Karte');
   return f;
 }
 /* Ohne Verzeichnis (Datei nicht geladen) bleibt alles bei der alten Form, ohne Absturz. */
@@ -237,7 +242,7 @@ const STOER = [
   ['S3 auch Adjektive bekommen eine Mehrzahl', 'C',
     q => ({ ...q, kern: ersetze(q.kern, " || w.type === 'adjective') return null;", ') return null;', 'S3') })],
   ['S4 pluralKarteNachziehen() übernimmt die Bedeutung nicht mehr', 'C',
-    q => ({ ...q, kern: ersetze(q.kern, "['ar', 'de', 'type', 'root'].forEach(", "['ar', 'type', 'root'].forEach(", 'S4') })],
+    q => ({ ...q, kern: ersetze(q.kern, '    else if (neu[f] !== undefined) pk[f] = neu[f];\n', '', 'S4') })],
   ['S10 die ganzen Bedeutungen werden nicht mehr gefragt', 'C',
     q => ({ ...q, kern: ersetze(q.kern, "  if (typeof ganz === 'string' && ganz) return ganz;\n", '', 'S10') })],
   ['S5 der Eintrag „Feld" fehlt im Verzeichnis', 'A',

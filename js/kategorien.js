@@ -765,21 +765,6 @@ function baueWortKarte(w){
   const geaendert = (typeof hatWortAenderung === 'function') && hatWortAenderung(w.id);
   const nurImGeraet = (typeof PERSONAL_VOCAB !== 'undefined') && PERSONAL_VOCAB.some(x => String(x && x.id) === String(w.id));
 
-  /* ⭐ Pluralkarten sind ABGELEITET (18.08.2026). Sie werden bei jedem Start aus
-     dem `pl`-Feld der Grundvokabel neu gebaut; eine Aenderung hier waere beim
-     naechsten Start weg, ohne dass irgendetwas meldet, dass sie verlorenging.
-     Statt einen Knopf anzubieten, der still nichts tut, fuehrt die Karte zur
-     Grundvokabel - dort wird der Plural geaendert, und die Karte folgt.
-     Die eigene Eselsbruecke bleibt hier trotzdem moeglich: die haengt an der
-     Id und nicht am Datensatz. */
-  if (w.istPlural){
-    t.push(`<div class="wk-aktionen">
-      <button class="btn btn-secondary btn-klein" data-wkgrundwort="${escapeHtml(w.plVon)}">Zur Grundvokabel</button>
-    </div>
-    <div class="wk-hinweis">Diese Karte entsteht aus dem Plural der Grundvokabel. Ändern lässt sich der Plural dort.</div>`);
-    return t.join('');
-  }
-
   /* ⭐⭐ EINZELN FREISCHALTEN — Elias am 20.08.2026: „teilweise benutzt mein
      lehrer begriffe die wir in späteren kapiteln finden … ich möchte aber nur
      die vereinzelnen wörter haben ohne den rest des kapitels zu haben."
@@ -809,6 +794,31 @@ function baueWortKarte(w){
       `<button class="kat-ziel${b === box ? ' ist-drin' : ''}" data-wkbox="${b}"${b === box ? ' aria-current="true"' : ''}>Box ${b}<span class="box-ziel-tage"> · ${wkTage(INTERVALS[b])}</span></button>`
     ).join('')}</div>
   </div>`);
+
+  /* ⭐ MEHRZAHLKARTEN LASSEN SICH BEARBEITEN (20.10.2026).
+     Elias um 02:24: „außerdem will ich auch direkt die pluralkarten bearbeiten können jedoch
+     finde ich es gut das wenn ich eine karte in der bedeutung ändere das sich dann auch plural
+     ändert also das die zusammenhängen".
+     Bis dahin stand hier nur „Zur Grundvokabel", mit der Begründung vom 18.08.2026: die Karten
+     werden bei jedem Start aus dem `pl`-Feld der Einzahl neu gebaut, eine Änderung wäre beim
+     nächsten Start weg. Das stimmte (im eigenen Edge nachgemessen) und ist jetzt behoben: was
+     ihm an der Mehrzahlkarte gehört (MEHRZAHL_EIGENE in js/kern.js), legt
+     wendePluralAenderungenAn() nach jedem Neubau wieder darauf. Die arabische Form speichert
+     speicherePluralKartenAenderung() als Mehrzahl der Einzahl, damit beide Karten dieselbe zeigen.
+     Die eigene Eselsbrücke ging schon immer: sie hängt an der Id, nicht am Datensatz.
+     ⚠️ Die Box-Reihe darüber bekommt die Mehrzahlkarte erst seit diesem Tag. Ihr Kommentar sagt
+     seit dem 20.08.2026 „Pluralkarten bekommen die Reihe auch", aber der alte Block hier stand
+     VOR ihr und kehrte vorher zurück (im eigenen Edge gemessen: 0 Box-Knöpfe auf „Felder
+     (Plural)", 7 auf „Feld"). */
+  if (w.istPlural){
+    t.push(`<div class="wk-aktionen">
+      <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
+      <button class="btn btn-secondary btn-klein" data-wkgrundwort="${escapeHtml(w.plVon)}">Zur Grundvokabel</button>
+      ${geaendert ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
+    </div>
+    <div class="wk-hinweis">Diese Karte hängt am Singular: Änderst du dort die Bedeutung, ändert sie sich hier mit.</div>`);
+    return t.join('');
+  }
 
   t.push(`<div class="wk-aktionen">
     ${wkFreiKnopf}
@@ -892,6 +902,21 @@ function baueWortFormular(w){
       <input type="text" id="${id}" value="${escapeHtml(wert || '')}"
              ${arabisch ? 'lang="ar" dir="rtl"' : ''} autocomplete="off" spellcheck="false">
     </label>`;
+  /* ⭐ Eine Mehrzahlkarte zeigt nur, was ihr gehört (20.10.2026, MEHRZAHL_EIGENE in js/kern.js),
+     dazu die arabische Form, die als Mehrzahl der Einzahl gespeichert wird. Wortart, Wurzel und
+     Plural sind die der Einzahl und werden dort geändert („Zur Grundvokabel"). */
+  if (w.istPlural) return `<div class="wk-kopfzeile">
+      <div class="wk-marken"><span class="chip chip-chapter">Bearbeiten</span></div>
+      <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+    </div>
+    ${feld('wkAr', 'Arabisch', w.ar, true)}
+    ${feld('wkDe', 'Deutsch', w.de, false)}
+    ${feld('wkSentAr', 'Beispielsatz Arabisch (optional)', w.sentAr, true)}
+    ${feld('wkSentDe', 'Beispielsatz Deutsch (optional)', w.sentDe, false)}
+    <div class="wk-aktionen">
+      <button class="btn btn-secondary btn-klein" data-wkabbrechen>Zurück zur Karte</button>
+    </div>
+    <div class="wk-hinweis">Wird beim Zurückgehen und beim Schließen von selbst gespeichert. Die arabische Form ändert sich auch auf dem Singular.</div>`;
   return `<div class="wk-kopfzeile">
       <div class="wk-marken"><span class="chip chip-chapter">Bearbeiten</span></div>
       <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
@@ -1002,9 +1027,13 @@ function speichereOffenesFormular(){
     const ar = wert('wkAr'), de = wert('wkDe');
     if (!ar || !de){ toast('Nicht gespeichert — Arabisch und Deutsch dürfen nicht leer sein'); return 'fehler'; }
     const typ = wert('wkType');
+    /* Ein Feld, das im Formular gar nicht steht, zählt nicht als geändert: `wert()` gibt dort
+       null. Die Mehrzahlkarte hat weder Plural noch Wurzel noch Wortart (20.10.2026); ohne diese
+       Ausnahme hätte jedes Schließen ihres Formulars als Änderung gegolten. */
+    const anders = (id, feld) => { const v = wert(id); return v !== null && v !== (WK_WORT[feld] || ''); };
     const geaendert = ar !== (WK_WORT.ar || '') || de !== (WK_WORT.de || '')
-      || wert('wkPl') !== (WK_WORT.pl || '') || wert('wkRoot') !== (WK_WORT.root || '')
-      || wert('wkSentAr') !== (WK_WORT.sentAr || '') || wert('wkSentDe') !== (WK_WORT.sentDe || '')
+      || anders('wkPl', 'pl') || anders('wkRoot', 'root')
+      || anders('wkSentAr', 'sentAr') || anders('wkSentDe', 'sentDe')
       || (typ !== null && typ !== (WK_WORT.type || 'vocab'));
     if (!geaendert) return 'nichts';
     speichereWortAenderung(WK_WORT.id, {
@@ -1169,9 +1198,14 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     /* Nur die eigene Fassung wegwerfen; das Original steht in vocab-data.js und
        ist nach dem Neuladen wieder da. Ohne Neuladen bliebe die geaenderte
        Fassung im Speicher stehen - deshalb der ausdrueckliche Hinweis. */
+    const mehrzahl = !!WK_WORT.istPlural;
     verwirfWortAenderung(WK_WORT.id);
     schliesseWortKarte();
-    toast('Zurückgesetzt — beim nächsten Start steht wieder das Original da.');
+    /* Eine Mehrzahlkarte zieht verwirfWortAenderung() sofort nach (20.10.2026): dann stimmt der
+       Hinweis auf den nächsten Start nicht, und die Liste dahinter zeigt schon das Neue. */
+    if (mehrzahl) zeichneHerkunftNeu();
+    toast(mehrzahl ? 'Zurückgesetzt — die Karte folgt wieder dem Singular.'
+                   : 'Zurückgesetzt — beim nächsten Start steht wieder das Original da.');
     return;
   }
   if (e.target.closest('[data-wkloeschen]') && WK_WORT){

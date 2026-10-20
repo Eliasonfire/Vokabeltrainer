@@ -1998,6 +1998,17 @@ if (!WORT_AENDERUNGEN || typeof WORT_AENDERUNGEN !== 'object' || Array.isArray(W
    oder `book` ueberschreiben und das Wort aus jeder Auswahl fallen lassen. */
 const AENDERBAR = ['ar','de','sentAr','sentDe','pl','root','type'];
 
+/* ⭐ WAS EINER MEHRZAHLKARTE SELBST GEHÖRT (20.10.2026).
+   Elias um 02:24: „außerdem will ich auch direkt die pluralkarten bearbeiten können jedoch
+   finde ich es gut das wenn ich eine karte in der bedeutung ändere das sich dann auch plural
+   ändert also das die zusammenhängen".
+   Nur diese drei Felder speichert eine Mehrzahlkarte unter ihrer eigenen Id. Alles andere
+   leitet bauePluralKarte() bei jedem Start aus der Einzahl ab: die arabische Form IST das Feld
+   `pl` der Einzahl (speicherePluralKartenAenderung() schreibt eine Änderung deshalb dorthin),
+   Wurzel und Wortart sind die der Einzahl. MEINE Aufteilung (Claude), ihm im Bericht gesagt.
+   Bewacht von werkzeuge/pruefe-bearbeiten.mjs (Teil „Mehrzahlkarte"). */
+const MEHRZAHL_EIGENE = ['de', 'sentAr', 'sentDe'];
+
 /* ⛔⛔ `type` kam am 20.08.2026 dazu, und zwar als BEHOBENER FEHLER, nicht als
    neue Funktion. Am Vortag entstand die Wortart-Auswahl im Bearbeitungsformular
    (`wkType` in js/kategorien.js); sie reichte `type` an speichereWortAenderung()
@@ -2029,6 +2040,9 @@ const WORT_ORIGINAL = {};
 
 function wendeWortAenderungenAn(){
   Object.keys(WORT_AENDERUNGEN).forEach(id => {
+    /* Eine Mehrzahlkarte bekommt ihre Änderungen erst unten, NACH allen Einzahlen: ihre
+       abgeleiteten Felder hängen an der schon geänderten Einzahl (20.10.2026). */
+    if (istPluralKarte(id)) return;
     const w = VOCAB_DATA.find(x => x.id === id);
     if (!w) return;
     const a = WORT_AENDERUNGEN[id];
@@ -2042,9 +2056,15 @@ function wendeWortAenderungenAn(){
       w[f] = a[f];
     });
   });
+  /* Jetzt die Mehrzahlkarten: neu ableiten aus den geänderten Einzahlen, dann seine eigenen
+     Felder darauf. So stimmen sie auch nach einem Geräteabgleich sofort, nicht erst nach dem
+     nächsten Start. `typeof`: Prüfstände schneiden diese Funktion allein aus dem Quelltext. */
+  if (typeof wendePluralAenderungenAn === 'function') wendePluralAenderungenAn();
 }
 
 function speichereWortAenderung(id, felder){
+  /* Eine Mehrzahlkarte speichert anders: ihre arabische Form gehört der Einzahl (20.10.2026). */
+  if (istPluralKarte(id)) return speicherePluralKartenAenderung(id, felder);
   const w = VOCAB_DATA.find(x => x.id === id);
   if (!w) return false;
   const sauber = {};
@@ -2102,6 +2122,11 @@ function speichereWortAenderung(id, felder){
      fortgeschrieben: die neue Änderung beginnt neu. */
   const bisher = (WORT_AENDERUNGEN[id] && !WORT_AENDERUNGEN[id].verworfen) ? WORT_AENDERUNGEN[id] : {};
   WORT_AENDERUNGEN[id] = Object.assign({}, bisher, sauber, { zeit: Date.now() });
+  /* ⭐ Ändert sich die BEDEUTUNG der Einzahl, folgt ihr die Mehrzahlkarte wieder, auch wenn er
+     dort vorher eine eigene Bedeutung eingetragen hatte (sein Satz von 02:24 bei MEHRZAHL_EIGENE).
+     Verglichen wird mit dem, was gerade dasteht: das Formular schickt immer alle Felder mit, und
+     eine Änderung nur am Satz darf seine Mehrzahl-Bedeutung nicht wegwerfen. */
+  if (sauber.de !== undefined && sauber.de.normalize('NFC') !== String(w.de || '').trim().normalize('NFC')) mehrzahlBedeutungFreigeben(id);
   LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
   /* Auch hier den Vorher-Wert sichern, bevor überschrieben wird — sonst kennt
      der Export nur die Originale der Änderungen, die beim Laden schon dastanden. */
@@ -2123,28 +2148,114 @@ function speichereWortAenderung(id, felder){
    speichereWortAenderung() aber nur das Wort selbst. Im Nachbau mit seinem
    Gerätestand gemessen: Einzahl „Professor PROBE", die Mehrzahl-Karte blieb bei
    „Professor (Plural)" stehen, bis die App neu startete.
-   Übernommen wird, was bauePluralKarte() aus dem Wort ableitet. Ausgenommen sind
-   die Felder, die er an der Mehrzahl-Karte selbst geändert hat, denn seine eigene
-   Änderung gewinnt. Eine NEUE Mehrzahl (vorher kein `pl`) bekommt ihre Karte erst
-   beim nächsten Start, zusammen mit ihrem Fortschrittseintrag.
+   Übernommen wird, was bauePluralKarte() aus dem Wort ableitet. Danach kommen die
+   Felder darauf, die er an der Mehrzahl-Karte selbst geändert hat (MEHRZAHL_EIGENE),
+   denn seine eigene Änderung gewinnt. Eine NEUE Mehrzahl (vorher kein `pl`) bekommt
+   ihre Karte erst beim nächsten Start, zusammen mit ihrem Fortschrittseintrag.
+   ⛔ Seit 20.10.2026 (Mehrzahlkarten bearbeiten) SETZT die Funktion seine Felder, statt sie
+   nur stehen zu lassen. Beim Start baut js/buecher.js die Karten frisch und ohne sie; was
+   nur „stehen bleiben" sollte, war dann weg. Im eigenen Edge gemessen: Änderung an der
+   Mehrzahlkarte gespeichert („PROBE-MEHRZAHL (Plural)"), nach dem Neustart stand wieder
+   „Felder (Plural)" da. Darum ruft wendePluralAenderungenAn() sie für alle Karten.
+   `nachId` (Map Id → Wort) ist freiwillig: dort reicht wendePluralAenderungenAn() sie
+   durch, damit der Start nicht je Karte zweimal die ganze Liste durchsucht.
    [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
-function pluralKarteNachziehen(id){
-  const w = VOCAB_DATA.find(x => x.id === id);
-  const pk = VOCAB_DATA.find(x => x.id === String(id) + PLURAL_MARKE);
+function pluralKarteNachziehen(id, nachId){
+  const suche = x => nachId ? nachId.get(String(x)) : VOCAB_DATA.find(v => String(v.id) === String(x));
+  const w = suche(id), pk = suche(String(id) + PLURAL_MARKE);
   if (!w || !pk) return false;
   const neu = bauePluralKarte(w);
   if (!neu) return false;
+  ['ar', 'type', 'root', 'sgAr'].forEach(f => { pk[f] = neu[f]; });
   const eigene = hatWortAenderung(pk.id) ? WORT_AENDERUNGEN[pk.id] : {};
-  ['ar', 'de', 'type', 'root'].forEach(f => { if (typeof eigene[f] !== 'string') pk[f] = neu[f]; });
-  pk.sgAr = neu.sgAr;
+  MEHRZAHL_EIGENE.forEach(f => {
+    const selbst = typeof eigene[f] === 'string';
+    /* Das „Original" einer Mehrzahlkarte ist, was sich aus der Einzahl ergibt, und das ändert
+       sich mit ihr: darum jedes Mal neu. Gebraucht vom Wartungs-Export (js/einstellungen.js).
+       `typeof`: in Prüfständen, die diese Funktion allein schneiden, gibt es WORT_ORIGINAL nicht. */
+    if (selbst && typeof WORT_ORIGINAL === 'object' && WORT_ORIGINAL){
+      if (!WORT_ORIGINAL[pk.id]) WORT_ORIGINAL[pk.id] = {};
+      WORT_ORIGINAL[pk.id][f] = neu[f] || '';
+    }
+    if (selbst) pk[f] = eigene[f];
+    else if (neu[f] !== undefined) pk[f] = neu[f];
+    /* Ohne seinen eigenen hat eine Mehrzahlkarte keinen Beispielsatz (Kommentar bei PLURAL_MARKE). */
+    else delete pk[f];
+  });
+  return true;
+}
+
+/* Alle Mehrzahlkarten aus ihren Einzahlen nachziehen, mit seinen eigenen Feldern darauf
+   (20.10.2026). Aufrufer: wendeWortAenderungenAn() (Start und Geräteabgleich) und js/buecher.js
+   direkt NACH wendePluralKartenAn(), das die Karten frisch und ohne seine Felder baut. Bewacht
+   von validate.js (Startlauf-Nachträge) und werkzeuge/pruefe-bearbeiten.mjs. */
+function wendePluralAenderungenAn(){
+  const nachId = new Map(VOCAB_DATA.map(w => [String(w.id), w]));
+  let n = 0;
+  VOCAB_DATA.forEach(pk => {
+    if (istPluralKarte(pk.id) && pk.plVon !== undefined && pluralKarteNachziehen(pk.plVon, nachId)) n++;
+  });
+  return n;
+}
+
+/* ⭐ EINE MEHRZAHLKARTE BEARBEITEN (20.10.2026). Sein Satz von 02:24 steht bei MEHRZAHL_EIGENE.
+   Bis dahin hatte ihre Infokarte nur „Zur Grundvokabel", und eine Änderung wäre beim nächsten
+   Start verloren gewesen (pluralKarteNachziehen()).
+   - Die ARABISCHE Form ist das Feld `pl` der Einzahl. Eine Änderung hier geht dorthin, damit
+     beide Karten dieselbe Mehrzahl zeigen: das Kästchen „Plural" auf der Einzahl und die
+     Mehrzahlkarte selbst.
+   - Bedeutung und Beispielsatz speichert die Mehrzahlkarte selbst, aber NUR, was sich von dem
+     unterscheidet, was sich aus der Einzahl ergibt. Das Formular schickt immer alle Felder mit;
+     sonst hinge nach einer bloßen Satzänderung auch die Bedeutung fest, und eine spätere
+     Korrektur im Verzeichnis (data/de-mehrzahl.js) käme bei dieser Karte nie mehr an.
+   - Was er leert oder auf den abgeleiteten Wert zurückstellt, fällt aus seinem Eintrag. Bleibt
+     nichts, wird daraus ein Vermerk „zurückgesetzt" mit Zeit (Abgleich, siehe
+     verwirfWortAenderung()). */
+function speicherePluralKartenAenderung(id, felder){
+  const pk = VOCAB_DATA.find(x => x.id === id);
+  const sg = pk ? VOCAB_DATA.find(x => String(x.id) === String(pk.plVon)) : null;
+  if (!pk || !sg) return false;
+  const text = f => typeof felder[f] === 'string' ? felder[f].trim() : undefined;
+  const ar = text('ar'), de = text('de');
+  if (!ar || !de) return false;      /* ohne die beiden ist es keine Vokabel */
+  const gleich = (a, b) => String(a == null ? '' : a).trim().normalize('NFC') === String(b == null ? '' : b).trim().normalize('NFC');
+  if (!gleich(ar, sg.pl) && !speichereWortAenderung(sg.id, { ar: sg.ar, de: sg.de, pl: ar })) return false;
+  const abgeleitet = bauePluralKarte(sg) || {};
+  const bisher = hatWortAenderung(id) ? WORT_AENDERUNGEN[id] : {};
+  const eigen = {};
+  MEHRZAHL_EIGENE.forEach(f => {
+    const v = f === 'de' ? de : text(f);
+    /* Nicht mitgeschickt: dann bleibt, was er schon hatte. */
+    if (v === undefined){ if (typeof bisher[f] === 'string') eigen[f] = bisher[f]; return; }
+    if (v && !gleich(v, abgeleitet[f])) eigen[f] = v;
+  });
+  const jetzt = Date.now();
+  if (Object.keys(eigen).length) WORT_AENDERUNGEN[id] = Object.assign(eigen, { zeit: jetzt });
+  else if (hatWortAenderung(id)) WORT_AENDERUNGEN[id] = { verworfen: true, zeit: jetzt };
+  LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
+  pluralKarteNachziehen(sg.id);
+  return true;
+}
+
+/* Seine eigene Bedeutung an der Mehrzahlkarte fällt weg, wenn sich die Bedeutung der Einzahl
+   ändert; der Beispielsatz bleibt (Aufrufer: speichereWortAenderung(), verwirfWortAenderung()).
+   Schreibt nur WORT_AENDERUNGEN; speichern und nachziehen tut der Aufrufer. */
+function mehrzahlBedeutungFreigeben(sgId){
+  const pkId = String(sgId) + PLURAL_MARKE;
+  if (!hatWortAenderung(pkId) || typeof WORT_AENDERUNGEN[pkId].de !== 'string') return false;
+  const rest = {};
+  MEHRZAHL_EIGENE.forEach(f => { if (f !== 'de' && typeof WORT_AENDERUNGEN[pkId][f] === 'string') rest[f] = WORT_AENDERUNGEN[pkId][f]; });
+  const jetzt = Date.now();
+  WORT_AENDERUNGEN[pkId] = Object.keys(rest).length ? Object.assign(rest, { zeit: jetzt }) : { verworfen: true, zeit: jetzt };
   return true;
 }
 
 /* Hat er dieses Wort selbst geändert? Ein Vermerk „zurückgesetzt" zählt nicht:
-   er trägt kein einziges Feld. */
+   er trägt kein einziges Feld. Bei einer Mehrzahlkarte zählen nur ihre eigenen Felder. */
 function hatWortAenderung(id){
   const a = WORT_AENDERUNGEN[id];
-  return !!(a && typeof a === 'object' && !a.verworfen && AENDERBAR.some(f => typeof a[f] === 'string'));
+  const felder = istPluralKarte(id) ? MEHRZAHL_EIGENE : AENDERBAR;
+  return !!(a && typeof a === 'object' && !a.verworfen && felder.some(f => typeof a[f] === 'string'));
 }
 
 /* Zurueck auf das Original - bei allem, dessen Original in einer Datei steht
@@ -2161,8 +2272,17 @@ function hatWortAenderung(id){
    Dieselbe Bauform wie vt_bekannt und vt_geloescht. [[ausfall_ist_unsichtbar_gebaut]] */
 function verwirfWortAenderung(id){
   if (!hatWortAenderung(id)) return false;
+  const vorher = WORT_AENDERUNGEN[id];
   WORT_AENDERUNGEN[id] = { verworfen: true, zeit: Date.now() };
+  /* Geht dabei die BEDEUTUNG einer Einzahl auf ihr Original zurück, folgt die Mehrzahlkarte
+     wie beim Ändern (speichereWortAenderung(), 20.10.2026). */
+  const original = WORT_ORIGINAL[id];
+  if (!istPluralKarte(id) && typeof vorher.de === 'string' && original && 'de' in original
+      && String(original.de || '').trim() !== vorher.de.trim()) mehrzahlBedeutungFreigeben(id);
   LS.set(AENDERUNGS_SCHLUESSEL, WORT_AENDERUNGEN);
+  /* Eine Mehrzahlkarte zeigt sofort wieder, was sich aus der Einzahl ergibt; eine Einzahl
+     selbst erst nach dem nächsten Start (Hinweis im Toast in js/kategorien.js). */
+  pluralKarteNachziehen(istPluralKarte(id) ? id.slice(0, -PLURAL_MARKE.length) : id);
   return true;
 }
 

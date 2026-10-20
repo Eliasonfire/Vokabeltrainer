@@ -24,6 +24,11 @@
    Dazu das Zurücksetzen („Auf Original zurück"): ein gelöschter Eintrag kam
    über den Abgleich vom anderen Gerät zurück.
 
+   Seit 20.10.2026 der Teil „Mehrzahlkarte" (M1–M6, V1–V3, sieben Störtests):
+   Elias um 02:24 wollte Mehrzahlkarten direkt bearbeiten, und eine Änderung an
+   der Einzahl soll die Mehrzahlkarte weiter mitziehen. Die Prüfungen stehen bei
+   missMehrzahl() und verdrahtungMehrzahl() unten.
+
    WIE GEMESSEN WIRD
    Die App-Dateien laufen in einer vm, in der Reihenfolge von index.html, mit
    EINEM Speicher über mehrere Starts und einem zweiten „Gerät". Je Herkunft
@@ -57,7 +62,7 @@ const befunde = [];
 
 /* In der Reihenfolge von index.html, nur was js/kern.js braucht. */
 const DATEN = ['vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js',
-               'data/feld-ausnahmen.js', 'grammar-data.js'];
+               'data/feld-ausnahmen.js', 'data/de-mehrzahl.js', 'grammar-data.js'];
 const SKRIPTE = DATEN.map(rel => new vm.Script(lies(rel), { filename: rel }));
 const KERN = lies('js/kern.js');
 const SYNC = new vm.Script(lies('js/sync.js'), { filename: 'js/sync.js' });
@@ -67,6 +72,7 @@ const SYNC = new vm.Script(lies('js/sync.js'), { filename: 'js/sync.js' });
    unten spielt sie nach. Ändert sie sich, misst dieser Prüfer eine App, die
    es nicht mehr gibt. */
 const FOLGE = ['wendeFeldErgaenzungenAn(VOCAB_DATA)', 'wendeWortAenderungenAn()',
+               'wendePluralKartenAn(pluralKartenStufe(SETTINGS))', 'wendePluralAenderungenAn()',
                'ergaenzeProgress()', 'tauscheDubletten()', 'fachbegriffeMitBuchkarte()'];
 {
   const b = lies('js/buecher.js');
@@ -104,8 +110,10 @@ const buchKarten = [];
 }
 
 /* ---------- Ein Start der App ----------
-   `speicher` ist der localStorage des Geräts und überlebt den Start. */
-function starte(speicher, kernQuelle){
+   `speicher` ist der localStorage des Geräts und überlebt den Start. `vorKern` (freiwillig)
+   läuft nach den Daten und vor js/kern.js — so ändert der Teil „Mehrzahlkarte" das Verzeichnis
+   der deutschen Mehrzahl zwischen zwei Starts, wie eine spätere Auslieferung es täte. */
+function starte(speicher, kernQuelle, vorKern){
   const el = () => ({ style:{}, classList:{ add(){}, remove(){}, toggle(){}, contains:()=>false },
     addEventListener(){}, appendChild(){}, querySelector:()=>null, querySelectorAll:()=>[],
     closest:()=>null, getAttribute:()=>null, setAttribute(){}, focus(){},
@@ -127,6 +135,7 @@ function starte(speicher, kernQuelle){
   c.globalThis = c; c.self = c; c.window.document = dom; c.window.localStorage = c.localStorage;
   vm.createContext(c);
   for (const s of SKRIPTE) s.runInContext(c);
+  if (vorKern) vm.runInContext(vorKern, c);
   vm.runInContext(kernQuelle, c, { filename: 'js/kern.js' });
   /* Was js/buecher.js beim Einhängen tut, für die Buchkarten, die hier zählen. */
   c.__buch = JSON.parse(JSON.stringify(buchKarten));
@@ -264,6 +273,136 @@ catch (e){
 const echt = befundeAus(erg);
 for (const liste of Object.values(echt)) befunde.push(...liste);
 
+/* ---------- Die Mehrzahlkarte (20.10.2026) ----------
+   Elias um 02:24: „außerdem will ich auch direkt die pluralkarten bearbeiten können jedoch
+   finde ich es gut das wenn ich eine karte in der bedeutung ändere das sich dann auch plural
+   ändert also das die zusammenhängen".
+   Bis dahin hatte die Infokarte einer Mehrzahlkarte keinen Bearbeiten-Knopf, und eine Änderung
+   wäre nach dem Neustart weg gewesen: js/buecher.js baut die Mehrzahlkarten NACH
+   wendeWortAenderungenAn() frisch (im eigenen Edge gemessen). Die Regeln stehen bei
+   MEHRZAHL_EIGENE, speicherePluralKartenAenderung() und pluralKarteNachziehen() in js/kern.js:
+     M1 Bedeutung und Satz an der Mehrzahlkarte überstehen den Neustart.
+     M2 Die arabische Form an der Mehrzahlkarte wird die Mehrzahl der Einzahl (beide Karten
+        zeigen dieselbe), und die Mehrzahlkarte speichert dafür nichts Eigenes.
+     M3 Ändert er die Bedeutung der Einzahl, folgt die Mehrzahlkarte, auch über ihre eigene
+        Bedeutung hinweg; ihr eigener Satz bleibt.
+     M4 Nach einer bloßen Satzänderung hängt die Bedeutung nicht fest: eine Korrektur im
+        Verzeichnis (data/de-mehrzahl.js) kommt beim nächsten Start an.
+     M5 „Auf Original zurück" an der Mehrzahlkarte wirkt sofort und nach dem Neustart.
+     M6 Ein zweites Gerät bekommt die Mehrzahlkarte über den Abgleich so, wie er sie geändert hat. */
+function missMehrzahl(kernQuelle){
+  const f = [];
+  const A = {};
+  const c1 = starte(A, kernQuelle);
+  const woerter = vm.runInContext(`(() => {
+    const raus = [];
+    for (const w of VOCAB_DATA){
+      if (raus.length === 4) break;
+      if (istPluralKarte(w.id) || w.type === 'adjective' || String(w.de || '').includes('/')) continue;
+      if (!VOCAB_DATA.some(p => p.id === w.id + PLURAL_MARKE) || !deMehrzahl(w)) continue;
+      raus.push(String(w.id));
+    }
+    return raus;
+  })()`, c1);
+  if (woerter.length < 4) return ['M0 nur ' + woerter.length + ' von 4 Prüfwörtern gefunden (Einzahl mit Mehrzahlkarte und Eintrag im Verzeichnis) — der Teil beweist nichts'];
+  const [w1, w2, w3, w4] = woerter;
+  const pl = id => id + '#pl';
+  const ruf = (c, code) => vm.runInContext(code, c);
+  const speichere = (c, id, felder) => ruf(c, `speichereWortAenderung(${JSON.stringify(id)}, ${JSON.stringify(felder)})`);
+  const zeig = k => k ? '„' + k.de + '", ar ' + k.ar + ', Satz ' + JSON.stringify(k.sentAr) : 'Karte fehlt';
+
+  /* So schickt das Formular eine Mehrzahlkarte: Plural, Wurzel, Wortart gibt es dort nicht (null). */
+  const pk1 = holeWort(c1, pl(w1));
+  speichere(c1, pl(w1), { ar: pk1.ar, de: 'PRUEF-MEHRZAHL (Plural)', pl: null, root: null, sentAr: 'PRUEF-SATZ', sentDe: 'Pruefsatz.' });
+  const pk2 = holeWort(c1, pl(w2));
+  speichere(c1, pl(w2), { ar: 'PRUEF-MEHRZAHL-AR', de: pk2.de, pl: null, root: null, sentAr: '', sentDe: '' });
+  const s2 = holeWort(c1, w2), k2 = holeWort(c1, pl(w2));
+  if (!s2 || s2.pl !== 'PRUEF-MEHRZAHL-AR') f.push('M2 die arabische Form der Mehrzahlkarte landet nicht als Mehrzahl der Einzahl: ' + (s2 && s2.pl));
+  if (!k2 || k2.ar !== 'PRUEF-MEHRZAHL-AR') f.push('M2 die Mehrzahlkarte zeigt ihre geänderte arabische Form nicht sofort: ' + zeig(k2));
+  const pk3 = holeWort(c1, pl(w3));
+  speichere(c1, pl(w3), { ar: pk3.ar, de: pk3.de, pl: null, root: null, sentAr: 'PRUEF-SATZ-3', sentDe: 'Pruefsatz drei.' });
+  const pk4 = holeWort(c1, pl(w4));
+  speichere(c1, pl(w4), { ar: pk4.ar, de: 'PRUEF-WEG (Plural)', pl: null, root: null, sentAr: 'PRUEF-WEG-SATZ', sentDe: '' });
+  ruf(c1, `verwirfWortAenderung(${JSON.stringify(pl(w4))})`);
+  const k4 = holeWort(c1, pl(w4));
+  if (!k4 || k4.de !== pk4.de || k4.sentAr !== undefined) f.push('M5 nach „Auf Original zurück" zeigt die Mehrzahlkarte nicht sofort wieder, was sich aus der Einzahl ergibt: ' + zeig(k4));
+  const gespeichert = (() => { try { return JSON.parse(A.vt_wortAenderungen || '{}'); } catch (e) { return {}; } })();
+  const eintrag2 = gespeichert[pl(w2)];
+  if (eintrag2 && !eintrag2.verworfen) f.push('M2 die Mehrzahlkarte speichert eigene Felder, obwohl nur ihre arabische Form geändert wurde: ' + JSON.stringify(eintrag2));
+
+  /* Neustart — dazwischen ändert sich das Verzeichnis für die Bedeutung von w3. */
+  const de3 = holeWort(c1, w3).de;
+  const c2 = starte(A, kernQuelle, `DE_MEHRZAHL[${JSON.stringify(de3)}] = 'PRUEF-VERZEICHNIS';`);
+  const n1 = holeWort(c2, pl(w1));
+  if (!n1 || n1.de !== 'PRUEF-MEHRZAHL (Plural)' || n1.sentAr !== 'PRUEF-SATZ' || n1.sentDe !== 'Pruefsatz.')
+    f.push('M1 Bedeutung und Satz an der Mehrzahlkarte überstehen den Neustart nicht: ' + zeig(n1));
+  const n2s = holeWort(c2, w2), n2 = holeWort(c2, pl(w2));
+  if (!n2s || n2s.pl !== 'PRUEF-MEHRZAHL-AR' || !n2 || n2.ar !== 'PRUEF-MEHRZAHL-AR')
+    f.push('M2 nach dem Neustart: Mehrzahl der Einzahl ' + (n2s && n2s.pl) + ', Mehrzahlkarte ' + zeig(n2));
+  const n3 = holeWort(c2, pl(w3));
+  if (!n3 || n3.de !== 'PRUEF-VERZEICHNIS (Plural)' || n3.sentAr !== 'PRUEF-SATZ-3')
+    f.push('M4 nach einer bloßen Satzänderung hängt die Bedeutung fest, die Korrektur im Verzeichnis kommt nicht an: ' + zeig(n3));
+  const n4 = holeWort(c2, pl(w4));
+  if (!n4 || n4.de !== pk4.de || n4.sentAr !== undefined) f.push('M5 nach dem Neustart ist die zurückgesetzte Mehrzahlkarte nicht wieder abgeleitet: ' + zeig(n4));
+
+  /* Die Bedeutung der Einzahl ändern, so wie das Formular der Einzahl es schickt. */
+  const s1 = holeWort(c2, w1);
+  speichere(c2, w1, { ar: s1.ar, de: 'PRUEFNEU', pl: s1.pl || '', root: s1.root || '', sentAr: s1.sentAr || '', sentDe: s1.sentDe || '', type: s1.type });
+  const m3 = holeWort(c2, pl(w1));
+  if (!m3 || m3.de !== 'PRUEFNEU (Plural)') f.push('M3 die Bedeutung der Einzahl geändert, die Mehrzahlkarte folgt nicht: ' + zeig(m3));
+  else if (m3.sentAr !== 'PRUEF-SATZ') f.push('M3 beim Nachziehen ging der eigene Satz der Mehrzahlkarte verloren: ' + zeig(m3));
+  const c3 = starte(A, kernQuelle);
+  const m3n = holeWort(c3, pl(w1));
+  if (!m3n || m3n.de !== 'PRUEFNEU (Plural)' || m3n.sentAr !== 'PRUEF-SATZ') f.push('M3 nach dem Neustart: ' + zeig(m3n));
+
+  /* Ein zweites Gerät holt sich den Stand ab. */
+  const B = {};
+  const b1 = starte(B, kernQuelle);
+  SYNC.runInContext(b1);
+  vm.runInContext(`fuehreZusammen({ daten: ${JSON.stringify(A)}, stempel: {} })`, b1);
+  const b2 = starte(B, kernQuelle);
+  const z1 = holeWort(b2, pl(w1)), z2 = holeWort(b2, pl(w2));
+  if (!z1 || z1.de !== 'PRUEFNEU (Plural)' || z1.sentAr !== 'PRUEF-SATZ') f.push('M6 am zweiten Gerät fehlt die geänderte Mehrzahlkarte: ' + zeig(z1));
+  if (!z2 || z2.ar !== 'PRUEF-MEHRZAHL-AR') f.push('M6 am zweiten Gerät fehlt die geänderte arabische Mehrzahl: ' + zeig(z2));
+  return f;
+}
+
+/* Die Verdrahtung in js/kategorien.js: Bearbeiten-Knopf und Box-Reihe auf der Mehrzahlkarte, ihr
+   eigenes Formular, und ein Formular ohne Plural/Wurzel/Wortart gilt beim Schließen nicht als
+   geändert. Am Text geprüft — gezeichnet wird die Karte in der Probe im eigenen Edge. */
+const KAT = lies('js/kategorien.js');
+function verdrahtungMehrzahl(kat){
+  const f = [];
+  const kopf = kat.indexOf('function baueWortKarte('), ende = kat.indexOf('\nfunction ', kopf + 10);
+  const karte = kopf < 0 ? '' : kat.slice(kopf, ende);
+  const i = karte.indexOf('  if (w.istPlural){\n    t.push(`<div class="wk-aktionen">');
+  const block = i < 0 ? '' : karte.slice(i, karte.indexOf("return t.join('');", i));
+  if (!block) f.push('V1 der Block für die Mehrzahlkarte in baueWortKarte() fehlt');
+  else {
+    if (!block.includes('data-wkbearbeiten')) f.push('V1 die Infokarte der Mehrzahlkarte hat keinen Bearbeiten-Knopf');
+    if (!block.includes('data-wkgrundwort')) f.push('V1 der Weg „Zur Grundvokabel" fehlt auf der Mehrzahlkarte');
+    const box = karte.indexOf('wk-boxwahl');
+    if (box < 0 || box > i) f.push('V1 die Mehrzahlkarte kehrt vor der Box-Reihe zurück (Kommentar dort: „Pluralkarten bekommen die Reihe auch")');
+  }
+  const fk = kat.indexOf('function baueWortFormular(');
+  const fi = fk < 0 ? -1 : kat.indexOf('if (w.istPlural) return `', fk);
+  const formular = fi < 0 ? '' : kat.slice(fi, kat.indexOf('`;', fi));
+  if (!formular) f.push('V2 baueWortFormular() hat kein eigenes Formular für die Mehrzahlkarte');
+  else {
+    const fehlt = ['wkAr', 'wkDe', 'wkSentAr', 'wkSentDe'].filter(x => !formular.includes("'" + x + "'"));
+    const zuviel = ['wkPl', 'wkRoot', 'wkType', 'wortartFeld('].filter(x => formular.includes(x));
+    if (fehlt.length) f.push('V2 im Formular der Mehrzahlkarte fehlt: ' + fehlt.join(', '));
+    if (zuviel.length) f.push('V2 im Formular der Mehrzahlkarte steht, was der Einzahl gehört: ' + zuviel.join(', '));
+  }
+  if (!kat.includes("anders('wkPl', 'pl')") || !kat.includes("anders('wkRoot', 'root')") || kat.includes("wert('wkPl') !== (WK_WORT.pl || '')"))
+    f.push('V3 speichereOffenesFormular() zählt ein Feld, das im Formular fehlt, als geändert — jedes Schließen des Mehrzahl-Formulars speicherte');
+  return f;
+}
+
+const mzBefunde = (() => { try { return missMehrzahl(KERN); } catch (e) { return ['M0 die Messung ließ sich nicht ausführen: ' + String(e && e.message).slice(0, 160)]; } })();
+const vBefunde = verdrahtungMehrzahl(KAT);
+befunde.push(...mzBefunde, ...vBefunde);
+
 /* ---------- Störtests: je ein alter Zweig zurück, die passende Prüfung muss rot werden ---------- */
 const STOERUNGEN = [
   { name: 'nur p_-Wörter nach vt_personalVocab (Stand bis v588)', gruppe: 'neustart',
@@ -288,6 +427,36 @@ for (const s of STOERUNGEN){
   else stoer.push(s.name + ': rot, wie es sein muss (' + r[s.gruppe].length + ')');
 }
 
+/* Störtests für den Teil „Mehrzahlkarte": je eine Regel zurückgebaut, die passende Prüfung muss rot werden. */
+const MZ_STOERUNGEN = [
+  { name: 'wendePluralAenderungenAn() legt nichts mehr darauf', erwartet: /^M1 /,
+    kern: ['function wendePluralAenderungenAn(){\n', 'function wendePluralAenderungenAn(){ return 0;\n'] },
+  { name: 'die arabische Form bleibt an der Mehrzahlkarte statt an der Einzahl', erwartet: /^M2 /,
+    kern: ['  if (!gleich(ar, sg.pl) && !speichereWortAenderung(sg.id, { ar: sg.ar, de: sg.de, pl: ar })) return false;\n', ''] },
+  { name: 'eine neue Bedeutung der Einzahl lässt die eigene der Mehrzahlkarte stehen', erwartet: /^M3 /,
+    kern: ["normalize('NFC')) mehrzahlBedeutungFreigeben(id);", "normalize('NFC')) {}"] },
+  { name: 'die Mehrzahlkarte speichert jedes Feld, auch das abgeleitete', erwartet: /^M4 /,
+    kern: ['    if (v && !gleich(v, abgeleitet[f])) eigen[f] = v;', '    if (v) eigen[f] = v;'] },
+  { name: 'Zurücksetzen zieht die Mehrzahlkarte nicht sofort nach', erwartet: /^M5 /,
+    kern: ['  pluralKarteNachziehen(istPluralKarte(id) ? id.slice(0, -PLURAL_MARKE.length) : id);\n', ''] },
+  { name: 'kein Bearbeiten-Knopf auf der Mehrzahlkarte (Stand bis v698)', erwartet: /^V1 /,
+    kat: ["      <button class=\"btn btn-secondary btn-klein\" data-wkbearbeiten>${icon('note')}Bearbeiten</button>\n      <button class=\"btn btn-secondary btn-klein\" data-wkgrundwort",
+          '      <button class="btn btn-secondary btn-klein" data-wkgrundwort'] },
+  { name: 'ein Feld, das im Formular fehlt, zählt wieder als geändert', erwartet: /^V3 /,
+    kat: ["anders('wkPl', 'pl')", "wert('wkPl') !== (WK_WORT.pl || '')"] },
+];
+for (const s of MZ_STOERUNGEN){
+  const [quelle, paar] = s.kern ? [KERN, s.kern] : [KAT, s.kat];
+  const treffer = quelle.split(paar[0]).length - 1;
+  if (treffer !== 1){ befunde.push('Störtest „' + s.name + '": die Stelle steht ' + treffer + '× statt 1× — der Prüfer beweist dort nichts mehr, nachziehen.'); continue; }
+  const gestoert = quelle.replace(paar[0], () => paar[1]);
+  let r;
+  try { r = s.kern ? missMehrzahl(gestoert) : verdrahtungMehrzahl(gestoert); }
+  catch (e){ r = ['M0 ' + String(e && e.message).slice(0, 120)]; }
+  if (!r.some(z => s.erwartet.test(z))) befunde.push('Störtest „' + s.name + '": blieb grün — die Prüfung kann diesen Fehler nicht sehen' + (r.length ? ' (' + r[0] + ')' : '') + '.');
+  else stoer.push(s.name + ': rot, wie es sein muss');
+}
+
 /* ---------- Ausgabe ---------- */
 console.log('--- Bleibt, was Elias im Formular ändert? ---\n');
 for (const [name, id] of erg.herkunft) console.log('  ' + name.padEnd(34) + (id || '— kein Wort dieser Herkunft (' + (name.includes('Tausch') ? 'Buchdatei fehlt' : 'nicht im Bestand') + ')'));
@@ -296,6 +465,8 @@ console.log('\nNeustart:           ' + summe(erg.neustart) + ' von ' + n + ' Fel
 console.log('zweites Gerät:      ' + summe(erg.zweit) + ' von ' + n + ' Feldern nicht angekommen');
 console.log('Zurücksetzen:       ' + (erg.zuruecksetzen || 'nicht geprüft'));
 console.log('alte Änderung an der Buchkarte (vor der Bestellung): ' + (erg.altVorBestellung === 'ok' ? 'weicht der Beschreibung des Fachbegriffs' : (erg.altVorBestellung || 'nicht geprüft (Buchdatei fehlt)')));
+console.log('Mehrzahlkarte:      ' + (mzBefunde.length ? mzBefunde.length + ' Befund(e)' : 'M1–M6 grün')
+  + ' · Verdrahtung in js/kategorien.js: ' + (vBefunde.length ? vBefunde.length + ' Befund(e)' : 'V1–V3 grün'));
 console.log('Störtests:');
 for (const z of stoer) console.log('  · ' + z);
 
@@ -304,5 +475,5 @@ if (befunde.length){
   befunde.forEach(z => console.log('  · ' + z));
   process.exit(1);
 }
-console.log('\n✅ Jede Änderung übersteht Neustart und Abgleich, das Zurücksetzen auch.');
+console.log('\n✅ Jede Änderung übersteht Neustart und Abgleich, das Zurücksetzen auch — an Mehrzahlkarten ebenso.');
 process.exit(0);
