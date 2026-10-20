@@ -769,7 +769,11 @@ const BUCH_ESELSBRUECKEN = {
 
   "kh-099": "⭐ In at-Tīn: فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍ (95:6) — „für sie wird es einen Lohn geben, der nicht aufhört“.",
 
-  "kh-100": "⭐ Du kennst das Wort: ein Ẓālim ist einer, der Unrecht tut — ein Unterdrücker, ein Frevler."
+  "kh-100": "⭐ Du kennst das Wort: ein Ẓālim ist einer, der Unrecht tut — ein Unterdrücker, ein Frevler.",
+
+  "46549": "Gebaut wie كَبِيرٌ (groß), صَغِيرٌ (klein), قَرِيبٌ (nah) und بَعِيدٌ (fern) — alle vier hast du schon: Adjektive mit langem ī vor dem letzten Buchstaben. ضَعِيفٌ gehört in dieselbe Reihe und heißt schwach.",
+
+  "50339": "Ein Ort auf مَـ: مَطْبَخٌ (Küche) ist der Ort, an dem gekocht wird, مَكْتَبٌ (Schreibtisch, Büro) der Ort, an dem geschrieben wird — beide hast du. مَلْعَبٌ ist der Ort, an dem gespielt wird: der Spiel- oder Sportplatz."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

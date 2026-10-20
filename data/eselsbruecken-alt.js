@@ -2871,7 +2871,8 @@ const ESELSBRUECKEN_ALT = {
 
   '46016': [
     'Dein Satz: السِّتَارَةُ فِي الْغُرْفَةِ — „Der Vorhang ist im Zimmer.“ Zwei weibliche Wörter auf ة, das eine hängt im anderen. Sag den Satz einmal laut, wenn du abends deinen eigenen Vorhang zuziehst.',
-    'Zwei Dinge machen ein Zimmer zu: der بَابٌ (Tür) hält Leute draußen, die سِتَارَةٌ hält Blicke draußen. Die Tür kennst du längst — der Vorhang ist ihr leiser Bruder am Fenster.'
+    'Zwei Dinge machen ein Zimmer zu: der بَابٌ (Tür) hält Leute draußen, die سِتَارَةٌ hält Blicke draußen. Die Tür kennst du längst — der Vorhang ist ihr leiser Bruder am Fenster.',
+    'Klang-Brücke, keine Verwandtschaft: سِتَارَةٌ klingt wie „Sitar“, das indische Saiteninstrument. Stell dir vor, hinter dem Vorhang spielt jemand Sitar — du ziehst die سِتَارَةٌ auf und siehst ihn sitzen. Erst die Sitar hören, dann den Vorhang aufziehen.'
   ],
 
   '46017': [
@@ -3462,5 +3463,15 @@ const ESELSBRUECKEN_ALT = {
   ],
   '45919#pl': [   /* weit entfernt: امْرَأَةٌ → نِسَاءٌ */
     'امْرَأَةٌ → نِسَاءٌ — ein ganz anderes Wort, kein Muster hilft. Dein Aufhänger: Sure 4 heißt an-Nisāʾ, „Die Frauen“.'
+  ],
+
+  '46549': [
+    'Stell dir einen Freund vor, der مَرِيضٌ (krank) im Bett liegt: Er will aufstehen und schafft es nicht — so ضَعِيفٌ ist er. Krank macht schwach: Lern die beiden zusammen, مَرِيضٌ kennst du schon.',
+    'Deine eigene Kartei: Eine Vokabel, die noch ضَعِيفٌ sitzt — schwach —, bleibt in Kasten 1. Jedes Mal, wenn du eine Karte nicht weißt, denk: noch ضَعِيفٌ, noch schwach. Und mit jedem „gewusst“ wird sie stärker.'
+  ],
+
+  '50339': [
+    'Stell dir ein Fußballspiel vor: Der Rasen, auf dem die Mannschaften spielen, ist der مَلْعَبٌ. Für Kinder ist es der Spielplatz, für Mannschaften der Sportplatz — immer der Platz zum Spielen.',
+    'Die Wurzel ل ع ب heißt spielen. In Bayna Yadayk 2, Kapitel 2, kommt das Verb لَعِبَ (spielen) — im selben Kapitel wie ضَعِيفٌ (schwach). Wer spielt, braucht einen Platz: مَلْعَبٌ.'
   ],
 };
