@@ -527,6 +527,11 @@ const PRUEFER = [
      das praktisch, für mein handy will ich das nicht". Bewacht vor allem die
      Ausnahme: am Handy kein Tastenkasten und kein inputmode. Sechs Störtests. */
   ['test-tippen-tablet.mjs', []],
+  /* 20.10.2026 — richtig getippt + Eingabetaste: die Karte dreht sich um. Elias:
+     „nur wenn es falsch ist soll es so bleiben". Fährt pruefeTippen(),
+     tippPruefenUndUmdrehen(), tippTaste() und beide Horcher auf die Eingabetaste
+     aus dem Quelltext; acht Störtests. */
+  ['test-tippen-umdrehen.mjs', []],
   /* 11.10.2026 — die Eselsbrücken-Vorschläge bleiben neben seiner eigenen stehen.
      Elias: „sie sollen da bleiben auch wenn ich eine notiz mache". Fährt
      renderNotiz() und wkEselsbruecke() aus dem Quelltext; vier Störtests. */

@@ -1126,7 +1126,7 @@ function pruefeTippen(){
      Regel (tippPluralDran()), nicht die Seite: ein verborgenes Feld sagt nichts. */
   const plFeld = (typeof tippPluralDran === 'function' && tippPluralDran(w)) ? document.getElementById('cardTippPlural') : null;
   const plEingabe = plFeld ? String(plFeld.value || '') : '';
-  if (!eingabe.trim() && !plEingabe.trim()){ feld.className='tipp-antwort'; feld.textContent=''; return; }
+  if (!eingabe.trim() && !plEingabe.trim()){ feld.className='tipp-antwort'; feld.textContent=''; return false; }
 
   /* Ohne Vokalzeichen vergleichen - getippt wird auf dem Handy, und die
      Taschkil ist hier nicht der Punkt. Die richtige Schreibweise steht auf
@@ -1141,16 +1141,45 @@ function pruefeTippen(){
     feld.textContent = richtig && plRichtig ? 'Richtig — umdrehen und einordnen.'
       : richtig ? 'Das Wort stimmt — die Mehrzahl noch nicht.'
       : plRichtig ? 'Die Mehrzahl stimmt — das Wort noch nicht.' : 'Noch nicht.';
-    return;
+    return richtig && plRichtig;
   }
   feld.className = 'tipp-antwort ' + (richtig ? 'richtig' : 'falsch');
   feld.textContent = richtig ? 'Richtig — umdrehen und einordnen.' : 'Noch nicht.';
+  return richtig;
+}
+
+/* ---------- Richtig getippt: die Karte dreht sich selbst um (20.10.2026) ----------
+
+   Elias, 20.10.2026 um 04:50: „ich möchte, dass wenn ich das arabische bei den karteikarten
+   richtig geschrieben habe und auf der tastatur auf enter drücke und es richtig ist, dass sich
+   die karte dann direkt umdreht. nur wenn es falsch ist soll es so bleiben"
+
+   pruefeTippen() sagt, ob alles stimmt; bei zwei Feldern heißt das Wort UND Mehrzahl. Nur dann
+   dreht sich die Karte um. Sonst bleibt sie stehen, mit „Noch nicht." oder mit der Zeile, welches
+   Feld noch fehlt. Eingeordnet wird nicht: die Stufe wählt er weiter selbst.
+
+   MEINE Bauart (nicht sein Satz), jede Zeile für sich änderbar:
+   - Die Taste „Prüfen" der Tablet-Tasten tut dasselbe. Sie steht dort für die Eingabetaste
+     (tippTaste() unten).
+   - Gedreht wird nur zur Rückseite hin (add, nicht toggle). Ein zweites Enter dreht nicht zurück.
+   - Das Feld gibt den Fokus ab, damit die Tastatur des Handys zugeht. So endet es auch heute,
+     wenn er die Karte antippt; sonst läge die Tastatur über der Rückseite.
+   Bewacht von test-tippen-umdrehen.mjs. */
+function tippPruefenUndUmdrehen(){
+  if (!pruefeTippen()) return false;
+  const aktiv = document.activeElement;
+  if (aktiv && (aktiv.id === 'cardTippEingabe' || aktiv.id === 'cardTippPlural') && typeof aktiv.blur === 'function') aktiv.blur();
+  document.getElementById('flashcard').classList.add('flipped');
+  /* Wie beim Antippen (Klick auf die Karte, weiter unten): der Hinweis „es geht weiter" hängt
+     daran, dass die Karte gedreht ist. */
+  if (typeof aktualisiereMehrHinweis === 'function') aktualisiereMehrHinweis();
+  return true;
 }
 
 document.getElementById('cardTippEingabe').addEventListener('click', (e)=>e.stopPropagation());
 document.getElementById('cardTippEingabe').addEventListener('keydown', (e)=>{
   e.stopPropagation();
-  if (e.key === 'Enter'){ e.preventDefault(); pruefeTippen(); }
+  if (e.key === 'Enter'){ e.preventDefault(); tippPruefenUndUmdrehen(); }
 });
 document.getElementById('cardTippEingabe').addEventListener('pointerdown', (e)=>e.stopPropagation());
 /* Das zweite Feld (Mehrzahl) verhält sich wie das erste. Dazu merkt sich der Kasten, welches
@@ -1169,7 +1198,7 @@ document.getElementById('cardTippEingabe').addEventListener('pointerdown', (e)=>
   pl.addEventListener('click', (e)=>e.stopPropagation());
   pl.addEventListener('keydown', (e)=>{
     e.stopPropagation();
-    if (e.key === 'Enter'){ e.preventDefault(); pruefeTippen(); }
+    if (e.key === 'Enter'){ e.preventDefault(); tippPruefenUndUmdrehen(); }
   });
   pl.addEventListener('pointerdown', (e)=>e.stopPropagation());
 })();
@@ -1237,9 +1266,10 @@ function zeigeTippTasten(){
 }
 
 /* Schreibt an der Schreibmarke: eine Auswahl wird ersetzt, „weg" löscht das Zeichen
-   davor (oder die Auswahl), „pruefen" prüft wie die Eingabetaste. */
+   davor (oder die Auswahl), „pruefen" prüft wie die Eingabetaste und dreht die Karte bei
+   richtiger Antwort um wie sie (tippPruefenUndUmdrehen() oben). */
 function tippTaste(wert){
-  if (wert === 'pruefen'){ pruefeTippen(); return; }
+  if (wert === 'pruefen'){ tippPruefenUndUmdrehen(); return; }
   /* Geschrieben wird in das Feld, das zuletzt angetippt war (Wort oder Mehrzahl) — der Kasten
      merkt es sich in data-ziel. Ohne Merker, oder ist das gemerkte Feld verborgen: das Wort. */
   const kasten = document.getElementById('cardTippBox');
