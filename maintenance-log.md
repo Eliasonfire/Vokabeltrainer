@@ -9123,3 +9123,19 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - Dual vorbereiten, ausgeschaltet lassen.
 - Beispielsatz und Eselsbrücken für ḍaʿīf und malʿab.
 - Fragen an ihn: ḍiʿāf (sein Buch) neben ḍuʿafāʾ (Karte)? Ist die Ausfüll-Leiste weg?
+
+
+## 2026-10-20 03:22 – Sitzung: deutsche Mehrzahl auf den Mehrzahlkarten — **v698 ausgeliefert** (`16ece7d`)
+
+**Anlass.** Elias um 02:23: *„und bei den plural karten soll direkt der plural stehen also nicht ,,feld (plural)" sondern ,,felder (Plural)""*.
+
+**Was jetzt gilt.** Neu `data/de-mehrzahl.js`: `DE_MEHRZAHL` mit 1720 deutschen Wörtern und ihrer deutschen Mehrzahl, für alle Bedeutungen, die auf einer Mehrzahlkarte stehen können (alle acht Bücher, Eigenliste, „Koran häufigste", Nachträge aus `data/feld-ausnahmen.js`, seine geänderten Bedeutungen). Dazu `DE_MEHRZAHL_GANZ` für Wörter mit zwei Mehrzahlen je nach Karte („Rat" → „Räte", „Rat / Ratschlag" → „Ratschläge"; „Erbe / Erben"; „Erbe / Ahnenreihe"). `deMehrzahl()` in `js/kern.js` schlägt jede Teilbedeutung nach, `bauePluralKarte()` schreibt „Felder (Plural)". Fehlt ein Teil, bleibt die alte Form. Adjektive bleiben („groß (Plural)") — meine Entscheidung, ihm gesagt. Weil `pluralKarteNachziehen()` `bauePluralKarte()` fragt, folgt die Mehrzahlkarte auch seiner Änderung an der Einzahl. Formen nach Duden; bei Wiktionary nachgesehen: Sport („Sporte" selten → „Sportarten"), Unterricht, Milch (bleibt), Glaube, Riyal, Labor.
+
+**Prüfen und Ausliefern.**
+- Neu `werkzeuge/pruefe-de-mehrzahl.mjs`: A Deckung (2146 Teilbedeutungen aller Quellen), B Verzeichnis, C Wirkung am echten Quelltext, D Verdrahtung; zehn Störtests. Im Sammellauf, in der Prüfkette von `VOLLES-PROGRAMM.md` (Kopie angeglichen), im Pflegeplan, Wartungsschritt 1c.5c mit Freigabe in `Automation/routines.json`.
+- Probe im eigenen Edge mit seiner Bücherwahl (`scratchpad/de-mehrzahl-probe.mjs`): 333 Mehrzahlkarten, keine in der alten Form, „Feld" → „Felder (Plural)", „Gast" → „Gäste (Plural)", „Lehrer" → „Professor" ergibt „Professoren (Plural)".
+- Der erste Sammellauf war NEU rot: `pruefe-volles-programm.mjs` — der neue Prüfer stand im Wartungsprompt, aber nicht in der Prüfkette. Eingetragen, danach 184 Prüfer, keiner neu rot.
+- `validate.js` 0; Oberfläche 47/0/5 (Stempel v698).
+- CACHE v698, `veroeffentlichen.mjs --mit-daten` um 03:22:14, Production auf main aus `16ece7d` (`5f413b08`), gepusht, `pruefe-ausgeliefert` Exit 0.
+
+**Offen.** Mehrzahlkarten direkt bearbeiten (Verbindung bleibt) · Dual vorbereiten, aus · Satz und Eselsbrücken für ḍaʿīf/malʿab · Fragen an ihn: ḍaʿīf beide Mehrzahlen? Leiste weg?
