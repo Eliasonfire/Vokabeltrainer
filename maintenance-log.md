@@ -9139,3 +9139,29 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - CACHE v698, `veroeffentlichen.mjs --mit-daten` um 03:22:14, Production auf main aus `16ece7d` (`5f413b08`), gepusht, `pruefe-ausgeliefert` Exit 0.
 
 **Offen.** Mehrzahlkarten direkt bearbeiten (Verbindung bleibt) · Dual vorbereiten, aus · Satz und Eselsbrücken für ḍaʿīf/malʿab · Fragen an ihn: ḍaʿīf beide Mehrzahlen? Leiste weg?
+
+
+## 2026-10-20 04:06 – Sitzung: Mehrzahlkarten direkt bearbeiten — **v699 ausgeliefert** (`13e9522`)
+
+**Anlass.** Elias um 02:24: *„außerdem will ich auch direkt die pluralkarten bearbeiten können jedoch finde ich es gut das wenn ich eine karte in der bedeutung ändere das sich dann auch plural ändert also das die zusammenhängen"*.
+
+**Gemessen vorher** (eigener Edge, seine Bücherwahl, `scratchpad/mz-bearbeiten-messen.mjs`): Die Infokarte von „Felder (Plural)" hatte keinen Bearbeiten-Knopf und 0 Box-Knöpfe; die Einzahl hat 7. Der Kommentar an der Box-Reihe sagte seit 20.08.2026 „Pluralkarten bekommen die Reihe auch", aber der Mehrzahl-Block kehrte vorher zurück. Eine Änderung an der Mehrzahlkarte wurde gespeichert, war nach dem Neustart aber weg: `js/buecher.js` baut die Mehrzahlkarten nach `wendeWortAenderungenAn()` frisch. KV 03:49 (nur gelesen): 13 Wortänderungen, 0 an Mehrzahlkarten.
+
+**Was jetzt gilt.**
+- `MEHRZAHL_EIGENE = ['de','sentAr','sentDe']`: Nur das gehört der Mehrzahlkarte selbst.
+- Die arabische Form wird das Feld `pl` der Einzahl (`speicherePluralKartenAenderung()`). Gespeichert wird nur, was vom Abgeleiteten abweicht.
+- Ändert sich die Bedeutung der Einzahl, auch über „Auf Original zurück", fällt die eigene Bedeutung der Mehrzahlkarte weg, und die Karte folgt wieder (`mehrzahlBedeutungFreigeben()`). Der eigene Satz bleibt.
+- `pluralKarteNachziehen()` setzt die eigenen Felder aktiv. `wendePluralAenderungenAn()` läuft in `wendeWortAenderungenAn()` und in `js/buecher.js` nach `wendePluralKartenAn()`.
+- Die Infokarte der Mehrzahlkarte hat Box-Reihe, Bearbeiten, Zur Grundvokabel und Auf Original zurück. Das Formular zeigt Arabisch, Deutsch und Beispielsatz.
+- `speichereOffenesFormular()` behandelt fehlende Felder null-sicher.
+
+**Prüfen und Ausliefern.**
+- `pruefe-bearbeiten.mjs`: neuer Teil „Mehrzahlkarte" mit M1–M6 und V1–V3, dazu sieben Störtests, alle rot. Der Nachbau lädt `data/de-mehrzahl.js`, FOLGE enthält die Mehrzahl-Aufrufe.
+- `pruefe-de-mehrzahl.mjs` nachgezogen: MEHRZAHL_EIGENE im Schnitt, C6 an frischer Karte, S4 neuer Anker.
+- `validate.js`: 7 Startlauf-Nachträge, 0 Fehler. Pflegeplan 0 Lücken. Sammellauf 184, keiner neu rot.
+- Probe mit echten Klicks (`scratchpad/mz-bearbeiten-probe.mjs`): 12 von 12 ok, 0 Seitenfehler.
+- CACHE v699, `veroeffentlichen.mjs --mit-daten` um 04:06:54, Production auf main aus `13e9522` (`61e95fce`), gepusht, `pruefe-ausgeliefert` Exit 0, Oberfläche 0 Fehler (Stempel v699).
+
+**Nebenbei gemessen** (seine Frage um ~04:08): Seine Runde heute mit dem Gerätestand von 02:13:57 (`scratchpad/tagesrunde-messen.mjs`): 9 fällige Wiederholungen, 3 Lerngruppe Box 1 (davon die Mehrzahl von „Spiegel"), 2 neue (Feld, Allah auf dem Koran-Platz), 1 vorgezogen (Auto). Die App zählte um 04:08 noch den 19.10.
+
+**Offen.** Dual vorbereiten, aus · Satz und Eselsbrücken für ḍaʿīf/malʿab · `mb1-63-4` NFC · Fragen an ihn: ḍaʿīf beide Mehrzahlen? Leiste weg?
