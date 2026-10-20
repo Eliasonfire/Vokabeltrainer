@@ -9222,3 +9222,17 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - ⚠️ Übungen, Sätze und Wurzeltraining fragen „bekannt" noch im alten Sinn (in der Auswahl) — nächster Schritt. Gemessen: Wurzeltraining (Stufe „stand") 351 von 615 ungesehen, Mehrzahl-Übung 56 von 193.
 
 **Prüfen und Ausliefern.** Probe im eigenen Edge: Einzahl „Bruder" nur noch „Fem.", Mehrzahl „Brüder" mit „Singular". validate 0, Pflegeplan 0, Sammellauf 185 Prüfer, keiner neu rot. CACHE v702, hochgeladen 05:21, Production main aus `e4e2aec` (`8ca4c02a`), gepusht, `pruefe-ausgeliefert` Exit 0, Oberfläche 47/0/5, Stempel v702.
+
+
+## 2026-10-20 05:57 – Nachtschicht: nur gesehene Karten in Wurzeltraining, Übungen und Satzmodus — **v703 ausgeliefert** (`70293b7`)
+
+**Anlass.** Elias um 05:10, mit Bild der Hörfrage „schmerzhaft": *„die vokabel hab ich noch nie gesehen. du sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen werden auch an plurals die ich bereits kenne oder zumindest mal gesehen habe. beim hören sind einige diesbezüglich falsch"* (Hörmodus: v702). Auf meinen Bericht zu Wurzeltraining, Mehrzahl-Übung und Sätzen um 05:3x: *„fix das"*.
+
+- „Gesehen" = `schonGesehen()` aus `js/kern.js` (bewertet oder über Box 1). `istBekannt()` bleibt unverändert (die Lernkarte stellt damit neue Wörter vor).
+- `js/wurzel.js`, Stufe „stand": `wzErlaubt()` neu; Vorrat, Lernwörter aus `vocab-data.js` und Duell (beim Ziehen) nur gesehene Wörter. „buch" und „alles" bleiben (MEINE Entscheidung: seine eigene Wahl).
+- `js/uebung.js`: `uebGesehen()` neu (über `uebMzKern`); in `uebGruppe()` (11/13/14), `uebEndungGlieder()` (15), `uebMehrzahlKarten()` (18) und Übung 16. Regelkarten-Glieder aus Folge 19 bleiben (MEINE Entscheidung).
+- `js/saetze.js`: `nichtVorausgeschrieben()` lässt den Satz einer Karte erst durch, wenn die Karte gesehen ist; Lehrbuchsätze und Sätze ohne Karte bleiben.
+- Gemessen mit seinem Stand (KV, Gerätestand 05:15), eigener Edge: Wurzel-Vorrat 615 → 264 (nie gesehen 351 → 0), Familien 21 → 13 (nie gesehene Familienwörter 12 → 0), Duell 59/200 Ziehungen mit nie gesehenem Wort → 0; Mehrzahl-Karten 193 → 137 (56 → 0); Sätze 523 → 437 (86 → 0). Aufgaben nach dem Öffnen des Satzmodus u. a. Übung 16 710 → 538, Übersetzen 523 → 437; keine Übung leer, die vorher Aufgaben hatte (Übung 18 hatte schon vorher 0). Oberfläche: Wurzeltraining 13 Familien, Satzmodus 437 Sätze, 0 Seitenfehler.
+- Offen, auf sein Wort: die strengere Lesart „nur Wörter, deren Mehrzahlkarte er schon hatte" (heute 1 von 137: Spiegel).
+
+**Prüfen und Ausliefern.** Neuer Prüfer `test-gesehen-uebungen.mjs` (G0–G6, 10 Störtests), Störtest-Anker in `test-endungen.mjs` und `test-mehrzahl-einsetzen.mjs` nachgezogen, Pflegeplan-Eintrag. validate 0, Pflegeplan 0, Sammellauf 186 Prüfer, keiner neu rot. CACHE v703, hochgeladen 05:57, Production main aus `70293b7` (`075098e7`), gepusht, `pruefe-ausgeliefert` Exit 0, Oberfläche 47/42/5, Stempel v703.
