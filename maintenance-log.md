@@ -9069,3 +9069,33 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - CACHE v695, `veroeffentlichen.mjs --mit-daten`. Cloudflare: Production auf main aus `9caed2b` (`e54ff429`). Gepusht, `pruefe-ausgeliefert` Exit 0.
 
 **Offen (meins).** Ein Prüfer-Abschnitt mit Störtest für `pluralKarteNachziehen()` fehlt noch. Er gehört am ehesten in `werkzeuge/pruefe-bearbeiten.mjs`.
+
+
+## 2026-10-20 02:23 – Sitzung: zwei Wörter aus nicht gewählten Büchern, Einzahl auf der Mehrzahl-Infokarte, Koran-Zahl und Regelstand weg — **v696 ausgeliefert** (`c989f55`)
+
+**Anlass.** Elias schickte zwischen 01:56 und 02:13 sechs Wünsche, fast alle mit Bild: *„ich brauche daifun also schwach als vokabel"* · *„ich will das hier bei den pluralkarten genauso der singular neben den wurzel steht."* · *„ich möchte das mir rechts nicht angezeigt wird wie oft es im koran vor kommt"* · *„ich möchte das mir das nicht mehr angezeigt wird"* (die Ausfüll-Leiste seines iPhones über der Tastatur) · *„spielplatz also al mulab brauche ich auch als vokabel."* · *„das brauche ich denke ich auch nicht"* / *„also zu sehen"* („Wie gut sitzen die Regeln?").
+
+**Zwei Wörter aus Büchern, die er nicht gewählt hat.** ḍaʿīf (46549, Bayna Yadayk 2, Kap. 2) und malʿab (50339, Madina 2, Kap. 32) stehen jetzt in `FREISCHALTEN_AUF_WUNSCH`. Sein Stand (KV nur gelesen): kein Eintrag, kein eigenes Wort. Im Nachbau zeigte sich: Die App lud nur die gewählten Bücher, die Freischaltung wirkte also nicht. Neu ist `einzelneAusAnderenBuechern()` in `js/buecher.js`. Sie lädt beim Start nur die fehlenden, einzeln freigeschalteten Wörter nach, mit der Marke `einzelnGeladen`. `buchVokabeln()` nimmt diese Wörter mit, `kapitelDesBuchs()` ignoriert sie, und `bauePluralKarte()` reicht die Marke weiter.
+
+**Weiter in v696:**
+- Auf der Infokarte einer Mehrzahlkarte steht „Singular" vor „Wurzel".
+- Die Koran-Zahl in den Suchtreffern ist weg, ebenso `quranHaeufigkeit()` und `.wl-quran`.
+- 8 Such- und Tippfelder haben jetzt `autocorrect="off"`. Ob das die Leiste verhindert, ist unbelegt.
+- „Wie gut sitzen die Regeln?" ist ausgeblendet, nicht gelöscht.
+
+**Prüfen und Ausliefern.**
+- Neu: `werkzeuge/pruefe-einzeln-fremdbuch.mjs` mit 7 Fällen und 8 Störtests, im Sammellauf eingetragen.
+- `test-plural-karte.mjs`: W1/W2 und S35/S36.
+- `pruefe-suchorte.mjs`: Teil 6 und 7.
+- `pruefe-regelsammlung.mjs`: Hülle `hidden`, mit Störtest.
+- `pruefe-oberflaeche.js` zählt die einzeln geladenen Wörter je Buch mit. Der erste Lauf meldete 8 Fehler; danach 47 Prüfungen, 0 Fehler, 5 Hinweise.
+- `validate.js`: 0 Fehler.
+- CACHE v696, `veroeffentlichen.mjs --mit-daten` um 02:22:53. Production auf main stammt aus `c989f55` (`8c5ac42d`). Gepusht, `pruefe-ausgeliefert` Exit 0.
+
+**Offen.**
+- Deutsche Mehrzahl auf der Mehrzahlkarte, also „Felder (Plural)", sein Satz von 02:23.
+- Mehrzahlkarten direkt bearbeiten, Verbindung zur Einzahl bleibt (02:24).
+- Dual vorbereiten, aber ausgeschaltet lassen.
+- Zwei Uhrzeiten in Kommentaren berichtigen: 02:03 → 02:04, 02:07 → 02:09.
+- Beispielsatz und Eselsbrücken für die zwei neuen Wörter.
+- Fragen an ihn: ḍiʿāf (sein Buch) neben ḍuʿafāʾ (Karte)? Ist die Leiste weg?
