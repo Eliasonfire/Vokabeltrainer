@@ -640,6 +640,14 @@ function baueWortKarte(w){
      Nachschlagen da, und wer hier hersieht, will alles sehen. Auf der Lernkarte
      bleibt der Schalter, was er ist - dort waere die Form ein Ratehinweis. */
   const formen = [];
+  /* ⭐ DIE EINZAHL NEBEN DER WURZEL, auf jeder Mehrzahlkarte (20.10.2026). Elias um 02:00,
+     mit einem Bild der Infokarte von aṣdiqāʾ („Freund (Plural)"), auf der unter dem
+     Lautsprecher nur die Wurzel stand: „ich will das hier bei den pluralkarten genauso der
+     singular neben den wurzel steht." Genauso wie auf der Einzahlkarte die Mehrzahl neben
+     der Wurzel steht — deshalb an derselben Stelle, als erstes Kästchen. Die Form ist
+     `sgAr` aus bauePluralKarte() in js/kern.js; ändert er das Wort, zieht
+     pluralKarteNachziehen() sie sofort mit. Bewacht von test-plural-karte.mjs (W1). */
+  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);
   /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
   if (w.pl)    formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), formenAnzeige(w.pl)]);
   if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);
@@ -1286,14 +1294,14 @@ function sucheTreffer(begriff){
   });
 }
 
-/* Wie oft die WURZEL im Quran steht. Dieselbe Quelle wie das Abzeichen auf der
-   Lernkarte (js/lernen.js), damit nicht zwei Stellen verschiedene Zahlen
-   nennen. */
-function quranHaeufigkeit(w){
-  if (!w.root || typeof QURAN_FREQ === 'undefined') return null;
-  const eintrag = QURAN_FREQ[w.root.replace(/\s+/g, '')];
-  return eintrag ? eintrag[0] : null;
-}
+/* ⛔ HIER STAND quranHaeufigkeit(w) — wie oft die WURZEL im Quran steht, als rotes
+   Abzeichen „☪ 6×" rechts in jeder Wortzeile der Suche. Elias am 20.10.2026 um 02:03,
+   mit einem Bild der Suche nach „Gast": „ich möchte das mir rechts nicht angezeigt wird
+   wie oft es im koran vor kommt". Das Abzeichen war die letzte Stelle, die die Zahl
+   zeigte (auf der Lernkarte ist sie seit dem Umbau der Vorderseite weg, siehe den
+   Kommentar bei #flashcard in index.html), also ist die Funktion ohne Aufrufer und
+   mit ihr gegangen. QURAN_FREQ selbst bleibt: der Wurzelmodus und das Quran-Lesen
+   brauchen es. Bewacht von werkzeuge/pruefe-suchorte.mjs (Teil 6). */
 
 /* ---------- Welche Suche findet was (Elias, 11.09.2026, 22:39) ----------
 
@@ -1322,7 +1330,8 @@ function quranHaeufigkeit(w){
 /* Die Wortzeilen, an beiden Orten dieselben. */
 function suchWortZeilenHtml(liste){
   return liste.slice(0, 60).map(w => {
-    const freq = quranHaeufigkeit(w);
+    /* Keine Koran-Zahl mehr rechts — Elias, 20.10.2026: „ich möchte das mir rechts nicht
+       angezeigt wird wie oft es im koran vor kommt" (Begründung oben, wo quranHaeufigkeit stand). */
     const fremd = !istBekannt(w);
     return `<div class="word-list-item" data-suchwort="${escapeHtml(String(w.id))}">
       <div class="wl-text">
@@ -1330,7 +1339,6 @@ function suchWortZeilenHtml(liste){
         <div class="wl-de">${escapeHtml(w.de)} · ${escapeHtml(kapitelBeschriftung(w))}</div>
       </div>
       <div class="wl-marken">
-        ${freq ? `<span class="wl-quran">${icon('crescent')}${freq}×</span>` : ''}
         ${fremd ? `<span class="wl-fremd">noch nicht dran</span>` : ''}
       </div>
     </div>`;

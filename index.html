@@ -2354,15 +2354,10 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 }
 .suche-feld input:focus{outline:none;}
 .suche-hinweis{color:var(--text-dim);font-size:var(--fs-sm);margin-bottom:var(--sp-3);line-height:1.5;}
-/* Die Häufigkeit im Quran je Trefferzeile. Elias: „soll auch anzeigen wie oft
-   es dieses wort im quran gibt." */
-.wl-quran{
-  display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;
-  font-size:var(--fs-xs);font-weight:700;
-  color:var(--red-bright);background:var(--red-wash);border:1px solid var(--red-dim);
-  border-radius:var(--r-full);padding:3px var(--sp-2);white-space:nowrap;
-}
-.wl-quran .ic{width:12px;height:12px;}
+/* ⛔ Hier stand .wl-quran, die Häufigkeit im Quran je Trefferzeile (Elias damals:
+   „soll auch anzeigen wie oft es dieses wort im quran gibt."). Am 20.10.2026 hat er
+   es zurückgenommen: „ich möchte das mir rechts nicht angezeigt wird wie oft es im
+   koran vor kommt" — Begründung in js/kategorien.js, wo quranHaeufigkeit() stand. */
 .wl-marken{display:flex;align-items:center;gap:6px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end;}
 /* Ein Treffer aus einem Kapitel, das noch nicht freigeschaltet ist. Gedämpft
    statt versteckt — er soll sehen, dass es das Wort gibt. */
@@ -5624,11 +5619,23 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            bleibt die Tastatur offen (ein anderes Textfeld übernimmt den
            Fokus) und kein Zeichen geht verloren. Beim `input` steht dieselbe
            Übergabe noch einmal als Netz — auf manchen Tastaturen kommt das
-           erste Zeichen vor dem Fokus an. -->
+           erste Zeichen vor dem Fokus an.
+
+           ⚠️ autocorrect="off" an jedem Such- und Tippfeld der App (20.10.2026; die
+           Felder für ein eigenes Wort und die Zahlenfelder nicht). Elias um
+           02:05, mit einem Bild der Suche, auf dem er die Leiste über seiner Tastatur
+           rot umrandet hat (Schlüssel, Karte, Ort — das Ausfüllen seines iPhones, das
+           neben einer fremden Tastatur erscheint): „ich möchte das mir das nicht mehr
+           angezeigt wird". autocomplete="off" stand schon da und hat die Leiste NICHT
+           verhindert. Ob autocorrect="off" sie verhindert, ist nicht belegt: eine
+           Webseite steuert diese Leiste nicht sicher (iOS entscheidet), und hier lässt
+           es sich nicht messen — nur auf seinem Gerät. Bewacht von
+           werkzeuge/pruefe-suchorte.mjs (Teil 7: jedes Such- und Tippfeld trägt die
+           vier Angaben). -->
       <div class="suche-feld start-suche">
         <svg class="ic"><use href="#ic-search"/></svg>
         <input type="text" id="startSuche" placeholder="Wörter und Regeln durchsuchen …"
-               autocomplete="off" autocapitalize="off" spellcheck="false"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                aria-label="Wörter und Regeln durchsuchen">
       </div>
 
@@ -5778,6 +5785,13 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            die Zeitachse. Getrennte Orte hätten sie entkoppelt. -->
       <h3 class="stats-titel">Trefferquote je Woche</h3>
       <div class="wochenquote" id="wochenquote"></div>
+      <!-- ⛔ AUSGEBLENDET seit 20.10.2026. Elias um 02:13, mit einem Bild genau dieses
+           Abschnitts: „das brauche ich denke ich auch nicht" und gleich danach „also zu
+           sehen". Nur die ANZEIGE ist weg: der Stand je Regel (vt_regelStand) wird weiter
+           geführt und gezeichnet, die Übungen lesen ihn wie bisher. Zurück mit einem Wort
+           von ihm: die Klasse `hidden` an dieser Hülle entfernen. Bewacht von
+           werkzeuge/pruefe-regelsammlung.mjs (die Hülle trägt `hidden`). -->
+      <div class="hidden" id="regelStandAbschnitt">
       <h3 class="stats-titel">Wie gut sitzen die Regeln?</h3>
       <div class="regel-sortierung" id="regelSortierung" role="group" aria-label="Sortierung">
         <button class="rs" data-sort="schwach" aria-pressed="true">schwächste zuerst</button>
@@ -5785,6 +5799,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <button class="rs" data-sort="nie" aria-pressed="false">nie geübt</button>
       </div>
       <div class="regel-stand" id="regelStand"></div>
+      </div>
       <!-- ⛔ Fortschritt je Übungsmodus (06.09.2026). Bis dahin hielten zwölf
            der dreizehn Modi ihr Ergebnis gar nicht fest — nur „Welche Regel?“
            trägt eine regelId und füllte den Kasten darüber. 4367 von 4682
@@ -5827,8 +5842,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
              Abzeichen hindurch. Und es zwang `.front-marken` zu einer
              Breitenreserve (--abzeichen-breite), die jetzt entfällt.
 
-             Die Zahl ist nicht verloren: die Suchtreffer in den Kategorien
-             führen sie weiter (`wl-quran`, js/kategorien.js). -->
+             Die Zahl stand danach nur noch in den Suchtreffern (`wl-quran`,
+             js/kategorien.js). Seit 20.10.2026 auch dort nicht mehr — Elias:
+             „ich möchte das mir rechts nicht angezeigt wird wie oft es im koran
+             vor kommt". -->
         <div class="swipe-hint swipe-hint-left" id="swipeHintLeft"><svg class="ic"><use href="#ic-close"/></svg></div>
         <div class="swipe-hint swipe-hint-right" id="swipeHintRight"><svg class="ic"><use href="#ic-check"/></svg></div>
         <div class="flashcard" id="flashcard">
@@ -5861,7 +5878,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                    auch etwas größer sein damit man besser lesen kann." -->
               <div class="tipp-box hidden" id="cardTippBox">
                 <input type="text" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
-                       placeholder="Wort auf Arabisch eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
+                       placeholder="Wort auf Arabisch eintippen …" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <!-- Zweites Feld für die Mehrzahl (13.10.2026). Elias, 12.10.2026: „man könnte auch
                      ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist". Von Anfang
                      an verborgen; renderTippfeld() in js/lernen.js zeigt es nur bei regelmäßiger
@@ -5873,7 +5890,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                      Arabisch eintippen", wortgleich mit dem Rest des Felds darüber (dessen Text braucht
                      286 px). Beide Felder sahen gleich aus. „Mehrzahl eintippen …" braucht 204 px. -->
                 <input type="text" id="cardTippPlural" class="select-input select-full tipp-plural hidden" lang="ar" dir="rtl"
-                       placeholder="Mehrzahl eintippen …" autocomplete="off" autocapitalize="off" spellcheck="false">
+                       placeholder="Mehrzahl eintippen …" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <!-- Arabische Tasten, NUR am Tablet (11.10.2026). Elias: „für mein tablet wäre
                      das praktisch, für mein handy will ich das nicht". Gefüllt und gezeigt von
                      zeigeTippTasten() in js/lernen.js; am Handy bleibt der Kasten leer und
@@ -6011,7 +6028,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="suche-feld">
         <svg class="ic"><use href="#ic-search"/></svg>
         <input type="text" id="sucheEingabe" placeholder="Wort, Bedeutung oder Wurzel suchen …"
-               autocomplete="off" autocapitalize="off" spellcheck="false">
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button class="icon-btn hidden" id="btnSucheLeeren" aria-label="Suche leeren"><svg class="ic"><use href="#ic-close"/></svg></button>
       </div>
       <div class="suche-hinweis hidden" id="sucheHinweis"></div>
@@ -6057,7 +6074,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="suche-feld">
         <svg class="ic"><use href="#ic-search"/></svg>
         <input type="text" id="alleSuche" placeholder="Wörter und Regeln durchsuchen …"
-               autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Wörter und Regeln durchsuchen">
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Wörter und Regeln durchsuchen">
         <button class="icon-btn hidden" id="btnAlleSucheLeeren" aria-label="Suche leeren"><svg class="ic"><use href="#ic-close"/></svg></button>
       </div>
       <div class="suche-hinweis hidden" id="alleSucheHinweis"></div>
@@ -6197,7 +6214,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="luecke-box hidden" id="sentLueckeBox">
           <div class="luecke-frage">Welches Wort fehlt?</div>
           <input type="text" id="lueckeEingabe" class="select-input select-full" lang="ar" dir="rtl"
-                 placeholder="…" autocomplete="off" autocapitalize="off" spellcheck="false">
+                 placeholder="…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
           <div class="luecke-knoepfe">
             <button class="btn btn-secondary btn-klein" id="btnLueckeAufloesen">Auflösen</button>
             <button class="btn btn-primary btn-klein" id="btnLueckePruefen">Prüfen</button>
@@ -6453,7 +6470,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Bildschirm, Zeile ~5571) und nennt dort dieselbe Übersetzung. Was
            hier wegfiel, war die Wiederholung plus eine Bedienanleitung für
            etwas, das er längst täglich tut. -->
-      <input type="text" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…">
+      <input type="text" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…"
+             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <!-- Favoriten stehen ÜBER der vollständigen Liste. Elias' Wunsch vom
            04.08.2026: die kurzen Suren, die er gerade braucht, stehen im Quran
            ganz hinten — er musste jedes Mal durch 114 Zeilen scrollen. -->
@@ -6704,7 +6722,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="suche-feld regeln-suche">
         <svg class="ic"><use href="#ic-search"/></svg>
         <input type="text" id="regelnSuche" placeholder="Regel suchen — Deutsch, Arabisch, mudaf …"
-               autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Regeln durchsuchen">
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Regeln durchsuchen">
       </div>
       <div id="regelnInhalt"></div>
     </section>

@@ -414,7 +414,17 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
       const rohListe = (window.VOKABELN && window.VOKABELN[b.slug]) || [];
       const ausgeblendet = (typeof BUCHDUBLETTEN_AUSBLENDEN !== 'undefined')
         ? rohListe.filter(w => BUCHDUBLETTEN_AUSBLENDEN.has(String(w.id))).length : 0;
-      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand - ausgeblendet;
+      /* ⛔ EINZELN GELADENE WÖRTER AUS ANDEREN BÜCHERN (20.10.2026). ḍaʿīf (Bayna Yadayk 2)
+         und malʿab (Madina 2) — Elias: „ich brauche daifun also schwach als vokabel",
+         „spielplatz also al mulab brauche ich auch als vokabel." — holt
+         einzelneAusAnderenBuechern() beim Start nach, mit der Marke `einzelnGeladen`, und
+         buchVokabeln() hängt sie wie die eigenen an JEDES Buch (ihre Mehrzahlkarten auch).
+         Ohne diesen Summanden meldete der erste Lauf danach acht Fehler: +4 bei sechs
+         Büchern, +2 bei den beiden, aus denen je eines stammt. Die aus DIESEM Buch zählen
+         schon in b.vokabeln (Einzahl) und in vonHand (Mehrzahlkarte). */
+      const fremdEinzeln = VOCAB_DATA.filter(w => w.einzelnGeladen === true
+                          && (w.book || 'madina-1') !== b.slug && w.chapter !== 'personal').length;
+      const soll = b.vokabeln + mitreisend.length - schonDrin + vonHand - ausgeblendet + fremdEinzeln;
       const ist = buchVokabeln().length;
       if (ist !== soll) fehl(`Buch ${b.slug}`, `${ist} Vokabeln, erwartet ${soll}`);
       else ok(`Buch ${b.slug}`, `${ist} Vokabeln, ${dauer} ms`);

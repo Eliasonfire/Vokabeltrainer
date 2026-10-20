@@ -1216,7 +1216,12 @@ function bauePluralKarte(w){
        keine Zerlegung der Id. */
     istPlural: true,
     plVon: w.id,
-    sgAr: w.ar
+    sgAr: w.ar,
+    /* Die Mehrzahl eines einzeln geladenen Worts aus einem nicht gewählten Buch ist
+       genauso einzeln geladen (einzelneAusAnderenBuechern() in js/buecher.js, 20.10.2026):
+       sonst zeigte die Kapitelvorschau jenes Buchs nur ihr Kapitel, und buchVokabeln()
+       ließe die Mehrzahl draußen, obwohl die Einzahl drin ist. */
+    ...(w.einzelnGeladen === true ? { einzelnGeladen: true } : {})
   };
 }
 
@@ -2211,8 +2216,20 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    erstmal wie es geschrieben und übersetzt wird". Auf meine Zeile „Die Karte
    gibt es schon im Buch, aber im Zusatzkapitel 24 … Sie muss nur freigeschaltet
    werden": „schalte frei". In seinem abgeglichenen Stand ohne Eintrag (gemessen
-   13.10.2026, 00:27). */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285'];
+   13.10.2026, 00:27).
+   20.10.2026: ضَعِيفٌ 46549 „schwach" dazu. Elias um 01:56, mit einem Bild aus
+   seinem Buch, auf dem er „Schwach" und das Wort rot neben die gedruckte Mehrzahl
+   geschrieben hat: „ich brauche daifun also schwach als vokabel". Die Karte steht
+   in Bayna Yadayk 2, Kapitel 2 — das Buch hat er nicht gewählt. In seinem
+   abgeglichenen Stand ohne Eintrag (KV gelesen 20.10.2026, 01:58: kein Eintrag in
+   vt_einzeln_frei, keiner in vt_bekannt, kein eigenes Wort „schwach").
+   20.10.2026: مَلْعَبٌ 50339 „Spielplatz / Sportplatz" dazu. Elias um 02:07, mit einem
+   Bild aus seinem Buch („Spielplatz" rot über dem Wort): „spielplatz also al mulab
+   brauche ich auch als vokabel." Die Karte steht in Madina 2, Kapitel 32 — das Buch hat
+   er nicht gewählt. Im selben Stand ohne Eintrag und ohne eigenes Wort.
+   ⚠️ Beide Bücher hat er NICHT gewählt. Dass ein solches Wort überhaupt in der App
+   ankommt, macht erst einzelneAusAnderenBuechern() in js/buecher.js (20.10.2026). */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)

@@ -30,6 +30,9 @@
  *   H  die Kartenhöhe: reicht die Vorderseite für den Tippkasten nicht, wächst die Karte
  *      (tippKarteHoehe() in js/lernen.js — MEINE Regel, Claude, nicht von Elias bestellt; sie
  *      behebt den gemessenen Überlauf am Tablet, den das zweite Feld vergrößert hätte)
+ *   W  die Infokarte (baueWortKarte in js/kategorien.js): auf einer Mehrzahlkarte steht die
+ *      Einzahl neben der Wurzel, als erstes Kästchen (Elias, 20.10.2026: „ich will das hier bei
+ *      den pluralkarten genauso der singular neben den wurzel steht.")
  *   V  Verdrahtung in index.html, js/einstellungen.js und js/kern.js
  *   R  seine echten Karten (Auswahl aus .stand-app.json): die Zeile ist dort nicht tot
  *   S  Störtests: der Quelltext wird verändert, der zuständige Fall MUSS scheitern
@@ -44,7 +47,7 @@ import { fileURLToPath } from 'node:url';
 const HIER = path.dirname(fileURLToPath(import.meta.url));
 const lies = p => fs.readFileSync(path.join(HIER, p), 'utf8');
 const KERN = lies('js/kern.js'), LERNEN = lies('js/lernen.js'), UEBUNG = lies('js/uebung.js'), SAETZE = lies('js/saetze.js');
-const HTML = lies('index.html'), EINST = lies('js/einstellungen.js');
+const HTML = lies('index.html'), EINST = lies('js/einstellungen.js'), KATEG = lies('js/kategorien.js');
 
 /* ---------- Schneiden ---------- */
 function schneideFunktion(quelle, kopf){
@@ -134,6 +137,22 @@ function rueckseite(kern, lernen, uebung, einstellungen, opt){
   return id => w.hole('__zeige(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + '))');
 }
 
+/* Die Infokarte: der Formen-Block aus baueWortKarte() (js/kategorien.js), herausgeschnitten und
+   als Funktion gefahren — dazu bauePluralKarte() aus dem Kern, damit die Mehrzahlkarte genau so
+   aussieht wie in der App. */
+function wortkarte(kern, kateg, uebung){
+  const a = kateg.indexOf('  const formen = [];');
+  if (a < 0) throw new Error('der Formen-Block der Infokarte wurde nicht gefunden');
+  const block = schneideBis(kateg.slice(a), '  const formen = [];', ".join('') + `</div>`);");
+  const w = welt(kern, uebung);
+  vm.runInContext(schneideFunktion(kern, 'function bauePluralKarte(')
+    + '\nfunction __infokarte(w){\n  const t = [];\n' + block + '\n  return t.join("");\n}', w.ctx);
+  return {
+    einzahl: id => w.hole('__infokarte(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + '))'),
+    mehrzahl: id => w.hole('__infokarte(bauePluralKarte(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + ')))'),
+  };
+}
+
 /* Das Tippfeld: ein Doppel der Seite — nur, was die geschnittenen Funktionen fragen. */
 const HANDY = [{ maxTouchPoints: 5 }, { width: 412, height: 915 }], TABLET = [{ maxTouchPoints: 5 }, { width: 924, height: 1480 }];
 function element(klassen){
@@ -214,7 +233,7 @@ const SEIN = { direction: 'de-ar', tippenAbBox4: true };                    /* s
 const BEIDE = { direction: 'de-ar', tippenAbBox4: true, tippenPlural: true };
 
 /* ---------- Die Fälle ---------- */
-function laufe(kern, lernen, uebung){
+function laufe(kern, lernen, uebung, kateg = KATEG){
   const erg = new Map();
   const fall = (name, fn) => { let r; try { r = fn(); } catch (e){ r = 'wirft: ' + e.message; } erg.set(name, { ok: r === true, zusatz: r === true ? '' : String(r) }); };
   const W = () => welt(kern, uebung);
@@ -310,6 +329,22 @@ function laufe(kern, lernen, uebung){
     const karten = KARTEN.map(k => k.id === '1' ? Object.assign({}, k, { pl: '<b>' + k.pl }) : k);
     const h = R({ showPlural: true }, { karten })(1);
     return h.includes('&lt;b&gt;') && !h.includes('<b>') ? true : h;
+  });
+
+  /* Elias, 20.10.2026 um 02:00, mit einem Bild der Infokarte von aṣdiqāʾ: „ich will das hier bei den
+     pluralkarten genauso der singular neben den wurzel steht." */
+  fall('W1 Infokarte einer Mehrzahlkarte: „Singular" mit der Einzahl steht als erstes Kästchen, vor „Wurzel" (Elias, 20.10.2026)', () => {
+    const h = wortkarte(kern, kateg, uebung).mehrzahl(1);
+    const kaestchen = [...h.matchAll(/<i class="lbl">([^<]*)<\/i><span class="wf-ar">([^<]*)<\/span>/g)].map(m => [m[1], m[2]]);
+    if (!kaestchen.length) return 'keine Kästchen: ' + h;
+    if (kaestchen[0][0] !== 'Singular') return 'das erste Kästchen heißt „' + kaestchen[0][0] + '": ' + h;
+    if (kaestchen[0][1] !== ar('rajulN')) return 'im Kästchen „Singular" steht nicht die Einzahl rajul: ' + kaestchen[0][1];
+    const wurzel = kaestchen.findIndex(k => k[0] === 'Wurzel');
+    return wurzel === 1 ? true : 'die Wurzel steht nicht direkt daneben (Stelle ' + wurzel + '): ' + h;
+  });
+  fall('W2 Die Einzahlkarte bekommt kein Kästchen „Singular": dort stehen „Plural" und „Wurzel" wie bisher', () => {
+    const h = wortkarte(kern, kateg, uebung).einzahl(1);
+    return h.includes('<i class="lbl">Plural</i>') && h.includes('<i class="lbl">Wurzel</i>') && !h.includes('>Singular<') ? true : h;
   });
 
   const T = (einst, geraet) => tippWelt(kern, lernen, uebung, { einstellungen: einst, fortschritt: TIPP_STAND, karten: TIPP_KARTEN, geraet });
@@ -590,11 +625,17 @@ const STOER = [
     lernen: q => ersetze(q, "  /* Ohne Kasten braucht die Karte ihre Mehrhöhe nicht mehr (tippKarteHoehe() setzt sie zurück). */\n  if (typeof tippKarteHoehe === 'function') tippKarteHoehe();\n", '', 'S30') },
   { name: 'S31 ein verborgenes Teil zählt zur Höhe', muss: ['H1'],
     lernen: q => ersetze(q, '  const sichtbar = [...vorn.children].filter(k => k.offsetHeight);', '  const sichtbar = [...vorn.children];', 'S31') },
+  { name: 'S35 die Infokarte der Mehrzahl zeigt die Einzahl nicht mehr', muss: ['W1'],
+    kateg: q => ersetze(q, "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", '', 'S35') },
+  { name: 'S36 die Einzahl rutscht hinter die Wurzel', muss: ['W1'],
+    kateg: q => ersetze(ersetze(q, "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", '', 'S36a'),
+      "  if (w.root)  formen.push(['Wurzel',   w.root]);\n",
+      "  if (w.root)  formen.push(['Wurzel',   w.root]);\n  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", 'S36b') },
 ];
 console.log('\n=== S  Störtests: ohne die Regel MUSS der zuständige Fall scheitern ===');
 for (const s of STOER){
   let e;
-  try { e = laufe(s.kern ? s.kern(KERN) : KERN, s.lernen ? s.lernen(LERNEN) : LERNEN, s.uebung ? s.uebung(UEBUNG) : UEBUNG); }
+  try { e = laufe(s.kern ? s.kern(KERN) : KERN, s.lernen ? s.lernen(LERNEN) : LERNEN, s.uebung ? s.uebung(UEBUNG) : UEBUNG, s.kateg ? s.kateg(KATEG) : KATEG); }
   catch (err){ rot++; console.log('  FEHL ' + s.name + '  -> ' + err.message); continue; }
   const gescheitert = [...e].filter(([, v]) => !v.ok).map(([n]) => n.split(' ')[0]);
   const fehlt = s.muss.filter(k => !gescheitert.includes(k));

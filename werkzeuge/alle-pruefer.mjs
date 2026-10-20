@@ -205,6 +205,11 @@ const PRUEFER = [
      js/kategorien.js und js/regeln.js, fährt sie gegen einen Schein-DOM und
      legt Ort und Reihenfolge per Störtest still. */
   ['werkzeuge/pruefe-suchorte.mjs', []],
+  /* ⭐ Neu am 20.10.2026. Elias: „ich brauche daifun also schwach als vokabel" und
+     „spielplatz also al mulab brauche ich auch als vokabel." — beide Karten stehen in
+     Büchern, die er nicht gewählt hat. Fährt einzelneAusAnderenBuechern() (js/buecher.js)
+     gegen Probebücher: nur das freigeschaltete Wort, mit Marke, Mehrzahl und Kasten. */
+  ['werkzeuge/pruefe-einzeln-fremdbuch.mjs', []],
   /* ⭐ Neu am 09.09.2026. „genau 2 ayaht und das wars" — der Rezitator brach
      bei ausgeschaltetem Bildschirm nach zwei Versen ab, weil Vers 3 einen
      neuen Ladevorgang brauchte. Seitdem zwei Elemente im Wechsel; der Pruefer

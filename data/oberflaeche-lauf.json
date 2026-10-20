@@ -4,7 +4,7 @@
   "_wie_2": "⛔ Der Lauf ist eine ASYNCHRONE IIFE. `then(eval)` gibt ein Promise zurueck - wer nicht AWAITET, stellt console.* zurueck, bevor die erste Zeile faellt, und bekommt EINEN LEEREN Bericht ohne jede Fehlermeldung. Am 09.09.2026 sah das aus wie 'nichts zu melden'. Also: `await (0, eval)(text)` und den Rueckgabewert lesen (`{fehler, ergebnis}`), nicht die eingesammelten Zeilen. Die Felder heissen `status`/`was`/`zusatz`, nicht `name`/`info`. [[leere_liste_ist_keine_messung]]",
   "_wie_3": "Seit 19.10.2026 ohne Pane: node werkzeuge/oberflaeche-lauf.mjs --stempel — eigener Edge, Dateiserver nur auf 127.0.0.1, fremde Rechner gesperrt, leerer Speicher; der Pruefer laeuft zweimal, gezaehlt wird der zweite. Der Stempel unten ist von diesem Werkzeug geschrieben.",
   "gelaufen": "2026-10-20",
-  "fassung": "vokabeltrainer-v695",
+  "fassung": "vokabeltrainer-v696",
   "pruefungen": 47,
   "fehler": 0,
   "hinweise": 5,

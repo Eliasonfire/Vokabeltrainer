@@ -344,6 +344,21 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
   pruefe('der Knopf steht in der Rückmeldung und öffnet über data-regelkarte', /class="ueb-warum"[^`]*data-regelkarte=/.test(ueb));
   pruefe('Lesemodus-Aufklapper: „in der Sammlung öffnen"', /gp-sammlung[^`]*data-regelkarte=/.test(lies('js/saetze.js')));
   pruefe('„Wie gut sitzen die Regeln?": jede Zeile öffnet ihre Karte', /class="rz' \+ ton \+ '" role="button"[^;]*data-regelkarte=/.test(lies('js/statistik.js')));
+  /* Elias, 20.10.2026, 02:13, mit einem Bild genau dieses Abschnitts auf dem Start: „das
+     brauche ich denke ich auch nicht" — „also zu sehen". Ausgeblendet, nicht gelöscht: die
+     Hülle trägt `hidden` und umschließt Titel, Sortierung und Liste. Mit Störtest. */
+  {
+    const versteckt = h => {
+      const a = h.indexOf('id="regelStandAbschnitt"');
+      const huelle = (h.match(/<div[^>]*id="regelStandAbschnitt"[^>]*>/) || [''])[0];
+      return a >= 0 && /class="[^"]*\bhidden\b/.test(huelle)
+        && a < h.indexOf('Wie gut sitzen die Regeln?') && a < h.indexOf('id="regelSortierung"') && a < h.indexOf('id="regelStand"');
+    };
+    const h = lies('index.html');
+    pruefe('„Wie gut sitzen die Regeln?" ist auf dem Start ausgeblendet (Elias, 20.10.2026: „das brauche ich denke ich auch nicht" — „also zu sehen")', versteckt(h));
+    pruefe('Störtest: ohne `hidden` an der Hülle wird diese Prüfung rot',
+      !versteckt(h.replace('<div class="hidden" id="regelStandAbschnitt">', '<div id="regelStandAbschnitt">')));
+  }
   pruefe('Karte: „im Satzmodus üben" setzt den Regelfilter', /setzeRegelfilter\(ids,/.test(lies('js/regeln.js')) && /function satzListe\(/.test(lies('js/saetze.js')));
   /* ⛔ Bis 11.09.2026, 22:39 stand hier „die Kategorien-Suche zeichnet einen
      Regelblock über den Wörtern" (Punkt 10). Elias hat es am selben Abend neu

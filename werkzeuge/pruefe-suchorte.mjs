@@ -20,6 +20,20 @@
  * Regeln in den Kategorien ÜBER den Wörtern, und das Startfeld reichte in die
  * Kategorien durch. Genau dorthin fiele eine „Vereinfachung" zurück.
  *
+ * ⛔ ZWEI SÄTZE VOM 20.10.2026 dazu:
+ *
+ *   02:03, mit einem Bild der Suche nach „Gast" (rechts in jeder Zeile „☪ 6×"):
+ *   „ich möchte das mir rechts nicht angezeigt wird wie oft es im koran vor kommt"
+ *   → Teil 6: keine Wortzeile der Suche trägt eine Koran-Zahl. Die Attrappe
+ *     quranHaeufigkeit() liefert dafür absichtlich 6 und QURAN_FREQ jede Wurzel —
+ *     eine Zeile, die die Zahl wieder fragt, bekäme sie also auch.
+ *   02:05, mit derselben Suche und der Leiste über seiner Tastatur rot umrandet
+ *   (Schlüssel, Karte, Ort): „ich möchte das mir das nicht mehr angezeigt wird"
+ *   → Teil 7: jedes Such- und Tippfeld in index.html trägt autocomplete, autocorrect,
+ *     autocapitalize und spellcheck aus. ⚠️ Ob das die Leiste seines iPhones wirklich
+ *     verschwinden lässt, misst dieser Prüfer NICHT — das geht nur auf seinem Gerät.
+ *     Er hält nur fest, dass kein Feld die Angaben verliert.
+ *
  * ⭐ Gefahren wird der ECHTE Quelltext: der Block „Welche Suche findet was" aus
  * js/kategorien.js und renderRegeln() aus js/regeln.js laufen gegen einen
  * Schein-DOM. Die Suchen selbst (sucheTreffer, regelSuche) sind Attrappen mit
@@ -93,6 +107,9 @@ function scheinDom(){
   return dom;
 }
 
+/* Teil 7: die Such- und Tippfelder (die Felder für ein eigenes Wort und die Zahlenfelder nicht). */
+const SUCH_UND_TIPPFELDER = ['startSuche', 'sucheEingabe', 'alleSuche', 'regelnSuche', 'surahSearch', 'cardTippEingabe', 'cardTippPlural', 'lueckeEingabe'];
+
 /* Die Befunde für einen Stand der Quelltexte — leer heißt: hält. */
 function befunde(q){
   const f = [];
@@ -106,9 +123,12 @@ function befunde(q){
   const zaehl = { sucheTreffer: 0, regelSuche: 0, bildschirm: [], wortkarte: null };
   const ctx = {
     console, document: dom.document,
-    escapeHtml: s => String(s), icon: () => '', quranHaeufigkeit: () => null,
+    escapeHtml: s => String(s), icon: () => '',
+    /* Teil 6: absichtlich eine Zahl und eine Tabelle, die jede Wurzel kennt — fragt eine
+       Zeile die Häufigkeit wieder, bekommt sie sie auch, und der Prüfer sieht es. */
+    quranHaeufigkeit: () => 6, QURAN_FREQ: new Proxy({}, { get: () => [6, []] }),
     istBekannt: () => true, kapitelBeschriftung: () => 'Kap. 1',
-    sucheTreffer: () => { zaehl.sucheTreffer++; return [{ id: 'w1', ar: 'ب', de: 'Haus' }, { id: 'w2', ar: 'ت', de: 'Häuser' }]; },
+    sucheTreffer: () => { zaehl.sucheTreffer++; return [{ id: 'w1', ar: 'ب', de: 'Haus', root: 'ب ي ت' }, { id: 'w2', ar: 'ت', de: 'Häuser', root: 'ب ي ت' }]; },
     regelSuche: () => { zaehl.regelSuche++; return [{ id: 'r1' }, { id: 'r2' }]; },
     /* Dasselbe Kennzeichen wie die echte Zeile — regelZeileHtml() setzt
        data-regelkarte; dass es dabei bleibt, prüft Teil 5. */
@@ -159,6 +179,10 @@ function befunde(q){
   (dom.hol('alleSucheTreffer').hoerer.click || []).forEach(h => h({ target: { closest: s => (s === '[data-suchwort]' ? { dataset: { suchwort: 'w1' } } : null) } }));
   if (zaehl.wortkarte !== 'w1') f.push('ein Tipp auf ein Wort der Suche öffnet die Wortkarte nicht');
 
+  /* 6. Keine Koran-Zahl rechts in den Wortzeilen — Elias, 20.10.2026, 02:03 */
+  for (const [ort, html] of [['Kategorien', kat], ['Suche vom Start', alle]])
+    if (/wl-quran|\d\s*×/.test(html)) f.push(ort + ': eine Wortzeile zeigt wieder, wie oft das Wort im Koran vorkommt — „ich möchte das mir rechts nicht angezeigt wird wie oft es im koran vor kommt"');
+
   /* 5. Die Verdrahtung außerhalb des Blocks */
   const nav = ohneKommentareUndTexte(q.nav, { texte: false });
   if (!/name\s*===\s*'suche'[^\n]*zeichneAlleSuche\(\)/.test(nav)) f.push('js/navigation.js zeichnet den Bildschirm „suche" beim Öffnen nicht');
@@ -169,6 +193,14 @@ function befunde(q){
   if (fehlen.length) f.push('index.html kennt diese Ids nicht: ' + fehlen.join(', '));
   if (!/data-regelkarte="\$\{escapeHtml\(id\)\}"/.test(q.regeln)) f.push('js/regeln.js: regelZeileHtml() setzt data-regelkarte nicht mehr — die Attrappe oben prüft dann das Falsche');
   if (/closest\('#screen-suche'\)/.test(q.regeln)) f.push('js/regeln.js: der Regelkarten-Handler nimmt die Suche aus — ein Tipp auf eine Regel täte dort nichts');
+
+  /* 7. Jedes Such- und Tippfeld schaltet das Ausfüllen aus — Elias, 20.10.2026, 02:05 */
+  for (const id of SUCH_UND_TIPPFELDER){
+    const tag = (q.html.match(new RegExp('<input[^>]*\\bid="' + id + '"[^>]*>')) || [''])[0];
+    if (!tag){ f.push('index.html: das Feld #' + id + ' fehlt'); continue; }
+    const fehlt = ['autocomplete="off"', 'autocorrect="off"', 'autocapitalize="off"', 'spellcheck="false"'].filter(a => !tag.includes(a));
+    if (fehlt.length) f.push('index.html: #' + id + ' fehlt ' + fehlt.join(', ') + ' — „ich möchte das mir das nicht mehr angezeigt wird" (die Leiste über der Tastatur)');
+  }
   return f;
 }
 
@@ -187,6 +219,10 @@ const STOER = [
   ['das Startfeld reicht wieder in die Kategorien durch', 'kat', "showScreen('suche')", "showScreen('categories')"],
   ['„Regeln" zeichnet ein Wort mit', 'regeln', '+ regelSuchZeilenHtml(treffer);', `+ regelSuchZeilenHtml(treffer) + '<div data-suchwort="x"></div>';`],
   ['der Bildschirm „Suche" wird beim Öffnen nicht gezeichnet', 'nav', "if (name==='suche'", "if (name==='suche-aus'"],
+  ['die Koran-Zahl kommt rechts in die Wortzeilen zurück', 'kat', '      <div class="wl-marken">\n',
+    '      <div class="wl-marken">\n        <span class="wl-quran">${icon(\'crescent\')}${quranHaeufigkeit(w)}×</span>\n'],
+  ['dem Suchfeld vom Start fehlt autocorrect="off"', 'html', 'id="startSuche" placeholder="Wörter und Regeln durchsuchen …"\n               autocomplete="off" autocorrect="off"',
+    'id="startSuche" placeholder="Wörter und Regeln durchsuchen …"\n               autocomplete="off"'],
 ];
 for (const [name, datei, alt, neu] of STOER){
   const n = ECHT[datei].split(alt).length - 1;
