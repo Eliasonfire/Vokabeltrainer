@@ -67,6 +67,24 @@ function nichtVorausgeschrieben(s){
   if (s.seite !== undefined) return true;
   const w = VOCAB_DATA.find(v => v.id === s.id);
   if (!w) return true;
+  /* ⛔⛔ DER SATZ EINER KARTE ERST, WENN ER DIE KARTE SCHON GESEHEN HAT (20.10.2026).
+     Elias: „du sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen werden auch
+     an plurals die ich bereits kenne oder zumindest mal gesehen habe" und auf meinen Bericht
+     (Wurzeltraining, Mehrzahl-Übung, „Die Sätze prüfe ich noch.") „fix das".
+     „Gesehen" sagt schonGesehen() in js/kern.js (bewertet oder über Box 1), dieselbe Grenze wie im
+     Hörmodus. Gemessen mit seinem Stand (20.10.2026, 05:15): 86 von 347 Kartensätzen gehörten zu
+     einer Karte, die er nie gesehen hat (Bayna Yadayk 1: 50, Madina 1: 18, Koran häufigste: 18);
+     es bleiben 437 von 523 Sätzen. Weil Satzmodus und Übungen dieselbe Liste lesen (SENT.list),
+     wirkt die Zeile auf beide.
+     Lehrbuchsätze (oben) und die längeren Sätze ohne Karte (`satz-lang-…`) bleiben — MEINE
+     Entscheidung: die einen stehen in seinem eigenen Buch, die anderen gehören zu keiner Karte.
+     ⚠️ try: Prüfstände, die js/kern.js nur zum Teil laden, haben schonGesehen() schon, PROGRESS aber
+     noch nicht — dort gilt dann die alte Auswahl. Bewacht von test-gesehen-uebungen.mjs. */
+  if (typeof schonGesehen === 'function'){
+    let gesehen = true;
+    try { gesehen = schonGesehen(w); } catch (e){ gesehen = true; }
+    if (!gesehen) return false;
+  }
   /* Nur wenn fuer dieses Buch ueberhaupt eine Auswahl besteht — sonst waere es
      der Buchfilter, den es hier gerade nicht geben soll. */
   const hatAuswahl = (typeof SETTINGS !== 'undefined') && SETTINGS.buecher

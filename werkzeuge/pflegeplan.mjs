@@ -898,6 +898,23 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-tippen-tablet.mjs läuft im Sammellauf: fährt istTablet(), zeigeTippTasten(), tippTaste() und renderTippfeld() aus dem Quelltext gegen ein Doppel der Seite (Handy, Tablet hoch und quer, PC), prüft die 36 Tasten gegen das Alphabet und die Verdrahtung in index.html; sechs Störtests' },
   },
+  /* 20.10.2026 (v703), innerhalb von js/wurzel.js, js/uebung.js und js/saetze.js und
+     deshalb von Hand hier: Wurzeltraining, Übungen und Satzmodus nehmen nur Karten dran,
+     die er schon gesehen hat. Elias: „du sollst sichergehen, dass ich wirklich nur die
+     vokabeln dran genommen werden auch an plurals die ich bereits kenne oder zumindest mal
+     gesehen habe" und auf meinen Bericht dazu „fix das". */
+  {
+    funktion: 'Nur gesehene Karten in Wurzeltraining, Übungen und Satzmodus',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Es ist eine Grenze auf vorhandene Karten und Sätze (schonGesehen() aus js/kern.js); es kommt kein Inhalt dazu. Neue Karten und Sätze fallen von selbst darunter, sobald er die Karte gesehen hat.' },
+    eingaben: { nein: 'Gelesen wird nur sein Fortschritt (vt_progress), den die Lernkarte ohnehin schreibt; kein neuer Speicherschlüssel.' },
+    /* ⛔ Still kaputtgehen kann die Grenze an jeder der sieben Stellen einzeln: ein Umbau,
+       der eine Zeile verliert, zeigt wieder nie gesehene Wörter — ohne Fehlermeldung.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-gesehen-uebungen.mjs läuft im Sammellauf: fährt mit der echten schonGesehen() an Probekarten mit festem Fortschritt die Wortgruppen der Übungen 11/13/14, 15, 16 und 18, nichtVorausgeschrieben() und alleSaetze() sowie Vorrat, Familien und Duell des Wurzeltrainings auf „stand" und „alles"; zehn Störtests' },
+  },
   /* 20.10.2026 (v701), innerhalb von js/lernen.js und deshalb von Hand hier: richtig
      getippt + Eingabetaste dreht die Lernkarte um. Elias: „nur wenn es falsch ist soll
      es so bleiben". */

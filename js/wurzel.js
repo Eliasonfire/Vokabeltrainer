@@ -223,12 +223,29 @@ function wzMische(a){
    verschwinden lassen, ohne dass irgendwo stuende warum. Deshalb ein
    Schalter mit drei Stufen und ein Hinweis, der die Zahl nennt. */
 function wzNiveau(){ return SETTINGS.wurzelNiveau || 'stand'; }
+/* ⛔⛔ AUF DER STUFE „STAND" NUR WÖRTER, DIE ER SCHON GESEHEN HAT (20.10.2026).
+   Elias, mit einem Bild der Hörfrage „schmerzhaft": „die vokabel hab ich noch nie gesehen. du
+   sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen werden auch an plurals die
+   ich bereits kenne oder zumindest mal gesehen habe. beim hören sind einige diesbezüglich falsch".
+   Auf meinen Bericht („Das Wurzeltraining hat dasselbe Problem: 351 von 615 Wörtern hast du noch
+   nie gesehen.") dann: „fix das".
+   „Gesehen" sagt schonGesehen() in js/kern.js (bewertet oder über Box 1) — dieselbe Grenze wie im
+   Hörmodus. Sie gilt für die Familien (alle vier Schritte und das Mini-Spiel) UND für das Duell.
+   Gemessen mit seinem Stand (20.10.2026, 05:15): Vorrat 351 von 615 nie gesehen, in den Familien 12
+   von 50 Wörtern, im Duell 59 von 200 Ziehungen mit einem nie gesehenen Wort.
+   MEINE Entscheidung, nicht sein Satz: die Stufen „buch" und „alles" bleiben, wie sie sind — die
+   wählt er selbst in den Einstellungen, um mehr zu sehen, als er kennt.
+   Bewacht von test-gesehen-uebungen.mjs (G6, Störtests S7 bis S10). */
+function wzErlaubt(w){
+  if (wzNiveau() !== 'stand' || typeof schonGesehen !== 'function') return true;
+  return schonGesehen(w);
+}
 function wzVorrat(){
   var n = wzNiveau();
   if (n === 'alles') return VOCAB_DATA;
   if (n === 'buch')  return (typeof buchVokabeln === 'function') ? buchVokabeln() : VOCAB_DATA;
-  /* 'stand': was er nach den freigeschalteten Kapiteln kennen kann. */
-  return (typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : VOCAB_DATA;
+  /* 'stand': was er nach den freigeschalteten Kapiteln kennen kann — und schon gesehen hat. */
+  return ((typeof bekannteVokabeln === 'function') ? bekannteVokabeln() : VOCAB_DATA).filter(wzErlaubt);
 }
 
 /* ================= Familien bauen ================= */
@@ -242,9 +259,11 @@ function wzBaueFamilien(){
      Millionenbereich an Vergleichen - spuerbar auf dem Handy. */
   var vorrat = new Set(wzVorrat());
   /* Die eigenen Lernwoerter sind IMMER dabei - sie sind ja sein Stand.
-     Gefiltert wird nur, was zusaetzlich aus den Buechern dazukaeme. */
+     Gefiltert wird nur, was zusaetzlich aus den Buechern dazukaeme.
+     ⛔ Seit dem 20.10.2026 auf der Stufe „stand" aber nur, wenn er sie schon gesehen hat
+     (wzErlaubt() oben) — sonst stuende ein nie gesehenes Lernwort als „kennst du" in Schritt 1. */
   var liste = VOCAB_DATA.filter(function(w){
-    return (eigenIds && eigenIds.has(w.id)) || vorrat.has(w);
+    return (eigenIds && eigenIds.has(w.id) && wzErlaubt(w)) || vorrat.has(w);
   });
 
   liste.forEach(function(w){
@@ -583,8 +602,11 @@ function wzDuellFuer(f){
   var ids = {};
   f.woerter.forEach(function(x){ if (x.id != null) ids[String(x.id)] = true; });
   var benutzt = WZ_SITZUNG.duelle || (WZ_SITZUNG.duelle = {});
+  /* ⛔ Beide Wörter des Paars muss er gesehen haben (Stufe „stand", wzErlaubt() oben, 20.10.2026).
+     Geprüft hier beim Ziehen, nicht in wzBaueDuelle(): die Paare werden einmal je Start gebaut,
+     und was er heute neu sieht, soll ohne Neustart dazukommen. */
   var frei = wzDuelle().filter(function(d){
-    return !benutzt[String(d.a.id) + '#' + String(d.b.id)];
+    return !benutzt[String(d.a.id) + '#' + String(d.b.id)] && wzErlaubt(d.a) && wzErlaubt(d.b);
   });
   if (!frei.length) return null;
   var eigen = frei.filter(function(d){ return ids[String(d.a.id)] || ids[String(d.b.id)]; });

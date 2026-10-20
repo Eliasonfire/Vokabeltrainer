@@ -600,12 +600,34 @@ function uebKartenGlieder(kartenId){
   }
   return out;
 }
+/* ⛔⛔ NUR KARTEN, DIE ER SCHON GESEHEN HAT (20.10.2026).
+   Elias, mit einem Bild der Hörfrage „schmerzhaft": „die vokabel hab ich noch nie gesehen. du
+   sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen werden auch an plurals die
+   ich bereits kenne oder zumindest mal gesehen habe. beim hören sind einige diesbezüglich falsch".
+   Auf meinen Bericht („Bei der Mehrzahl-Übung stammen 56 von 193 Karten von Wörtern, die du noch
+   nie gesehen hast, zum Beispiel „Kollege" und „Ehefrau".") dann: „fix das".
+   istBekannt() heißt nur „liegt in seiner Auswahl"; gesehen hat er eine Karte erst, wenn er sie
+   bewertet hat oder sie über Box 1 steht — schonGesehen() in js/kern.js, dieselbe Grenze wie im
+   Hörmodus. Sie gilt in den Wortgruppen der Übungen 11, 13, 14 (uebGruppe), 15 (uebEndungGlieder),
+   18 (uebMehrzahlKarten) und in Übung 16: überall dort, wo eine KARTE gefragt wird oder zur Wahl steht.
+   MEINE Entscheidungen, nicht seine:
+   · Die Glieder seiner Regelkarten aus Folge 19 (uebKartenGlieder) bleiben — das ist Stoff aus dem
+     Unterricht, keine Vokabel der Kartei.
+   · „Gesehen" heißt bei Übung 16 und 18 die Karte des WORTES (bis v701 stand die Mehrzahl auf ihrer
+     Rückseite). Nur Wörter zu nehmen, deren Mehrzahlkarte er schon hatte, wäre die strengere Lesart —
+     die ist eine Frage an ihn (To-Do Vokabeltrainer, „Wartet auf Elias").
+   ⚠️ Über uebMzKern() wie die Aufrufe in Übung 18: Prüfstände, die js/kern.js nur zum Teil laden,
+   haben schonGesehen() schon, PROGRESS aber noch nicht — dort gilt dann die alte Auswahl. Dass die
+   Grenze in der App wirkt, misst test-gesehen-uebungen.mjs mit den echten Funktionen. */
+function uebGesehen(w){
+  return uebMzKern(() => typeof schonGesehen !== 'function' || schonGesehen(w), true);
+}
 function uebGruppe(kartenId, passtKarte){
   if (UEB_WORTGRUPPEN[kartenId]) return UEB_WORTGRUPPEN[kartenId];
   const glieder = uebKartenGlieder(kartenId);
   const bekannt = (typeof istBekannt === 'function') ? istBekannt : null;
   if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) for (const w of VOCAB_DATA){
-    if (!w || !w.ar || (bekannt && !bekannt(w)) || !passtKarte(w)) continue;
+    if (!w || !w.ar || (bekannt && !bekannt(w)) || !uebGesehen(w) || !passtKarte(w)) continue;
     const form = String(w.ar).split('/')[0].trim();
     const sk = uebSkelett(form);
     if (!form || /\s|ـ/.test(form) || sk.length < 2) continue;
@@ -878,7 +900,7 @@ function uebEndungGlieder(){
   const bekannt = (typeof istBekannt === 'function') ? istBekannt : null;
   const out = [];
   if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA)) for (const w of VOCAB_DATA){
-    if (!w || (bekannt && !bekannt(w))) continue;
+    if (!w || (bekannt && !bekannt(w)) || !uebGesehen(w)) continue;
     const form = String(w.ar || '').normalize('NFC').trim();
     if (!/^ـ[ً-ْ]?[ء-ي]/.test(form)) continue;
     if (!/Besitzendung/i.test(String(w.de || '')) && !/^possessiv-/.test(String(w.regel || ''))) continue;
@@ -1201,7 +1223,7 @@ function uebMehrzahlKarten(){
   const bekannt = (typeof istBekannt === 'function') ? istBekannt : null;
   const muster = (typeof pluralMuster === 'function') ? pluralMuster : null;
   if (typeof VOCAB_DATA !== 'undefined' && Array.isArray(VOCAB_DATA) && typeof istZahlwort === 'function') for (const w of VOCAB_DATA){
-    if (!w || !w.pl || (bekannt && !bekannt(w)) || istZahlwort(w)) continue;
+    if (!w || !w.pl || (bekannt && !bekannt(w)) || !uebGesehen(w) || istZahlwort(w)) continue;
     if (uebMzKern(() => typeof istPluralKarte === 'function' && istPluralKarte(w.id), false)) continue;
     const formen = uebMehrzahlFormen(w.pl);
     if (!formen.length) continue;
@@ -2098,7 +2120,8 @@ const UEBUNGEN = [
       return z.map((t,i)=>{
         const v = uebungVokabel(t.wort);
         const art = uebPluralArt(v);
-        if (!art) return null;
+        /* ⛔ Nur Karten, die er schon gesehen hat (uebGesehen() bei uebGruppe, 20.10.2026). */
+        if (!art || !uebGesehen(v)) return null;
         /* Nur fragen, wenn eindeutig ist, WELCHE Form dasteht: die Einzahl der
            Karte oder ihre Mehrzahl. Die weibliche Form eines Adjektivs
            (كَبِيرَةٌ) findet zwar die Karte, ist aber keins von beiden — ihre

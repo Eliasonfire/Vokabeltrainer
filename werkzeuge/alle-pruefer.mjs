@@ -532,6 +532,7 @@ const PRUEFER = [
      tippPruefenUndUmdrehen(), tippTaste() und beide Horcher auf die Eingabetaste
      aus dem Quelltext; acht Störtests. */
   ['test-tippen-umdrehen.mjs', []],
+  ['test-gesehen-uebungen.mjs', []],
   /* 11.10.2026 — die Eselsbrücken-Vorschläge bleiben neben seiner eigenen stehen.
      Elias: „sie sollen da bleiben auch wenn ich eine notiz mache". Fährt
      renderNotiz() und wkEselsbruecke() aus dem Quelltext; vier Störtests. */
