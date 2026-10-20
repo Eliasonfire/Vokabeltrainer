@@ -82,7 +82,10 @@ function stand(quelle) {
     SETTINGS: { tippenAbBox4: true }, PROGRESS: { k4: { box: 4 }, k3: { box: 3 } },
     SESSION: { idx: 0, words: [{ id: 'k4' }, { id: 'k3' }] },
     cardDirection: () => zustand.richtung,
+    /* „Prüfen" geht seit v701 über tippPruefenUndUmdrehen(), wie die Eingabetaste — was die dann
+       tut, prüft test-tippen-umdrehen.mjs. Hier zählt nur, dass die Taste sie aufruft. */
     pruefeTippen: () => { zustand.geprueft++; },
+    tippPruefenUndUmdrehen: () => { zustand.geprueft++; },
   };
   Object.defineProperty(ctx, 'navigator', { get: () => zustand.geraet[0], enumerable: true });
   Object.defineProperty(ctx, 'screen', { get: () => zustand.geraet[1], enumerable: true });

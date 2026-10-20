@@ -896,6 +896,21 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-tippen-tablet.mjs läuft im Sammellauf: fährt istTablet(), zeigeTippTasten(), tippTaste() und renderTippfeld() aus dem Quelltext gegen ein Doppel der Seite (Handy, Tablet hoch und quer, PC), prüft die 36 Tasten gegen das Alphabet und die Verdrahtung in index.html; sechs Störtests' },
   },
+  /* 20.10.2026 (v701), innerhalb von js/lernen.js und deshalb von Hand hier: richtig
+     getippt + Eingabetaste dreht die Lernkarte um. Elias: „nur wenn es falsch ist soll
+     es so bleiben". */
+  {
+    funktion: 'Richtig getippt: die Lernkarte dreht sich selbst um',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Es ist ein Verhalten des Tippfelds, kein Inhalt; es kommt nichts dazu.' },
+    eingaben: { nein: 'Was er tippt, wird sofort verglichen (pruefeTippen()); gespeichert wird nichts und eingeordnet auch nicht, kein neuer Speicherschlüssel.' },
+    /* ⛔ Still kaputtgehen kann die AUSNAHME: dreht sich die Karte auch bei falscher
+       Antwort um, sieht er die Lösung, bevor er weiterschreiben kann — ohne Fehlermeldung.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-tippen-umdrehen.mjs läuft im Sammellauf: fährt pruefeTippen(), tippPruefenUndUmdrehen(), tippTaste() und beide Horcher auf die Eingabetaste aus dem Quelltext gegen ein Doppel der Seite (richtig, falsch, leer, zwei Felder, die Tablet-Taste „Prüfen", ein zweites Enter, kein Einordnen); acht Störtests' },
+  },
   /* 22.09.2026 (v569), innerhalb von functions/api/diagnose.js,
      js/einstellungen.js und werkzeuge/diagnose-holen.mjs und deshalb von Hand
      hier: die Diagnose liegt jetzt unter `diagnose:<mail>:<gerät>` statt unter
