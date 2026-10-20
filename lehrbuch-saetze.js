@@ -176,7 +176,7 @@ const LEHRBUCH_SAETZE = [
      Der Lehrer geht in Folge 17 ab 32:06 zehn Uebungssaetze durch, in denen
      zwischen الَّذِي und الَّتِي zu entscheiden ist. */
   { id: 'mb1-63-4', seite: 63, kapitel: 12, vokalisationErgaenzt: true,
-    gedruckt: 'الْفَتَاةُ الَّتِي مَعَكِ und أُخْتُكِ vollständig; ومن هذه أهي ohne Zeichen',
+    gedruckt: 'الْفَتَاةُ الَّتِي مَعَكِ und أُخْتُكِ vollständig; ومن هذه أهي ohne Zeichen',
     sentAr: 'وَمَنْ هَذِهِ الْفَتَاةُ الَّتِي مَعَكِ؟ أَهِيَ أُخْتُكِ؟',
     sentDe: 'Und wer ist dieses Mädchen, das bei dir ist? Ist sie deine Schwester?' },
 
