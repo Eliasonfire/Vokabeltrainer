@@ -57,6 +57,20 @@
  */
 
 const BEISPIELSAETZE = {
+  /* ضَعِيفٌ — schwach (bayna-yadayk-2, Kapitel 2, einzeln freigeschaltet)
+     Nominalsatz: hādhā als Subjekt, Nomen mit Adjektiv als Prädikat. Alle drei Wörter stehen so auf seinen Karten (50160, 45764, 46549); geschrieben in der Nachtschicht vom 20.10.2026 — in seinen Büchern und Schlüsseln steht kein Satz mit dem Wort (gesucht in 608 Sätzen des Repos und in den Schlüsseln Band 2 und 3). */
+  '46549': {
+    sentAr: 'هَذَا رَجُلٌ ضَعِيفٌ.',
+    sentDe: 'Das ist ein schwacher Mann.'
+  },
+
+  /* مَلْعَبٌ — Spielplatz / Sportplatz (madina-2, Kapitel 32, einzeln freigeschaltet)
+     Nominalsatz: hādhā als Subjekt, Nomen mit Adjektiv als Prädikat. Alle drei Wörter stehen so auf seinen Karten (50160, 50339, 45798); geschrieben in der Nachtschicht vom 20.10.2026 — in seinen Büchern steht kein Satz mit dem Wort (gesucht wie bei 46549; der Schlüssel Band 3 nennt es nur in einer Wortliste). */
+  '50339': {
+    sentAr: 'هَذَا مَلْعَبٌ كَبِيرٌ.',
+    sentDe: 'Das ist ein großer Sportplatz.'
+  },
+
 
   /* زَمِيلٌ — Kollege / Mitschüler (madina-1, Kapitel 10)
      Nominalsatz mit Nisba-Anschluss: زَمِيلِي ist durch das angehaengte ي
