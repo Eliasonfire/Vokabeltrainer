@@ -539,6 +539,12 @@ body{
   text-rendering:optimizeLegibility;
 }
 input,textarea{-webkit-user-select:text;user-select:text;}
+/* Suchfeld statt Textfeld (20.10.2026, v700): Chrome zeigt auf Android über der Tastatur die Ausfüll-Leiste
+   (Schlüssel, Karte, Ort) bei jedem Textfeld, bei einem Suchfeld nur mit echten Ausfüll-Vorschlägen. Begründung und
+   Beleg im Kommentar über #startSuche. Diese Zeilen nehmen dem Suchfeld sein eigenes Aussehen (Rahmen, das Kreuz zum
+   Leeren), damit es aussieht wie vorher. Bewacht von werkzeuge/pruefe-suchorte.mjs (Teil 8). */
+input[type="search"]{-webkit-appearance:none;appearance:none;}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration,input[type="search"]::-webkit-search-results-button,input[type="search"]::-webkit-search-results-decoration{-webkit-appearance:none;appearance:none;display:none;}
 button{font-family:inherit;color:inherit;}
 
 /* Sichtbarer Fokus für Tastatur/Screenreader, ohne Maus-Klicks zu stören */
@@ -5624,17 +5630,35 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            ⚠️ autocorrect="off" an jedem Such- und Tippfeld der App (20.10.2026; die
            Felder für ein eigenes Wort und die Zahlenfelder nicht). Elias um
            02:05, mit einem Bild der Suche, auf dem er die Leiste über seiner Tastatur
-           rot umrandet hat (Schlüssel, Karte, Ort — das Ausfüllen seines iPhones, das
-           neben einer fremden Tastatur erscheint): „ich möchte das mir das nicht mehr
+           rot umrandet hat (Schlüssel, Karte, Ort): „ich möchte das mir das nicht mehr
            angezeigt wird". autocomplete="off" stand schon da und hat die Leiste NICHT
-           verhindert. Ob autocorrect="off" sie verhindert, ist nicht belegt: eine
-           Webseite steuert diese Leiste nicht sicher (iOS entscheidet), und hier lässt
-           es sich nicht messen — nur auf seinem Gerät. Bewacht von
-           werkzeuge/pruefe-suchorte.mjs (Teil 7: jedes Such- und Tippfeld trägt die
-           vier Angaben). -->
+           verhindert, autocorrect="off" auch nicht: auf „Ist die Leiste über der
+           Tastatur jetzt weg?" kam um 04:15 „nein".
+           ⛔ BERICHTIGT 20.10.2026 (v700): Hier stand „das Ausfüllen seines iPhones"
+           und „iOS entscheidet". Er hat KEIN iPhone („wieso iphone, ich habe android"),
+           sein Handy ist ein Pixel 10 Pro XL, die App läuft dort als installierte
+           Web-App von Chrome. Die Leiste ist Chromes Ausfüll-Leiste („keyboard
+           accessory": Passwörter, Zahlungsmittel, Adressen).
+           ⭐ SEIT v700 IST JEDES TEXTFELD DER APP EIN SUCHFELD (type="search"). Beleg im
+           Quelltext von Chrome (chrome/browser/keyboard_accessory/android/
+           manual_filling_controller_impl.cc, ShouldShowAccessoryForLastFocusedFieldType,
+           gelesen 20.10.2026): Bei einem Suchfeld (kFillableSearchField) erscheint die
+           Leiste nur, wenn es echte Ausfüll-Vorschläge gibt, und die schaltet
+           autocomplete="off" ab. Bei einem gewöhnlichen Textfeld genügen die gespeicherten
+           Passwörter, Karten und Adressen. Den Schalter, der das für Suchfelder ändern
+           würde (kAutofillEnableKeyboardAccessoryOnSearchFields), liefert Chrome
+           ausgeschaltet aus (components/autofill/core/common/autofill_features.cc).
+           Mehrzeilige Felder (textarea) zeigen die Leiste nie, außer ein ebenfalls
+           ausgeschalteter Schalter ist an. Ob sie auf seinem Pixel wirklich weg ist, sieht
+           nur er; hier lässt sich Chromes Android-Leiste nicht nachbauen. Die zwei
+           Zahlenfelder in den Einstellungen bleiben Zahlenfelder (Ziel im Hörmodus und in
+           der Wurzelübung).
+           Bewacht von werkzeuge/pruefe-suchorte.mjs: Teil 7 prüft die vier Angaben an
+           jedem Such- und Tippfeld, Teil 8 prüft, dass kein type="text" zurückkommt und
+           die CSS-Zeilen für das Aussehen dastehen. -->
       <div class="suche-feld start-suche">
         <svg class="ic"><use href="#ic-search"/></svg>
-        <input type="text" id="startSuche" placeholder="Wörter und Regeln durchsuchen …"
+        <input type="search" id="startSuche" placeholder="Wörter und Regeln durchsuchen …"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
                aria-label="Wörter und Regeln durchsuchen">
       </div>
@@ -5877,7 +5901,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                    lust darauf habe oder die zeit mal eng ist. das schreibfeld sollte
                    auch etwas größer sein damit man besser lesen kann." -->
               <div class="tipp-box hidden" id="cardTippBox">
-                <input type="text" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
+                <input type="search" enterkeyhint="done" id="cardTippEingabe" class="select-input select-full" lang="ar" dir="rtl"
                        placeholder="Wort auf Arabisch eintippen …" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <!-- Zweites Feld für die Mehrzahl (13.10.2026). Elias, 12.10.2026: „man könnte auch
                      ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist". Von Anfang
@@ -5890,7 +5914,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                      eintippen …" braucht 329 px und wurde links abgeschnitten — übrig blieb „… auf
                      Arabisch eintippen", wortgleich mit dem Rest des Felds darüber (dessen Text braucht
                      286 px). Beide Felder sahen gleich aus. „Mehrzahl eintippen …" braucht 204 px. -->
-                <input type="text" id="cardTippPlural" class="select-input select-full tipp-plural hidden" lang="ar" dir="rtl"
+                <input type="search" enterkeyhint="done" id="cardTippPlural" class="select-input select-full tipp-plural hidden" lang="ar" dir="rtl"
                        placeholder="Mehrzahl eintippen …" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 <!-- Arabische Tasten, NUR am Tablet (11.10.2026). Elias: „für mein tablet wäre
                      das praktisch, für mein handy will ich das nicht". Gefüllt und gezeigt von
@@ -6028,7 +6052,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            fehlen. -->
       <div class="suche-feld">
         <svg class="ic"><use href="#ic-search"/></svg>
-        <input type="text" id="sucheEingabe" placeholder="Wort, Bedeutung oder Wurzel suchen …"
+        <input type="search" id="sucheEingabe" placeholder="Wort, Bedeutung oder Wurzel suchen …"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button class="icon-btn hidden" id="btnSucheLeeren" aria-label="Suche leeren"><svg class="ic"><use href="#ic-close"/></svg></button>
       </div>
@@ -6074,7 +6098,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       </div>
       <div class="suche-feld">
         <svg class="ic"><use href="#ic-search"/></svg>
-        <input type="text" id="alleSuche" placeholder="Wörter und Regeln durchsuchen …"
+        <input type="search" id="alleSuche" placeholder="Wörter und Regeln durchsuchen …"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Wörter und Regeln durchsuchen">
         <button class="icon-btn hidden" id="btnAlleSucheLeeren" aria-label="Suche leeren"><svg class="ic"><use href="#ic-close"/></svg></button>
       </div>
@@ -6089,10 +6113,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <h2 id="wordlistTitle">Wörter</h2>
       </div>
       <div class="personal-vocab-add" id="personalVocabAddForm">
-        <input type="text" id="pvAr" placeholder="Arabisch (mit Tashkil), z.B. لَحْمٌ" lang="ar" dir="rtl">
-        <input type="text" id="pvDe" placeholder="Deutsche Übersetzung">
-        <input type="text" id="pvSentAr" placeholder="Beispielsatz Arabisch (optional)" lang="ar" dir="rtl">
-        <input type="text" id="pvSentDe" placeholder="Beispielsatz Deutsch (optional)">
+        <input type="search" enterkeyhint="done" id="pvAr" placeholder="Arabisch (mit Tashkil), z.B. لَحْمٌ" lang="ar" dir="rtl">
+        <input type="search" enterkeyhint="done" id="pvDe" placeholder="Deutsche Übersetzung">
+        <input type="search" enterkeyhint="done" id="pvSentAr" placeholder="Beispielsatz Arabisch (optional)" lang="ar" dir="rtl">
+        <input type="search" enterkeyhint="done" id="pvSentDe" placeholder="Beispielsatz Deutsch (optional)">
         <button class="btn btn-primary" id="btnAddPersonalVocab"><svg class="ic"><use href="#ic-plus"/></svg>Vokabel hinzufügen</button>
       </div>
       <div class="word-list stagger" id="wordList"></div>
@@ -6214,7 +6238,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
         <div class="luecke-box hidden" id="sentLueckeBox">
           <div class="luecke-frage">Welches Wort fehlt?</div>
-          <input type="text" id="lueckeEingabe" class="select-input select-full" lang="ar" dir="rtl"
+          <input type="search" enterkeyhint="done" id="lueckeEingabe" class="select-input select-full" lang="ar" dir="rtl"
                  placeholder="…" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
           <div class="luecke-knoepfe">
             <button class="btn btn-secondary btn-klein" id="btnLueckeAufloesen">Auflösen</button>
@@ -6471,7 +6495,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Bildschirm, Zeile ~5571) und nennt dort dieselbe Übersetzung. Was
            hier wegfiel, war die Wiederholung plus eine Bedienanleitung für
            etwas, das er längst täglich tut. -->
-      <input type="text" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…"
+      <input type="search" id="surahSearch" class="select-input select-full" placeholder="Sure suchen (Name oder Nummer)…"
              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
       <!-- Favoriten stehen ÜBER der vollständigen Liste. Elias' Wunsch vom
            04.08.2026: die kurzen Suren, die er gerade braucht, stehen im Quran
@@ -6602,10 +6626,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <div class="qs-schleife hidden" id="qsSchleife">
           <span class="qs-sch-titel">Wiederholen</span>
           <label class="qs-sch-feld">von
-            <input type="text" id="qsVon" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Erster Vers">
+            <input type="search" enterkeyhint="done" id="qsVon" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Erster Vers">
           </label>
           <label class="qs-sch-feld">bis
-            <input type="text" id="qsBis" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Letzter Vers">
+            <input type="search" enterkeyhint="done" id="qsBis" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="Letzter Vers">
           </label>
           <!-- ⛔ Kein Knopf „An/Aus" mehr (20.09.2026): ist diese Zeile offen,
                läuft die Schleife. Begründung bei schleifeSetzen() in
@@ -6722,7 +6746,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Kategorien-Suche zeigt seitdem keine Regeln mehr. -->
       <div class="suche-feld regeln-suche">
         <svg class="ic"><use href="#ic-search"/></svg>
-        <input type="text" id="regelnSuche" placeholder="Regel suchen — Deutsch, Arabisch, mudaf …"
+        <input type="search" id="regelnSuche" placeholder="Regel suchen — Deutsch, Arabisch, mudaf …"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Regeln durchsuchen">
       </div>
       <div id="regelnInhalt"></div>

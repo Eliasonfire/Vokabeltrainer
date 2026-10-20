@@ -30,9 +30,15 @@
  *   02:05, mit derselben Suche und der Leiste über seiner Tastatur rot umrandet
  *   (Schlüssel, Karte, Ort): „ich möchte das mir das nicht mehr angezeigt wird"
  *   → Teil 7: jedes Such- und Tippfeld in index.html trägt autocomplete, autocorrect,
- *     autocapitalize und spellcheck aus. ⚠️ Ob das die Leiste seines iPhones wirklich
- *     verschwinden lässt, misst dieser Prüfer NICHT — das geht nur auf seinem Gerät.
- *     Er hält nur fest, dass kein Feld die Angaben verliert.
+ *     autocapitalize und spellcheck aus — und ist seit v700 ein Suchfeld (type="search").
+ *     Die vier Angaben allein halfen nicht (04:15 auf „Ist die Leiste … weg?": „nein").
+ *   → Teil 8 (v700): kein <input type="text"> mehr in index.html, js/kategorien.js und
+ *     js/regeln.js, und die CSS-Zeilen, die dem Suchfeld Rahmen und Kreuz nehmen, stehen da.
+ *     Grund: Chrome zeigt auf Android die Ausfüll-Leiste bei jedem Textfeld, bei einem
+ *     Suchfeld nur mit echten Ausfüll-Vorschlägen (Beleg im Kommentar über #startSuche in
+ *     index.html). ⛔ Er hat KEIN iPhone (hier stand bis v699 „die Leiste seines iPhones"):
+ *     Pixel 10 Pro XL, Chrome. Ob die Leiste dort wirklich weg ist, misst dieser Prüfer NICHT,
+ *     das sieht nur er. Er hält fest, dass kein Feld zurückfällt.
  *
  * ⭐ Gefahren wird der ECHTE Quelltext: der Block „Welche Suche findet was" aus
  * js/kategorien.js und renderRegeln() aus js/regeln.js laufen gegen einen
@@ -200,7 +206,16 @@ function befunde(q){
     if (!tag){ f.push('index.html: das Feld #' + id + ' fehlt'); continue; }
     const fehlt = ['autocomplete="off"', 'autocorrect="off"', 'autocapitalize="off"', 'spellcheck="false"'].filter(a => !tag.includes(a));
     if (fehlt.length) f.push('index.html: #' + id + ' fehlt ' + fehlt.join(', ') + ' — „ich möchte das mir das nicht mehr angezeigt wird" (die Leiste über der Tastatur)');
+    if (!tag.includes('type="search"')) f.push('index.html: #' + id + ' ist kein Suchfeld (type="search") — Chrome zeigt dort auf Android die Ausfüll-Leiste');
   }
+
+  /* 8. Kein Textfeld mehr, nur Suchfelder (v700, 20.10.2026) — Begründung im Kopf dieser Datei. */
+  for (const [datei, text] of [['index.html', q.html], ['js/kategorien.js', q.kat], ['js/regeln.js', q.regeln]]){
+    const n = (text.match(/<input[^>]*\btype="text"/g) || []).length;
+    if (n) f.push(datei + ': ' + n + '× <input type="text"> — Chrome zeigt dort auf Android die Ausfüll-Leiste („ich möchte das mir das nicht mehr angezeigt wird")');
+  }
+  if (!q.html.includes('input[type="search"]::-webkit-search-cancel-button'))
+    f.push('index.html: die CSS-Zeilen für das Suchfeld fehlen — dann zeigt Chrome Rahmen und ein Kreuz zum Leeren');
   return f;
 }
 
@@ -223,6 +238,9 @@ const STOER = [
     '      <div class="wl-marken">\n        <span class="wl-quran">${icon(\'crescent\')}${quranHaeufigkeit(w)}×</span>\n'],
   ['dem Suchfeld vom Start fehlt autocorrect="off"', 'html', 'id="startSuche" placeholder="Wörter und Regeln durchsuchen …"\n               autocomplete="off" autocorrect="off"',
     'id="startSuche" placeholder="Wörter und Regeln durchsuchen …"\n               autocomplete="off"'],
+  ['ein Suchfeld wird wieder ein Textfeld (Stand bis v699)', 'html', '<input type="search" id="alleSuche"', '<input type="text" id="alleSuche"'],
+  ['das Formular der Infokarte baut wieder Textfelder', 'kat', '<input type="search" enterkeyhint="done" id="${id}"', '<input type="text" id="${id}"'],
+  ['die CSS-Zeilen für das Suchfeld fehlen', 'html', 'input[type="search"]::-webkit-search-cancel-button,', 'input[type="search"]::-webkit-search-abbruch,'],
 ];
 for (const [name, datei, alt, neu] of STOER){
   const n = ECHT[datei].split(alt).length - 1;
