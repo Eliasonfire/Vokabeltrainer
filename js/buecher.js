@@ -426,6 +426,66 @@ function einhaengen(liste){
   return { neu, ergaenzt, verworfen, eselsbruecken, saetze };
 }
 
+/* ---------- Ein einzeln freigeschaltetes Wort aus einem Buch, das er NICHT gewählt hat (20.10.2026) ----
+
+   Elias in derselben Nacht zweimal, je mit einem Bild aus seinem Buch: „ich brauche
+   daifun also schwach als vokabel" (01:56) und „spielplatz also al mulab brauche ich
+   auch als vokabel." (02:07). Beide Karten gibt es — ḍaʿīf in Bayna Yadayk 2, Kapitel 2,
+   malʿab in Madina 2, Kapitel 32 —, aber keines der beiden Bücher hat er gewählt.
+
+   ⛔ Die App lud bis dahin NUR die gewählten Bücher (aktiveBuecher()). Ein einzeln
+   freigeschaltetes Wort aus einem anderen Buch stand deshalb nie in VOCAB_DATA: die
+   Freischaltung war gespeichert und wirkte nicht. Gemessen im Nachbau mit seinem Stand
+   (20.10.2026): vt_einzeln_frei["46549"] gesetzt, VOCAB_DATA ohne 46549. Alle 37 Wörter,
+   die er bis dahin einzeln freigeschaltet hatte, stammen aus Madina 1 und Bayna Yadayk 1
+   — der Fall war schlicht noch nie vorgekommen.
+
+   Alles Weitere stand schon bereit: istBekannt() lässt ein einzeln freies Wort durch,
+   und passtZurAuswahl() behandelt es bei einem nicht gewählten Buch wie seine eigenen
+   Wörter (wieEigene, sein Satz vom 07.09.2026). Es fehlte nur das Laden.
+
+   ⭐ Welches Buch ein Wort enthält, steht nirgends — deshalb werden die übrigen Bücher
+   der Reihe nach geladen, bis jedes fehlende Wort gefunden ist. Kosten fallen nur an,
+   wenn wirklich eines fehlt; die Dateien liegen im Vorrat des Service Workers (sw.js,
+   seit v515). Gesucht wird nur nach Buchkennungen (nur Ziffern): eine Mehrzahlkarte
+   (…#pl) entsteht erst später beim Start, und eine Kennung, die es in keinem Buch gibt,
+   kostete sonst bei jedem Start alle Bücher.
+   ⛔ Eingehängt wird NUR das freigeschaltete Wort, nie der Rest des Buchs — sein Satz
+   vom 20.08.2026: „ich möchte aber nur die vereinzelnen wörter haben ohne den rest des
+   kapitels zu haben". Die Marke `einzelnGeladen` hält es aus der Kapitelvorschau des
+   Buchs heraus (kapitelDesBuchs unten): sonst zeigte Bayna Yadayk 2 nur noch Kapitel 2.
+   Danach dieselbe Nachbearbeitung wie in einhaengen(): Eselsbrücken, Schreibweisen,
+   Beispielsätze. Bewacht von werkzeuge/pruefe-einzeln-fremdbuch.mjs. */
+async function einzelneAusAnderenBuechern(){
+  if (typeof EINZELN === 'undefined' || !EINZELN) return 0;
+  const da = new Set(VOCAB_DATA.map(w => String(w.id)));
+  const fehlen = new Set(Object.keys(EINZELN).filter(id =>
+    /^\d+$/.test(id) && EINZELN[id] && EINZELN[id].an && !da.has(id)));
+  if (!fehlen.size) return 0;
+  const gewaehlt = new Set(aktiveBuecher());
+  const andere = (typeof BUECHER !== 'undefined' && Array.isArray(BUECHER) ? BUECHER : [])
+    .map(b => b.slug).filter(s => s && !gewaehlt.has(s) && s !== KORAN_BUCH);
+  const neu = [];
+  for (const slug of andere){
+    if (!fehlen.size) break;
+    let liste;
+    try { liste = await ladeBuchDatei(slug); }
+    catch (e){ continue; }   /* gewollt still: ein fehlendes Buch hat dieses Wort eben nicht */
+    (liste || []).forEach(roh => {
+      const id = String(roh.id);
+      if (!fehlen.has(id) || BUCHDUBLETTEN_AUSBLENDEN.has(id)) return;
+      neu.push(roh); fehlen.delete(id);
+    });
+  }
+  if (!neu.length) return 0;
+  VOCAB_DATA.push(...neu.map(roh => Object.assign({}, roh, { einzelnGeladen: true })));
+  eselsbrueckenNachtragen(neu);
+  eselsbrueckenErsetzen();
+  schreibweisenErsetzen();
+  saetzeNachtragen(neu);
+  return neu.length;
+}
+
 /* ---------- Beispielsaetze fuer die Buchvokabeln nachtragen ----------
 
    Dieselbe Bauart und derselbe Grund wie bei den Eselsbruecken darunter:
@@ -821,8 +881,13 @@ function buchVokabeln(){
      ⚠️ Ihr `book` ist weiterhin 'grammar' — daran haengen der Fachbegriff-Takt
      im Lernmodus und der Hoermodus. Die Herkunft bleibt, die Zugehoerigkeit
      wechselt. */
+  /* ⭐ `einzelnGeladen` (20.10.2026): ein einzeln freigeschaltetes Wort aus einem Buch, das
+     er nicht gewählt hat (ḍaʿīf, malʿab — einzelneAusAnderenBuechern()). Ohne diese
+     Bedingung stand es im Nachbau mit seinem Stand in der Lernrunde (passtZurAuswahl: ja),
+     aber in KEINER Liste, die hierüber läuft: Kategorien, Hörmodus, Statistik, Wortfelder. */
   return VOCAB_DATA.filter(w => gewaehlt.has(w.book)
-                             || w.chapter === 'personal');
+                             || w.chapter === 'personal'
+                             || w.einzelnGeladen === true);
 }
 
 /* Alle Kapitelnummern des aktiven Buchs, aufsteigend. Fuer Madina 1 tragen
@@ -855,7 +920,9 @@ function kapitelDesBuchs(slug){
      Der Name steht als Text, weil Prüfstände nur diese Funktion aus dem Quelltext
      schneiden (pruefe-vokabeln-seite.mjs wurde sonst rot: „KORAN_BUCH is not defined"). */
   if (s === 'koran-haeufig') return info ? Array.from({length: info.kapitel}, (_,i)=>i+1) : [];
-  const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number')
+  /* `einzelnGeladen`: ein einzeln freigeschaltetes Wort aus einem nicht gewählten Buch
+     (einzelneAusAnderenBuechern()) sagt nichts darüber, welche Kapitel das Buch hat. */
+  const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number' && !w.einzelnGeladen)
     .map(w=>w.chapter))].sort((a,b)=>a-b);
   /* Was tatsaechlich geladen ist, gilt. Die Zahl aus dem Verzeichnis ist nur
      die Vorschau fuer ein Buch, das noch nicht angetippt wurde - stuende sie
@@ -1007,6 +1074,12 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      Eintrag oder ohne Karte werden übersprungen. */
   if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN))
     saetzeNachtragen(FACHBEGRIFF_VOKABELN);
+
+  /* ⭐ Einzeln freigeschaltete Wörter aus Büchern, die er nicht gewählt hat (20.10.2026,
+     ḍaʿīf und malʿab) — Begründung bei einzelneAusAnderenBuechern() oben. HIER, weil
+     danach seine Korrekturen, die Mehrzahlkarten und der Fortschritt über ALLE Wörter
+     laufen: so bekommen auch diese ihre Änderungen, ihre Mehrzahlkarte und ihren Kasten. */
+  await einzelneAusAnderenBuechern();
 
   /* ---------- Seine Korrekturen NACH den Buechern anwenden (21.08.2026) ----
 
