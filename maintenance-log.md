@@ -9236,3 +9236,13 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - Offen, auf sein Wort: die strengere Lesart „nur Wörter, deren Mehrzahlkarte er schon hatte" (heute 1 von 137: Spiegel).
 
 **Prüfen und Ausliefern.** Neuer Prüfer `test-gesehen-uebungen.mjs` (G0–G6, 10 Störtests), Störtest-Anker in `test-endungen.mjs` und `test-mehrzahl-einsetzen.mjs` nachgezogen, Pflegeplan-Eintrag. validate 0, Pflegeplan 0, Sammellauf 186 Prüfer, keiner neu rot. CACHE v703, hochgeladen 05:57, Production main aus `70293b7` (`075098e7`), gepusht, `pruefe-ausgeliefert` Exit 0, Oberfläche 47/42/5, Stempel v703.
+
+
+## 2026-10-20 06:21 – Nachtschicht: Dual bereit (aus); ḍaʿīf und malʿab mit Satz und Eselsbrücken; Vorhang neue Eselsbrücke; mb1-63-4 NFC — **v704 ausgeliefert**
+
+**Dual (`69d36f1`).** Elias 01:53 *„es wäre auch wichtig, dass ich für alle wörter die dual formen habe."* und 01:55 *„du sollst es erstmal bereit machen aber ich will erstmal mich nur auf singular und plural konzentrieren"*. `js/kern.js`: `dualPruefen()`, `dualFormen()`, `baueDualKarte()`, `istDualKarte()`, `dualKartenStufe()` = false; nichts ruft die Karte auf. Regel aus Madina-Schlüssel Band 2, L20, PDF-S. 89: -āni / -aini, ta marbuta → ta. Nur der sichere Fall (Tanwin Damma, Nomen/Adjektiv, ein Wort); keine Form bei ab/akh, Alif/Hamza am Ende, Manqūṣ, Diptoton, Zahlwort, Fachbegriff. Mit seinem Stand: 277 von 545 bekannten Wörtern mit Form (vor dem Fachbegriff-Ausschluss), 0 Dualkarten in VOCAB_DATA. Prüfer `test-dual.mjs` (D1–D4, 10 Störtests).
+
+**Sätze und Eselsbrücken.** 46549 ḍaʿīf und 50339 malʿab (beide einzeln freigeschaltet) hatten nichts. Kein Satz in seinen Büchern (0 in 608 Repo-Sätzen, Schlüssel 2/3) → je ein geschriebener Satz aus Kartenwörtern; je drei Eselsbrücken ohne Koranstelle und ohne Ḥadīth. Vorhang 46016 (0/12, um 04:52 Vorschlag gewechselt): eine neue Alternative, die vorhandenen bleiben. Anlass: *„mach auch eselsbrücken, hab paar als schlecht empfunden"* — in der App ist seit 10.10. keine als „Taugt nicht" markiert (67 Ablehnungen, alle ersetzt).
+
+**mb1-63-4.** Das Feld `gedruckt` auf NFC (die einzige Zeile von `lehrbuch-saetze.js`, die es nicht war; Länge 76 bleibt).
+**Ausgeliefert.** Commits `69d36f1` (Dual), `eb932ae` (Sätze, Eselsbrücken), `5f8629d` (NFC). validate 0, Pflegeplan 0, Sammellauf 187 Prüfer, keiner neu rot (vorher NEU ROT und behoben: zwei Störtest-Anker wegen kopierter Zeilen in `baueDualKarte()`; `artefakte/regeln.json` neu erzeugt). CACHE v704, hochgeladen 06:21, Production main aus `5f8629d` (`cbbb8709`), gepusht, `pruefe-ausgeliefert` Exit 0, Oberfläche 47/42/5, Stempel v704.
