@@ -9165,3 +9165,26 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 **Nebenbei gemessen** (seine Frage um ~04:08): Seine Runde heute mit dem Gerätestand von 02:13:57 (`scratchpad/tagesrunde-messen.mjs`): 9 fällige Wiederholungen, 3 Lerngruppe Box 1 (davon die Mehrzahl von „Spiegel"), 2 neue (Feld, Allah auf dem Koran-Platz), 1 vorgezogen (Auto). Die App zählte um 04:08 noch den 19.10.
 
 **Offen.** Dual vorbereiten, aus · Satz und Eselsbrücken für ḍaʿīf/malʿab · `mb1-63-4` NFC · Fragen an ihn: ḍaʿīf beide Mehrzahlen? Leiste weg?
+
+
+## 2026-10-20 04:43 – Sitzung: Ausfüll-Leiste über der Tastatur — **v700 ausgeliefert** (`e422f85`)
+
+**Anlass.** Elias um 02:05 (Bild der Suche, die Leiste mit Schlüssel, Karte und Ort rot umrandet): *„ich möchte das mir das nicht mehr angezeigt wird"*. v696 hatte `autocorrect="off"` ergänzt. Um 04:15 auf die Frage „Leiste weg?": *„nein"*. Dann auf meine iPhone-Erklärung: *„wieso iphone, ich habe android"*. Das war ein Fehler zum zweiten Mal, eingetragen in `lernpunkte.md` und `elias_geraete.md`. Sein Gerät: Pixel 10 Pro XL, Chrome, installierte Web-App (Diagnose: standalone, 448×906, Pixelverhältnis 3).
+
+**Beleg im Quelltext von Chrome (gelesen 20.10.2026).**
+- `manual_filling_controller_impl.cc`, `ShouldShowAccessoryForLastFocusedFieldType()`: Bei einem Suchfeld erscheint die Leiste nur mit echten Ausfüll-Vorschlägen. Bei textarea steht dort: „Even if there are suggestions, don't show on textareas".
+- `password_autofill_agent.cc`: `type="search"` ergibt `kFillableSearchField`.
+- `autofill_features.cc`: Beide Ausnahme-Schalter sind `FEATURE_DISABLED_BY_DEFAULT`.
+
+**Was jetzt gilt.**
+- Alle 14 Textfelder in `index.html`, das Infokarten-Formular (`js/kategorien.js`) und die 3 Felder in `js/regeln.js` sind jetzt `type="search"`.
+- Die Tipp- und Formularfelder haben dazu `enterkeyhint="done"`.
+- Eine CSS-Zeile nimmt dem Suchfeld Rahmen und Kreuz. Die 2 Zahlenfelder bleiben.
+- Der falsche iPhone-Kommentar über `#startSuche` ist berichtigt.
+
+**Prüfen und Ausliefern.**
+- `pruefe-suchorte.mjs`: Teil 7 prüft auch `type="search"`, Teil 8 (neu) verbietet `<input type="text">` und prüft die CSS-Zeilen. 3 neue Störtests, alle rot.
+- validate 0, Sammellauf 184, keiner neu rot.
+- Probe im eigenen Edge: 14 Suchfelder, 0 Textfelder, 2 Zahlenfelder, 0 Seitenfehler.
+- CACHE v700, hochgeladen 04:43, Production main aus `e422f85` (`7d119b10`), gepusht, `pruefe-ausgeliefert` Exit 0.
+- ⚠️ Ob die Leiste auf seinem Pixel weg ist, sieht nur er.
