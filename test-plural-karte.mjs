@@ -16,9 +16,14 @@
  *     von Anfang an AUS — Elias, 20.10.2026: „und ich will erstmal bei ab box 4 die plural
  *     einschreiben erstmal aus machen weil ich die plurals noch gar nicht kenne, am besten eine
  *     einstellung die dierekt auf aus ist". Der alte Schlüssel tippenPlural, der in seinem Stand
- *     noch auf true steht, öffnet es NICHT (T1, T10). Die Formen auf der Rückseite stehen
- *     dagegen ohne Schalter da (L1; Elias, 14.10.2026: „plural soll nciht hinter schaltern
+ *     noch auf true steht, öffnet es NICHT (T1, T10). Die Formen-Zeile der Rückseite hat
+ *     dagegen keinen Schalter (L1; Elias, 14.10.2026: „plural soll nciht hinter schaltern
  *     versteckt sein").
+ *   - Seit 20.10.2026 steht auf der Einzahlkarte KEINE Mehrzahl, dafür auf der Mehrzahlkarte die
+ *     Einzahl (L1, L7, L8). Elias, mit einem Bild der Rückseite von „Bruder": „die plurale sollen
+ *     beim singular nicht angezeigt werden. ich will mich nur auf den singular konzentrieren. bei
+ *     den plural karten selbst soll aber unten am besten noch stehen der singular davon". „Fem."
+ *     (eine Einzahl) und beim Zahlwort die Form beim weiblichen Nomen bleiben.
  *   - „aber auch nur da wo es regelmässig ist": das zweite Feld steht nie bei einer
  *     gebrochenen Mehrzahl, und nie ohne das erste Feld (Box 4, die Karte fragt auf Deutsch).
  *   - Was regelmäßig ist, sagt EINE Stelle: uebPluralArt() in js/uebung.js. Fehlt sie, gilt
@@ -30,7 +35,8 @@
  * gewandelt (kein getipptes Arabisch); sie stehen auf keiner seiner Karten in dieser Rolle.
  *   M  das Muster (pluralMuster): Familien, Kasusendung, schwache Buchstaben, Schadda
  *   P  die Partner (pluralKlangPartner): Reihenfolge nach Kasten, Ausnahmen
- *   L  die Rückseite der Lernkarte
+ *   L  die Rückseite der Lernkarte (Einzahl ohne Mehrzahl, Mehrzahlkarte mit „Singular") und die Art
+ *      der Mehrzahl vorne in der Herkunftszeile der Mehrzahlkarte (kapitelBeschriftung in js/kern.js)
  *   T  das zweite Tippfeld (hinter seinem Schalter „Mehrzahl mit eintippen", Vorgabe AUS) und
  *      die Tablet-Tasten
  *   H  die Kartenhöhe: reicht die Vorderseite für den Tippkasten nicht, wächst die Karte
@@ -139,8 +145,15 @@ function rueckseite(kern, lernen, uebung, einstellungen, opt){
   if (a < 0 || b < a) throw new Error('der Formen-Block der Lernkarte wurde nicht gefunden');
   const w = welt(kern, uebung, opt);
   vm.runInContext('let SETTINGS = ' + JSON.stringify(einstellungen) + '; const __el = { innerHTML: "" }; const document = { getElementById(){ return __el; } };'
+    + '\n' + schneideFunktion(kern, 'function bauePluralKarte(') + '\n' + schneideFunktion(kern, 'function kapitelBeschriftung(')
     + '\nfunction __zeige(w){\n' + lernen.slice(a, b) + '\n  return __el.innerHTML;\n}', w.ctx);
-  return id => w.hole('__zeige(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + '))');
+  const karte = id => '__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + ')';
+  const z = id => w.hole('__zeige(' + karte(id) + ')');
+  /* Seit 20.10.2026: die Rückseite der Mehrzahlkarte (bauePluralKarte() wie in der App) und ihre
+     Herkunftszeile vorne — dort steht seitdem die Art der Mehrzahl. */
+  z.mehrzahl = id => w.hole('__zeige(bauePluralKarte(' + karte(id) + '))');
+  z.herkunft = id => w.hole('kapitelBeschriftung(bauePluralKarte(' + karte(id) + '))');
+  return z;
 }
 
 /* Die Infokarte: der Formen-Block aus baueWortKarte() (js/kategorien.js), herausgeschnitten und
@@ -314,38 +327,66 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
   });
 
   const R = (einst, opt) => rueckseite(kern, lernen, uebung, einst, opt);
-  fall('L1 Die Formen stehen IMMER da, auch bei einem alten Stand mit showPlural:false (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")', () => {
-    const z = R({ showPlural: false });
-    return [1, 8, 9, 10].every(id => z(id) !== '') ? true : 'ohne den alten Schalter fehlt die Formen-Zeile';
+  const kaestchen = h => [...h.matchAll(/<i class="lbl">([^<]*)<\/i><span class="wf-ar">([^<]*)<\/span>/g)].map(m => [m[1], m[2]]);
+  /* Elias, 20.10.2026 um 04:44, mit einem Bild der Rückseite von „Bruder": „die plurale sollen beim singular nicht
+     angezeigt werden. ich will mich nur auf den singular konzentrieren. bei den plural karten selbst soll aber unten
+     am besten noch stehen der singular davon". Einen Schalter hat die Zeile weiter nicht (14.10.2026: „plural soll
+     nciht hinter schaltern versteckt sein"); ein alter Stand mit showPlural:false ändert nichts. */
+  const MIT_FEM = KARTEN.map(k => k.id === '2' ? Object.assign({}, k, { femSg: ar('kabiyrapN'), femPl: ar('kabiyrAtN') }) : k);
+  fall('L1 Einzahlkarte: KEINE Mehrzahl — Fem., die Form beim Zahlwort und „Singular" auf der Mehrzahlkarte stehen trotzdem da, auch mit showPlural:false (Elias, 20.10.2026)', () => {
+    const z = R({ showPlural: false }, { karten: MIT_FEM });
+    for (const k of MIT_FEM.filter(k => k.id !== '10')){
+      const h = z(k.id), mz = k.pl.split(' / ').concat(k.femPl ? [k.femPl] : []);
+      if (kaestchen(h).some(([l, v]) => /^Plural|^Fem\. Pl\./.test(l) || mz.some(f => v.includes(f)))) return 'Karte ' + k.id + ' (' + k.de + ') zeigt eine Mehrzahl: ' + h;
+    }
+    if (!z(2).includes('<i class="lbl">Fem.</i>')) return 'das Kästchen „Fem." fehlt (die Zeile ist ganz tot?): ' + z(2);
+    if (!z(10).includes('>bei weiblichem Nomen</i>')) return 'beim Zahlwort fehlt die Form beim weiblichen Nomen: ' + z(10);
+    return z.mehrzahl(1).includes('<i class="lbl">Singular</i>') ? true : 'die Mehrzahlkarte zeigt kein „Singular": ' + z.mehrzahl(1);
   });
-  /* Seit 19.10.2026 sagt die Zeile die ART (Elias: „bei den plural vokabeln sollte noch irgendwie
-     gekennzeichnet werden ob sie regelmässig sind oder unregelmässig"), mit seinen Wörtern. */
-  fall('L2 Regelmäßige Mehrzahl: die Zeile sagt „Plural · regelmäßig männlich" bzw. „… weiblich", ohne „Klingt wie"', () => {
-    const z = R({ showPlural: true });
-    for (const [id, art] of [[8, 'männlich'], [9, 'weiblich']]){ const h = z(id); if (!h.includes('>Plural · regelmäßig ' + art + '</i>') || h.includes('Klingt wie')) return 'Karte ' + id + ': ' + h; }
+  /* Die Art der Mehrzahl (19.10.2026: „bei den plural vokabeln sollte noch irgendwie gekennzeichnet werden ob sie
+     regelmässig sind oder unregelmässig") steht seit 20.10.2026 nur noch auf der Mehrzahlkarte selbst: vorne in der
+     Herkunftszeile (kapitelBeschriftung in js/kern.js), mit seinen Wörtern. */
+  const einzahl = id => KARTEN.find(k => k.id === String(id)).ar;
+  fall('L2 Regelmäßige Mehrzahl: die Mehrzahlkarte sagt vorne „regelmäßig männlich" bzw. „… weiblich · Plural von …"', () => {
+    const z = R({});
+    for (const [id, art] of [[8, 'männlich'], [9, 'weiblich']]){ const t = z.herkunft(id); if (t !== 'regelmäßig ' + art + ' · Plural von ' + einzahl(id)) return 'Karte ' + id + ': ' + t; }
     return true;
   });
-  fall('L3 Gebrochene Mehrzahl: „Plural · unregelmäßig" — und KEIN „Klingt wie", obwohl die Karte Partner hätte (Elias, 15.10.2026: „dieses klingt wie ist quatsch, das soll raus")', () => {
-    const h = R({ showPlural: true })(1);
-    if (!h.includes('<i class="lbl">Plural · unregelmäßig</i>')) return 'die Plural-Zeile stimmt nicht: ' + h;
+  fall('L3 Gebrochene Mehrzahl: vorne „unregelmäßig · Plural von …" — und auf keiner Rückseite ein „Klingt wie" (Elias, 15.10.2026: „dieses klingt wie ist quatsch, das soll raus")', () => {
+    const z = R({});
+    const t = z.herkunft(1);
+    if (t !== 'unregelmäßig · Plural von ' + einzahl(1)) return 'die Herkunftszeile stimmt nicht: ' + t;
+    const h = z(1) + z.mehrzahl(1) + z(15) + z.mehrzahl(15);
     return !/Klingt wie|wf-klang|wf-paar/.test(h) ? true : '„Klingt wie" steht wieder auf der Karte: ' + h;
   });
-  fall('L4 Auch ohne Wurzel kein „Klingt wie"; beim Zahlwort bleibt „bei weiblichem Nomen" — ohne „regelmäßig"', () => {
-    const z = R({ showPlural: true });
-    if (z(15).includes('Klingt wie')) return 'eine Karte ohne Wurzel bekommt „Klingt wie"';
-    const h = z(10);
-    return h.includes('>bei weiblichem Nomen</i>') && !h.includes('regelmäßig') && !h.includes('Klingt wie') ? true : 'Zahlwort: ' + h;
+  fall('L4 Beim Zahlwort bleibt auf der Einzahlkarte „bei weiblichem Nomen" mit der Form — ohne „regelmäßig"', () => {
+    const h = R({})(10);
+    return h.includes('>bei weiblichem Nomen</i>') && h.includes(ar('xamosN')) && !h.includes('regelmäßig') ? true : 'Zahlwort: ' + h;
   });
-  fall('L6 Was die strenge Einordnung offen lässt, benennt die Anzeige trotzdem: tilfāzāt regelmäßig weiblich, zwei gebrochene Formen einmal „unregelmäßig", zwei Arten beide (19.10.2026)', () => {
-    const z = R({ showPlural: true });
-    const soll = [[15, 'Plural · regelmäßig weiblich'], [5, 'Plural · unregelmäßig'], [18, 'Plural · unregelmäßig und regelmäßig männlich']];
-    for (const [id, text] of soll){ const h = z(id); if (!h.includes('<i class="lbl">' + text + '</i>')) return 'Karte ' + id + ': ' + h; }
+  fall('L6 Was die strenge Einordnung offen lässt, benennt die Herkunftszeile trotzdem: tilfāzāt regelmäßig weiblich, zwei gebrochene Formen einmal „unregelmäßig", zwei Arten beide (19.10.2026)', () => {
+    const z = R({});
+    const soll = [[15, 'regelmäßig weiblich'], [5, 'unregelmäßig'], [18, 'unregelmäßig und regelmäßig männlich']];
+    for (const [id, text] of soll){ const t = z.herkunft(id); if (t !== text + ' · Plural von ' + einzahl(id)) return 'Karte ' + id + ': ' + t; }
     return true;
   });
-  fall('L5 Die Mehrzahl selbst wird maskiert (fremder Text im HTML)', () => {
-    const karten = KARTEN.map(k => k.id === '1' ? Object.assign({}, k, { pl: '<b>' + k.pl }) : k);
-    const h = R({ showPlural: true }, { karten })(1);
+  fall('L5 Die Formen werden maskiert (fremder Text im HTML)', () => {
+    const karten = KARTEN.map(k => k.id === '1' ? Object.assign({}, k, { ar: '<b>' + k.ar }) : k);
+    const h = R({}, { karten }).mehrzahl(1);
     return h.includes('&lt;b&gt;') && !h.includes('<b>') ? true : h;
+  });
+  fall('L7 Mehrzahlkarte: das Kästchen „Singular" mit der Einzahl steht auf der Rückseite, als erstes — die Einzahlkarte bekommt keins (Elias, 20.10.2026: „bei den plural karten selbst soll aber unten am besten noch stehen der singular davon")', () => {
+    const z = R({});
+    for (const id of [1, 5, 9]){
+      const k = kaestchen(z.mehrzahl(id));
+      if (!k.length || k[0][0] !== 'Singular' || k[0][1] !== einzahl(id)) return 'Karte ' + id + ': ' + JSON.stringify(k);
+      if (k.some(([l]) => /^Plural/.test(l))) return 'Karte ' + id + ' nennt auf ihrer Rückseite noch eine Mehrzahl: ' + JSON.stringify(k);
+    }
+    return kaestchen(z(1)).some(([l]) => l === 'Singular') ? 'die Einzahlkarte bekommt auch ein Kästchen „Singular"' : true;
+  });
+  fall('L8 „Fem." ist eine Einzahl und bleibt auf der Einzahlkarte, „Fem. Pl." ist eine Mehrzahl und geht', () => {
+    const k = kaestchen(R({}, { karten: MIT_FEM })(2));
+    if (!k.some(([l, v]) => l === 'Fem.' && v === ar('kabiyrapN'))) return 'das Kästchen „Fem." fehlt: ' + JSON.stringify(k);
+    return k.some(([l]) => l === 'Fem. Pl.') ? '„Fem. Pl." steht noch da: ' + JSON.stringify(k) : true;
   });
 
   /* Elias, 20.10.2026 um 02:00, mit einem Bild der Infokarte von aṣdiqāʾ: „ich will das hier bei den
@@ -615,8 +656,20 @@ const STOER = [
     kern: q => ersetze(q, "  if (typeof uebPluralArt !== 'function') return [];", '', 'S9') },
   { name: 'S10 die Rückseite zeigt die Zeilen nur noch mit dem alten Schalter', muss: ['L1'],
     lernen: q => ersetze(q, "  let forms = [];\n  {", "  let forms = [];\n  if (SETTINGS.showPlural){", 'S10') },
+  /* S11 trifft seit 20.10.2026 die Herkunftszeile der Mehrzahlkarte: dort steht die Art jetzt. */
   { name: 'S11 der Vermerk der Art fehlt', muss: ['L2', 'L3', 'L6'],
-    lernen: q => ersetze(q, "+ (plArt ? ' · ' + plArt : '')", "+ ''", 'S11') },
+    kern: q => ersetze(q, "    return (art ? art + ' · ' : '') + `Plural von ${w.sgAr}`;", "    return `Plural von ${w.sgAr}`;", 'S11') },
+  { name: 'S39 die Mehrzahl steht wieder auf der Einzahlkarte (wie vom 14. bis 20.10.2026)', muss: ['L1'],
+    lernen: q => ersetze(q, "    if (w.pl && typeof istZahlwort === 'function' && istZahlwort(w))\n", '    if (w.pl)\n', 'S39') },
+  { name: 'S40 die Mehrzahlkarte zeigt die Einzahl nicht', muss: ['L1', 'L7'],
+    lernen: q => ersetze(q, "    if (w.istPlural && w.sgAr) forms.push({label:'Singular', value:formenAnzeige(w.sgAr)});\n", '', 'S40') },
+  { name: 'S41 „Fem. Pl." kommt zurück', muss: ['L1', 'L8'],
+    lernen: q => ersetze(q, "    if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});\n",
+      "    if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});\n    if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});\n", 'S41') },
+  { name: 'S42 „Fem." geht mit weg', muss: ['L1', 'L8'],
+    lernen: q => ersetze(q, "    if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});\n", '', 'S42') },
+  { name: 'S43 beim Zahlwort verschwindet die Form beim weiblichen Nomen, als wäre sie eine Mehrzahl', muss: ['L1', 'L4'],
+    lernen: q => ersetze(q, "    if (w.pl && typeof istZahlwort === 'function' && istZahlwort(w))\n", '    if (false)\n', 'S43') },
   { name: 'S33 die Einzahl plus -āt gilt nicht mehr als regelmäßig weiblich', muss: ['L6'],
     uebung: q => ersetze(q, "  if (p === s0 + ALIF + TA) return 'f';\n", '', 'S33') },
   { name: 'S34 zwei Formen werden nicht mehr einzeln eingeordnet', muss: ['L6'],

@@ -194,7 +194,16 @@ function hoerbareVokabeln(){
      `bekannteVokabeln()` (js/kern.js) ist genau die gesuchte Menge und waechst
      von selbst mit: freigeschaltete Kapitel des jeweiligen Buchs + eigene
      Wörter + der handverlesene Lernbestand aus vocab-data.js. */
-  const brauchbar = w => w.ar && w.de && String(w.de).trim().length > 1;
+  /* ⛔⛔ UND NUR, WAS ER KENNT ODER SCHON GESEHEN HAT (20.10.2026). Elias, mit einem Bild der
+     Hörfrage „schmerzhaft" (alīm, „Koran häufigste"): „die vokabel hab ich noch nie gesehen. du
+     sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen werden auch an plurals die
+     ich bereits kenne oder zumindest mal gesehen habe. beim hören sind einige diesbezüglich falsch".
+     Gemessen mit seinem Stand (20.10.2026, 05:15): 615 Wörter im Hörvorrat, 351 davon nie auf
+     einer Lernkarte bewertet und in Box 1 — 212 aus „Koran häufigste", 69 Mehrzahlkarten, 50 aus
+     Bayna Yadayk 1, 18 aus Madina 1, je eins aus Madina 2 und Bayna Yadayk 2. Was „gesehen" heißt,
+     sagt schonGesehen() in js/kern.js. Es gilt für Fragen UND Ablenker, wie die Grenze vom 17.08.
+     oben, und damit auch für den Geh-Modus (er fragt dieselbe Funktion). */
+  const brauchbar = w => w.ar && w.de && String(w.de).trim().length > 1 && schonGesehen(w);
   let pool = bekannteVokabeln().filter(brauchbar);
   /* Die Kapitelauswahl von der Startseite gilt auch hier - sonst uebt man das
      halbe Buch, obwohl oben "Kapitel 3" eingestellt ist. Nur wenn dabei zu

@@ -3741,6 +3741,24 @@ function nieAbgefragt(w){
   const p = w && PROGRESS[w.id];
   return !!p && !(Number(p.correct) > 0) && !(Number(p.wrong) > 0);
 }
+/* ⛔⛔ KENNT ER ES — ODER HAT ER ES WENIGSTENS SCHON GESEHEN? (20.10.2026)
+   Elias, mit einem Bild der Hörfrage „schmerzhaft" (alīm, aus „Koran häufigste"): „die vokabel hab
+   ich noch nie gesehen. du sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen
+   werden auch an plurals die ich bereits kenne oder zumindest mal gesehen habe. beim hören sind
+   einige diesbezüglich falsch".
+   „Bekannt" (istBekannt() oben) heißt nur: das Wort liegt in seiner Auswahl, die Lernkarte darf es
+   ihm vorstellen. Gesehen hat er es erst, wenn er es auf einer Lernkarte bewertet hat — oder es
+   steht über Box 1 (eine Antwort, die Box-Reihe der Infokarte oder ein mitgebrachter Stand). Die
+   Infokarte eines neuen Wortes und die Übung in der Mitte der Runde schreiben nichts (answer() in
+   js/lernen.js); gezählt wird die Abfrage am Ende derselben Runde.
+   MEINE Grenze, nicht sein Satz: ein Wort, das schon in der Lerngruppe steht (p.gruppe), aber noch
+   keine Antwort hat, gilt NICHT als gesehen — vielleicht hat er die Runde vor dieser Karte beendet.
+   Gemessen am 20.10.2026 (sein Stand, 05:15): 0 solche Wörter im Hörvorrat.
+   Bewacht von werkzeuge/pruefe-hoer-auswahl.mjs. */
+function schonGesehen(w){
+  const p = w && PROGRESS[w.id];
+  return !!p && (Number(p.correct) > 0 || Number(p.wrong) > 0 || (Number(p.box) || 1) >= 2);
+}
 function neueZuerst(liste){
   const neu = [], rest = [];
   for (const w of liste) (nieAbgefragt(w) ? neu : rest).push(w);
