@@ -191,7 +191,7 @@ if (!rot) console.log(`✔ 1–6 grün: ${echt.aufgaben} Aufgaben, Auswahl ${ech
 /* ---------- Störtests: jeder muss SEINEN Punkt rot machen ---------- */
 const STOER = [
   { name: 'ausgeblendete Karte ـهُ (istBekannt) → Punkt 2', punkt: 2, extra: { versteckt: ['gram-suffix-hu'] },
-    aus: 'if (!w || (bekannt && !bekannt(w))) continue;\n    const form = String(w.ar || \'\').normalize(\'NFC\').trim();', ein: 'if (!w) continue;\n    const form = String(w.ar || \'\').normalize(\'NFC\').trim();' },
+    aus: 'if (!w || (bekannt && !bekannt(w)) || !uebGesehen(w)) continue;\n    const form = String(w.ar || \'\').normalize(\'NFC\').trim();', ein: 'if (!w || !uebGesehen(w)) continue;\n    const form = String(w.ar || \'\').normalize(\'NFC\').trim();' },
   { name: 'ohne die Liste ذَلِكَ/هُنَاكَ … → Punkt 3', punkt: 3,
     aus: 'if (UEB_ENDUNG_NICHT.includes(uebSkelett(kern))) return null;', ein: '' },
   { name: 'ohne die Verb-Sperre → Punkt 3', punkt: 3,

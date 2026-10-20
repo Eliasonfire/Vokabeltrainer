@@ -272,7 +272,7 @@ if (echt.f.length){ console.log('❌ Echter Stand:'); echt.f.slice(0, 40).forEac
 else console.log(`✅ Echter Stand: ${echt.zahl} Aufgaben in seiner Auswahl; jede Knopf-Form steht auf einer seiner Karten, jede Lösung ist das Wort im Buchsatz.`);
 
 const STOER = [
-  ['Zahlwörter werden gefragt', '(bekannt && !bekannt(w)) || istZahlwort(w)) continue;', '(bekannt && !bekannt(w))) continue;', /^2z:/],
+  ['Zahlwörter werden gefragt', '(bekannt && !bekannt(w)) || !uebGesehen(w) || istZahlwort(w)) continue;', '(bekannt && !bekannt(w)) || !uebGesehen(w)) continue;', /^2z:/],
   ['eine Form, die auch die Einzahl ist, wird gefragt', 'if (k < 0 || istEinzahl) return null;', 'if (k < 0) return null;', /^2e:/],
   ['die Lücke zeigt das Wort', "luecke[j] = stellen[j].davor + '____' + stellen[j].danach;", 'luecke[j] = z[j].wort;', /^3:|^7:/],
   ['auf dem Knopf steht eine veränderte Form', "text: f.form,", "text: f.form + 'x',", /^4:|^11 /],
