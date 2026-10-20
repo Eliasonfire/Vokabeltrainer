@@ -801,11 +801,11 @@ function zeichneFormular(id){
   const t = neu ? { name: '', kurz: '' } : regelText(id);
   const e = (!neu && regelArt(id) === 'eigen') ? eigeneRegel(id) : null;
   return rkKopfHtml(`<span class="chip">${neu ? 'Neue Regel' : 'Bearbeiten'}</span>`)
-    + `<label class="rk-feld"><span>Name</span><input type="text" data-rkname value="${escapeHtml(t.name)}" maxlength="120"></label>`
+    + `<label class="rk-feld"><span>Name</span><input type="search" enterkeyhint="done" data-rkname value="${escapeHtml(t.name)}" maxlength="120"></label>`
     + `<label class="rk-feld"><span>Erklärung</span><textarea data-rkkurz rows="7">${escapeHtml(t.kurz)}</textarea></label>`
     + ((neu || e)
-        ? `<label class="rk-feld"><span>Beispiel auf Arabisch (freiwillig)</span><input type="text" data-rkbspar dir="rtl" lang="ar" value="${escapeHtml(e ? e.beispielAr : '')}"></label>
-           <label class="rk-feld"><span>Beispiel auf Deutsch (freiwillig)</span><input type="text" data-rkbspde value="${escapeHtml(e ? e.beispielDe : '')}"></label>`
+        ? `<label class="rk-feld"><span>Beispiel auf Arabisch (freiwillig)</span><input type="search" enterkeyhint="done" data-rkbspar dir="rtl" lang="ar" value="${escapeHtml(e ? e.beispielAr : '')}"></label>
+           <label class="rk-feld"><span>Beispiel auf Deutsch (freiwillig)</span><input type="search" enterkeyhint="done" data-rkbspde value="${escapeHtml(e ? e.beispielDe : '')}"></label>`
         : `<div class="rk-klein">Das Original bleibt erhalten und steht auf der Karte einen Tipp entfernt.</div>`)
     + `<div class="wk-aktionen">
          <button class="btn btn-secondary" type="button" data-rkabbrechen>Abbrechen</button>

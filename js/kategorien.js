@@ -899,7 +899,7 @@ function baueWortFormular(w){
   const feld = (id, beschriftung, wert, arabisch) => `
     <label class="wk-feld">
       <span>${escapeHtml(beschriftung)}</span>
-      <input type="text" id="${id}" value="${escapeHtml(wert || '')}"
+      <input type="search" enterkeyhint="done" id="${id}" value="${escapeHtml(wert || '')}"
              ${arabisch ? 'lang="ar" dir="rtl"' : ''} autocomplete="off" spellcheck="false">
     </label>`;
   /* ⭐ Eine Mehrzahlkarte zeigt nur, was ihr gehört (20.10.2026, MEHRZAHL_EIGENE in js/kern.js),
