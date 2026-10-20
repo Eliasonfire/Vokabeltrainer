@@ -9099,3 +9099,27 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - Zwei Uhrzeiten in Kommentaren berichtigen: 02:03 → 02:04, 02:07 → 02:09.
 - Beispielsatz und Eselsbrücken für die zwei neuen Wörter.
 - Fragen an ihn: ḍiʿāf (sein Buch) neben ḍuʿafāʾ (Karte)? Ist die Leiste weg?
+
+
+## 2026-10-20 02:47 – Sitzung: Schalter „Mehrzahl mit eintippen" ab Box 4, Voreinstellung aus — **v697 ausgeliefert** (`cd0b3be`)
+
+**Anlass.** Elias um 02:27: *„und ich will erstmal bei ab box 4 die plural einschreiben erstmal aus machen weil ich die plurals noch gar nicht kenne, am besten eine einstellung die dierekt auf aus ist"*.
+
+**Was jetzt gilt.** Das zweite Tippfeld (Mehrzahl unter dem Wort, ab Box 4, nur bei regelmäßiger Mehrzahl) stand seit 14.10.2026 ohne Schalter da. Jetzt steht in den Einstellungen direkt unter „Ab Box 4 eintippen" der Schalter „Mehrzahl mit eintippen" (`#toggleMehrzahlEintippen`). Er ist aus, bis Elias ihn einschaltet. `tippPluralDran()` in `js/lernen.js` fragt `SETTINGS.mehrzahlEintippen === true`; fehlt der Eintrag, ist er aus.
+
+**Warum ein neuer Schlüssel.** Den alten Schlüssel `tippenPlural` hat der erste Schalter vom 13.10.2026 geschrieben. In seinem Stand steht er noch auf true (KV gelesen 20.10.2026, 01:58, nur gelesen). Ein Schalter auf diesem Schlüssel wäre bei ihm sofort an gewesen.
+
+**Prüfen und Ausliefern.**
+- `test-plural-karte.mjs`: T1 neu (seine Einstellungen: nur das erste Feld, es urteilt allein über das Wort), T10 neu (Vorgabe aus `js/kern.js` plus sein gespeicherter Stand: Feld zu; erst sein Klick öffnet es), Störtests S13, S37 (alter Schlüssel öffnet das Feld) und S38 (Vorgabe schaltet ein). Dazu Verdrahtung: Schalter direkt unter „Ab Box 4 eintippen", nur sein Klick schreibt den Wert. 35 Fälle, 38 Störtests, grün.
+- Probe im eigenen Edge mit seinem Stand (`scratchpad/schalter-mehrzahl.mjs`): Schalter aus, Feld zu; nach einem Klick an, gespeichert, Feld da; nach dem zweiten Klick wieder aus.
+- Pflegeplan, `test-plural-fern.mjs` und `pruefe-plural.mjs` nennen die Ausnahme.
+- Zwei falsche Uhrzeiten in Kommentaren von v696 berichtigt: 02:03 → 02:04, 02:07 → 02:09.
+- `validate.js` 0 Fehler; Oberflächenprüfung 47 Prüfungen, 0 Fehler, 5 Hinweise (Stempel v697); Sammellauf 183 Prüfer, keiner neu rot.
+- CACHE v697, `veroeffentlichen.mjs --mit-daten` um 02:47:51. Production auf main stammt aus `cd0b3be` (`2b14c294`). Gepusht, `pruefe-ausgeliefert` Exit 0.
+
+**Offen.**
+- Deutsche Mehrzahl auf der Mehrzahlkarte, also „Felder (Plural)" (sein Satz von 02:23).
+- Mehrzahlkarten direkt bearbeiten, Verbindung zur Einzahl bleibt (02:24).
+- Dual vorbereiten, ausgeschaltet lassen.
+- Beispielsatz und Eselsbrücken für ḍaʿīf und malʿab.
+- Fragen an ihn: ḍiʿāf (sein Buch) neben ḍuʿafāʾ (Karte)? Ist die Ausfüll-Leiste weg?
