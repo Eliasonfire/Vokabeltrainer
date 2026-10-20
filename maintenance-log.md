@@ -9206,3 +9206,19 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - Probe im eigenen Edge (412 × 915, Berührung): falsch → vorne mit „Noch nicht.", Fokus im Feld; richtig → gedreht, Fokus weg, Box 4 und Runde unverändert; zweites Enter → bleibt gedreht. 0 Seitenfehler.
 - validate 0, Pflegeplan 0, Sammellauf 185 Prüfer, keiner neu rot.
 - CACHE v701, hochgeladen 05:03, Production main aus `a8d9ed9` (`50abfba8`), gepusht, `pruefe-ausgeliefert` Exit 0. Oberfläche 47 Prüfungen, 0 Fehler, 5 Hinweise, Stempel v701.
+
+
+## 2026-10-20 05:21 – Sitzung: Einzahlkarte ohne Mehrzahl, Mehrzahlkarte mit Singular; Hörmodus nur gesehene Wörter — **v702 ausgeliefert** (`e4e2aec`)
+
+**Anlass 1.** Elias um 04:44, mit Bild der Rückseite „Bruder": *„die plurale sollen beim singular nicht angezeigt werden. ich will mich nur auf den singular konzentrieren. bei den plural karten selbst soll aber unten am besten noch stehen der singular davon"*.
+- Vorher gemessen: Einzahlkarte mit „Plural · unregelmäßig" und „Fem.", Mehrzahlkarte ohne Kasten.
+- Jetzt (`js/lernen.js`): keine Mehrzahl auf der Einzahlkarte (auch „Fem. Pl." nicht); „Fem." bleibt; beim Zahlwort bleibt die Form beim weiblichen Nomen; die Mehrzahlkarte zeigt „Singular" mit `sgAr`. Die Art der Mehrzahl steht weiter vorne auf der Mehrzahlkarte. Infokarte unverändert.
+- `test-plural-karte.mjs`: L1–L8 neu, S11 auf `kapitelBeschriftung()`, S39–S43 neu; 37 Fälle, 43 Störtests.
+
+**Anlass 2.** Elias mit Bild der Hörfrage „schmerzhaft" (alīm): *„die vokabel hab ich noch nie gesehen. du sollst sichergehen, dass ich wirklich nur die vokabeln dran genommen werden auch an plurals die ich bereits kenne oder zumindest mal gesehen habe. beim hören sind einige diesbezüglich falsch"*.
+- Gemessen mit seinem Stand (KV 05:15): 351 von 615 Hörwörtern nie bewertet und in Box 1 (212 Koran häufigste, 69 Mehrzahlkarten, 50 BY1, 18 M1, je 1 M2/BY2).
+- Jetzt: `schonGesehen(w)` in `js/kern.js` (bewertet oder über Box 1); `hoerbareVokabeln()` nimmt nur solche Wörter, als Frage und Ablenker, auch im Geh-Modus. Nachgemessen: 264 Wörter, 0 nie gesehen.
+- `werkzeuge/pruefe-hoer-auswahl.mjs`: Fortschritt in der Welt, Aussage 4, Eichung, 2 Störtests.
+- ⚠️ Übungen, Sätze und Wurzeltraining fragen „bekannt" noch im alten Sinn (in der Auswahl) — nächster Schritt. Gemessen: Wurzeltraining (Stufe „stand") 351 von 615 ungesehen, Mehrzahl-Übung 56 von 193.
+
+**Prüfen und Ausliefern.** Probe im eigenen Edge: Einzahl „Bruder" nur noch „Fem.", Mehrzahl „Brüder" mit „Singular". validate 0, Pflegeplan 0, Sammellauf 185 Prüfer, keiner neu rot. CACHE v702, hochgeladen 05:21, Production main aus `e4e2aec` (`8ca4c02a`), gepusht, `pruefe-ausgeliefert` Exit 0, Oberfläche 47/0/5, Stempel v702.
