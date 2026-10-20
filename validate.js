@@ -803,6 +803,11 @@ try {
         { name:'wendePluralKartenAn', wo:'js/kern.js', nach:null,
           folge:'dann entstehen die Pluralkarten nur aus den Woertern, die schon beim Laden '
               + 'dastanden: 120 statt 190 (gemessen 18.08.2026)' },
+        /* Die siebte seit 20.10.2026 (Mehrzahlkarten bearbeiten, Elias um 02:24). */
+        { name:'wendePluralAenderungenAn', wo:'js/kern.js', nach:'wendePluralKartenAn',
+          folge:'dann sind Elias’ Änderungen an Mehrzahlkarten nach jedem Neustart weg: '
+              + 'wendePluralKartenAn() baut die Karten frisch und ohne sie (im eigenen Edge '
+              + 'gemessen 20.10.2026: „PROBE-MEHRZAHL (Plural)" gespeichert, danach „Felder (Plural)")' },
         { name:'eselsbrueckenNachtragen', wo:'js/buecher.js', nach:null,
           folge:'dann bekommen die selbst angelegten Woerter keine Eselsbruecke — geschrieben, '
               + 'gespeichert, ausgeliefert und nie angewandt (20.08.2026)' },
