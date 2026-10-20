@@ -296,6 +296,10 @@ const PRUEFER = [
      PLURAL_FERN, Vokalzeichen, Nomen ohne Mehrzahl). Exit 2 nur bei einem Befund in UNSEREN
      Daten — der sperrt das Ausliefern zu Recht; Befunde im Abzug färben den Exit nicht. */
   ['werkzeuge/pruefe-plural.mjs', []],
+  /* 20.10.2026 — die deutsche Mehrzahl auf den Mehrzahlkarten. Elias: „und bei den plural karten
+     soll direkt der plural stehen also nicht ,,feld (plural)" sondern ,,felder (Plural)"". Rot,
+     sobald eine Bedeutung (aller Bücher) keinen Eintrag in data/de-mehrzahl.js hat. */
+  ['werkzeuge/pruefe-de-mehrzahl.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, und der Anlass war der schwerste Fund der Nacht:
      „مَدْرَسَةٌ → مَدَارِسُ" stand auf dem Schirm RUECKWAERTS. Ein Pfeil
      zwischen zwei arabischen Laeufen ist ein neutrales Zeichen und bekommt

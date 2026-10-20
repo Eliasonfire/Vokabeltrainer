@@ -895,8 +895,15 @@ node werkzeuge/pruefe-buecher-aktuell.mjs
 node werkzeuge/pruefe-eigene-vorrang.mjs
 node werkzeuge/pruefe-satzmodus-aktuell.mjs
 node werkzeuge/pruefe-plural.mjs
+node werkzeuge/pruefe-de-mehrzahl.mjs
 node werkzeuge/export-index.mjs --pruefen
 ```
+
+⭐ **`pruefe-de-mehrzahl.mjs`** (seit 20.10.2026) bewacht Elias' *„und bei den plural karten
+soll direkt der plural stehen also nicht ,,feld (plural)" sondern ,,felder (Plural)""*: jede
+deutsche Teilbedeutung eines Worts mit Mehrzahlkarte braucht ihren Eintrag in
+`data/de-mehrzahl.js`, sonst zeigt die Karte still wieder „Feld (Plural)". Neue Wörter aus
+einem neuen Buch oder Abzug → Eintrag nachtragen (Wartung, Schritt 1c.5c).
 
 ⭐ **`pruefe-plural.mjs`** (seit 14.10.2026) ist Elias' *„ich glaube wir brauchen einen
 prüfer auch für plural dann jetzt"*: seit v685 steht die Mehrzahl (A3, Feld `pl`) ohne
