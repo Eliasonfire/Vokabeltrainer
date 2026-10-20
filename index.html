@@ -5882,7 +5882,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
                 <!-- Zweites Feld für die Mehrzahl (13.10.2026). Elias, 12.10.2026: „man könnte auch
                      ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist". Von Anfang
                      an verborgen; renderTippfeld() in js/lernen.js zeigt es nur bei regelmäßiger
-                     Mehrzahl und nur mit dem Schalter „Mehrzahl mit eintippen" (tippPluralDran()).
+                     Mehrzahl und nur mit dem Schalter „Mehrzahl mit eintippen" (tippPluralDran();
+                     den Schalter gibt es seit 20.10.2026 wieder, Voreinstellung aus).
                      Wie das Feld darüber trägt es KEIN inputmode — das setzt am Tablet zeigeTippTasten().
                      ⚠️ Der Hinweistext bleibt KURZ. Gemessen am 13.10.2026 in der Seitenprobe (Fenster
                      375 px breit, Feld 261 px, innen 227 px, Schrift 20 px): „Mehrzahl auf Arabisch
@@ -7150,9 +7151,20 @@ Teil 2</span>
         </div>
         <button class="switch" id="toggleTippen" aria-label="Tippen ab Box 4 umschalten"><span class="knob"></span></button>
       </div>
-      <!-- „Mehrzahl mit eintippen" (13.10.2026) gibt es seit 14.10.2026 nicht mehr. Elias: „plural
-           soll nciht hinter schaltern versteckt sein". Mit „Ab Box 4 eintippen" steht bei
-           regelmäßiger Mehrzahl immer ein zweites Feld da (tippPluralDran() in js/lernen.js). -->
+      <!-- „Mehrzahl mit eintippen": seit 20.10.2026 wieder da, Voreinstellung AUS. Elias: „und ich
+           will erstmal bei ab box 4 die plural einschreiben erstmal aus machen weil ich die plurals
+           noch gar nicht kenne, am besten eine einstellung die dierekt auf aus ist". Den Schalter
+           gab es schon vom 13. bis 14.10.2026 (Schlüssel tippenPlural); danach stand das Feld ohne
+           Schalter da (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein").
+           ⛔ Neuer Schlüssel mehrzahlEintippen: tippenPlural steht in seinem Stand noch auf true.
+           Wirkung: tippPluralDran() in js/lernen.js. -->
+      <div class="setting-row">
+        <div>
+          <div class="setting-title">Mehrzahl mit eintippen</div>
+          <div class="setting-sub">Nur zusammen mit „Ab Box 4 eintippen": Unter dem Wort steht dann ein zweites Feld für die Mehrzahl, aber nur bei regelmäßiger Mehrzahl.</div>
+        </div>
+        <button class="switch" id="toggleMehrzahlEintippen" aria-label="Mehrzahl mit eintippen umschalten"><span class="knob"></span></button>
+      </div>
 
       <!-- Satzübung 17 „Verb einsetzen": kurze Zeilen für Formen ohne Satz (13.10.2026,
            Paket B der Nachtschicht). Der Vorschlag war ihm gezeigt, seine Antwort war eine

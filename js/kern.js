@@ -2223,7 +2223,7 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    in Bayna Yadayk 2, Kapitel 2 — das Buch hat er nicht gewählt. In seinem
    abgeglichenen Stand ohne Eintrag (KV gelesen 20.10.2026, 01:58: kein Eintrag in
    vt_einzeln_frei, keiner in vt_bekannt, kein eigenes Wort „schwach").
-   20.10.2026: مَلْعَبٌ 50339 „Spielplatz / Sportplatz" dazu. Elias um 02:07, mit einem
+   20.10.2026: مَلْعَبٌ 50339 „Spielplatz / Sportplatz" dazu. Elias um 02:09, mit einem
    Bild aus seinem Buch („Spielplatz" rot über dem Wort): „spielplatz also al mulab
    brauche ich auch als vokabel." Die Karte steht in Madina 2, Kapitel 32 — das Buch hat
    er nicht gewählt. Im selben Stand ohne Eintrag und ohne eigenes Wort.

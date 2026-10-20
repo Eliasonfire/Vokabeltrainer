@@ -1002,13 +1002,24 @@ function quranMitTreffer(vers, w){
    Unter dem Feld für das Wort steht dann ein zweites für die Mehrzahl — nur wenn das
    erste Feld dasteht (Schalter „Ab Box 4 eintippen", Kasten 4, die Karte fragt auf
    Deutsch), nur bei regelmäßiger Mehrzahl (pluralRegelmaessig() in js/kern.js, das
-   fragt uebPluralArt()). Einen eigenen Schalter („Mehrzahl mit eintippen", Feld
-   tippenPlural der Einstellungen) gab es vom 13. bis zum 14.10.2026; seitdem steht das Feld immer
-   da — Elias: „plural soll nciht hinter schaltern versteckt sein".
+   fragt uebPluralArt()) und nur mit dem Schalter „Mehrzahl mit eintippen".
    Verglichen wird wie beim Wort ohne Vokalzeichen, gegen das Feld `pl` der Karte.
    Er bewertet sich weiter selbst; das Feld sagt nur „richtig" oder „noch nicht".
-   Bewacht von test-plural-karte.mjs. */
+
+   ⛔ Der Schalter (SETTINGS.mehrzahlEintippen, seit 20.10.2026) steht von Anfang an AUS.
+   Elias, 20.10.2026: „und ich will erstmal bei ab box 4 die plural einschreiben erstmal
+   aus machen weil ich die plurals noch gar nicht kenne, am besten eine einstellung die
+   dierekt auf aus ist". Vom 14. bis zum 20.10.2026 stand das Feld ohne Schalter da (sein
+   Satz damals: „plural soll nciht hinter schaltern versteckt sein"). Für das Tippfeld ist
+   der durch den Satz vom 20.10. überholt; die Formen auf der Karte und die Mehrzahlkarten
+   bleiben ohne Schalter.
+   ⛔⛔ NICHT den alten Schlüssel tippenPlural lesen. Den hat der erste Schalter „Mehrzahl
+   mit eintippen" (13. bis 14.10.2026) geschrieben, und in seinem Stand steht er noch auf
+   true (KV gelesen 20.10.2026, 01:58). Ein Schalter auf diesem Schlüssel stünde bei ihm
+   sofort AN.
+   Bewacht von test-plural-karte.mjs (T1, T10, Störtests S13, S37, S38). */
 function tippPluralDran(w){
+  if (!(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.mehrzahlEintippen === true)) return false;
   return !!(w && w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w));
 }
 
