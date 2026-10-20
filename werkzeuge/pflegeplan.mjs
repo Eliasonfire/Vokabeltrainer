@@ -732,7 +732,9 @@ export const PFLEGEPLAN = [
       wie: 'lässt hoerbareVokabeln() und passtZurAuswahl() aus dem echten Quelltext in einer kleinen Welt mit und ohne Kapitel-Einengung laufen: '
         + 'jedes Kartei-Wort mit Bedeutung muss im Hörvorrat stehen, nichts, was vorher darin stand, darf fehlen. Die Welt wird geeicht '
         + '(ohne die Zeile zeigt sie den Fehler vom 23.09.). Störtests: Vereinigung entfernt, bekannteVokabeln() statt VOCAB_DATA, '
-        + 'Ersetzung statt Vereinigung = je Exit 1' },
+        + 'Ersetzung statt Vereinigung = je Exit 1. Seit 20.10.2026 (Elias: „du sollst sichergehen, dass ich wirklich nur die vokabeln '
+        + 'dran genommen werden … die ich bereits kenne oder zumindest mal gesehen habe") auch die Grenze schonGesehen() aus js/kern.js: '
+        + 'kein nie gesehenes Wort im Hörvorrat, eigene Eichung und zwei Störtests' },
   },
   {
     /* ⭐ 22.09.2026 — BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE.

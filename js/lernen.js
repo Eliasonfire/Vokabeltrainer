@@ -671,31 +671,35 @@ function renderCard(){
     genusEl.classList.add('hidden');
   }
 
-  // Plural-/Femininum-Formen stehen IMMER auf der Karte — seit 14.10.2026 ohne den Schalter
-  // „Pluralformen anzeigen". Elias: „plural soll nciht hinter schaltern versteckt sein".
+  // Die Formen-Zeile hat keinen Schalter (seit 14.10.2026, Elias: „plural soll nciht hinter
+  // schaltern versteckt sein"). WAS darin steht, regelt seit dem 20.10.2026 sein Satz unten.
   // Label und arabische Form getrennt ausgeben: das Label bleibt klein und
   // lateinisch, die Form selbst wird gross und arabisch gesetzt.
   let forms = [];
   {
     /* formenAnzeige vereinheitlicht das Trennzeichen: der naechste
        arabicroots-Abzug bringt "|" mit, angezeigt wird immer " / ". */
-    /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
-    /* ⭐ Seit dem 13.10.2026 sagt die Zeile bei einer regelmäßigen Mehrzahl „regelmäßig" — Begründung
-       und sein Wortlaut bei pluralRegelmaessig() in js/kern.js. Mit Abfrage, weil Prüfstände diese
-       Datei ohne den Kern laden.
-       ⛔ Die Zeile „Klingt wie" (bis zu zwei andere Karten mit gleich klingender Mehrzahl, 13. bis
-       15.10.2026) ist WEG. Elias am 15.10.2026, zur Karte „leicht" mit „Klingt wie Klassenzimmer,
-       Haus": „dieses klingt wie ist quatsch, das soll raus". Bewacht von test-plural-karte.mjs (L3). */
-    /* ⭐ Seit dem 19.10.2026 steht hier die ART jeder Mehrzahl, nicht nur „regelmäßig": „regelmäßig
-       männlich", „regelmäßig weiblich" oder „unregelmäßig" — dieselbe Angabe wie auf der Mehrzahlkarte.
-       Elias: „bei den plural vokabeln sollte noch irgendwie gekennzeichnet werden ob sie regelmässig sind
-       oder unregelmässig". Entschieden in pluralArtText() (js/uebung.js). Zahlwörter bekommen keinen
-       Text: bei ihnen ist `pl` die Form beim weiblichen Nomen. */
-    const plArt = (!!w.pl && typeof pluralArtText === 'function'
-      && !(typeof istZahlwort === 'function' && istZahlwort(w))) ? pluralArtText(w.sg || w.ar, w.pl) : '';
-    if (w.pl) forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural') + (plArt ? ' · ' + plArt : ''), value:formenAnzeige(w.pl)});
+    /* ⛔⛔ Seit dem 20.10.2026 steht die Mehrzahl NICHT mehr auf der Einzahlkarte, dafür die Einzahl auf
+       der Mehrzahlkarte. Elias um 04:44, mit einem Bild der Rückseite von „Bruder" (Kasten „Plural ·
+       unregelmäßig"): „die plurale sollen beim singular nicht angezeigt werden. ich will mich nur auf
+       den singular konzentrieren. bei den plural karten selbst soll aber unten am besten noch stehen
+       der singular davon".
+       - Die Mehrzahlkarte (bauePluralKarte() in js/kern.js) bekommt das Kästchen „Singular" mit `sgAr`,
+         an der Stelle, an der auf der Einzahlkarte die Mehrzahl stand — dasselbe Wort wie auf der
+         Infokarte (sein Satz von 02:00, baueWortKarte() in js/kategorien.js).
+       - „Fem." ist eine Einzahl und bleibt. „Fem. Pl." ist eine Mehrzahl und geht.
+       - Beim Zahlwort ist `pl` keine Mehrzahl, sondern die Form beim weiblichen Nomen
+         (plBeschriftung() in js/kern.js). Die bleibt; ohne istZahlwort() gilt `pl` als Mehrzahl.
+       Die Art der Mehrzahl (19.10.2026: „bei den plural vokabeln sollte noch irgendwie gekennzeichnet
+       werden ob sie regelmässig sind oder unregelmässig") steht weiter auf der Mehrzahlkarte selbst,
+       vorne in der Herkunftszeile (kapitelBeschriftung() in js/kern.js). Vom 14. bis 20.10.2026 stand
+       sie hier in der Zeile „Plural · …" der Einzahlkarte; die Zeile „Klingt wie" ist seit dem
+       15.10.2026 weg („dieses klingt wie ist quatsch, das soll raus").
+       Bewacht von test-plural-karte.mjs (L1 bis L8). */
+    if (w.istPlural && w.sgAr) forms.push({label:'Singular', value:formenAnzeige(w.sgAr)});
+    if (w.pl && typeof istZahlwort === 'function' && istZahlwort(w))
+      forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), value:formenAnzeige(w.pl)});
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});
-    if (w.femPl) forms.push({label:'Fem. Pl.', value:formenAnzeige(w.femPl)});
   }
   /* ⚠️ Die arabische Form steht in einem EIGENEN inline-Element, nicht als
      nackter Text im Chip. Der Chip selbst ist `display:inline-flex` (er stellt

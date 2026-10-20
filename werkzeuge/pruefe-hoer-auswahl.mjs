@@ -16,9 +16,25 @@
  * seit dem 07.09.2026 „wie eigene" mit. Seit v584 fragt der Hörmodus dieselbe
  * Funktion wie die Kartei (passtZurAuswahl) und nimmt jedes solche Wort dazu.
  *
+ * ⛔⛔ SEIT DEM 20.10.2026 DIE GRENZE DAZU — Elias, mit einem Bild der Hörfrage
+ * „schmerzhaft" (alīm, „Koran häufigste"):
+ *
+ *   „die vokabel hab ich noch nie gesehen. du sollst sichergehen, dass ich
+ *   wirklich nur die vokabeln dran genommen werden auch an plurals die ich bereits
+ *   kenne oder zumindest mal gesehen habe. beim hören sind einige diesbezüglich
+ *   falsch"
+ *
+ * Gemessen mit seinem Stand (05:15): 351 von 615 Hörwörtern hatte er nie auf
+ * einer Lernkarte. Was „gesehen" heißt, sagt schonGesehen() in js/kern.js
+ * (bewertet oder über Box 1); es wird geschnitten, nicht nachgebaut.
+ *
  * Bewacht wird SEIN SATZ als Wirkung, nicht die Zeile:
- *   1. Jedes Wort, das die Kartei abfragt und eine Bedeutung hat, steht im
- *      Hörvorrat — in einer Welt MIT und einer OHNE Kapitel-Einengung.
+ *   1. Jedes Wort, das die Kartei abfragt, eine Bedeutung hat UND das er schon
+ *      gesehen hat, steht im Hörvorrat — in einer Welt MIT und einer OHNE
+ *      Kapitel-Einengung.
+ *   4. Kein Wort, das er nie gesehen hat, steht im Hörvorrat (20.10.2026) —
+ *      weder ein neues aus Kapitel 1 (Box 1, 0 richtig, 0 falsch) noch eins
+ *      ganz ohne Eintrag im Fortschritt.
  *   2. Es ist eine VEREINIGUNG: was ohne die neue Zeile im Hörvorrat stand,
  *      steht weiter darin — auch ein Fachbegriff, den die Kartei auslässt, und
  *      ein Wort, das er als „kenne ich schon" markiert hat (es dient als
@@ -75,7 +91,7 @@ function funktion(quelle, name){
 const TEILE = {};
 for (const [quelle, datei, namen] of [
   [HOEREN, 'js/hoeren.js', ['hoerbareVokabeln']],
-  [KERN, 'js/kern.js', ['istBekannt', 'bekannteVokabeln', 'fachbegriffFolgtRegel', 'passtZurAuswahl']],
+  [KERN, 'js/kern.js', ['istBekannt', 'bekannteVokabeln', 'fachbegriffFolgtRegel', 'passtZurAuswahl', 'schonGesehen']],
   [BUECHER, 'js/buecher.js', ['aktiveBuecher', 'kapitelAuswahl', 'irgendwoEingeengt', 'buchVokabeln']],
 ]) for (const n of namen){
   const f = funktion(quelle, n);
@@ -104,6 +120,13 @@ const WOERTER = [
 ];
 const EINZELN = ['m1-24', 'm1-24-leer', 'm2-5', 'by-6'];
 const KENNT = ['k-1'];
+/* Seit 20.10.2026 der Fortschritt: gesehen ist, was bewertet ist oder über Box 1 steht — abwechselnd
+   beides, damit jede Hälfte von schonGesehen() trägt. NIE gesehen: m1-1-6 (Box 1, 0 richtig, 0 falsch,
+   so legt initProgress() jedes neue Wort an) und by-1 (gar kein Eintrag). */
+const NIE = ['m1-1-6', 'by-1'];
+const FORTSCHRITT = Object.fromEntries(WOERTER.filter(w => !NIE.includes(w.id))
+  .map((w, i) => [w.id, i % 2 ? { box: 2, correct: 0, wrong: 0 } : { box: 1, correct: 1, wrong: 0 }]));
+FORTSCHRITT['m1-1-6'] = { box: 1, correct: 0, wrong: 0 };
 const WELTEN = [
   { name: 'mit Einengung (Madina 1: Kapitel 1–2, Bayna Yadayk 1: Kapitel 1, Eigene an)',
     settings: { buecher: { 'madina-1': [1, 2], 'bayna-yadayk-1': [1] }, eigeneGewaehlt: true },
@@ -124,6 +147,7 @@ function lauf(hoerQuelle, settings){
   vm.runInContext(
     'var SETTINGS = ' + JSON.stringify(settings) + ';\n'
     + 'var VOCAB_DATA = ' + JSON.stringify(WOERTER) + ';\n'
+    + 'var PROGRESS = ' + JSON.stringify(FORTSCHRITT) + ';\n' + TEILE.schonGesehen + '\n'
     + 'var LERNBESTAND_IDS = new Set();\nvar FREIGESCHALTET = {};\n'
     + 'var GRAMMAR_RULES = [{ id: "r-gestrichen", nichtAufKarteikarten: true }];\n'
     + 'const HOER_ANTWORTEN = ' + ANTWORTEN + ';\n'
@@ -135,7 +159,8 @@ function lauf(hoerQuelle, settings){
        TEILE.istBekannt, TEILE.bekannteVokabeln, TEILE.fachbegriffFolgtRegel, TEILE.passtZurAuswahl, hoerQuelle].join('\n')
     + '\n;globalThis.__E = JSON.stringify({'
     + ' hoer: hoerbareVokabeln().map(w => String(w.id)),'
-    + ' karteiMit: VOCAB_DATA.filter(w => passtZurAuswahl(w) && w.ar && w.de && String(w.de).trim().length > 1).map(w => String(w.id)) });',
+    + ' karteiMit: VOCAB_DATA.filter(w => passtZurAuswahl(w) && w.ar && w.de && String(w.de).trim().length > 1 && schonGesehen(w)).map(w => String(w.id)),'
+    + ' karteiNeu: VOCAB_DATA.filter(w => passtZurAuswahl(w) && !schonGesehen(w)).map(w => String(w.id)) });',
     ctx, { filename: 'Welt für hoerbareVokabeln()' });
   return JSON.parse(ctx.__E);
 }
@@ -160,9 +185,13 @@ function befunde(hoerQuelle){
     for (const id of welt.bleiben) if (!hoer.has(id)) raus.push(welt.name + ': ' + id + ' fehlt im Hörmodus, stand aber vorher darin');
     const offen = welt.draussen.filter(id => hoer.has(id));
     if (offen.length) raus.push(welt.name + ': ' + offen.join(', ') + ' im Hörmodus, obwohl weder in der Kartei noch vorher darin');
+    const neu = NIE.filter(id => hoer.has(id));
+    if (neu.length) raus.push(welt.name + ': ' + neu.join(', ') + ' im Hörmodus, obwohl er sie nie gesehen hat (Elias, 20.10.2026: „die vokabel hab ich noch nie gesehen")');
   }
   return raus;
 }
+/* Ohne die Grenze vom 20.10.2026 — für die Eichung und den Störtest. */
+const OHNE_GRENZE = [' && schonGesehen(w);', ';'];
 
 console.log('pruefe-hoer-auswahl — Elias, 23.09.2026: „ja, alle vokabeln die abgefragt werden soll er haben"\n');
 
@@ -179,7 +208,19 @@ if (!TEILE.hoerbareVokabeln.includes(OHNE_ZEILE[0])){
   }
 }
 
-/* 1.–3. Die echte Fassung. */
+/* 0b. Die Welt eichen für den 20.10.: ohne die Grenze stehen die nie gesehenen Wörter im Hörmodus. */
+if (!TEILE.hoerbareVokabeln.includes(OHNE_GRENZE[0])){
+  schlecht('„' + OHNE_GRENZE[0] + '" steht nicht mehr in hoerbareVokabeln() — Prüfer und Störtest an den Umbau anpassen');
+} else {
+  for (const welt of WELTEN){
+    const e = lauf(TEILE.hoerbareVokabeln.split(OHNE_GRENZE[0]).join(OHNE_GRENZE[1]), welt.settings);
+    const zeigt = NIE.filter(id => e.hoer.includes(id) && e.karteiNeu.includes(id));
+    if (zeigt.length === NIE.length) gut('Welt geeicht, ' + welt.name + ': ohne die Grenze stehen ' + zeigt.join(', ') + ' im Hörmodus — der Fehler vom 20.10. ist nachgestellt');
+    else schlecht('Welt ' + welt.name + ' zeigt den Fehler vom 20.10. nicht (erwartet im Hörmodus: ' + NIE.join(', ') + ', gemessen: ' + (zeigt.join(', ') || 'keins') + ') — dann prüft sie nichts');
+  }
+}
+
+/* 1.–4. Die echte Fassung. */
 const echt = befunde(TEILE.hoerbareVokabeln);
 if (echt.length) echt.forEach(schlecht);
 else {
@@ -195,6 +236,8 @@ const STOERUNGEN = [
   ['die Vereinigung entfernt', OHNE_ZEILE[0], OHNE_ZEILE[1]],
   ['über bekannteVokabeln() statt über VOCAB_DATA', 'for (const w of VOCAB_DATA)', 'for (const w of bekannteVokabeln())'],
   ['Ersetzung statt Vereinigung', 'const da = new Set(pool.map(w => String(w.id)));', 'const da = new Set(); pool = [];'],
+  ['ohne die Grenze vom 20.10.2026 (auch nie gesehene Wörter)', OHNE_GRENZE[0], OHNE_GRENZE[1]],
+  ['die Grenze nur für die Kapitel-Wörter, nicht für die Vereinigung', 'if (!da.has(String(w.id)) && brauchbar(w) && passtZurAuswahl(w))', 'if (!da.has(String(w.id)) && w.ar && w.de && passtZurAuswahl(w))'],
 ];
 for (const [name, alt, neu] of STOERUNGEN){
   if (!TEILE.hoerbareVokabeln.includes(alt)){ schlecht('Störtest „' + name + '": „' + alt + '" steht nicht in hoerbareVokabeln() — Störtest an den Umbau anpassen'); continue; }
@@ -203,5 +246,5 @@ for (const [name, alt, neu] of STOERUNGEN){
   else schlecht('Störtest „' + name + '" bleibt grün — der Prüfer sieht diesen Fehler nicht');
 }
 
-console.log('\n' + (fehler ? '⛔ ' + fehler + ' Befund(e) — Exit 1' : '✅ grün — der Hörmodus hat jedes Wort, das die Kartei abfragt'));
+console.log('\n' + (fehler ? '⛔ ' + fehler + ' Befund(e) — Exit 1' : '✅ grün — der Hörmodus hat jedes Wort, das die Kartei abfragt und das er schon gesehen hat, und keins, das er nie gesehen hat'));
 process.exit(fehler ? 1 : 0);

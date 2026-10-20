@@ -5,8 +5,10 @@
  * Elias, 14.10.2026: „ich glaube wir brauchen einen prüfer auch für plural dann
  * jetzt, passe die routinen warhscheinlich an oder" — kurz nachdem die Mehrzahl
  * nicht mehr hinter Schaltern steht (v685, sein Satz: „plural soll nciht hinter
- * schaltern versteckt sein"). Seitdem steht der Formen-Block immer auf der
- * Lernkarte, ab Kasten 4 verlangt das zweite Tippfeld bei regelmäßiger Mehrzahl
+ * schaltern versteckt sein"). Seitdem hat der Formen-Block der Lernkarte keinen
+ * Schalter; seit 20.10.2026 steht die Mehrzahl dort aber nur noch als eigene
+ * Mehrzahlkarte und auf der Infokarte, nicht mehr auf der Einzahlkarte (Elias:
+ * „die plurale sollen beim singular nicht angezeigt werden"). Ab Kasten 4 verlangt das zweite Tippfeld bei regelmäßiger Mehrzahl
  * die Form (seit 20.10.2026 nur mit seinem Schalter „Mehrzahl mit eintippen",
  * Voreinstellung aus), und die acht weit entfernten (PLURAL_FERN in js/kern.js) haben immer
  * eine eigene Karte. Ein falsches Feld `pl` landet also sofort bei ihm.
