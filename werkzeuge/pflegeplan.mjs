@@ -898,6 +898,21 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-tippen-tablet.mjs läuft im Sammellauf: fährt istTablet(), zeigeTippTasten(), tippTaste() und renderTippfeld() aus dem Quelltext gegen ein Doppel der Seite (Handy, Tablet hoch und quer, PC), prüft die 36 Tasten gegen das Alphabet und die Verdrahtung in index.html; sechs Störtests' },
   },
+  /* 20.10.2026 (v704), innerhalb von js/kern.js und deshalb von Hand hier: die Dualformen
+     sind bereit, aber aus. Elias: „du sollst es erstmal bereit machen aber ich will erstmal
+     mich nur auf singular und plural konzentrieren". */
+  {
+    funktion: 'Dualformen bereit, aber aus (dualPruefen, baueDualKarte, dualKartenStufe)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Formen werden aus der Einzahl nach der Regel seines Buchs gebildet (Schlüssel 2, L20, S. 89); ein neues Wort bekommt seine Form von selbst, unsichere Endungen bekommen keine. Gezeigt wird nichts, solange dualKartenStufe() false sagt.' },
+    eingaben: { nein: 'Er trägt nichts ein; kein Speicherschlüssel.' },
+    /* ⛔ Still kaputtgehen kann zweierlei: eine falsche Form (niemand liest gegen, bis er
+       einschaltet) und eine Dualkarte, die ungefragt in Runde oder Liste auftaucht.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-dual.mjs läuft im Sammellauf: die Beispiele des Buchs (kitābayni, ghurfatāni, mudarrisāni …) Zeichen für Zeichen, 14 unsichere Fälle ohne Form, dualKartenStufe() false und kein Aufruf von baueDualKarte()/dualFormen() außerhalb von js/kern.js; zehn Störtests' },
+  },
   /* 20.10.2026 (v703), innerhalb von js/wurzel.js, js/uebung.js und js/saetze.js und
      deshalb von Hand hier: Wurzeltraining, Übungen und Satzmodus nehmen nur Karten dran,
      die er schon gesehen hat. Elias: „du sollst sichergehen, dass ich wirklich nur die

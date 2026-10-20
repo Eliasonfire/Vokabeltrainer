@@ -1258,6 +1258,98 @@ function bauePluralKarte(w){
   };
 }
 
+/* ⭐⭐ DUAL — BEREIT, ABER AUS (20.10.2026)
+   Elias, 01:53: „es wäre auch wichtig, dass ich für alle wörter die dual formen habe." und 01:55:
+   „du sollst es erstmal bereit machen aber ich will erstmal mich nur auf singular und plural
+   konzentrieren". Deshalb gibt es hier die Formen und die Karte, aber dualKartenStufe() sagt
+   false, und NICHTS ruft baueDualKarte() auf: keine Dualkarte in Runde, Liste, Suche oder
+   Hörmodus, bis er „jetzt" sagt. Einschalten heißt dann: dualKartenStufe() → true und die Karten
+   neben wendePluralKartenAn() einhängen (Fortschritt, Lerngruppe, Hörmodus wie bei der Mehrzahl).
+
+   ⛔ DIE REGEL STEHT IN SEINEM BUCH, nicht in meinem Kopf: Madina-Schlüssel Band 2, Lektion 20,
+   PDF-Seite 89 (gerendert und gelesen am 20.10.2026): „Die marfūʿ Endung im Dual ist (-āni), und die
+   manṣūb und majrūr Endung ist (-aini)", mit riyālāni/riyālayni, kitābayni, yawmayni,
+   mudarrisāni jadīdāni, ghurfatāni kabīratāni (die ta marbuta wird zum ta). Buch 1 bringt den
+   Dual in Lektion 18 (Kapitelname oben).
+   ⛔ NUR DER SICHERE FALL. Gebildet wird nur aus der unbestimmten Form auf -un (Tanwin Damma),
+   ohne Artikel, ein Wort, Nomen oder Adjektiv. KEINE Form, wo die Schreibung am Ende kippt — die
+   rate ich nicht: Alif maqṣūra (Endung ā), Alif oder Hamza am Ende (mamdūda und Hamza-Schreibung),
+   Manqūṣ (Tanwin Kasra), Diptota ohne Tanwin, ab und akh (abawāni, akhawāni) und die Zahlwörter.
+   MEINE Entscheidungen: die Schadda am letzten Buchstaben bleibt (ḥaqqun → ḥaqqāni); die deutsche
+   Zeile heißt bei einem Nomen „zwei" + Mehrzahl (deMehrzahl), sonst „… (Dual)".
+   Bewacht von test-dual.mjs. */
+const DUAL_MARKE = '#du';
+const DUAL_Z = c => String.fromCodePoint(c);
+const DUAL_ZEICHEN = new RegExp('[' + DUAL_Z(0x64B) + '-' + DUAL_Z(0x652) + DUAL_Z(0x670) + ']');
+/* Gerüst ohne Zeichen: ab und akh mit jeder Hamza-Schreibung. */
+const DUAL_UNSICHER = [[0x623, 0x628], [0x623, 0x62E], [0x627, 0x628], [0x627, 0x62E]].map(t => t.map(DUAL_Z).join(''));
+function istDualKarte(id){
+  return typeof id === 'string' && id.endsWith(DUAL_MARKE);
+}
+function dualKartenStufe(){
+  /* „ich will erstmal mich nur auf singular und plural konzentrieren" (20.10.2026, 01:55). */
+  return false;
+}
+/* → { nom, gen } oder { grund }. Nur lesen, nichts schreiben. */
+function dualPruefen(w){
+  if (!w) return { grund: 'keine Karte' };
+  const id = String(w.id || '');
+  if (w.istPlural || id.endsWith('#pl') || istDualKarte(id)) return { grund: 'Mehrzahl- oder Dualkarte' };
+  /* MEINE Entscheidung: die Fachbegriffe seines Lehrers (gram-…) sind Namen für Grammatik, keine
+     zählbaren Dinge — gemessen am 20.10.2026 stand sonst „zwei Genitivverbindungen" in der Liste. */
+  if (/^gram-/.test(id)) return { grund: 'Fachbegriff' };
+  if (!['noun', 'adjective'].includes(w.type)) return { grund: 'kein Nomen oder Adjektiv' };
+  if (typeof istZahlwort === 'function' && istZahlwort(w)) return { grund: 'Zahlwort' };
+  const sg = String(w.sg || w.ar || '').normalize('NFC').trim();
+  if (!sg || /[\s\/|]/.test(sg)) return { grund: 'mehrere Wörter oder Formen' };
+  let i = sg.length;
+  while (i > 0 && DUAL_ZEICHEN.test(sg[i - 1])) i--;
+  const basis = sg.slice(0, i), zeichen = sg.slice(i);
+  /* Ohne Tanwin auch jede Form mit Artikel (die trägt nie Tanwin) — eine eigene Prüfung auf ال
+     schlösse dagegen Nomen wie iltizām aus, die selbst mit Alif und Lam beginnen. */
+  if (!zeichen.includes(DUAL_Z(0x64C))) return { grund: 'ohne Tanwin Damma (Artikel, Manqūṣ, Diptoton, Endung ā)' };
+  const geruest = basis.replace(new RegExp(DUAL_ZEICHEN.source, 'g'), '');
+  if (DUAL_UNSICHER.includes(geruest)) return { grund: 'ab oder akh' };
+  const letzter = geruest.slice(-1);
+  if ([0x627, 0x649, 0x621, 0x623, 0x625, 0x624, 0x626, 0x622].map(DUAL_Z).includes(letzter)) return { grund: 'Alif oder Hamza am Ende' };
+  let stamm = basis;
+  if (letzter === DUAL_Z(0x629)) stamm = basis.slice(0, -1) + DUAL_Z(0x62A);
+  if (zeichen.includes(DUAL_Z(0x651))) stamm += DUAL_Z(0x651);
+  const fatha = DUAL_Z(0x64E);
+  return {
+    nom: (stamm + fatha + DUAL_Z(0x627) + DUAL_Z(0x646) + DUAL_Z(0x650)).normalize('NFC'),
+    gen: (stamm + fatha + DUAL_Z(0x64A) + DUAL_Z(0x652) + DUAL_Z(0x646) + DUAL_Z(0x650)).normalize('NFC')
+  };
+}
+function dualFormen(w){
+  const r = dualPruefen(w);
+  return r && r.nom ? r : null;
+}
+function baueDualKarte(w){
+  const f = dualFormen(w);
+  if (!f) return null;
+  const de = String(w.de || '').trim();
+  /* ⚠️ Bewusst anders geschrieben als die gleichen Zeilen in bauePluralKarte(): Störtests in
+     pruefe-de-mehrzahl.mjs und pruefe-einzeln-fremdbuch.mjs suchen jene Zeilen als EINZIGE Stelle. */
+  const deutschPlural = (typeof deMehrzahl === 'function') ? deMehrzahl(w) : null;
+  const karte = {
+    id: w.id + DUAL_MARKE,
+    ar: f.nom,
+    arGen: f.gen,
+    de: (/^[A-ZÄÖÜ]/.test(de) && deutschPlural) ? 'zwei ' + deutschPlural : de + ' (Dual)',
+    book: w.book,
+    chapter: w.chapter,
+    type: w.type,
+    gender: w.gender,
+    root: w.root,
+    istDual: true,
+    dualVon: w.id,
+    sgAr: w.ar
+  };
+  if (w.einzelnGeladen === true) karte.einzelnGeladen = true;
+  return karte;
+}
+
 /* Schaltet die Pluralkarten an oder aus. Wird beim Start EINMAL aufgerufen und
    danach bei jedem Umlegen des Schalters.
 
