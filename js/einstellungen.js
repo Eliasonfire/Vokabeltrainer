@@ -3,8 +3,9 @@
    teilt sich mit den uebrigen js/-Dateien den globalen Namensraum. */
 /* ===================== SETTINGS ===================== */
 function renderSettings(){
-  /* „Pluralformen anzeigen", „Mehrzahl mit eintippen" und „Nur weit entfernte Mehrzahl" gibt es
-     seit 14.10.2026 nicht mehr. Elias: „plural soll nciht hinter schaltern versteckt sein". */
+  /* „Pluralformen anzeigen" und „Nur weit entfernte Mehrzahl" gibt es seit 14.10.2026 nicht mehr.
+     Elias: „plural soll nciht hinter schaltern versteckt sein". „Mehrzahl mit eintippen" ist seit
+     20.10.2026 wieder da, mit neuem Schlüssel und AUS (der Klick weiter unten). */
   /* „Plural als eigene Karten" ist seit 19.10.2026 ebenfalls weg — alle Mehrzahlen sind eigene Karten. */
   document.getElementById('toggleVerbFormen').classList.toggle('on', !!SETTINGS.showVerbFormen);
   document.getElementById('toggleQuran').classList.toggle('on', !!SETTINGS.showQuran);
@@ -14,6 +15,8 @@ function renderSettings(){
   document.getElementById('directionSelect').value = SETTINGS.direction || 'ar-de';
   zeigeRichtungHinweis();
   document.getElementById('toggleTippen').classList.toggle('on', !!SETTINGS.tippenAbBox4);
+  /* An ist er nur nach SEINEM Klick (=== true): ein fehlender Eintrag heißt aus. */
+  { const t = document.getElementById('toggleMehrzahlEintippen'); if (t) t.classList.toggle('on', SETTINGS.mehrzahlEintippen === true); }
   { const t = document.getElementById('toggleVerbKurzzeilen'); if (t) t.classList.toggle('on', !!SETTINGS.verbKurzzeilen); }
   /* Wurzelmodus. Die Ausrichtung ist standardmaessig AN, deshalb wird auf
      `!== false` geprueft und nicht auf Wahrheit - ein fehlender Eintrag ist
@@ -518,9 +521,18 @@ document.getElementById('toggleTippen').addEventListener('click', ()=>{
      in js/lernen.js. [[widerspruch_liegt_in_der_beschriftung]] */
   if (SETTINGS.tippenAbBox4) toast('Ab Box 4: Fragt die Karte auf Deutsch, schreibst du das arabische Wort. Mit „Überspringen".');
 });
-/* „Mehrzahl mit eintippen" (13.10.2026) gibt es seit 14.10.2026 nicht mehr: das zweite Feld steht
-   ab Box 4 bei regelmäßiger Mehrzahl immer da (tippPluralDran() in js/lernen.js). Elias: „plural
-   soll nciht hinter schaltern versteckt sein". */
+/* „Mehrzahl mit eintippen": seit 20.10.2026 wieder da, Voreinstellung AUS. Elias: „und ich will
+   erstmal bei ab box 4 die plural einschreiben erstmal aus machen weil ich die plurals noch gar
+   nicht kenne, am besten eine einstellung die dierekt auf aus ist". Vom 14. bis zum 20.10.2026
+   stand das zweite Feld ohne Schalter da (Elias, 14.10.2026: „plural soll nciht hinter schaltern
+   versteckt sein"). Die Wirkung steht in tippPluralDran() in js/lernen.js.
+   ⛔ Eigener, NEUER Schlüssel mehrzahlEintippen: der alte tippenPlural (13.10.2026) steht in seinem
+   Stand noch auf true. Kein Hinweis beim Einschalten — der Text unter dem Schalter sagt, was er tut. */
+document.getElementById('toggleMehrzahlEintippen').addEventListener('click', ()=>{
+  SETTINGS.mehrzahlEintippen = SETTINGS.mehrzahlEintippen !== true;
+  saveSettings();
+  renderSettings();
+});
 /* Satzübung 17: kurze Zeilen für Formen ohne Satz (13.10.2026). Voreinstellung AUS — er
    schaltet selbst ein. uebungenAufbauen() in js/uebung.js liest den Schalter bei jedem Aufbau
    und baut die Liste neu, wenn er sich geändert hat. */

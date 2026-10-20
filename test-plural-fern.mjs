@@ -130,7 +130,12 @@ function pruefe(q){
     if (!erste) f.push('4: ' + id + '#pl hat keine eigene Eselsbrücke');
     else if (!erste.includes(paar)) f.push('4: die erste Eselsbrücke von ' + id + '#pl nennt das Paar der Karte nicht');
   }
-  /* 5 */
+  /* 5 — ⚠️ Eine Ausnahme ist gewollt: der Schalter „Mehrzahl mit eintippen" für das zweite Tippfeld
+     (toggleMehrzahlEintippen, SETTINGS.mehrzahlEintippen, seit 20.10.2026, Voreinstellung aus).
+     Elias: „und ich will erstmal bei ab box 4 die plural einschreiben erstmal aus machen weil ich
+     die plurals noch gar nicht kenne, am besten eine einstellung die dierekt auf aus ist". Bewacht
+     von test-plural-karte.mjs (T1, T10). Die alten Namen hier bleiben verboten — tippenPlural steht
+     in seinem Stand noch auf true. */
   const zaehle = (t, s) => t.split(s).length - 1;
   for (const id of ['togglePluralFern', 'toggleShowPlural', 'toggleTippenPlural', 'togglePluralKarten'])
     if (q.html.includes('id="' + id + '"')) f.push('5: der Schalter ' + id + ' steht wieder in index.html');

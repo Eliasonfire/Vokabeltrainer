@@ -7,7 +7,8 @@
  * nicht mehr hinter Schaltern steht (v685, sein Satz: „plural soll nciht hinter
  * schaltern versteckt sein"). Seitdem steht der Formen-Block immer auf der
  * Lernkarte, ab Kasten 4 verlangt das zweite Tippfeld bei regelmäßiger Mehrzahl
- * die Form, und die acht weit entfernten (PLURAL_FERN in js/kern.js) haben immer
+ * die Form (seit 20.10.2026 nur mit seinem Schalter „Mehrzahl mit eintippen",
+ * Voreinstellung aus), und die acht weit entfernten (PLURAL_FERN in js/kern.js) haben immer
  * eine eigene Karte. Ein falsches Feld `pl` landet also sofort bei ihm.
  *
  * GEPRÜFT WIRD SEIN BESTAND, so wie die App ihn baut: vocab-data.js, die Kapitel

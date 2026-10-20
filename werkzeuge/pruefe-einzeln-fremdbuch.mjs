@@ -8,7 +8,7 @@
  * je mit einem Bild aus seinem Buch:
  *
  *   01:56  „ich brauche daifun also schwach als vokabel"
- *   02:07  „spielplatz also al mulab brauche ich auch als vokabel."
+ *   02:09  „spielplatz also al mulab brauche ich auch als vokabel."
  *
  * Beide Karten gibt es — ḍaʿīf (46549) in Bayna Yadayk 2, Kapitel 2, malʿab (50339) in
  * Madina 2, Kapitel 32 —, aber keines der beiden Bücher hat er gewählt. Die App lud bis

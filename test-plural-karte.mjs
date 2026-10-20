@@ -12,8 +12,13 @@
  *   „man könnte auch ab box 4 den plural verlangen aber auch nur da wo es regelmässig ist".
  *
  * Die AUSNAHMEN sind der Kern:
- *   - Solange ER nichts einschaltet, ändert sich nichts: ohne „Pluralformen anzeigen" keine
- *     Zeile auf der Rückseite, ohne „Mehrzahl mit eintippen" kein zweites Feld.
+ *   - Das zweite Feld kommt nur, wenn ER „Mehrzahl mit eintippen" einschaltet. Der Schalter steht
+ *     von Anfang an AUS — Elias, 20.10.2026: „und ich will erstmal bei ab box 4 die plural
+ *     einschreiben erstmal aus machen weil ich die plurals noch gar nicht kenne, am besten eine
+ *     einstellung die dierekt auf aus ist". Der alte Schlüssel tippenPlural, der in seinem Stand
+ *     noch auf true steht, öffnet es NICHT (T1, T10). Die Formen auf der Rückseite stehen
+ *     dagegen ohne Schalter da (L1; Elias, 14.10.2026: „plural soll nciht hinter schaltern
+ *     versteckt sein").
  *   - „aber auch nur da wo es regelmässig ist": das zweite Feld steht nie bei einer
  *     gebrochenen Mehrzahl, und nie ohne das erste Feld (Box 4, die Karte fragt auf Deutsch).
  *   - Was regelmäßig ist, sagt EINE Stelle: uebPluralArt() in js/uebung.js. Fehlt sie, gilt
@@ -26,7 +31,8 @@
  *   M  das Muster (pluralMuster): Familien, Kasusendung, schwache Buchstaben, Schadda
  *   P  die Partner (pluralKlangPartner): Reihenfolge nach Kasten, Ausnahmen
  *   L  die Rückseite der Lernkarte
- *   T  das zweite Tippfeld und die Tablet-Tasten
+ *   T  das zweite Tippfeld (hinter seinem Schalter „Mehrzahl mit eintippen", Vorgabe AUS) und
+ *      die Tablet-Tasten
  *   H  die Kartenhöhe: reicht die Vorderseite für den Tippkasten nicht, wächst die Karte
  *      (tippKarteHoehe() in js/lernen.js — MEINE Regel, Claude, nicht von Elias bestellt; sie
  *      behebt den gemessenen Überlauf am Tablet, den das zweite Feld vergrößert hätte)
@@ -172,7 +178,14 @@ function tippWelt(kern, lernen, uebung, opt){
   Object.defineProperty(ctx, 'navigator', { get: () => zustand.geraet[0], enumerable: true });
   Object.defineProperty(ctx, 'screen', { get: () => zustand.geraet[1], enumerable: true });
   vm.createContext(ctx);
-  vm.runInContext('let SETTINGS = ' + JSON.stringify(opt.einstellungen) + '; let PROGRESS = ' + JSON.stringify(opt.fortschritt)
+  /* Mit `gespeichert` kommen die Einstellungen so zustande wie beim Start der App: die Vorgabe aus
+     js/kern.js (let SETTINGS = Object.assign(…)), darüber der gespeicherte Stand aus vt_settings.
+     Daran misst T10, ob die Vorgabe das zweite Feld einschaltet. */
+  const einstellungen = opt.gespeichert !== undefined
+    ? 'const LS = { get: (k, d) => k === "vt_settings" ? ' + JSON.stringify(opt.gespeichert) + ' : d }; '
+      + schneideBis(kern, 'let SETTINGS = Object.assign(', "LS.get('vt_settings', {})\n);")
+    : 'let SETTINGS = ' + JSON.stringify(opt.einstellungen) + ';';
+  vm.runInContext(einstellungen + ' let PROGRESS = ' + JSON.stringify(opt.fortschritt)
     + '; let SESSION = { words: ' + JSON.stringify(opt.karten) + ', idx: 0, dirs: [], fertig: false }; function bekannteVokabeln(){ return SESSION.words; }'
     /* Für Fall H6: ein Zähler an der Stelle der Höhenregel — gezählt wird, ob renderTippfeld() sie ruft. */
     + (opt.zaehleHoehe ? ' let __hoehe = 0; function tippKarteHoehe(){ __hoehe++; }' : ''), ctx);
@@ -229,8 +242,12 @@ const HOEHE_TABLET = { basis: 458, polster: 28, teile: [MARKEN, { h: 77 }, { h: 
 
 const TIPP_KARTEN = [KARTEN[7], KARTEN[8], KARTEN[0], KARTEN[9]];          /* Lehrer (regelmäßig m), Auto (regelmäßig f), Mann (gebrochen), fünf (Zahlwort) */
 const TIPP_STAND = { 8: { box: 5 }, 9: { box: 4 }, 1: { box: 6 }, 10: { box: 6 } };
-const SEIN = { direction: 'de-ar', tippenAbBox4: true };                    /* so steht es bei ihm (13.10.2026); seit 14.10.2026 kommt dort das zweite Feld ohne eigenen Schalter */
-const BEIDE = { direction: 'de-ar', tippenAbBox4: true, tippenPlural: true };
+/* So steht es bei ihm (KV gelesen 20.10.2026, 01:58): „Ab Box 4 eintippen" an, und der ALTE Schlüssel
+   tippenPlural (vom ersten Schalter „Mehrzahl mit eintippen", 13.10.2026) steht noch auf true.
+   Seine Richtung ist „box" — ab Kasten 3 fragt die Karte per Zufall auf Deutsch oder Arabisch; hier
+   steht „de-ar", also die Hälfte der Fälle, in der das erste Feld dasteht. */
+const SEIN = { direction: 'de-ar', tippenAbBox4: true, tippenPlural: true };
+const BEIDE = { direction: 'de-ar', tippenAbBox4: true, mehrzahlEintippen: true };
 
 /* ---------- Die Fälle ---------- */
 function laufe(kern, lernen, uebung, kateg = KATEG){
@@ -348,10 +365,14 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
   });
 
   const T = (einst, geraet) => tippWelt(kern, lernen, uebung, { einstellungen: einst, fortschritt: TIPP_STAND, karten: TIPP_KARTEN, geraet });
-  fall('T1 Bei SEINEN Einstellungen (nur „Ab Box 4 eintippen") steht bei regelmäßiger Mehrzahl das zweite Feld da — ohne eigenen Schalter (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")', () => {
+  /* Elias, 20.10.2026: „und ich will erstmal bei ab box 4 die plural einschreiben erstmal aus machen
+     weil ich die plurals noch gar nicht kenne, am besten eine einstellung die dierekt auf aus ist". */
+  fall('T1 Bei SEINEN Einstellungen („Ab Box 4 eintippen" an, der alte Schlüssel tippenPlural true, „Mehrzahl mit eintippen" nie geklickt) steht nur das erste Feld da — und es urteilt allein über das Wort (Elias, 20.10.2026)', () => {
     const u = T(SEIN); u.zeige(0);
     if (u.els.cardTippBox.classList.contains('hidden')) return 'das erste Feld fehlt — der Fall misst nichts';
-    return u.els.cardTippPlural.classList.contains('hidden') ? 'das zweite Feld fehlt bei seinen Einstellungen' : true;
+    if (!u.els.cardTippPlural.classList.contains('hidden')) return 'das zweite Feld steht da, obwohl er „Mehrzahl mit eintippen" nie eingeschaltet hat';
+    const r = u.pruefe(0, ar('mdrs'), ar('ktb'));
+    return r === 'tipp-antwort richtig | Richtig — umdrehen und einordnen.' ? true : 'ohne seinen Schalter urteilt das Feld auch über die Mehrzahl: ' + r;
   });
   fall('T2 Ab Box 4, auf Deutsch gefragt und bei regelmäßiger Mehrzahl steht das zweite Feld da — leer', () => {
     const u = T(BEIDE); u.els.cardTippPlural.value = 'alt';
@@ -372,9 +393,9 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
   fall('T4 Nie ohne das erste Feld: unter Box 4, auf Arabisch gefragt oder ohne „Ab Box 4 eintippen" bleibt der ganze Kasten zu', () => {
     const box3 = tippWelt(kern, lernen, uebung, { einstellungen: BEIDE, fortschritt: { 8: { box: 3 } }, karten: TIPP_KARTEN }); box3.zeige(0);
     if (!box3.els.cardTippBox.classList.contains('hidden')) return 'Box 3 bekommt den Kasten';
-    const arDe = T({ direction: 'ar-de', tippenAbBox4: true, tippenPlural: true }); arDe.zeige(0);
+    const arDe = T({ direction: 'ar-de', tippenAbBox4: true, mehrzahlEintippen: true }); arDe.zeige(0);
     if (!arDe.els.cardTippBox.classList.contains('hidden')) return 'auf Arabisch gefragt: der Kasten steht da';
-    const nurPl = T({ direction: 'de-ar', tippenPlural: true }); nurPl.zeige(0);
+    const nurPl = T({ direction: 'de-ar', mehrzahlEintippen: true }); nurPl.zeige(0);
     return nurPl.els.cardTippBox.classList.contains('hidden') ? true : 'der Mehrzahl-Schalter allein öffnet den Kasten';
   });
   fall('T5 „Richtig" erst, wenn Wort UND Mehrzahl stimmen (ohne Vokalzeichen getippt gilt); sonst sagt die Zeile, was fehlt', () => {
@@ -417,6 +438,17 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
     const u = T(BEIDE, TABLET); u.zeige(0);
     u.els.cardTippBox.dataset.ziel = 'cardTippPlural'; u.zeige(1);
     return u.els.cardTippBox.dataset.ziel === 'cardTippEingabe' ? true : 'der Merker bleibt auf dem zweiten Feld stehen: ' + u.els.cardTippBox.dataset.ziel;
+  });
+  /* Die Einstellungen wie beim Start der App: die Vorgabe aus js/kern.js plus der gespeicherte Stand. */
+  const G = gespeichert => tippWelt(kern, lernen, uebung, { gespeichert, fortschritt: TIPP_STAND, karten: TIPP_KARTEN });
+  fall('T10 Die Vorgabe der App lässt das zweite Feld zu — mit nur den zwei nötigen Einstellungen und mit SEINEM gespeicherten Stand; erst sein Klick (mehrzahlEintippen: true) öffnet es (Elias, 20.10.2026: „am besten eine einstellung die dierekt auf aus ist")', () => {
+    const noetig = G({ direction: 'de-ar', tippenAbBox4: true }); noetig.zeige(0);
+    if (noetig.els.cardTippBox.classList.contains('hidden')) return 'das erste Feld fehlt — der Fall misst nichts';
+    if (!noetig.els.cardTippPlural.classList.contains('hidden')) return 'ohne seinen Klick steht das zweite Feld da: die Vorgabe schaltet es ein';
+    const sein = G(SEIN); sein.zeige(0);
+    if (!sein.els.cardTippPlural.classList.contains('hidden')) return 'bei seinem gespeicherten Stand (tippenPlural: true) steht das zweite Feld da';
+    const geklickt = G(Object.assign({}, SEIN, { mehrzahlEintippen: true })); geklickt.zeige(0);
+    return geklickt.els.cardTippPlural.classList.contains('hidden') ? 'nach seinem Klick (mehrzahlEintippen: true) fehlt das zweite Feld' : true;
   });
 
   const H = opt => hoeheWelt(lernen, opt);
@@ -489,10 +521,16 @@ console.log('\n=== V  Verdrahtung ===');
   const hinweis = (feld.match(/placeholder="([^"]*)"/) || ['', ''])[1];
   sag(hinweis.length > 0 && hinweis.length <= 20, 'index.html: der Hinweistext des zweiten Felds ist höchstens 20 Zeichen lang (ein längerer wird am Handy abgeschnitten, dann sehen beide Felder gleich aus)  -> ' + hinweis.length + ' Zeichen');
   sag(!!feld && !feld.includes('inputmode'), 'index.html: das zweite Feld trägt kein festes inputmode (sonst ginge am Handy seine Tastatur nicht auf)');
-  sag(!h.includes('id="toggleTippenPlural"') && !h.includes('id="toggleShowPlural"'), 'index.html: kein Schalter mehr für „Pluralformen anzeigen" und „Mehrzahl mit eintippen" (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")');
-  sag(!/SETTINGS\.(showPlural|tippenPlural)/.test(e + l), 'js/einstellungen.js und js/lernen.js lesen weder SETTINGS.showPlural noch SETTINGS.tippenPlural');
+  sag(!h.includes('id="toggleTippenPlural"') && !h.includes('id="toggleShowPlural"'), 'index.html: kein Schalter mehr für „Pluralformen anzeigen", und keiner unter dem alten Namen toggleTippenPlural (Elias, 14.10.2026: „plural soll nciht hinter schaltern versteckt sein")');
+  sag(!/SETTINGS\.(showPlural|tippenPlural)/.test(e + l), 'js/einstellungen.js und js/lernen.js lesen weder SETTINGS.showPlural noch SETTINGS.tippenPlural (der steht in seinem Stand noch auf true)');
+  /* Der neue Schalter (20.10.2026): steht direkt unter „Ab Box 4 eintippen" — kein anderer Schalter dazwischen. */
+  const tippen = h.indexOf('id="toggleTippen"'), mehrzahl = h.indexOf('id="toggleMehrzahlEintippen"');
+  sag(tippen >= 0 && mehrzahl > tippen && !/id="toggle/.test(h.slice(tippen + 1, mehrzahl)), 'index.html: der Schalter „Mehrzahl mit eintippen" (toggleMehrzahlEintippen) steht direkt unter „Ab Box 4 eintippen" (Elias, 20.10.2026: „am besten eine einstellung die dierekt auf aus ist")');
+  const schreiben = (e + l + k).match(/SETTINGS\.mehrzahlEintippen\s*=[^=]/g) || [];
+  sag(schreiben.length === 1 && e.includes('SETTINGS.mehrzahlEintippen = SETTINGS.mehrzahlEintippen !== true;'), 'js/einstellungen.js: nur sein Klick schreibt SETTINGS.mehrzahlEintippen (gefunden: ' + schreiben.length + '×)');
+  sag(e.includes("t.classList.toggle('on', SETTINGS.mehrzahlEintippen === true)"), 'js/einstellungen.js: der Schalter zeigt „an" nur bei mehrzahlEintippen === true — ein fehlender Eintrag heißt aus');
   const vorgabe = (k.match(/\{ pluralKarten:[^\n]*\}/) || [''])[0];
-  sag(!!vorgabe && !/showPlural|tippenPlural|pluralFern/.test(vorgabe) && !/tippenAbBox4/.test(vorgabe), 'js/kern.js: die Vorgabe kennt keinen Plural-Schalter außer „Plural als eigene Karten", und kein Tipp-Schalter ist an');
+  sag(!!vorgabe && !/showPlural|tippenPlural|pluralFern|mehrzahlEintippen/.test(vorgabe) && !/tippenAbBox4/.test(vorgabe), 'js/kern.js: die Vorgabe kennt keinen Plural-Schalter außer „Plural als eigene Karten", und kein Tipp-Schalter ist an');
   sag(l.includes("f.addEventListener('focus', merke);") && l.includes('kasten.dataset.ziel = id;'), 'js/lernen.js: ein Antippen merkt sich das Feld für die Tablet-Tasten');
   sag(l.includes("pl.addEventListener('click', (e)=>e.stopPropagation());") && l.includes("pl.addEventListener('pointerdown', (e)=>e.stopPropagation());"), 'js/lernen.js: ein Tippen ins zweite Feld dreht die Karte nicht um');
   sag(l.includes("typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w)") && !/function uebPluralArt\(/.test(l + k), 'die Einordnung regelmäßig/gebrochen steht nur in js/uebung.js — Lernkarte und Kern fragen dort');
@@ -587,8 +625,12 @@ const STOER = [
     lernen: q => ersetze(q, '<span class="wf-ar">${escapeHtml(f.value)}</span>', '<span class="wf-ar">${f.value}</span>', 'S12') },
   { name: 'S32 die Zeile „Klingt wie" kommt auf die Karte zurück', muss: ['L3'],
     lernen: q => ersetze(q, "  ).join('');\n\n  renderVerbFormen(w);", "  ).join('') + '<span class=\"wf-klang\"><i class=\"lbl\">Klingt wie</i></span>';\n\n  renderVerbFormen(w);", 'S32') },
-  { name: 'S13 das zweite Feld nur noch mit einem Schalter', muss: ['T1'],
-    lernen: q => ersetze(q, '  return !!(w && w.pl && ', '  return !!(SETTINGS.tippenPlural && w && w.pl && ', 'S13') },
+  { name: 'S13 das zweite Feld steht wieder ohne seinen Schalter da (wie vom 14. bis 20.10.2026)', muss: ['T1', 'T10'],
+    lernen: q => ersetze(q, "  if (!(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.mehrzahlEintippen === true)) return false;\n", '', 'S13') },
+  { name: 'S37 der alte Schlüssel tippenPlural öffnet das zweite Feld', muss: ['T1', 'T10'],
+    lernen: q => ersetze(q, 'SETTINGS.mehrzahlEintippen === true)) return false;', '(SETTINGS.mehrzahlEintippen === true || SETTINGS.tippenPlural))) return false;', 'S37') },
+  { name: 'S38 die Vorgabe der App schaltet „Mehrzahl mit eintippen" ein', muss: ['T10'],
+    kern: q => ersetze(q, '  { pluralKarten:false, ', '  { mehrzahlEintippen:true, pluralKarten:false, ', 'S38') },
   { name: 'S14 das zweite Feld auch bei gebrochener Mehrzahl', muss: ['T3', 'T6'],
     lernen: q => ersetze(q, "w.pl && typeof pluralRegelmaessig === 'function' && pluralRegelmaessig(w));", 'w.pl);', 'S14') },
   { name: 'S15 „richtig", sobald das Wort stimmt', muss: ['T5'],

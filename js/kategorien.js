@@ -1295,7 +1295,7 @@ function sucheTreffer(begriff){
 }
 
 /* ⛔ HIER STAND quranHaeufigkeit(w) — wie oft die WURZEL im Quran steht, als rotes
-   Abzeichen „☪ 6×" rechts in jeder Wortzeile der Suche. Elias am 20.10.2026 um 02:03,
+   Abzeichen „☪ 6×" rechts in jeder Wortzeile der Suche. Elias am 20.10.2026 um 02:04,
    mit einem Bild der Suche nach „Gast": „ich möchte das mir rechts nicht angezeigt wird
    wie oft es im koran vor kommt". Das Abzeichen war die letzte Stelle, die die Zahl
    zeigte (auf der Lernkarte ist sie seit dem Umbau der Vorderseite weg, siehe den

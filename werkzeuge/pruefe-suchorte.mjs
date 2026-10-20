@@ -22,7 +22,7 @@
  *
  * ⛔ ZWEI SÄTZE VOM 20.10.2026 dazu:
  *
- *   02:03, mit einem Bild der Suche nach „Gast" (rechts in jeder Zeile „☪ 6×"):
+ *   02:04, mit einem Bild der Suche nach „Gast" (rechts in jeder Zeile „☪ 6×"):
  *   „ich möchte das mir rechts nicht angezeigt wird wie oft es im koran vor kommt"
  *   → Teil 6: keine Wortzeile der Suche trägt eine Koran-Zahl. Die Attrappe
  *     quranHaeufigkeit() liefert dafür absichtlich 6 und QURAN_FREQ jede Wurzel —
@@ -179,7 +179,7 @@ function befunde(q){
   (dom.hol('alleSucheTreffer').hoerer.click || []).forEach(h => h({ target: { closest: s => (s === '[data-suchwort]' ? { dataset: { suchwort: 'w1' } } : null) } }));
   if (zaehl.wortkarte !== 'w1') f.push('ein Tipp auf ein Wort der Suche öffnet die Wortkarte nicht');
 
-  /* 6. Keine Koran-Zahl rechts in den Wortzeilen — Elias, 20.10.2026, 02:03 */
+  /* 6. Keine Koran-Zahl rechts in den Wortzeilen — Elias, 20.10.2026, 02:04 */
   for (const [ort, html] of [['Kategorien', kat], ['Suche vom Start', alle]])
     if (/wl-quran|\d\s*×/.test(html)) f.push(ort + ': eine Wortzeile zeigt wieder, wie oft das Wort im Koran vorkommt — „ich möchte das mir rechts nicht angezeigt wird wie oft es im koran vor kommt"');
 

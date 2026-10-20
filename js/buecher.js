@@ -430,7 +430,7 @@ function einhaengen(liste){
 
    Elias in derselben Nacht zweimal, je mit einem Bild aus seinem Buch: „ich brauche
    daifun also schwach als vokabel" (01:56) und „spielplatz also al mulab brauche ich
-   auch als vokabel." (02:07). Beide Karten gibt es — ḍaʿīf in Bayna Yadayk 2, Kapitel 2,
+   auch als vokabel." (02:09). Beide Karten gibt es — ḍaʿīf in Bayna Yadayk 2, Kapitel 2,
    malʿab in Madina 2, Kapitel 32 —, aber keines der beiden Bücher hat er gewählt.
 
    ⛔ Die App lud bis dahin NUR die gewählten Bücher (aktiveBuecher()). Ein einzeln
