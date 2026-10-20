@@ -9188,3 +9188,21 @@ Danach: 47 Prüfungen, **0 Fehler**, 5 Hinweise (die `p_`-Wörter ohne Speicher,
 - Probe im eigenen Edge: 14 Suchfelder, 0 Textfelder, 2 Zahlenfelder, 0 Seitenfehler.
 - CACHE v700, hochgeladen 04:43, Production main aus `e422f85` (`7d119b10`), gepusht, `pruefe-ausgeliefert` Exit 0.
 - ⚠️ Ob die Leiste auf seinem Pixel weg ist, sieht nur er.
+
+
+## 2026-10-20 05:03 – Sitzung: richtig getippt + Eingabetaste dreht die Lernkarte um — **v701 ausgeliefert** (`a8d9ed9`)
+
+**Anlass.** Elias um 04:50: *„ich möchte, dass wenn ich das arabische bei den karteikarten richtig geschrieben habe und auf der tastatur auf enter drücke und es richtig ist, dass sich die karte dann direkt umdreht. nur wenn es falsch ist soll es so bleiben"*. Bis v700 prüfte die Eingabetaste nur und schrieb „Richtig — umdrehen und einordnen."; umgedreht hat er von Hand.
+
+**Was jetzt gilt (`js/lernen.js`).**
+- `pruefeTippen()` gibt zurück, ob alles stimmt (bei zwei Feldern: Wort UND Mehrzahl).
+- Neu `tippPruefenUndUmdrehen()`: dreht die Karte nur bei richtiger Antwort um. Falsch oder leer: die Karte bleibt, das Feld behält den Fokus.
+- Beide Felder rufen es mit der Eingabetaste, die Tablet-Taste „Prüfen" auch.
+- Eingeordnet wird nicht; die Stufe wählt er selbst.
+- Meine Bauart (im Kommentar so gekennzeichnet): nur zur Rückseite hin drehen (`add`, nicht `toggle`); das Feld gibt den Fokus ab, damit die Handy-Tastatur zugeht, wie beim Antippen der Karte.
+
+**Prüfen.**
+- Neuer Prüfer `test-tippen-umdrehen.mjs` im Sammellauf: 7 Fälle, 8 Störtests, alle rot. `test-tippen-tablet.mjs` kennt die neue Funktion. Pflegeplan-Eintrag dazu.
+- Probe im eigenen Edge (412 × 915, Berührung): falsch → vorne mit „Noch nicht.", Fokus im Feld; richtig → gedreht, Fokus weg, Box 4 und Runde unverändert; zweites Enter → bleibt gedreht. 0 Seitenfehler.
+- validate 0, Pflegeplan 0, Sammellauf 185 Prüfer, keiner neu rot.
+- CACHE v701, hochgeladen 05:03, Production main aus `a8d9ed9` (`50abfba8`), gepusht, `pruefe-ausgeliefert` Exit 0. Oberfläche 47 Prüfungen, 0 Fehler, 5 Hinweise, Stempel v701.
