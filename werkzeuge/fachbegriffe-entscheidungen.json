@@ -630,6 +630,26 @@
         "jam-muannath-salim-01"
       ],
       "am": "2026-10-13"
+    },
+    "اولئك": {
+      "entscheidung": "abgelehnt",
+      "grund": "Hinweiswort (Plural von dhālika/tilka) — wie هذا/هذه/ذلك eine Buchvokabel, kein Fachbegriff. Kandidat nur, weil es die Regel ismul-isara-ulaika-01 benennt.",
+      "am": "2026-10-21"
+    },
+    "اطباء": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort der Regel mamnu-min-as-sarf-plural-01 (Plural von ṭabīb), kein Fachbegriff",
+      "am": "2026-10-21"
+    },
+    "فقراء": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort der Regel mamnu-min-as-sarf-plural-01 (Plural von faqīr), kein Fachbegriff",
+      "am": "2026-10-21"
+    },
+    "رجال": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (Plural von rajul) in drei Plural-Regeln, kein Fachbegriff",
+      "am": "2026-10-21"
     }
   }
 }
