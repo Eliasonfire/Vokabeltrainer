@@ -9369,3 +9369,21 @@ Gemessen am 21.10.2026 und weiter offen:
 - Übung 17: Lücke huma-f.
 - Tagesziel steht auf 15, seine Erinnerung war am 11.10. fällig.
 - Wurzel von أَمَامَ. Balance 9,8 %. Mehrzahl von بَعْضٌ und تَعَارُفٌ (Teil E).
+
+## 2026-10-22 16:02 – Neue Kapitel (madina-1 14)
+
+⛔ **Nicht ausgeliefert.** `sw.js` steht auf **v705**, im Netz liegt weiter v704.
+
+**Schritt 0** – Auftrag vom 22.10., 15:56 (Versuch 1 von 2): madina-1 Kapitel 14, angehakt seit 22.10., 04:36. `git pull` aktuell, Marke gesetzt, `pruefe-volles-programm.mjs` Exit 0.
+
+**Schritt 1** – `get_unlocked_chapters`: arabicroots meldet madina-1 1–13 und aby-1 1–4 (Kapitel 14 dort noch nicht). Die App-Auswahl (KV, 22.10., 04:36) nennt madina-1 bis 14. `vorrat.mjs --stand --app auto`: `FREIGESCHALTET` madina-1 [1–13] → [1–14]. „⭐ Lernstand automatisch mitgewachsen: madina-1: Angabe 13 → 14 (+1, im Rahmen)". Wie bisher: madina-2 Kapitel 1–24 stehen in `js/kern.js`, aber in keiner gemessenen Quelle — BEHALTEN (seine Entscheidung).
+
+**Schritt 2** – `vorrat.mjs --nur-kapitel madina-1:14`: Exit 2. Gemessen werden 13 Wörter, davon 7 vollständig. Unvollständig sind 6, und zwar nur am Feld `pl`. Eselsbrücken, Sätze, Markierungen und Kategorien fehlen nicht (je 0).
+
+**Schritt 3** – Die 6 Wörter ohne Mehrzahl stehen im Abzug alle mit `pl: null`: رَجَبٌ (45926), اليُونَانُ (45927), كُلِّيَّةُ الطِّبِّ (45929), كُلِّيَّةُ الهَنْدَسَةِ (45930), كُلِّيَّةُ التِّجَارَةِ (45931) und كُلِّيَّةُ الشَّرِيعَةِ (45932). arabdict nennt weder für رجب noch für كلية eine Mehrzahl. `schluessel-suche.mjs كليات` hat 0 Treffer in Band 2 und 3. Ich habe nichts eingetragen: Eine Mehrzahl wird nicht selbst gebildet, und eine Ausnahme in `feld-ausnahmen.js` gibt es nur auf sein Wort. Das ergibt 0 von 6 erledigt, alle 6 gehen als Frage an ihn.
+
+**Schritt 4** – Alle mit Exit 0: `--check js/kern.js` · `validate.js` (36 Prüfungen, 2 Hinweise) · `pruefe-saetze` (647 Sätze) · `pruefe-markierungen` · `pruefe-erreichbarkeit` · `pruefe-funktionen` (347 im Fenster, 0 „nur Wort") · `pruefe-duplikate` · `pruefe-eselsbruecken` (2126 Einzelprüfungen, 1 Hinweis) · `pruefe-quran` (36 Bezüge) · `pruefe-taschkil` (0 Fragen) · `taschkil-belegen` (0 Wörter) · `pruefe-wortfelder --fenster` (219 von 347) · `pruefe-eigene-vorrang` (347/347/347) · `test-satzmodus-schwerer`. Knapp gemessen: „Vorrat: 6 von 13 freigeschalteten Woertern unvollstaendig — 0 Eselsbruecken, 0 Beispielsaetze, 0 Markierungen, 0 Kategorien, 6× pl."
+
+**Schritt 5** – `CACHE_NAME` v704 → v705. `validate.js` Exit 0. `alle-pruefer.mjs` Exit 2: **NEU ROT: 1**, nämlich `werkzeuge/kandidaten-bewerten.mjs` mit 15 Regelkandidaten aus Folge 29 ohne Urteil (`f29-1245`, `f29-115`, `f29-1945`, …). Das kommt nicht aus diesem Lauf: `transcripts/kandidaten/folge-29.json` trägt den Zeitstempel 21.10.2026, 23:29. Regelkandidaten zu bewerten liegt außerhalb dieser Routine, und sie verbietet das Ausliefern bei „NEU ROT" (wie am 08.10. bei Folge 26). Kapitel 14 geht mit der nächsten Auslieferung hinaus, sobald Folge 29 bewertet ist.
+
+**Schritt 6/7** – Sechs Dateien mit explizitem Pfad committet (`93b96fd`) und gepusht: `js/kern.js`, `sw.js`, `data/lernstand.json`, `data/boxen.json`, `data/auswendig.json`, `data/abgelehnt.json`. Den Auftrag habe ich mit `--notiz "v705 NICHT ausgeliefert: …"` abgeschlossen, die Marke ist weg.
