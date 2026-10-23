@@ -9395,3 +9395,17 @@ Routine „Eselsbrücken": Eine Ablehnung war offen (23.10.2026, 02:34).
 - **45796 وَسِخٌ (schmutzig), `alt[0]`:** Abgelehnt war die Musterarbeit („فَعِل statt فَعِيل wie نَظِيف"). Die neue Idee ist ein Bild aus seinem eigenen Buch: der Lehrbuchsatz الْقَمِيصُ وَسِخٌ (Madina 1, Seite 15, `mb1-15-1`), also das fleckige Hemd, das man gerade anziehen will. Der Text nennt keine Wurzel, keinen Plural und keine Koranstelle. `alt[1]` (Gruppe mit و-Anlaut) und `mnemo` sind wörtlich geblieben.
 
 Prüfungen: `pruefe-eselsbruecken` Exit 0, `vorschlaege-holen --auftrag` Exit 3 (nichts mehr offen), `pruefe-quran`, `pruefe-taschkil`, `taschkil-belegen`, `pruefe-duplikate` und `validate` alle Exit 0. `alle-pruefer.mjs`: 187 Prüfer, 7 rot, keiner neu rot. `CACHE_NAME` v705 → **v706**, mit `--mit-daten` ausgeliefert, `pruefe-ausgeliefert` meldet 111 Dateien deckungsgleich.
+
+
+## 2026-10-23 21:05 – Sitzung: „schwer" zählt bei arabicroots zur Hälfte als gewusst — **v707 ausgeliefert** (`2a7d42c`)
+
+Elias: *„ich möchte, dass wenn ich bei karteikarten auf ,,schwer" tippe also das es bei der box bleiben soll, dass es bei arabicroots die hälfte davon als gewusst eingetragen wird und die andere als nicht nicht gewusst"*.
+
+- `js/lernen.js`: `schwerZaehltAlsGewusst()` und `istArabicrootsWort()`. `answer()` gibt jedem „schwer" auf einem Wort mit Ziffern-Kennung abwechselnd `schwerGewusst` oder `schwerNichtGewusst` (Summe über alle Wörter, also die Hälfte über alle seine „schwer"). In der App bleibt „schwer" Fehlversuch und hält die Box.
+- `js/sync.js`: `schwerGewusst` und `zaehlweise: 2` in der Nutzlast.
+- `functions/api/arabicroots.js`: `offeneVersuche()` schiebt die gewussten „schwer" von falsch nach richtig (gedeckelt auf `wrong`, nie unter 0). Zählweise ungleich 2 → 409 vor der Anmeldung; sonst stünde ein „schwer" vom noch nicht neu geladenen zweiten Gerät drüben doppelt. GET nennt `zaehlweise`.
+- Prüfer `test-schwer-halb.mjs` (H1–H8, elf Störtests) im Sammellauf, Pflegeplan-Eintrag.
+- Probe im eigenen Edge mit seinem Stand vom 20.10. (`schwer-probe.mjs` im Scratchpad, echter Knopf „Schwer"): acht Klicks → g n g n g – n g, der Fachbegriff gram-zarf ohne Hälfte, Box und Fehlversuch wie bisher; drüben neu 4 gewusst + 3 nicht gewusst. Die erste Fassung ohne Kennungsgrenze gab dem Fachbegriff eine Hälfte, die drüben nie ankommt. Von 284 beantworteten Wörtern haben 76 keine Ziffern-Kennung; die 208 anderen stehen alle in den arabicroots-Büchern.
+- validate grün (36 Prüfungen, 2 Hinweise). Sammellauf 188 Prüfer, keiner neu rot — vorher einmal NEU ROT: `pruefe-datumsangaben.mjs` an meinem Gedächtnis-Abschnitt „Stand 23.10.2026, 20:34" (Messzeit ohne Commit), Marke „Kein Commit" dort nachgetragen.
+- Hochgeladen 21:05:08, Production main aus `2a7d42c` (`67bd57df`), `pruefe-ausgeliefert` 0, Oberfläche 47/42/5 ohne Seiten- und Konsolenfehler, Stempel v707, gepusht.
+- ⚠️ Die „schwer" von vor v707 bleiben drüben als nicht gewusst. Eine App auf dem zweiten Gerät, die noch nicht neu geladen ist, schreibt bis dahin nichts nach arabicroots; verloren geht dabei nichts, weil an der Zieltabelle gezählt wird.
