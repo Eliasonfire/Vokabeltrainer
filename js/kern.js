@@ -2473,8 +2473,16 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    brauche ich auch als vokabel." Die Karte steht in Madina 2, Kapitel 32 — das Buch hat
    er nicht gewählt. Im selben Stand ohne Eintrag und ohne eigenes Wort.
    ⚠️ Beide Bücher hat er NICHT gewählt. Dass ein solches Wort überhaupt in der App
-   ankommt, macht erst einzelneAusAnderenBuechern() in js/buecher.js (20.10.2026). */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339'];
+   ankommt, macht erst einzelneAusAnderenBuechern() in js/buecher.js (20.10.2026).
+   23.10.2026: naṣrāniyyun 46913 „Christ" (Mehrzahl naṣārā) dazu. Elias, mit einem Bild
+   des Wortes: „christlich will ich auch als eigene vokabel aufnehmen", danach mit einem
+   Bild aus seinem Buch (Wort und Mehrzahl, rot darunter „Christ…"): „guck mal was
+   christlich ist". Die Karte steht in Bayna Yadayk 2, Kapitel 13 — das Buch hat er nicht
+   gewählt. arabicroots und arabdict sagen „Christ"; für das Eigenschaftswort „christlich"
+   nennt arabdict ein anderes Wort (masīḥiyyun) — so hat er es im Chat erfahren. In seinem
+   abgeglichenen Stand (KV 23.10.2026, 21:06) kein Eintrag in vt_einzeln_frei und
+   vt_bekannt, kein eigenes Wort mit „Christ"; in vt_progress ein unbewerteter Eintrag. */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)
