@@ -9409,3 +9409,14 @@ Elias: *„ich möchte, dass wenn ich bei karteikarten auf ,,schwer" tippe also 
 - validate grün (36 Prüfungen, 2 Hinweise). Sammellauf 188 Prüfer, keiner neu rot — vorher einmal NEU ROT: `pruefe-datumsangaben.mjs` an meinem Gedächtnis-Abschnitt „Stand 23.10.2026, 20:34" (Messzeit ohne Commit), Marke „Kein Commit" dort nachgetragen.
 - Hochgeladen 21:05:08, Production main aus `2a7d42c` (`67bd57df`), `pruefe-ausgeliefert` 0, Oberfläche 47/42/5 ohne Seiten- und Konsolenfehler, Stempel v707, gepusht.
 - ⚠️ Die „schwer" von vor v707 bleiben drüben als nicht gewusst. Eine App auf dem zweiten Gerät, die noch nicht neu geladen ist, schreibt bis dahin nichts nach arabicroots; verloren geht dabei nichts, weil an der Zieltabelle gezählt wird.
+
+
+## 2026-10-23 21:23 – Sitzung: „Christ" (46913) auf Wunsch freigeschaltet — **v708 ausgeliefert** (`c4b433c`)
+
+Elias, mit Bild des Wortes: *„christlich will ich auch als eigene vokabel aufnehmen"*, dann mit Bild aus seinem Buch: *„guck mal was christlich ist"*. Die Karte gibt es schon: naṣrāniyyun, Bayna Yadayk 2, Kapitel 13, „Christ", Mehrzahl naṣārā, Wurzel n-ṣ-r. arabicroots und arabdict sagen „Christ"; für das Eigenschaftswort „christlich" nennt arabdict masīḥiyyun (ihm so gesagt). Sein Stand (KV 21:06, nur gelesen): kein Eintrag in vt_einzeln_frei/vt_bekannt, kein eigenes Wort mit „Christ".
+
+- `js/kern.js`: `46913` in `FREISCHALTEN_AUF_WUNSCH`, mit seinen Sätzen im Kommentar.
+- Probe im eigenen Edge mit seinem Stand: Karte in `VOCAB_DATA` und `bekannteVokabeln()`, einzeln frei, 0 Seitenfehler. Die Mehrzahlkarte kommt erst nach der Einzahl.
+- validate grün; Sammellauf 188 Prüfer: NEU ROT nur `pruefe-datumsangaben.mjs` an meiner Projektnotiz (zwei Blöcke desselben Tages in falscher Reihenfolge) → getauscht, danach grün.
+- Hochgeladen 21:2x, Production main aus `c4b433c` (`64741100`), `pruefe-ausgeliefert` 0, Oberfläche 47/42/5 ohne Fehler, Stempel v708.
+- Offen (To-Do, Block „▶️ TO-DO NACH DEM KOMPRIMIEREN (geschrieben 23.10.2026, 21:2x)"): Satz und drei Eselsbrücken für 46913; die 7 Wochentage und die 12 islamischen Monate als Karten (sein Wunsch, Monate mit Platz im Jahr).
