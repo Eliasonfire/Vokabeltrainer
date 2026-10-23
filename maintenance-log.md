@@ -9432,3 +9432,14 @@ Elias: *„ich will auch die 7 wochentagen und alle monate als eigene vokabel"* 
 - Sammellauf 188 Prüfer, 5 rot, keiner NEU rot. Probe im eigenen Edge mit seinem Stand (KV-Abzug vom 23.10., 21:42): 17 von 17 Kalenderkarten frei mit Satz und Eselsbrücken, Dienstag, Rajab „(7. Monat)", Christ; 20 Sätze, 47 geprüfte Wörter, 0 falsch erklärt; 0 Seitenfehler.
 - Hochgeladen 23:09:24, Production main aus `be8c322` (`c33724d5`), `pruefe-ausgeliefert` 0, Oberfläche 47/42/5 ohne Fehler, Stempel v709.
 - Offen für ihn: bei dhū erklärt die App die Endung noch nicht (sein Satz vom 11.09.2026). Befund, nicht gebaut: ein Eigenname mit Tanwīn und ein unbestimmtes Adjektiv danach wird allgemein als naʿt gelesen.
+
+## 2026-10-23 23:55 – Sitzung: dhū mit Fall, Hörmodus bleibt bei der Frage — **v710 ausgeliefert** (`efc5004`)
+
+Elias auf die Frage, ob die App die Endung von dhū schon jetzt erklären soll: *„jetzt erklären"*. Um 23:38:50: *„ich war eben im hörmodus und habe die antwort geklickt und habe dann eine vokabel im wörterbuch nachgeguckt, als ich dann wieder zu dem hören gekommen bin wurden mir nicht mehr die altern vokabeln angezeigt sondern die näcshte runde. das möchte ich nicht."*
+
+- `js/irab.js`: dhū/dhī behalten ihren Fall wie abū und akhū (erwartet raf/jarr statt null), endungUnsichtbar() sagt „Endung ist ein Buchstabe: Wāw = Nominativ" bzw. „Yāʾ = Genitiv"; neu `dhuKasus()` (exportiert mit `DHU_VOLL`). `js/saetze.js`: bei den fünf Nomen kein „nicht sichtbar —" mehr. Regelkarte asma-khamsa-vollstaendig-01 bleibt ausgeblendet.
+- `pruefe-saetze.js`: Fall der Rolle gegen Fall des Buchstabens (sonst Fehler), EICH_KAL 9 → 12. `--alle` vorher/nachher: nur die vier dhū-Wörter der drei Kalendersätze anders, 666 Sätze kasusrein. Störtest im Spiegel: altes Verhalten 4 von 12 rot, Satz mit dhū nach baʿda gemeldet.
+- `js/hoeren.js`: openHoeren() setzt eine angefangene Frage fort (hoerFrageFortsetzbar), neu gewürfelt nur ohne Frage oder nach Auswahlwechsel; beim Zurückkommen kein Ton, nach dem Weitertippen wie bisher. `test-hoeren-fortsetzen.mjs` (neu, im Sammellauf): 13 von 13, mit hoeren.js von v709 6 rot.
+- Sammellauf 189 Prüfer, 5 rot, keiner NEU rot. Probe mit seinem Stand (KV 23:29:47): 0 von 47 Kalender-Zeilen falsch erklärt.
+- Hochgeladen 23:54:51, Production main aus `efc5004` (`7e2e0421`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v710.
+- Offen (v711): Imāla-Raute in 11:41 (die Hafs-Schrift malt U+06EA als Punkt), abgeschnittenes kleines sīn in 75:27 und 83:14 beim Markieren; danach Koransätze für „Koran häufigste" (194 Karten in seiner Auswahl ohne Satz).
