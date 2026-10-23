@@ -9420,3 +9420,15 @@ Elias, mit Bild des Wortes: *„christlich will ich auch als eigene vokabel aufn
 - validate grün; Sammellauf 188 Prüfer: NEU ROT nur `pruefe-datumsangaben.mjs` an meiner Projektnotiz (zwei Blöcke desselben Tages in falscher Reihenfolge) → getauscht, danach grün.
 - Hochgeladen 21:2x, Production main aus `c4b433c` (`64741100`), `pruefe-ausgeliefert` 0, Oberfläche 47/42/5 ohne Fehler, Stempel v708.
 - Offen (To-Do, Block „▶️ TO-DO NACH DEM KOMPRIMIEREN (geschrieben 23.10.2026, 21:2x)"): Satz und drei Eselsbrücken für 46913; die 7 Wochentage und die 12 islamischen Monate als Karten (sein Wunsch, Monate mit Platz im Jahr).
+
+
+## 2026-10-23 23:09 – Sitzung: Wochentage und islamische Monate als eigene Karten — **v709 ausgeliefert** (`be8c322`)
+
+Elias: *„ich will auch die 7 wochentagen und alle monate als eigene vokabel"* (Wahl: „Islamische Monate"), *„die islamischen monat bitte auch dazu schreiben welcher im jahr dieser monat ist damit ich weiß weil ich weiß nicht wann welcher monat ist"*, zu den Monatssätzen *„wir gehen nach deiner empfehlung"* (Reihenfolge-Sätze „X kommt nach Y" behalten).
+
+- `data/kalender.js` (neu, Weg 6): 17 Karten `kal-…` (6 Wochentage, 11 Monate mit Platz im Jahr). Dienstag `47254` über `FREISCHALTEN_AUF_WUNSCH`, Rajab `45926` „(7. Monat)" über `KALENDER_BUCHKARTEN`. Sätze und je drei Eselsbrücken für 19 Wörter (dazu „Christ" 46913), 44 Markierungen.
+- `js/irab.js`, sieben Regeln (dhū ohne Kasusaussage, Monatsnamen bestimmt und nie muḍāf, zweiteilige Monatsnamen, al-yawmu als Nomen, keine Iḍāfa vor ẓarf auf Fatḥa, Genitiv mit Fatḥa bei mamnūʿ min aṣ-ṣarf, `funktionenVon` Punkt 5 nur für ein Wort). `pruefe-saetze.js --alle` vorher/nachher: genau 18 Sätze anders zerlegt, darunter der alte „Rajab ist nah" (vorher falsch erklärt).
+- Werkzeuge kennen Weg 6: pruefe-saetze (EICH_KAL, 9 Fälle), -funktionen, -eselsbruecken, -wortfelder, -duplikate, -taschkil (3625 → 3683 Wörter), validate (Wurzeln 143 → 154), pruefe-beispielsaetze (17 von 17 mit Satz), pruefe-satzmodus-aktuell (493 → 510 Sätze, jetzt grün), pruefe-bidi, pruefe-bearbeiten (7 Herkünfte, Störtest Rajab), vorrat. Pflegeplan „Kalenderkarten", `VOLLES-PROGRAMM.md` Weg 6 (alle vier Kopien gleich).
+- Sammellauf 188 Prüfer, 5 rot, keiner NEU rot. Probe im eigenen Edge mit seinem Stand (KV-Abzug vom 23.10., 21:42): 17 von 17 Kalenderkarten frei mit Satz und Eselsbrücken, Dienstag, Rajab „(7. Monat)", Christ; 20 Sätze, 47 geprüfte Wörter, 0 falsch erklärt; 0 Seitenfehler.
+- Hochgeladen 23:09:24, Production main aus `be8c322` (`c33724d5`), `pruefe-ausgeliefert` 0, Oberfläche 47/42/5 ohne Fehler, Stempel v709.
+- Offen für ihn: bei dhū erklärt die App die Endung noch nicht (sein Satz vom 11.09.2026). Befund, nicht gebaut: ein Eigenname mit Tanwīn und ein unbestimmtes Adjektiv danach wird allgemein als naʿt gelesen.
