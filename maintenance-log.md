@@ -9454,3 +9454,14 @@ Elias zu 11:41 (Bilder): *„… sollte das so ein rechteckiges zeiczhen sein wi
 - Sammellauf 190 Prüfer: zuerst 6 rot, davon test-hamza-lamalif neu (behoben, s. o.); die übrigen 5 bekannt (Auslieferung, Warteliste).
 - Hochgeladen 00:22:17, Production main aus `6aa88ca` (`68979cea`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v711.
 - Inventur des Korantexts: 72 verschiedene Zeichen, alle in der Zeichentabelle von Uthmanic Hafs. Als Nächstes: jedes Sonderzeichen gegen quran.com vergleichen (sein Auftrag), danach sīn (75:27, 83:14) und Koransätze.
+
+## 2026-10-24 00:47 – Sitzung: Raute in Hafs gezeichnet, zwischen mīm und nūn, an rā/nūn gekoppelt — **v712 ausgeliefert** (`f9655e6`)
+
+Elias nach v711 (Bilder): *„jetzt wird das ra abgeschnitten aufgrund der notiz"*; *„das hier solltest du zwischen mim und nun platzieren. ich will später das nun markieren weil die raute bezieht sich auf das nun deswegen kannst du das irgendwie im code miteinander verbinden aber wie gesagt sie soll zwischen mim und nun stehen. mache das jetzt sofort …"*.
+
+- Gemessen: der CSS-Highlight malt die Farbe nur im Kasten des Buchstabens; das rā in Scheherazade ragt hinaus (abgeschnitten), in Hafs nicht. Das kleine sīn (75:27) wird auch in Hafs abgeschnitten, als eigenes `<span>` gefärbt bleibt es ganz und verbunden (Grundlage für den nächsten Schritt).
+- `js/quran.js`: beide Wörter wieder Hafs; Punkt → U+034F (unsichtbar, gleich lang, gleicher Cluster), `data-raute="unten"|"zwischen"`, neu `quranRauteZiel()` (rā bzw. folgendes nūn). `index.html`: `[data-raute]::after` zeichnet die hohle Raute an der gemessenen Stelle des Hafs-Punkts (em ab Wortmitte), im Lesetext und auf der Karte (dort für diese Wörter Hafs). `js/quran-markierung.js`: `--raute-farbe` = Farbe des rā/nūn in `tajweedZeichnen()` und `tajweedFlaechenBauen()`.
+- `test-quran-raute.mjs` 19/19 (Lage auf der Grenze mīm/nūn, Farbe nur vom nūn, Karte); mit quran.js von v711 12 rot, von v710 14 rot. `test-hamza-lamalif.mjs` erlaubt genau die zwei Ersetzungen.
+- Sammellauf 190 Prüfer: neu rot nur `pruefe-gedaechtnis-luecken` (Log-Commit `2090a98` ohne Spur) → Projektnotiz nachgezogen, grün.
+- Hochgeladen 00:46:58, Production main aus `f9655e6` (`c295e54f`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v712.
+- Zeichenvergleich: 36 Wörter / 29 Sonderzeichen gegen quran.com gleich. ⚠️ quran.com-Vorgabe `code_v2` malt an den Rautenstellen gefüllte Punkte; Elias' quran.com zeigt hohle Rauten → andere Schrift bei ihm (offen).
