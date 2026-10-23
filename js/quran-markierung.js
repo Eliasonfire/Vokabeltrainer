@@ -329,6 +329,7 @@ function tajweedZeichnen(){
   /* Der Rückfall hinterlässt Klassen im DOM — die müssen zuerst weg, sonst
      bliebe eine weggenommene Markierung als Farbe stehen. */
   liste.querySelectorAll('.qw.tj-wort').forEach(el => { el.className = 'qw'; });
+  liste.querySelectorAll('.qw[data-raute]').forEach(el => { el.style.removeProperty('--raute-farbe'); });
 
   const proFarbe = {};
   TJ_FARBEN.forEach(f => { proFarbe[f.id] = []; });
@@ -356,6 +357,15 @@ function tajweedZeichnen(){
         return;
       }
       const cluster = tajweedCluster(knoten.nodeValue);
+      /* Die hohle Raute (11:41, 12:11) trägt die Farbe des Buchstabens, zu dem
+         sie gehört. Elias, 24.10.2026: „die raute bezieht sich auf das nun
+         deswegen kannst du das irgendwie im code miteinander verbinden".
+         quranRauteZiel() in js/quran.js. */
+      if (span.dataset.raute){
+        const ziel = quranRauteZiel(cluster, span.dataset.raute);
+        const st = ziel && stellen.find(s => tajweedClusterAn(cluster, s.pos) === ziel);
+        if (st) span.style.setProperty('--raute-farbe', 'var(--tj-' + st.farbe + ')');
+      }
       for (const st of stellen){
         const c = tajweedClusterAn(cluster, st.pos);
         if (!c) continue;
@@ -480,7 +490,13 @@ function tajweedKarteOeffnen(span, vers, wort){
   TJ_OFFEN = { sure, vers, wort, text, buchstaben, vorher, aktiv: buchstaben.size ? [...buchstaben.keys()].sort((a, b) => a - b)[0] : null };
 
   document.getElementById('tjTitel').textContent = `Sure ${sure}, Vers ${vers} · Wort ${wort}`;
-  document.getElementById('tjWort').textContent = text;
+  const tjWort = document.getElementById('tjWort');
+  tjWort.textContent = text;
+  /* Die hohle Raute kommt mit auf die Karte (Elias: „ich will später das nun
+     markieren"); Farbe setzt tajweedKarteNachziehen(). */
+  if (span.dataset.raute) tjWort.dataset.raute = span.dataset.raute;
+  else delete tjWort.dataset.raute;
+  tjWort.style.removeProperty('--raute-farbe');
   tajweedKarteNachziehen();
 
   document.getElementById('tajweedBackdrop').classList.remove('hidden');
@@ -685,6 +701,13 @@ function tajweedFlaechenBauen(){
     knopf.style.top = '0px';
     knopf.style.height = bb.height + 'px';
     flaechen.appendChild(knopf);
+  }
+  /* Die hohle Raute in der Farbe ihres Buchstabens (rā bzw. nūn). */
+  if (wortEl.dataset.raute){
+    const ziel = quranRauteZiel(cluster, wortEl.dataset.raute);
+    const b = ziel && TJ_OFFEN.buchstaben.get(ziel.i);
+    if (b) wortEl.style.setProperty('--raute-farbe', 'var(--tj-' + b.farbe + ')');
+    else wortEl.style.removeProperty('--raute-farbe');
   }
   tajweedHighlightsSetzen('tajweed-karte-', proFarbe);
 }
