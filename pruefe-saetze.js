@@ -24,7 +24,7 @@
 const fs = require('fs');
 const path = require('path');
 const { analysiereSatz, setzeLexikon, endungUnsichtbar,
-        istJarrLamVoll, giltAlsVerb, rolleAnzeige } = require('./js/irab.js');
+        istJarrLamVoll, giltAlsVerb, rolleAnzeige, dhuKasus, DHU_VOLL } = require('./js/irab.js');
 
 const P = __dirname + path.sep;
 const { VOCAB_DATA } =
@@ -280,7 +280,11 @@ for (const q of quellen){
 
   for (const s of q.saetze){
     const teile = analysiereSatz(s.ar);
-    const fehler = teile.filter(t => t.stimmt === false);
+    /* dhu / dhi (js/irab.js, seit v710): die Endung ist ein Buchstabe, `stimmt` bleibt dort
+       null. Deshalb hier der Vergleich: verlangt die Rolle einen anderen Fall als der
+       Buchstabe (dhu nach einer Praeposition), ist der Satz falsch vokalisiert. */
+    const fehler = teile.filter(t => t.stimmt === false
+      || (t.erwartet && dhuKasus(t.wort) && dhuKasus(t.wort) !== t.erwartet));
     /* „keine Endung zu lesen" hat zwei ganz verschiedene Gruende. Bis zum
        18.08.2026 standen beide in einer Zahl, und die klang wie ein Mangel. */
     const ohneEndung = teile.filter(t => t.erwartet && !t.gelesen);
@@ -325,7 +329,8 @@ for (const q of quellen){
       console.log(`     ${b.s.de || ''}`);
       b.fehler.forEach(f => console.log(
         `     ${f.wort}  ist ${f.rolle}, das verlangt ${f.erwartet}, ` +
-        `geschrieben steht aber ${f.gelesen.zeichen}`));
+        /* dhu / dhi haben kein gelesenes Zeichen — dort spricht der Buchstabe (dhuKasus). */
+        `geschrieben steht aber ${f.gelesen ? f.gelesen.zeichen : 'der Buchstabe für ' + dhuKasus(f.wort)}`));
       console.log('');
     });
   }
@@ -863,7 +868,10 @@ let lexikonSchwer = 0;
      (kal-…, 45926), nicht getippt; die beiden Gegenproben werden per Code daraus
      gebaut (ein Zeichen getauscht). Stoertest am 23.10.2026, 22:4x: mit der irab.js
      von HEAD (9fea7a7) sind die sieben Faelle rot und die zwei Gegenproben gruen,
-     mit der neuen alle neun gruen. */
+     mit der neuen alle neun gruen.
+     ⭐ v710 (23.10.2026, Elias: „jetzt erklären"): dhu / dhi tragen ihren Fall wie abu
+     und akhu; der Buchstabe sagt, welcher es sein muss (dhuKasus). Drei Faelle dazu
+     (kal-dhulhijja, dhu nach bada, dha bleibt draussen). */
   {
     const satz = id => { const s = BEISPIELSAETZE[id] || VOCAB_DATA.find(v => String(v.id) === id); return s ? s.sentAr : ''; };
     const MUBTADA = 'مُبْتَدَأ';
@@ -894,11 +902,24 @@ let lexikonSchwer = 0;
           return r[1].rolle.startsWith(NAT) && r[4].rolle.startsWith(NAT) && r[4].erwartet === 'jarr'; },
         'Jumada al-akhiratu bada Jumada l-ula: al-ula ist nat (vorher mubtada)'],
       ['kal-dhulqada', () => { const r = analysiereSatz(satz('kal-dhulqada'));
-          return r[0].rolle.startsWith(MUBTADA + ' ' + MUDAF) && r[0].erwartet === null && r[1].rolle === ILAYH && r[1].stimmt === true; },
-        'Dhu l-qadati: dhu ist mubtada und mudaf OHNE Kasusaussage (fuenf Nomen erst auf sein Wort), al-qadati mudaf ilayh'],
+          return r[0].rolle === MUBTADA + ' ' + MUDAF && r[0].erwartet === 'raf' && dhuKasus(r[0].wort) === 'raf'
+            && /Nominativ/.test(endungUnsichtbar(r[0].wort) || '') && r[1].rolle === ILAYH && r[1].stimmt === true; },
+        'Dhu l-qadati: dhu ist mubtada und mudaf, marfu — die Endung ist das Waw (seit v710), al-qadati mudaf ilayh'],
       ['kal-muharram', () => { const r = analysiereSatz(satz('kal-muharram'));
-          return r[2].rolle.includes(MUDAF) && r[2].erwartet === null && r[3].rolle === ILAYH && r[3].stimmt === true; },
-        'bada dhi l-hijjati: dhi ist mudaf, al-hijjati mudaf ilayh (vorher khabar mit falscher Kasra)'],
+          return r[2].rolle.includes(MUDAF) && r[2].erwartet === 'jarr' && dhuKasus(r[2].wort) === 'jarr'
+            && /Genitiv/.test(endungUnsichtbar(r[2].wort) || '') && r[3].rolle === ILAYH && r[3].stimmt === true; },
+        'bada dhi l-hijjati: dhi ist mudaf und majrur (Yaa), al-hijjati mudaf ilayh (vorher khabar mit falscher Kasra)'],
+      ['kal-dhulhijja', () => { const r = analysiereSatz(satz('kal-dhulhijja'));
+          return r[0].erwartet === 'raf' && dhuKasus(r[0].wort) === 'raf'
+            && r[3].erwartet === 'jarr' && dhuKasus(r[3].wort) === 'jarr' && r[4].rolle === ILAYH && r[4].stimmt === true; },
+        'Dhu l-hijjati bada dhi l-qadati: dhu marfu (Waw), dhi nach bada majrur (Yaa)'],
+      ['Gegenprobe dhu nach bada', () => { const falsch = satz('kal-muharram').replace(DHU_VOLL[1], DHU_VOLL[0]);
+          const r = analysiereSatz(falsch);
+          return falsch !== satz('kal-muharram') && r[2].erwartet === 'jarr' && dhuKasus(r[2].wort) === 'raf'; },
+        'Gegenprobe: dhu (Waw) nach bada passt nicht zum Genitiv — der Satzpruefer zaehlt das als Fehler'],
+      ['Gegenprobe dha', () => { const dha = DHU_VOLL[0].slice(0, 1) + 'َا';
+          return dhuKasus(dha) === null && !/Buchstabe/.test(endungUnsichtbar(dha) || ''); },
+        'Gegenprobe: dha (Hinweiswort, 2:255) bekommt keinen Fall der fuenf Nomen'],
       ['kal-ramadan', () => mitLexikon(MINI_MONATE, () => { const r = analysiereSatz(satz('kal-ramadan'));
           return r[0].rolle === MUBTADA && r[2].erwartet === 'jarr' && r[2].stimmt === true; }),
         'Ramadanu bada Shabana: Ramadanu ist kein mudaf vor bada, Shabana Genitiv auf Fatha (mamnu min as-sarf)'],
@@ -911,7 +932,7 @@ let lexikonSchwer = 0;
     ];
     eiche(EICH_KAL.map(([n, , warum]) => [n, true, warum]),
           n => { try { return EICH_KAL.find(e => e[0] === n)[1](); } catch (e) { return false; } },
-          'Kalendersaetze: al-yawmu, Monatsname, Monatszusatz, dhu ohne Kasus, Genitiv auf Fatha (Fall 2, 7, 8 mit Mini-Lexikon)');
+          'Kalendersaetze: al-yawmu, Monatsname, Monatszusatz, dhu mit Fall aus dem Buchstaben, Genitiv auf Fatha (Fall 2, 7, 8 mit Mini-Lexikon)');
   }
   setzeLexikon(wortschatz);
 

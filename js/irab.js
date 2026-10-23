@@ -569,27 +569,43 @@ const istZarf = w => {
 const FUENF_NOMEN = ['أبو', 'أخو', 'حمو', 'أبا', 'أخا', 'حما', 'أبي', 'أخي', 'حمي'];
 const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
 
-/* ⭐ DHU / DHI („Besitzer von") — NUR DIE SATZROLLE, KEINE ENDUNG (23.10.2026).
+/* ⭐ DHU / DHI („Besitzer von") — SATZROLLE UND FALL WIE BEI ABU UND AKHU (23.10.2026).
    Anlass: die Monatskarten Dhu l-Qada und Dhu l-Hijja (data/kalender.js; Elias am
    23.10.2026: „ich will auch die 7 wochentagen und alle monate als eigene vokabel").
    Ohne diese Zeilen las die Analyse dhi als „Yaa des Sprechers" und das Nomen
    dahinter als khabar — in «Muharramun bada dhi l-hijjati.» (kal-muharram) haette er
    gelernt, al-hijjati sei die Aussage und muesse Damma tragen.
-   ⛔ dhu gehoert zu den fuenf Nomen, und die stehen auf SEINEN Wunsch noch nicht im
-   Satzmodus (asma-khamsa-vollstaendig-01, Elias am 11.09.2026: „später wenn mein
-   lehrer es aufgreift und das erklärt dann kann man das rein nehmen aber jetzt noch
-   nicht"). Deshalb bewusst NICHT in FUENF_NOMEN: dhu/dhi bekommt seine Satzrolle und
-   wird mudaf (das Nomen danach steht im Genitiv — die Idafa kennt er), aber KEINE
-   Kasusaussage und nicht die Auskunft „fuenf Nomen". Behandelt sein Lehrer die fuenf
-   Nomen vollstaendig: IHN fragen, dann hier in FUENF_NOMEN uebernehmen.
-   ⛔ Der Absatz ueber FUENF_NOMEN gilt weiter fuer dha: es faellt mit dem Hinweiswort
-   zusammen (man dha lladhi, 2:255) und bleibt draussen. Erkannt wird nur die VOLLE
-   Schreibung dhu (Damma) und dhi (Kasra), als ganzes Wort.
-   Zeichen als \u-Folgen, an seinen Saetzen kal-dhulqada und kal-muharram gegengeprueft. */
+   ⭐ Seit v710 zeigt die Analyse auch den FALL von dhu. In v709 stand er ohne
+   Kasusaussage da („die Endung kommt erst im zweiten Buch"), weil die fuenf Nomen
+   auf seinen Wunsch noch nicht im Satzmodus stehen (asma-khamsa-vollstaendig-01,
+   Elias am 11.09.2026: „später wenn mein lehrer es aufgreift und das erklärt dann
+   kann man das rein nehmen aber jetzt noch nicht"). Auf die Frage, ob die App die
+   Endung von dhu schon jetzt erklaeren soll, Elias am 23.10.2026: „jetzt erklären".
+   Seitdem gilt fuer dhu genau, was fuer abu und akhu gilt: die Rolle verlangt ihren
+   Fall (erwartet), eine Haraka wird nicht gelesen, und endungUnsichtbar() weiter
+   unten nennt den Grund — die Endung ist ein Buchstabe.
+   ⛔ Die Regelkarte asma-khamsa-vollstaendig-01 bleibt AUSGEBLENDET: sein „jetzt
+   erklären" galt der Endung von dhu, nicht der Karte. Und asma-khamsa-01 (sein
+   Lehrer, Folge 16) nennt nur abu und akhu — die dhu-Saetze tragen sie deshalb nicht.
+   ⛔ Trotzdem NICHT in FUENF_NOMEN: die Liste vergleicht ohne Vokalzeichen, und dha
+   faellt mit dem Hinweiswort zusammen (man dha lladhi, 2:255) und bleibt draussen.
+   Erkannt wird nur die VOLLE Schreibung dhu (Damma) und dhi (Kasra), als ganzes Wort.
+   Zeichen an seinen Saetzen kal-dhulqada und kal-muharram gegengeprueft. */
 const DHU_VOLL = ['ذُو', 'ذِي'];   // dhu · dhi
 const SATZZEICHEN_RE = /[.،؟!«»:؛]/g;
 const istDhu = w => DHU_VOLL.includes(String(w == null ? '' : w).normalize('NFC')
   .replace(SATZZEICHEN_RE, '').trim().replace(/^[وف]َ/, ''));
+
+/* Welcher Fall zu dhu / dhi gehoert. Die Endung ist der Buchstabe: Waw im Nominativ,
+   Yaa im Genitiv (Madina-Schluessel 3, Lektion 1, S. 7 — dieselbe Regel steht in
+   asma-khamsa-vollstaendig-01). Anders als bei abi („mein Vater") gibt es keine zweite
+   Lesart: dhu ist immer marfu, dhi immer majrur. Null, wenn das Wort kein dhu ist.
+   Gelesen von endungUnsichtbar() und von pruefe-saetze.js: dort muessen der Fall, den
+   die Rolle verlangt, und der Fall des Buchstabens zusammenpassen (23.10.2026). */
+const dhuKasus = w => !istDhu(w) ? null
+  : (String(w).normalize('NFC').includes(DHU_VOLL[0].slice(-2)) ? 'raf' : 'jarr');
+/* Der Name der Gruppe, so wie er in endungUnsichtbar() steht (per Skript aus dessen Text gezogen). */
+const FUENF_NOMEN_NAME = 'الْأَسْمَاءُ الْخَمْسَةُ';
 
 /* ⭐ MONATSNAMEN SIND EIGENNAMEN — UND DAMIT BESTIMMT (23.10.2026, Regel von Claude).
    «Rajabun qaribun.» (45926, „Rajab ist nah.") wurde bisher als EINE Wortgruppe
@@ -1173,6 +1189,11 @@ const giltAlsVerb = w => {
      أَبُو  die fuenf Nomen tragen ihre Endung als BUCHSTABEN (siehe FUENF_NOMEN)
    Gibt den Grund zurueck oder null. */
 function endungUnsichtbar(w){
+  /* dhu / dhi (DHU_VOLL oben, seit v710): VOR dem Yaa des Sprechers weiter unten — dhi
+     endet auf Yaa und bekaeme sonst dessen Grund. Mit dem Buchstaben und seinem Fall,
+     denn bei dhu ist er eindeutig (dhuKasus oben). */
+  if (istDhu(w)) return FUENF_NOMEN_NAME + ' (Endung ist ein Buchstabe: '
+    + (dhuKasus(w) === 'raf' ? 'Wāw = Nominativ' : 'Yāʾ = Genitiv') + ')';
   const rein = String(w).replace(/[.،؟!«»:؛]/g, '');
   const ohne = ohneVokale(rein).replace(/^[و]/, '');
   /* Die fuenf Nomen — auch mit angehaengtem Pronomen: أَبُوكَ ist أبو + كَ,
@@ -2072,11 +2093,9 @@ function analysiereSatz(satz){
       if (angerufen) erwartet = null;
     }
 
-    /* dhu / dhi: Satzrolle ja, Kasus nein (DHU_VOLL oben, sein Wunsch vom 11.09.2026). */
-    if (istDhu(wort) && erwartet){
-      erwartet = null;
-      rolle += ' — ' + DHU_VOLL[0] + ': die Endung kommt erst im zweiten Buch (noch nicht geprüft)';
-    }
+    /* dhu / dhi behalten ihren Fall wie abu und akhu (DHU_VOLL oben). Bis v709 stand hier
+       erwartet = null mit dem Zusatz „die Endung kommt erst im zweiten Buch" — Elias am
+       23.10.2026: „jetzt erklären". */
     /* Ein Monatsname zaehlt als bestimmt (MONATSNAMEN oben). */
     if (erwartet){ letzterKasus = erwartet; letzteBestimmtheit = istBestimmt(wort) || istMonatsname(wort); }
     /* Nach einem Punkt, Frage- oder Ausrufezeichen faengt ein neuer Satz an:
@@ -2170,5 +2189,6 @@ if (typeof module !== 'undefined' && module.exports){
      pruefe-saetze.js sie EICHEN kann — an der echten, geladenen Funktion
      statt an einer nachgebauten Kopie. [[handliste_neben_echter_quelle]] */
   module.exports = { analysiereSatz, irabZeilen, endung, setzeLexikon, wortart, KASUS,
-                     endungUnsichtbar, istJarrLamVoll, giltAlsVerb, rolleAnzeige };
+                     endungUnsichtbar, istJarrLamVoll, giltAlsVerb, rolleAnzeige,
+                     dhuKasus, DHU_VOLL };
 }
