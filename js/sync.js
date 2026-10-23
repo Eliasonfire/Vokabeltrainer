@@ -1325,6 +1325,13 @@ async function schickeZumServer(absicht){
 let AR_LETZTE_MELDUNG = null;
 const AR_MINDESTABSTAND = 5 * 60 * 1000;
 let   AR_LETZTE_ZEIT = 0;
+/* ⭐ v707: die Zählweise, mit der diese Fassung schickt. 2 = „schwer" zählt
+   drüben zur Hälfte als gewusst (Elias, 23.10.2026; Regel bei
+   schwerZaehltAlsGewusst() in js/lernen.js). ⛔ Muss gleich ZAEHLWEISE in
+   functions/api/arabicroots.js sein — eine ältere App ohne sie schreibt dort
+   nichts mehr, siehe die Begründung an jener Stelle. test-schwer-halb.mjs
+   hält beide Zahlen gegeneinander. */
+const AR_ZAEHLWEISE = 2;
 
 async function schickeNachArabicroots(){
   try {
@@ -1334,7 +1341,13 @@ async function schickeNachArabicroots(){
       if (!p) continue;
       const c = Number(p.correct) || 0, w = Number(p.wrong) || 0;
       if (!c && !w) continue;          /* nie beantwortet — nichts zu melden */
-      fortschritt[id] = { correct: c, wrong: w, ts: Number(p.ts) || 0 };
+      const eintrag = { correct: c, wrong: w, ts: Number(p.ts) || 0 };
+      /* v707: wie viele seiner „schwer" drüben als gewusst zählen. Sie stecken
+         in `wrong`; umgerechnet wird erst in der Übertragung. Nur wenn es sie
+         gibt — ein Wort ohne bleibt Zeichen für Zeichen wie bisher. */
+      const sg = Number(p.schwerGewusst) || 0;
+      if (sg > 0) eintrag.schwerGewusst = sg;
+      fortschritt[id] = eintrag;
     }
     if (!Object.keys(fortschritt).length) return;
     /* ⛔ Nur melden, wenn sich wirklich etwas geändert hat. Sonst schreibt
@@ -1354,7 +1367,7 @@ async function schickeNachArabicroots(){
     await fetch('/api/arabicroots', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ fortschritt }),
+      body: JSON.stringify({ zaehlweise: AR_ZAEHLWEISE, fortschritt }),
     });
   } catch (e){ /* offline, nicht eingerichtet, Zeitgrenze: alles folgenlos */ }
 }

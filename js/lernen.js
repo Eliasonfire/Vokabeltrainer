@@ -2058,7 +2058,9 @@ document.getElementById('btnExitLearn').addEventListener('click', ()=>{
    Statistik zaehlen "nochmal" und "schwer" weiterhin als
    Fehlversuch, "gut" und "leicht" als Treffer - daran wurde bewusst NICHTS
    geaendert, sonst waere die Trefferquote nicht mehr mit den frueheren Werten
-   vergleichbar. */
+   vergleichbar.
+   ⚠️ Nur bei arabicroots zaehlt "schwer" seit v707 zur Haelfte als gewusst
+   (Elias, 23.10.2026) - siehe schwerZaehltAlsGewusst() ueber answer(). */
 const STUFEN = {
   nochmal: { box: (b) => Math.max(1, b - 1),     richtig: false, feedback: 'answer-wrong' },
   schwer:  { box: (b) => b,                      richtig: false, feedback: 'answer-wrong' },
@@ -2156,6 +2158,51 @@ function stufenVorschau(){
   });
 }
 
+/* ⭐ v707 (23.10.2026): „schwer" zählt bei arabicroots zur HÄLFTE als gewusst.
+   Elias, wörtlich: „ich möchte, dass wenn ich bei karteikarten auf ,,schwer"
+   tippe also das es bei der box bleiben soll, dass es bei arabicroots die
+   hälfte davon als gewusst eingetragen wird und die andere als nicht nicht
+   gewusst".
+
+   Hier in der App ändert sich NICHTS: „schwer" bleibt in der Box und zählt in
+   `p.wrong` weiter als Fehlversuch (Trefferquote und Statistik wie oben bei
+   STUFEN). Neu sind zwei Zähler am Wort, die nur die Übertragung liest
+   (js/sync.js → functions/api/arabicroots.js, offeneVersuche()):
+     schwerGewusst       dieses „schwer" kommt drüben als gewusst an
+     schwerNichtGewusst  dieses „schwer" kommt drüben als nicht gewusst an
+
+   Welche Hälfte ein Tippen bekommt, entscheidet die Summe über ALLE Wörter:
+   gewusst, solange bisher nicht mehr „schwer" als gewusst gezählt haben als
+   als nicht gewusst. Es wechselt also ab — gewusst, nicht gewusst, gewusst … —
+   und die Hälfte gilt für alle seine „schwer" zusammen, auch wenn jedes Wort
+   nur ein einziges hat. Die Zähler stehen im Lernstand; nach dem Abgleich
+   rechnen Handy und Tablet mit derselben Summe und gleichen einen Vorsprung
+   von selbst aus. (Das Abwechseln über alle Wörter ist MEINE Umsetzung seines
+   Satzes, die Hälfte ist seine Vorgabe.)
+
+   ⛔ Gezählt wird erst ab v707. Die „schwer" davor stehen drüben schon als
+   nicht gewusst, und die Übertragung legt nur an, was fehlt — sie löscht nie.
+
+   ⛔ Und nur Wörter, die hinübergehen: eine Kennung NUR AUS ZIFFERN, dieselbe
+   Grenze wie in der Übertragung (functions/api/arabicroots.js). Ein
+   Fachbegriff (gram-…), ein eigenes Wort oder eine Mehrzahlkarte kommt dort
+   nie an — zählte sein „schwer" mit, fehlte drüben genau die Hälfte, die es
+   bekommen hat. Gemessen in der Probe mit seinem Stand (20.10.): von acht
+   „schwer" fiel ein „nicht gewusst" auf gram-zarf, drüben wären 4 gewusst und
+   3 nicht gewusst angekommen. Von seinen 284 beantworteten Wörtern haben 76
+   keine Ziffern-Kennung; die 208 anderen stehen alle in den arabicroots-
+   Büchern. */
+function istArabicrootsWort(id){ return /^\d+$/.test(String(id)); }
+function schwerZaehltAlsGewusst(fortschritt){
+  let gewusst = 0, nicht = 0;
+  for (const e of Object.values(fortschritt || {})){
+    if (!e) continue;
+    gewusst += Number(e.schwerGewusst) || 0;
+    nicht   += Number(e.schwerNichtGewusst) || 0;
+  }
+  return gewusst <= nicht;
+}
+
 function answer(stufe){
   /* Schutz gegen Doppelauslösung: waehrend das Antwort-Feedback laeuft, wird ein
      zweiter Klick/Swipe ignoriert - sonst ueberspringt die Runde eine Karte. */
@@ -2236,6 +2283,14 @@ function answer(stufe){
   }
   if (s.richtig) p.correct = (p.correct||0)+1;
   else           p.wrong   = (p.wrong||0)+1;
+  /* v707: welche Hälfte dieses „schwer" bei arabicroots ist — Elias' Satz und
+     die Regel stehen bei schwerZaehltAlsGewusst() direkt über answer(). Die
+     Summe wird VOR dem Hochzählen gebildet, sonst zählte dieses Tippen sich
+     selbst schon mit. */
+  if (s === STUFEN.schwer && istArabicrootsWort(w.id)){
+    if (schwerZaehltAlsGewusst(PROGRESS)) p.schwerGewusst = (Number(p.schwerGewusst) || 0) + 1;
+    else p.schwerNichtGewusst = (Number(p.schwerNichtGewusst) || 0) + 1;
+  }
   /* Vorgezogen und richtig in Box 4–7 (v603) oder als andere Hälfte der
      Lerngruppe (v604): der Termin bleibt. Sonst sagt stufeErgebnis() die Tage —
      für ein Mitglied, das bleibt, GRUPPE_ABSTAND statt INTERVALS[1]. */

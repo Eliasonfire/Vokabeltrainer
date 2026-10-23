@@ -26,6 +26,15 @@
  *   3. AUFBAUEN, nicht ersetzen: es werden nur die Versuche angelegt, die
  *      drueben noch fehlen.
  *   4. Laufend: js/sync.js ruft das hier nach jedem geglueckten Abgleich auf.
+ *   5. ⭐ Seit v707 (23.10.2026) zaehlt „schwer" hier zur HAELFTE als gewusst.
+ *      Elias, woertlich: „ich möchte, dass wenn ich bei karteikarten auf
+ *      ,,schwer" tippe also das es bei der box bleiben soll, dass es bei
+ *      arabicroots die hälfte davon als gewusst eingetragen wird und die andere
+ *      als nicht nicht gewusst". Im Vokabeltrainer bleibt „schwer" ein
+ *      Fehlversuch (`wrong`); welches „schwer" drueben gewusst ist, zaehlt
+ *      `schwerGewusst` am Wort (js/lernen.js, schwerZaehltAlsGewusst()).
+ *      offeneVersuche() schiebt genau diese von falsch nach richtig. Die
+ *      „schwer" von vor v707 bleiben, wie sie drueben stehen.
  *
  * ⛔⛔ WARUM DIE DIFFERENZ AN DER ZIELTABELLE GEMESSEN WIRD, nicht an einem
  * eigenen Merker: Ein Merker („zuletzt uebertragen: 412") lebt auf einem Geraet
@@ -87,6 +96,23 @@ const RICHTUNG = 'ar_de';
    sieben Anfragen — von der Zeitgrenze weit entfernt. Die Portionierung bleibt
    trotzdem: sie ist die Notbremse, falls der Rückstand einmal groß wird. */
 const HOECHSTENS_JE_LAUF = 1000;
+
+/* ⭐ v707: die Zaehlweise, die eine App mitschicken muss, damit hier etwas
+   geschrieben wird. 1 (bis v706, ohne Angabe) = „schwer" ganz als falsch.
+   2 (seit v707) = „schwer" zur Haelfte als gewusst, Regel 5 oben.
+
+   ⛔⛔ WARUM EINE AELTERE APP GAR NICHTS MEHR SCHREIBT: Elias uebt auf Handy
+   UND Tablet, und das zweite Geraet laedt die neue Fassung erst, wenn er die
+   App dort schliesst und neu oeffnet. Bis dahin hat es nach dem Abgleich
+   dieselben Woerter, kennt `schwerGewusst` aber nicht und meldet jedes
+   „schwer" als falsch — auch eines, das das neue Geraet drueben schon als
+   gewusst angelegt hat. Dann stuende derselbe Versuch zweimal drueben, und
+   loeschen kann diese Funktion nicht. Abgewiesen geht nichts verloren: gezaehlt
+   wird an der Zieltabelle (Regel 3), der naechste Aufruf einer neuen Fassung
+   legt alles an, was fehlt. Und die Absage kommt VOR der Anmeldung — sie
+   kostet keinen Schreibvorgang in KV. [[zweiter_aufruf_ueberschreibt_still]]
+   ⛔ Muss gleich AR_ZAEHLWEISE in js/sync.js sein (test-schwer-halb.mjs). */
+export const ZAEHLWEISE = 2;
 
 function antwort(daten, status = 200){
   return new Response(JSON.stringify(daten), {
@@ -172,7 +198,7 @@ async function rest(env, token, pfad, optionen = {}){
 
 /* ⭐ Der Kern, bewusst als reine Funktion ohne Netz: was muss angelegt werden?
  *
- * @param fortschritt  { "45751": { correct, wrong, ts }, … } aus dem Vokabeltrainer
+ * @param fortschritt  { "45751": { correct, wrong, ts, schwerGewusst? }, … } aus dem Vokabeltrainer
  * @param schonDa      { "45751": { richtig, falsch }, … }    bereits uebertragen
  * @param bekannt      Set der IDs, die es in arabicroots wirklich gibt
  * @returns Array der anzulegenden Zeilen (ohne user_id)
@@ -186,8 +212,15 @@ export function offeneVersuche(fortschritt, schonDa, bekannt){
        wuerde den ganzen Block scheitern lassen. */
     if (!bekannt.has(String(id))) continue;
     const da = schonDa[String(id)] || { richtig: 0, falsch: 0 };
-    const fehltR = Math.max(0, (Number(p && p.correct) || 0) - da.richtig);
-    const fehltF = Math.max(0, (Number(p && p.wrong)   || 0) - da.falsch);
+    /* v707, Regel 5: die „schwer", die drueben als gewusst zaehlen, stecken
+       im Vokabeltrainer in `wrong` — sie wandern hier von falsch nach richtig.
+       Die Summe bleibt dieselbe: kein Versuch entsteht, keiner geht verloren.
+       ⛔ Nie mehr als `wrong` und nie unter 0: ein kaputter Wert darf keinen
+       Versuch erfinden und keine Fehlversuche ins Minus drehen. */
+    const falsch = Number(p && p.wrong) || 0;
+    const halb = Math.min(falsch, Math.max(0, Math.floor(Number(p && p.schwerGewusst) || 0)));
+    const fehltR = Math.max(0, (Number(p && p.correct) || 0) + halb - da.richtig);
+    const fehltF = Math.max(0, falsch - halb - da.falsch);
     if (!fehltR && !fehltF) continue;
     /* Alle nachgetragenen Versuche eines Wortes bekommen SEINEN Zeitstempel.
        ⚠️ Der Vokabeltrainer haelt nur den LETZTEN fest (`p.ts`), die einzelnen
@@ -224,7 +257,7 @@ export async function onRequest(context){
         `attempts?device_id=eq.${GERAET_VOKABELTRAINER}&select=vocabulary_id&limit=20000`);
       return antwort({ eingerichtet: true, anmeldung: 'geht (' + quelle + ')',
         nutzerkennung: userId ? 'vorhanden' : 'fehlt',
-        bereitsUebertragen: (eigene || []).length });
+        bereitsUebertragen: (eigene || []).length, zaehlweise: ZAEHLWEISE });
     } catch (e){
       return antwort({ eingerichtet: true, anmeldung: 'FEHLER',
         fehler: String(e && e.message || e) }, 502);
@@ -240,13 +273,19 @@ export async function onRequest(context){
     return antwort({ eingerichtet: false, fehlend,
       hinweis: 'In Cloudflare Pages → Settings → Variables and Secrets setzen.' }, 501);
 
-  let fortschritt;
+  let fortschritt, zaehlweise;
   try {
     const koerper = await request.json();
     fortschritt = koerper && koerper.fortschritt;
+    zaehlweise = Number(koerper && koerper.zaehlweise) || 1;
   } catch (e) { return antwort({ fehler: 'ungueltiger Koerper' }, 400); }
   if (!fortschritt || typeof fortschritt !== 'object')
     return antwort({ fehler: 'fortschritt fehlt' }, 400);
+  /* ⛔ v707: eine aeltere App schreibt nichts — die Begruendung steht bei
+     ZAEHLWEISE oben. Vor der Anmeldung, damit die Absage nichts kostet. */
+  if (zaehlweise !== ZAEHLWEISE)
+    return antwort({ eingerichtet: true, geschrieben: 0, zaehlweise, erwartet: ZAEHLWEISE,
+      hinweis: 'aeltere App-Fassung — schreibt nach dem Neuladen wieder' }, 409);
 
   try {
     const { token, userId } = await anmelden(env);

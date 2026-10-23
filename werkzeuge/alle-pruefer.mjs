@@ -799,6 +799,12 @@ const PRUEFER = [
   ['test-richtung-nach-box.mjs', []],
   ['test-quote-karteikarten.mjs', []],
   ['test-arabicroots-differenz.mjs', []],
+  /* 23.10.2026 (v707) — „schwer" zählt bei arabicroots zur Hälfte als gewusst.
+     Elias: „dass es bei arabicroots die hälfte davon als gewusst eingetragen
+     wird und die andere als nicht nicht gewusst". Fährt die ganze js/lernen.js
+     (answer()), schickeNachArabicroots() und offeneVersuche()/onRequest() aus
+     dem Quelltext; elf Störtests. */
+  ['test-schwer-halb.mjs', []],
   ['test-hifz-sync.mjs', []],  ['test-sync.mjs', []],
   ['test-sync-anzeige.mjs', []],
   ['test-wurzel.mjs', []],
