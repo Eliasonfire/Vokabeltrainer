@@ -9387,3 +9387,11 @@ Gemessen am 21.10.2026 und weiter offen:
 **Schritt 5** – `CACHE_NAME` v704 → v705. `validate.js` Exit 0. `alle-pruefer.mjs` Exit 2: **NEU ROT: 1**, nämlich `werkzeuge/kandidaten-bewerten.mjs` mit 15 Regelkandidaten aus Folge 29 ohne Urteil (`f29-1245`, `f29-115`, `f29-1945`, …). Das kommt nicht aus diesem Lauf: `transcripts/kandidaten/folge-29.json` trägt den Zeitstempel 21.10.2026, 23:29. Regelkandidaten zu bewerten liegt außerhalb dieser Routine, und sie verbietet das Ausliefern bei „NEU ROT" (wie am 08.10. bei Folge 26). Kapitel 14 geht mit der nächsten Auslieferung hinaus, sobald Folge 29 bewertet ist.
 
 **Schritt 6/7** – Sechs Dateien mit explizitem Pfad committet (`93b96fd`) und gepusht: `js/kern.js`, `sw.js`, `data/lernstand.json`, `data/boxen.json`, `data/auswendig.json`, `data/abgelehnt.json`. Den Auftrag habe ich mit `--notiz "v705 NICHT ausgeliefert: …"` abgeschlossen, die Marke ist weg.
+
+## 2026-10-23 16:34 – Eselsbrücken ersetzt
+
+Routine „Eselsbrücken": Eine Ablehnung war offen (23.10.2026, 02:34).
+
+- **45796 وَسِخٌ (schmutzig), `alt[0]`:** Abgelehnt war die Musterarbeit („فَعِل statt فَعِيل wie نَظِيف"). Die neue Idee ist ein Bild aus seinem eigenen Buch: der Lehrbuchsatz الْقَمِيصُ وَسِخٌ (Madina 1, Seite 15, `mb1-15-1`), also das fleckige Hemd, das man gerade anziehen will. Der Text nennt keine Wurzel, keinen Plural und keine Koranstelle. `alt[1]` (Gruppe mit و-Anlaut) und `mnemo` sind wörtlich geblieben.
+
+Prüfungen: `pruefe-eselsbruecken` Exit 0, `vorschlaege-holen --auftrag` Exit 3 (nichts mehr offen), `pruefe-quran`, `pruefe-taschkil`, `taschkil-belegen`, `pruefe-duplikate` und `validate` alle Exit 0. `alle-pruefer.mjs`: 187 Prüfer, 7 rot, keiner neu rot. `CACHE_NAME` v705 → **v706**, mit `--mit-daten` ausgeliefert, `pruefe-ausgeliefert` meldet 111 Dateien deckungsgleich.
