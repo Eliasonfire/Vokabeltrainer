@@ -8,6 +8,9 @@
  * zwischen mim und nun platzieren. ich will später das nun markieren weil die raute bezieht sich
  * auf das nun deswegen kannst du das irgendwie im code miteinander verbinden aber wie gesagt sie
  * soll zwischen mim und nun stehen."
+ * Nach v712 (Bild der Karte): „kannst du zwischen der raute und dem nun ein kleines bisschen mehr
+ * abstand machen", dann mit Bild aus dem gedruckten Muṣḥaf: „so möchte ich das es aussieht" — hohe,
+ * schmale Raute über der Verbindung, rechts vom Punkt des nūn (seit v713).
  *
  * Gefahren wird die ECHTE App im Browser (Edge, ohne Service Worker):
  *   - über den ganzen Koran bekommen genau zwei Wörter die hohle Raute: 11:41:6 („unten") und
@@ -20,7 +23,8 @@
  *     sie NICHT; dasselbe auf der großen Karte.
  * `--bild <ordner>` legt dort raute-11-41.png, raute-12-11.png und raute-karte.png ab.
  * Störtest: `node test-quran-raute.mjs --quran <datei>` liefert <datei> statt js/quran.js aus —
- * mit dem Stand von v710 oder v711 muss der Test rot sein.
+ * mit dem Stand von v710 oder v711 muss der Test rot sein. `--index <datei>` ebenso für index.html:
+ * mit dem Stand von v712 (Raute unten auf der Verbindung, quadratisch) muss er rot sein.
  * Exit 0 = grün · 1 = Befund · 3 = kann nicht laufen (Playwright fehlt).
  */
 import http from 'node:http';
@@ -38,7 +42,8 @@ catch (e) { console.log('⛔ Playwright nicht gefunden (gesucht über ' + PLAYWR
 const arg = (name) => { const i = process.argv.indexOf(name); return i > 0 ? path.resolve(process.argv[i + 1]) : null; };
 const ERSATZ = arg('--quran');
 const BILD = arg('--bild');
-if (ERSATZ && !fs.existsSync(ERSATZ)) { console.log('⛔ ' + ERSATZ + ' gibt es nicht'); process.exit(3); }
+const ERSATZ_INDEX = arg('--index');
+for (const e of [ERSATZ, ERSATZ_INDEX]) if (e && !fs.existsSync(e)) { console.log('⛔ ' + e + ' gibt es nicht'); process.exit(3); }
 
 const TYP = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.woff2': 'font/woff2', '.ttf': 'font/ttf' };
@@ -47,6 +52,7 @@ const server = http.createServer((req, res) => {
   if (p.endsWith('/')) p += 'index.html';
   let datei = path.join(WURZEL, p);
   if (ERSATZ && p === '/js/quran.js') datei = ERSATZ;
+  else if (ERSATZ_INDEX && p === '/index.html') datei = ERSATZ_INDEX;
   else if (!datei.startsWith(WURZEL) || !fs.existsSync(datei) || fs.statSync(datei).isDirectory()) { res.writeHead(404); res.end(); return; }
   res.writeHead(200, { 'content-type': TYP[path.extname(datei).toLowerCase()] || 'application/octet-stream', 'cache-control': 'no-store' });
   fs.createReadStream(datei).pipe(res);
@@ -123,7 +129,7 @@ try {
       const bereich = (c) => { const g = document.createRange(); g.setStart(knoten, c.i); g.setEnd(knoten, c.i + c.len); return g.getBoundingClientRect(); };
       const eigen = bereich(cl[k]);
       return { schrift: getComputedStyle(sp).fontFamily, nachbarn: [getComputedStyle(nb(5)).fontFamily, getComputedStyle(nb(7)).fontFamily],
-        inhalt: nach.content, rand: nach.borderTopStyle,
+        inhalt: nach.content, rand: nach.borderTopStyle, matrix: nach.transform,
         /* in em: Abstand der Rautenmitte zur linken Kante des eigenen Clusters (mīm bzw. rā), und zur Grundlinie grob über die Kastenmitte */
         zurGrenze: (rx - eigen.left) / fs, rechtsVonGrenze: (eigen.right - rx) / fs, unterMitte: (ry - (r.top + r.height / 2)) / fs,
         clusterText: [...cl[k].text].map(c => c.codePointAt(0).toString(16)).join(' '),
@@ -132,8 +138,12 @@ try {
     pruefe(sure + ':' + vers + ' Wort 6 bleibt in Uthmanic Hafs, die Nachbarn auch', HAFS.test(m.schrift) && m.nachbarn.every(f => HAFS.test(f)), m);
     pruefe(sure + ':' + vers + ' die Raute wird gezeichnet (hohl: nur ein Rand)', m.inhalt !== 'none' && m.rand === 'solid', m);
     if (art === 'zwischen'){
-      pruefe('12:11 die Raute sitzt auf der Grenze zwischen mīm und nūn', m.clusterText.startsWith('645') && m.folgeText.startsWith('646') && Math.abs(m.zurGrenze) < 0.03, m);
-      pruefe('12:11 die Raute steht über der Wortmitte, nicht darunter', m.unterMitte < 0.1, m);
+      /* Form aus der Matrix des ::after: Ausdehnung waagerecht |a|+|c|, senkrecht |b|+|d| */
+      const z = String(m.matrix || '').match(/matrix\(([^)]+)\)/), k = z ? z[1].split(',').map(Number) : [1, 0, 0, 1];
+      const hochZuBreit = (Math.abs(k[1]) + Math.abs(k[3])) / (Math.abs(k[0]) + Math.abs(k[2]));
+      pruefe('12:11 die Raute steht zwischen mīm und nūn, nicht näher am nūn als die Grenze', m.clusterText.startsWith('645') && m.folgeText.startsWith('646') && m.zurGrenze > -0.03 && m.zurGrenze < 0.05, m);
+      pruefe('12:11 die Raute steht über der Verbindung (sein Bild): 0,08 bis 0,2 em über der Wortmitte', m.unterMitte < -0.08 && m.unterMitte > -0.2, m);
+      pruefe('12:11 die Raute ist hoch und schmal wie im Muṣḥaf (mindestens 1,4-mal so hoch wie breit)', hochZuBreit > 1.4, { matrix: m.matrix, hochZuBreit });
     } else {
       pruefe('11:41 die Raute sitzt unter dem rā (waagerecht innerhalb des rā)', m.clusterText.startsWith('631') && m.zurGrenze > 0 && m.rechtsVonGrenze > 0, m);
       pruefe('11:41 die Raute steht deutlich unter der Wortmitte', m.unterMitte > 0.5, m);
@@ -174,6 +184,32 @@ try {
       if (BILD){ await page.waitForTimeout(400); await page.locator('#tajweedKarte').screenshot({ path: path.join(BILD, 'raute-karte.png') }); }
       await page.evaluate(() => tajweedKarteSchliessen && tajweedKarteSchliessen());
     }
+  }
+  /* 3. Der Hizb-Stern wie bei quran.com V1 (Elias: „ich möchte das von quran.com haben"):
+     U+06DE kommt im Leser aus Scheherazade New, alles andere bleibt Hafs. Gemessen über die Breite
+     des Zeichens allein: in 'Uthmanic Hafs' so breit wie in Scheherazade New, und nicht so breit wie
+     in der reinen Hafs-Datei (sonst prüfte der Vergleich nichts). */
+  await page.evaluate(() => showScreen('quranfull', { ohneEbene: true }));
+  await page.evaluate(() => openSurah(2));
+  await page.waitForSelector('#verseList .verse-item[data-versnr="26"] .verse-ar .qw[data-w="1"]', { timeout: 30000 });
+  const hizb = await page.evaluate(async () => {
+    const rein = new FontFace('HafsRein', 'url(./fonts/kfgqpc-hafs-18.woff2)');
+    document.fonts.add(await rein.load());
+    await document.fonts.load("60px 'Scheherazade New'");
+    await document.fonts.load("60px 'Uthmanic Hafs'", String.fromCodePoint(0x6DE));
+    const breite = (fam) => { const s = document.createElement('span'); s.style.cssText = 'font-size:60px;position:absolute;white-space:nowrap;font-family:' + fam;
+      s.textContent = String.fromCodePoint(0x6DE); document.body.appendChild(s); const b = s.getBoundingClientRect().width; s.remove(); return b; };
+    const wort = document.querySelector('#verseList .verse-item[data-versnr="26"] .verse-ar .qw[data-w="1"]');
+    return { leser: breite("'Uthmanic Hafs'"), sch: breite("'Scheherazade New'"), rein: breite('HafsRein'),
+      hatZeichen: wort.textContent.codePointAt(0) === 0x6DE, schrift: getComputedStyle(wort).fontFamily };
+  });
+  pruefe('2:26 Wort 1 beginnt mit dem Hizb-Stern und steht in Uthmanic Hafs', hizb.hatZeichen && HAFS.test(hizb.schrift), hizb);
+  pruefe('der Hizb-Stern kommt aus Scheherazade New (Rosette wie V1), nicht aus Hafs (kleiner Stern)',
+    Math.abs(hizb.leser - hizb.sch) < 0.5 && Math.abs(hizb.rein - hizb.sch) > 2, hizb);
+  if (BILD){
+    await page.evaluate(() => document.querySelector('#verseList .verse-item[data-versnr="26"] .verse-ar').scrollIntoView({ block: 'center', behavior: 'instant' }));
+    await page.waitForTimeout(400);
+    await page.locator('#verseList .verse-item[data-versnr="26"] .verse-ar').screenshot({ path: path.join(BILD, 'hizb-2-26.png') });
   }
   pruefe('keine Seitenfehler', fehler.length === 0, fehler);
 } finally { await browser.close(); server.close(); }

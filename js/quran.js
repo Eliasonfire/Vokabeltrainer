@@ -1589,6 +1589,55 @@ function quranOhneVersnummer(text){
   return String(text || '').replace(QW_VERSNUMMER, '');
 }
 
+/* ⭐ Die Pausenzeichen wie bei quran.com „V1" (24.10.2026). Elias liest auf
+   quran.com in der Schrift V1 (King Fahad Complex V1, die ältere Druckausgabe
+   des Muṣḥaf al-Madīna); nur sie zeigt die hohle Raute in 11:41 und 12:11.
+   Auf meine Frage, ob die App die Pausenzeichen so zeigen soll wie V1, mit
+   einem Bild aus 67:23 (V1 ṣalā, App jīm): „und diese zeichen (alle) müssen
+   auch identisch sein weil jeder eine andere bedetuung hat".
+
+   Gemessen am 24.10.2026: V1 zeichnet genau die Pausenzeichen des Feldes
+   `text_uthmani` von quran.com (16 von 16 Stichproben, je die Glyphe aus der
+   V1-Seitenschrift neben den Text gelegt). Sie stehen an 352 Wörtern in 326
+   Versen anders als in `text_qpc_hafs`, darunter 67× lā, das die neuere
+   Ausgabe nicht mehr setzt. In beiden Texten steht ein Pausenzeichen
+   (U+06D6–U+06DB) nur am Wortende, und höchstens eins je Wort.
+
+   Deshalb: alles aus `text_qpc_hafs` (Elias, 19.10.2026: „stelle sicher das
+   sie gleich sind damit keine fehler da sind"), nur das Pausenzeichen jedes
+   Wortes aus `text_uthmani`. Die Wörter werden der Reihe nach zugeordnet. In
+   `text_uthmani` steht ein Pausenzeichen mit Leerraum davor als eigenes „Wort"
+   (gemessen: 4358×, z. B. 2:2), ebenso das kleine sīn, das Sajda- und das
+   Hizb-Zeichen: so ein Wort ohne Buchstaben gehört zum vorigen Wort, nur das
+   Hizb-Zeichen zum folgenden — wie in `text_qpc_hafs`. Haben beide Texte verschieden viele Wörter
+   (15:7, 27:20, 36:22: andere Wortgrenzen, kein Pausenzeichen darin), bleibt
+   der Vers nur dann, wie er ist, wenn die Pausenzeichen in derselben Folge
+   stehen; sonst kommt null zurück (der Bau bricht ab, der Rückfall nimmt
+   text_qpc_hafs).
+
+   ⛔ Diese Funktion steht nur HIER: werkzeuge/korantext-bauen.mjs schneidet
+   sie aus dieser Datei, damit Bau und Rückfall nie verschieden mischen.
+   Bewacht von test-korantext.mjs (K8). */
+function quranPausenV1(qpc, uthmani){
+  const PAUSE = new RegExp('[' + String.fromCodePoint(0x6D6) + '-' + String.fromCodePoint(0x6DB) + ']', 'g');
+  const NUR_ZEICHEN = new RegExp('^[' + String.fromCodePoint(0x6D6) + '-' + String.fromCodePoint(0x6DC) + String.fromCodePoint(0x6DE, 0x6E9) + ']+$');
+  const a = String(qpc || '').split(' ');
+  const b = [];
+  let vorne = '';
+  for (const t of String(uthmani || '').trim().split(/\s+/).filter(Boolean)){
+    if (NUR_ZEICHEN.test(t)){
+      if (t.codePointAt(0) === 0x6DE || !b.length) vorne += t; else b[b.length - 1] += t;
+      continue;
+    }
+    b.push(vorne + t); vorne = '';
+  }
+  if (vorne && b.length) b[b.length - 1] += vorne;
+  const pausen = w => (w.match(PAUSE) || []).join('');
+  if (a.length !== b.length) return a.map(pausen).join('') === b.map(pausen).join('') ? String(qpc || '') : null;
+  return a.map((w, i) => w.replace(PAUSE, '') + pausen(b[i])).join(' ');
+}
+/* ende quranPausenV1 */
+
 /* ⭐ Das Hamza im Lam-Alif wie bei quran.com (19.10.2026). Elias, mit zwei
    Bildschirmfotos von 93:4: „ich möchte, dass diese Hamza im lam alif nicht so
    darsteht wie sie aktuell in der app ist sondern so wie bei quran.com. das
@@ -2621,18 +2670,24 @@ async function openSurah(id, opt){
        Kodierung, die die Muṣḥaf-Schrift nicht so zeichnet wie quran.com. Das
        Feld trägt am Ende die Versnummer (U+00A0 und Ziffern); die kommt weg wie
        beim Bau, sonst stünde sie zweimal im Leser. Gelesen wird der Vers weiter
-       über `text_uthmani`, den Namen, den der ganze Leser benutzt. */
+       über `text_uthmani`, den Namen, den der ganze Leser benutzt.
+       ⭐ Seit dem 24.10.2026 kommt das echte Feld `text_uthmani` mit: aus ihm
+       nimmt quranPausenV1() die Pausenzeichen wie bei quran.com „V1" — dieselbe
+       Mischung wie beim Bau von quran-text.js. */
     try{
       let verses = [], page = 1, totalPages = 1;
       do{
-        const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?language=de&translations=27&fields=text_qpc_hafs&per_page=50&page=${page}`);
+        const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?language=de&translations=27&fields=text_qpc_hafs,text_uthmani&per_page=50&page=${page}`);
         if (!res.ok) throw new Error('HTTP '+res.status);
         const data = await res.json();
         verses = verses.concat(data.verses||[]);
         totalPages = (data.pagination && data.pagination.total_pages) || 1;
         page++;
       } while(page <= totalPages);
-      VERSE_CACHE[id] = verses.map(v => ({ ...v, text_uthmani: quranOhneVersnummer(v.text_qpc_hafs) }));
+      VERSE_CACHE[id] = verses.map(v => {
+        const qpc = quranOhneVersnummer(v.text_qpc_hafs);
+        return { ...v, text_uthmani: quranPausenV1(qpc, v.text_uthmani) || qpc };
+      });
       renderVerses(id);
       anDenAnfang();
     }catch(err2){

@@ -1,6 +1,6 @@
 /* quran-verszeichen.js — ERZEUGT, nicht von Hand pflegen.
    Quelle: quran-text.js · Werkzeug: werkzeuge/verszeichen-bauen.mjs
-   Erzeugt am 2026-10-19.
+   Erzeugt am 2026-10-23.
 
    QURAN_VERSZEICHEN[Sure] = [Zeichen von Vers 1, Vers 2, …]
    Gezaehlt sind Buchstaben ohne Taschkil und ohne Leerzeichen.
