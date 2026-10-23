@@ -780,6 +780,11 @@ const PRUEFER = [
      Liste und Datendatei gegeneinander und fährt koranKartenEinordnen() und
      neueZuerst() aus dem Quelltext — mit Störtests. */
   ['test-koran-haeufig.mjs', []],
+  /* ⭐ Neu am 23.10.2026 (v710). Elias: „… als ich dann wieder zu dem hören gekommen bin
+     wurden mir nicht mehr die altern vokabeln angezeigt sondern die näcshte runde. das
+     möchte ich nicht." Fährt die echte App im Browser: Antwort tippen, zur Suche, zurück —
+     dieselbe Frage muss dastehen. Störtest mit `--hoeren <alte hoeren.js>`. */
+  ['test-hoeren-fortsetzen.mjs', []],
   /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner
      ist": „das auch" (selbst mit den Wörterbüchern entscheiden). Schneidet
      plBeschriftung() und bauePluralKarte() aus js/kern.js und legt die

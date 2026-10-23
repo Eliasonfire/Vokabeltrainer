@@ -1227,6 +1227,19 @@ document.addEventListener('visibilitychange', ()=>{
    verbraucht. Siehe dort. */
 let HOER_ERSTES_WORT = true;
 
+/* Steht noch eine Frage, zu der er zurückkehren kann? Nur, wenn die Karte sie zeigt und
+   jedes ihrer Wörter — das gefragte und die vier anderen Antworten — noch in seinem
+   Vorrat liegt. Sonst stünde nach einem Auswahlwechsel ein Wort da, das er gerade
+   abgewählt hat. */
+function hoerFrageFortsetzbar(){
+  if (!HOER.wort || !Array.isArray(HOER.optionen) || HOER.optionen.length < 2) return false;
+  const karte = document.getElementById('hoerKarte');
+  if (!karte || karte.classList.contains('hidden')) return false;
+  if (!document.querySelector('#hoerOptionen [data-hoerwahl]')) return false;
+  const da = new Set(hoerbareVokabeln().map(w => String(w.id)));
+  return HOER.optionen.every(w => w && da.has(String(w.id)));
+}
+
 function openHoeren(){
   HOER_ERSTES_WORT = true;
   /* Ohne arabische Stimme waere der Modus stumm und damit sinnlos - das
@@ -1236,6 +1249,24 @@ function openHoeren(){
     const leer = document.getElementById('hoerLeer');
     leer.classList.remove('hidden');
     leer.textContent = 'Dieser Browser kann keine Sprachausgabe. Ohne sie funktioniert der Hörmodus nicht.';
+    return;
+  }
+  /* ⭐⭐ ZURÜCK ZUR SELBEN FRAGE (23.10.2026, v710). Elias um 23:38:50: „ich war eben im
+     hörmodus und habe die antwort geklickt und habe dann eine vokabel im wörterbuch
+     nachgeguckt, als ich dann wieder zu dem hören gekommen bin wurden mir nicht mehr die
+     altern vokabeln angezeigt sondern die näcshte runde. das möchte ich nicht."
+     Bis v709 begann JEDES Betreten mit naechsteHoerfrage(): die Frage, an der er war, samt
+     ihren fünf Antworten und der Lösung, war weg. Jetzt bleibt eine angefangene Frage
+     stehen — beantwortet oder nicht —, genau wie die Lernkarte ihre Runde an derselben
+     Karte fortsetzt (js/navigation.js). Neu gewürfelt wird nur, wenn es keine Frage gibt
+     (erstes Betreten nach dem Start der App) oder wenn ein Wort der Frage nicht mehr zu
+     seinem Vorrat gehört (andere Auswahl). Geprüft von test-hoeren-fortsetzen.mjs. */
+  if (hoerFrageFortsetzbar()){
+    /* Die fortgesetzte Frage gilt als das erste Wort: sie spielt nicht von selbst (seine
+       Vorgabe vom 15.09.2026), das nächste nach dem Weitertippen wieder schon. */
+    HOER_ERSTES_WORT = false;
+    hoerStandSchreiben();
+    hoerZielPruefen();
     return;
   }
   HOER.richtig = 0; HOER.gesamt = 0;

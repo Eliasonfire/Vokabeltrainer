@@ -990,7 +990,9 @@ function renderIrab(){
       ? endungUnsichtbar(t.wort) : null;
     const kasus = t.erwartet
       ? `<span class="irab-kasus" data-k="${t.erwartet}">${KASUS[t.erwartet].ar} · ${KASUS[t.erwartet].de}` +
-        (unsichtbar ? `<span class="irab-unsichtbar">nicht sichtbar — ${escapeHtml(unsichtbar)}</span>` : '') +
+        /* Bei den fuenf Nomen IST die Endung zu sehen — als Buchstabe (Waw, Alif, Yaa).
+           „nicht sichtbar" waere dort falsch, der Grund sagt es selbst (23.10.2026, dhu). */
+        (unsichtbar ? `<span class="irab-unsichtbar">${/Endung ist ein Buchstabe/.test(unsichtbar) ? '' : 'nicht sichtbar — '}${escapeHtml(unsichtbar)}</span>` : '') +
         '</span>'
       : '<span class="irab-kasus">keine Endung</span>';
     return `<div class="irab-zeile">
