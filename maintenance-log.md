@@ -9465,3 +9465,15 @@ Elias nach v711 (Bilder): *„jetzt wird das ra abgeschnitten aufgrund der notiz
 - Sammellauf 190 Prüfer: neu rot nur `pruefe-gedaechtnis-luecken` (Log-Commit `2090a98` ohne Spur) → Projektnotiz nachgezogen, grün.
 - Hochgeladen 00:46:58, Production main aus `f9655e6` (`c295e54f`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v712.
 - Zeichenvergleich: 36 Wörter / 29 Sonderzeichen gegen quran.com gleich. ⚠️ quran.com-Vorgabe `code_v2` malt an den Rautenstellen gefüllte Punkte; Elias' quran.com zeigt hohle Rauten → andere Schrift bei ihm (offen).
+
+## 2026-10-24 01:36 – Sitzung: Pausenzeichen und Hizb-Stern wie quran.com V1, Raute 12:11 hoch und schmal — **v713 ausgeliefert** (`af6f7a2`)
+
+Elias (mit Bildern aus meinem V1-Vergleich): *„ich möchte das von quran.com haben"* (Hizb-Stern) · *„und diese zeichen (alle) müssen auch identisch sein weil jeder eine andere bedetuung hat"* (Pausenzeichen, 67:23) · zur Raute: *„kannst du zwischen der raute und dem nun ein kleines bisschen mehr abstand machen"*, dann mit Bild aus dem gedruckten Muṣḥaf: *„so möchte ich das es aussieht"*.
+
+- Gemessen: Elias liest auf quran.com in **V1** (King Fahad Complex V1, ältere Druckausgabe) — nur V1 zeigt die hohle Raute in 11:41/12:11 und den Punkt in 41:44. Glyphen je Wort aus `api.quran.com/api/v4/verses/by_key/…?words=true&word_fields=code_v1,v1_page`, Schrift `static.qurancdn.com/fonts/quran/hafs/v1/woff2/p<seite>.woff2`. V1 zeichnet die Pausenzeichen von `text_uthmani` (16/16 Stichproben); anders als `text_qpc_hafs` an **352 Wörtern in 326 Versen** (in seinem Bereich nur 67:23:9).
+- `js/quran.js`: `quranPausenV1()` (alles aus text_qpc_hafs, nur das Pausenzeichen je Wort aus text_uthmani; dort steht es als eigenes Wort). Rückfall ohne Datei lädt beide Felder. `werkzeuge/korantext-bauen.mjs`/`-lib.mjs`: Bau mischt mit derselben Funktion (aus js/quran.js geschnitten); quran-text.js + Fingerabdruck neu, 352 Wörter, alle an den unabhängig gemessenen Stellen, sonst nichts, Deutsch gleich; `quran-verszeichen.js` neu.
+- `test-korantext.mjs` K8 + 3 Störtests (alle 8 rot). `index.html`: U+06DE aus Scheherazade New (zweite `@font-face` 'Uthmanic Hafs' mit `unicode-range`), Raute 12:11 hoch und schmal über der Verbindung (aus vier Lagen gewählt). `test-quran-raute.mjs` 22/22, mit index.html von v712 3 rot.
+- ⚠️ Das Edit-Werkzeug verwandelt `ۖ`-Folgen still in echte Zeichen → im Code `String.fromCodePoint()`; `werkzeuge/pflegeplan.mjs` trug statt des Befehls dessen Ausgabe (Backticks durch die Shell) → repariert.
+- Sammellauf 190 Prüfer: neu rot nur `pruefe-datumsangaben` und `notiz-umraeumen` (mein Projektnotiz-Block: geschätzte Zeit, falsche Reihenfolge) → Commit-Zeiten eingesetzt, umgeräumt, beide grün.
+- Hochgeladen 01:35:25, Production main aus `af6f7a2` (`430a5dde`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v713.
+- Offen: Sajda-Zeichen (keine Schrift der App trifft V1 — Frage an Elias), kleines sīn 75:27/83:14, Koransätze.
