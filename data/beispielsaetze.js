@@ -57,6 +57,139 @@
  */
 
 const BEISPIELSAETZE = {
+  /* نَصْرَانِيٌّ — Christ (23.10.2026)
+     Nominalsatz: huwa als Subjekt, das Wort als Prädikat. Beide Wörter stehen so auf seinen Karten (50157, 46913). */
+  '46913': {
+    sentAr: 'هُوَ نَصْرَانِيٌّ.',
+    sentDe: 'Er ist Christ.'
+  },
+
+  /* يَوْمُ الثُّلَاثَاءِ — Dienstag (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  '47254': {
+    sentAr: 'الْيَوْمُ يَوْمُ الثُّلَاثَاءِ.',
+    sentDe: 'Heute ist Dienstag.'
+  },
+
+  /* يَوْمُ الْأَحَدِ — Sonntag (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  'kal-sonntag': {
+    sentAr: 'الْيَوْمُ يَوْمُ الْأَحَدِ.',
+    sentDe: 'Heute ist Sonntag.'
+  },
+
+  /* يَوْمُ الِاثْنَيْنِ — Montag (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  'kal-montag': {
+    sentAr: 'الْيَوْمُ يَوْمُ الِاثْنَيْنِ.',
+    sentDe: 'Heute ist Montag.'
+  },
+
+  /* يَوْمُ الْأَرْبَعَاءِ — Mittwoch (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  'kal-mittwoch': {
+    sentAr: 'الْيَوْمُ يَوْمُ الْأَرْبَعَاءِ.',
+    sentDe: 'Heute ist Mittwoch.'
+  },
+
+  /* يَوْمُ الْخَمِيسِ — Donnerstag (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  'kal-donnerstag': {
+    sentAr: 'الْيَوْمُ يَوْمُ الْخَمِيسِ.',
+    sentDe: 'Heute ist Donnerstag.'
+  },
+
+  /* يَوْمُ الْجُمُعَةِ — Freitag (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  'kal-freitag': {
+    sentAr: 'الْيَوْمُ يَوْمُ الْجُمُعَةِ.',
+    sentDe: 'Heute ist Freitag.'
+  },
+
+  /* يَوْمُ السَّبْتِ — Samstag (23.10.2026)
+     Nominalsatz: al-yawm (seine Karte 48402) als Subjekt, der Wochentag als Prädikat (Genitivverbindung mit yawm). */
+  'kal-samstag': {
+    sentAr: 'الْيَوْمُ يَوْمُ السَّبْتِ.',
+    sentDe: 'Heute ist Samstag.'
+  },
+
+  /* مُحَرَّمٌ — Muharram (1. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-muharram': {
+    sentAr: 'مُحَرَّمٌ بَعْدَ ذِي الْحِجَّةِ.',
+    sentDe: 'Muharram kommt nach Dhul-Hijja.'
+  },
+
+  /* صَفَرٌ — Safar (2. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-safar': {
+    sentAr: 'صَفَرٌ بَعْدَ مُحَرَّمٍ.',
+    sentDe: 'Safar kommt nach Muharram.'
+  },
+
+  /* رَبِيعٌ الْأَوَّلُ — Rabi al-Awwal (3. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-rabi1': {
+    sentAr: 'رَبِيعٌ الْأَوَّلُ بَعْدَ صَفَرٍ.',
+    sentDe: 'Rabi al-Awwal kommt nach Safar.'
+  },
+
+  /* رَبِيعٌ الْآخِرُ — Rabi al-Akhir (4. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-rabi2': {
+    sentAr: 'رَبِيعٌ الْآخِرُ بَعْدَ رَبِيعٍ الْأَوَّلِ.',
+    sentDe: 'Rabi al-Akhir kommt nach Rabi al-Awwal.'
+  },
+
+  /* جُمَادَى الْأُولَى — Jumada al-Ula (5. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-jumada1': {
+    sentAr: 'جُمَادَى الْأُولَى بَعْدَ رَبِيعٍ الْآخِرِ.',
+    sentDe: 'Jumada al-Ula kommt nach Rabi al-Akhir.'
+  },
+
+  /* جُمَادَى الْآخِرَةُ — Jumada al-Akhira (6. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-jumada2': {
+    sentAr: 'جُمَادَى الْآخِرَةُ بَعْدَ جُمَادَى الْأُولَى.',
+    sentDe: 'Jumada al-Akhira kommt nach Jumada al-Ula.'
+  },
+
+  /* شَعْبَانُ — Shaban (8. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-shaban': {
+    sentAr: 'شَعْبَانُ بَعْدَ رَجَبٍ.',
+    sentDe: 'Shaban kommt nach Rajab.'
+  },
+
+  /* رَمَضَانُ — Ramadan (9. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-ramadan': {
+    sentAr: 'رَمَضَانُ بَعْدَ شَعْبَانَ.',
+    sentDe: 'Ramadan kommt nach Shaban.'
+  },
+
+  /* شَوَّالٌ — Shawwal (10. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-shawwal': {
+    sentAr: 'شَوَّالٌ بَعْدَ رَمَضَانَ.',
+    sentDe: 'Shawwal kommt nach Ramadan.'
+  },
+
+  /* ذُو الْقَعْدَةِ — Dhul-Qada (11. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-dhulqada': {
+    sentAr: 'ذُو الْقَعْدَةِ بَعْدَ شَوَّالٍ.',
+    sentDe: 'Dhul-Qada kommt nach Shawwal.'
+  },
+
+  /* ذُو الْحِجَّةِ — Dhul-Hijja (12. Monat) (23.10.2026)
+     Nominalsatz: der Monatsname als Subjekt, baʿda mit dem Monat davor im Genitiv (Form aus der enwikt-Beugungstabelle). Lehrt die Reihenfolge, die Elias wissen will („welcher im jahr dieser monat ist“). */
+  'kal-dhulhijja': {
+    sentAr: 'ذُو الْحِجَّةِ بَعْدَ ذِي الْقَعْدَةِ.',
+    sentDe: 'Dhul-Hijja kommt nach Dhul-Qada.'
+  },
+
   /* ضَعِيفٌ — schwach (bayna-yadayk-2, Kapitel 2, einzeln freigeschaltet)
      Nominalsatz: hādhā als Subjekt, Nomen mit Adjektiv als Prädikat. Alle drei Wörter stehen so auf seinen Karten (50160, 45764, 46549); geschrieben in der Nachtschicht vom 20.10.2026 — in seinen Büchern und Schlüsseln steht kein Satz mit dem Wort (gesucht in 608 Sätzen des Repos und in den Schlüsseln Band 2 und 3). */
   '46549': {

@@ -149,6 +149,28 @@ try {
   console.log('     node werkzeuge/vorrat.mjs --stand <datei> --app auto');
 }
 
+/* ⭐ DIE KALENDERKARTEN (23.10.2026) — data/kalender.js.
+   Elias: „ich will auch die 7 wochentagen und alle monate als eigene vokabel".
+   js/kern.js schiebt sie in der App IMMER in VOCAB_DATA (chapter 'personal'), also
+   stehen sie in JEDEM Lexikon, und ihre Saetze (data/beispielsaetze.js, kal-…) sind
+   immer sichtbar. Ohne diesen Block hiessen sie unten „Id, die in keinem Buch
+   steht", und die Analyse kannte die Monatsnamen nicht — js/irab.js erkennt den
+   Genitiv auf Fatha (Ramadana, Shabana) gerade an ihrer Grundform im Wortschatz.
+   [[pruefwerkzeug_laedt_mehr_als_die_app]] mit umgekehrtem Vorzeichen. */
+let KALENDER_VOKABELN = [];
+try {
+  const d = P + 'data' + path.sep + 'kalender.js';
+  if (fs.existsSync(d))
+    ({ KALENDER_VOKABELN } = (new Function(fs.readFileSync(d, 'utf8') + ';return {KALENDER_VOKABELN};'))());
+} catch (e) { console.log('  data/kalender.js nicht lesbar: ' + e.message); }
+{
+  const schon = new Set(VOCAB_DATA.map(w => String(w.id)));
+  const neu = KALENDER_VOKABELN.filter(w => w && w.id && !schon.has(String(w.id)));
+  VOCAB_DATA.push(...neu);
+  wortschatz.push(...neu);
+  if (neu.length) console.log(`  ${neu.length} Kalenderkarten mitgeladen (data/kalender.js).`);
+}
+
 setzeLexikon(wortschatz);
 console.log(wortschatz.length
   ? `Wortarten aus ${wortschatz.length} Vokabeln geladen.`
@@ -834,6 +856,62 @@ let lexikonSchwer = 0;
     eiche(EICH_TEIL.map(([n, , warum]) => [n, true, warum]),
           n => EICH_TEIL.find(e => e[0] === n)[1](),
           'neuer Satzteil, wahid als نَعْت, Komma trennt, wa-li, a + Pronomen, Satzende nach Verb (ohne Lexikon)');
+  }
+
+  /* ⭐ DIE KALENDERSAETZE (23.10.2026) — fuenf Regeln in js/irab.js, jede mit einem
+     Fall, an dem sie scheitern kann. Die Saetze kommen aus data/beispielsaetze.js
+     (kal-…, 45926), nicht getippt; die beiden Gegenproben werden per Code daraus
+     gebaut (ein Zeichen getauscht). Stoertest am 23.10.2026, 22:4x: mit der irab.js
+     von HEAD (9fea7a7) sind die sieben Faelle rot und die zwei Gegenproben gruen,
+     mit der neuen alle neun gruen. */
+  {
+    const satz = id => { const s = BEISPIELSAETZE[id] || VOCAB_DATA.find(v => String(v.id) === id); return s ? s.sentAr : ''; };
+    const MUBTADA = 'مُبْتَدَأ';
+    const KHABAR  = 'خَبَر';
+    const NAT     = 'نَعْت';
+    const MUDAF   = '(مُضَاف)';
+    const ILAYH   = 'مُضَاف إِلَيْه';
+    const MINI_MONATE = ['kal-shaban', 'kal-ramadan', 'kal-muharram', 'kal-safar']
+      .map(id => KALENDER_VOKABELN.find(w => w.id === id)).filter(Boolean);
+    /* Gegenprobe Genitiv auf Fatha: Muharramin -> Muharrama (Tanwin Kasra gegen Fatha) */
+    const safarFalsch = satz('kal-safar').replace('ٍ.', 'َ.');
+    /* Gegenprobe Adverb: al-yawmu -> al-yawma (erste Damma des Satzes gegen Fatha) */
+    const yawmaSatz = satz('kal-sonntag').replace(/^(\S*?)ُ/, '$1َ');
+    const EICH_KAL = [
+      ['kal-sonntag', () => { const r = analysiereSatz(satz('kal-sonntag'));
+          return r[0].rolle === MUBTADA && r[1].rolle === KHABAR + ' ' + MUDAF && r[2].rolle === ILAYH; },
+        'al-yawmu yawmu l-ahadi: al-yawmu ist mubtada (nicht das Adverb), yawmu khabar und mudaf'],
+      /* Mit Mini-Lexikon: der Fehler zeigt sich nur, wenn qaribun als Adjektiv bekannt
+         ist (ohne Lexikon war es auch vorher schon khabar — Stoertest 23.10.2026). */
+      ['45926', () => mitLexikon([{ ar: satz('45926').split(/\s+/)[1].replace(/[.]/g, ''), type: 'adjective' }], () => {
+          const r = analysiereSatz(satz('45926'));
+          return r[0].rolle === MUBTADA && r[1].rolle === KHABAR; }),
+        'Rajabun qaribun: der Monatsname ist bestimmt, qaribun also khabar und kein nat'],
+      ['kal-rabi2', () => { const r = analysiereSatz(satz('kal-rabi2'));
+          return r[1].rolle.startsWith(NAT) && r[4].rolle.startsWith(NAT) && r[4].erwartet === 'jarr' && r[4].stimmt === true; },
+        'Rabiun al-akhiru bada Rabiin al-awwali: beide Zusaetze sind nat im Fall des Namens'],
+      ['kal-jumada2', () => { const r = analysiereSatz(satz('kal-jumada2'));
+          return r[1].rolle.startsWith(NAT) && r[4].rolle.startsWith(NAT) && r[4].erwartet === 'jarr'; },
+        'Jumada al-akhiratu bada Jumada l-ula: al-ula ist nat (vorher mubtada)'],
+      ['kal-dhulqada', () => { const r = analysiereSatz(satz('kal-dhulqada'));
+          return r[0].rolle.startsWith(MUBTADA + ' ' + MUDAF) && r[0].erwartet === null && r[1].rolle === ILAYH && r[1].stimmt === true; },
+        'Dhu l-qadati: dhu ist mubtada und mudaf OHNE Kasusaussage (fuenf Nomen erst auf sein Wort), al-qadati mudaf ilayh'],
+      ['kal-muharram', () => { const r = analysiereSatz(satz('kal-muharram'));
+          return r[2].rolle.includes(MUDAF) && r[2].erwartet === null && r[3].rolle === ILAYH && r[3].stimmt === true; },
+        'bada dhi l-hijjati: dhi ist mudaf, al-hijjati mudaf ilayh (vorher khabar mit falscher Kasra)'],
+      ['kal-ramadan', () => mitLexikon(MINI_MONATE, () => { const r = analysiereSatz(satz('kal-ramadan'));
+          return r[0].rolle === MUBTADA && r[2].erwartet === 'jarr' && r[2].stimmt === true; }),
+        'Ramadanu bada Shabana: Ramadanu ist kein mudaf vor bada, Shabana Genitiv auf Fatha (mamnu min as-sarf)'],
+      ['Gegenprobe Muharrama', () => mitLexikon(MINI_MONATE, () => { const r = analysiereSatz(safarFalsch);
+          return safarFalsch !== satz('kal-safar') && r[2].stimmt === false; }),
+        'Gegenprobe: Muharram traegt in seiner Grundform Tanwin — mit Fatha nach bada bleibt es ein Fehler'],
+      ['Gegenprobe al-yawma', () => { const r = analysiereSatz(yawmaSatz);
+          return yawmaSatz !== satz('kal-sonntag') && /^unveränderlich/.test(r[0].rolle); },
+        'Gegenprobe: al-yawma auf Fatha bleibt das Adverb (unveraenderlich)']
+    ];
+    eiche(EICH_KAL.map(([n, , warum]) => [n, true, warum]),
+          n => { try { return EICH_KAL.find(e => e[0] === n)[1](); } catch (e) { return false; } },
+          'Kalendersaetze: al-yawmu, Monatsname, Monatszusatz, dhu ohne Kasus, Genitiv auf Fatha (Fall 2, 7, 8 mit Mini-Lexikon)');
   }
   setzeLexikon(wortschatz);
 

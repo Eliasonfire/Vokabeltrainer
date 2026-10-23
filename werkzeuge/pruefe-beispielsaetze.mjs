@@ -95,7 +95,10 @@ const nackt = x => String(x || '').normalize('NFC')
    seinem doppelten مُضَاف vom selben Abend — siehe To-Do. */
 const QUELLEN = [
   ['vocab-data.js',        'VOCAB_DATA'],
-  ['data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN']
+  ['data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN'],
+  /* ⭐ Weg 6 (23.10.2026): die 17 Kalenderkarten. Ihre Sätze stehen alle in
+     data/beispielsaetze.js und kommen über saetzeNachtragen() an die Karte. */
+  ['data/kalender.js',     'KALENDER_VOKABELN']
 ];
 
 /* ⛔⛔ EIN LEERES `sentAr` HEISST NICHT, DASS DIE KARTE KEINEN SATZ HAT.

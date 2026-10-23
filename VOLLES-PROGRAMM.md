@@ -43,7 +43,7 @@ fehlenden 224 sind madina-2, für das Elias keinen Lernstand angegeben hat —
 sie bleiben absichtlich draußen (siehe unten), aber das Werkzeug **beziffert**
 es seitdem, statt nur den Buchnamen zu nennen.
 
-Es gibt **fünf Wege**, auf denen ein Wort in seine Reichweite kommt:
+Es gibt **sechs Wege**, auf denen ein Wort in seine Reichweite kommt:
 
 | Weg | Wo das Wort herkommt | Wo es liegt | Zahl |
 |---|---|---|---|
@@ -53,6 +53,7 @@ Es gibt **fünf Wege**, auf denen ein Wort in seine Reichweite kommt:
 | 3b | Er legt sie **in der App** an | `vt_personalVocab` → `data/eigene-woerter.json` | 14 |
 | 4 | Ein **Fachbegriff** kommt dazu | `FACHBEGRIFF_VOKABELN` in `data/fachbegriffe.js` | 15 |
 | **5** | Ein Wort steht **nur in `vocab-data.js`** | die neun Zahlwörter (im Abzug Kapitel 24) und أَخٌ / أُخْتٌ (in keiner Abzugsdatei) | **11** |
+| 6 | Eine **Kalenderkarte**: Wochentag oder islamischer Monat (seit 23.10.2026) | `KALENDER_VOKABELN` in `data/kalender.js` | 17 |
 
 ⛔ **Die Nummern 1–4 sind absichtlich unverändert** — „Weg 3" wird in diesem
 Dokument an vier weiteren Stellen genannt, und eine Umnummerierung bräche sie
@@ -62,6 +63,17 @@ Speicher ohne eine einzige gemeinsame Kennung, und bis zum 20.08.2026 kannte
 
 ⭐ **`werkzeuge/vorrat.mjs` deckt seit dem 20.08.2026 die Wege 1, 3a, 3b, 4
 und 5 ab** (vorher nur Weg 1: 163 → 189 → **214** geprüfte Wörter).
+
+⭐ **Weg 6 kam am 23.10.2026 dazu** (v709). Elias: *„ich will auch die 7
+wochentagen und alle monate als eigene vokabel"* (seine Wahl: „Islamische
+Monate"), und jeder Monat nennt seinen Platz im Jahr („Ramadan (9. Monat)").
+Die 17 Karten tragen `chapter: 'personal'` wie die Fachbegriffe und sind
+**immer** in seiner Reichweite; Dienstag (47254) und Rajab (45926) sind
+Buchkarten und stehen deshalb nicht in der Datei. Gezählt wird Weg 6 wie
+Weg 4 in `vorrat.mjs`, `pruefe-funktionen.js` und `pruefe-wortfelder.js
+--fenster`; `pruefe-eigene-vorrang.mjs` maß danach bei allen vier Werkzeugen
+**364**. ⚠️ Die Kennungen `kal-…` bestehen nicht nur aus Ziffern: bei
+arabicroots gibt es diese Karten nicht, und dorthin geht von ihnen auch nichts.
 
 ⭐⭐ **Weg 5 war der teuerste und kam zuletzt.** In der laufenden App zählte
 `bekannteVokabeln()` **200**, `vorrat.mjs` **203**, und die Probe

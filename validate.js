@@ -1701,7 +1701,19 @@ try {
   const WURZEL_SONDERFALL = new Set(['45802', '45853']);
   let wOk = 0, wStreng = 0, wSchwach = 0, wSonder = 0;
   const wBefunde = [];
-  for (const w of VOCAB_DATA){
+  /* ⭐ Dazu die Kalenderkarten (data/kalender.js, Weg 6, 23.10.2026). Ihre Wurzel steht nur,
+     wo eine Quelle sie nennt (11 von 17) — ob sie im Wort steckt, misst diese Schleife. */
+  let KALENDER = [];
+  {
+    const d = path.join(DIR, 'data', 'kalender.js');
+    if (fs.existsSync(d)){
+      try {
+        KALENDER = (new Function(fs.readFileSync(d, 'utf8')
+          + ';return typeof KALENDER_VOKABELN!=="undefined"?KALENDER_VOKABELN:[];'))();
+      } catch (e) { fail('data/kalender.js nicht lesbar: ' + e.message); }
+    }
+  }
+  for (const w of VOCAB_DATA.concat(KALENDER)){
     if (!w.root) continue;
     if (WURZEL_SONDERFALL.has(String(w.id))){ wSonder++; continue; }
     const rad = nfcW(w.root).split(/\s+/).filter(Boolean).map(buchst);

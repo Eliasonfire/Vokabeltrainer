@@ -760,6 +760,10 @@ laden('wortfelder-data.js', false);
    werden), die Fachbegriffe unter FACHBEGRIFF_VOKABELN. Genau daran ist auch
    pruefe-taschkil.js vorbeigelaufen. [[dritte_satzquelle]] */
 laden('data/fachbegriffe.js', false);
+/* ⭐ Weg 6, die Kalenderkarten (23.10.2026, data/kalender.js): in der App immer in
+   VOCAB_DATA (js/kern.js). Elias: „ich will auch die 7 wochentagen und alle monate als
+   eigene vokabel". */
+laden('data/kalender.js', false);
 laden('data/vokabeln-eigene.js', false);
 /* ⛔⛔ 20.08.2026 — DIE NEUN UNGEMESSENEN PUNKTE.
    Bis heute mass dieses Werkzeug VIER Dinge: Eselsbruecken, Beispielsatz,
@@ -1468,6 +1472,7 @@ const _gepflegt = new Map((VOCAB || []).map(w => [String(w.id), w]));
 const EIGENE = (kiste.window.EIGENE_VOKABELN || [])
   .map(w => _gepflegt.get(String(w.id)) || w);
 const FACH   = hol('FACHBEGRIFF_VOKABELN') || [];
+const KAL    = hol('KALENDER_VOKABELN') || [];
 
 /* ⛔⛔ DER VIERTE WEG: seine SELBST ANGELEGTEN Woerter.
 
@@ -1517,7 +1522,7 @@ try {
    Elias' Lernbestand, fuer die nie geprueft wurde, ob sie Eselsbruecken,
    einen Satz, eine Markierung oder vollstaendige Felder haben.
    [[werkzeug_misst_kleineren_bestand]] [[app_auswahl_entscheidet]] */
-const _sonderIds = new Set([...EIGENE, ...FACH, ...SELBST].map(w => String(w.id)));
+const _sonderIds = new Set([...EIGENE, ...FACH, ...KAL, ...SELBST].map(w => String(w.id)));
 const NUR_VOCAB = (VOCAB || []).filter(w => {
   const id = String(w.id);
   return !_imAbzug.has(id) && !_sonderIds.has(id);
@@ -1620,7 +1625,7 @@ function ueberSammlungErreichbar(w){
 }
 
 /* Mit `--nur-kapitel` nicht: dort zählen nur die gemeldeten Kapitel (siehe oben). */
-(NUR_KAPITEL ? [] : [['eigene', EIGENE], ['fachbegriffe', FACH], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]]).forEach(([slug, liste]) => {
+(NUR_KAPITEL ? [] : [['eigene', EIGENE], ['fachbegriffe', FACH], ['kalender', KAL], ['selbst', SELBST], ['vocab-data', NUR_VOCAB]]).forEach(([slug, liste]) => {
   liste.forEach(w => {
     geprueft++;
     _imFenster.push(w);

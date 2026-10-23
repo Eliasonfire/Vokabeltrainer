@@ -915,6 +915,25 @@ if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOK
   VOCAB_DATA.push(...FACHBEGRIFF_VOKABELN.filter(w => fachbegriffBestellt(w) && !(weg[w.id] && weg[w.id].an)));
 }
 
+/* ⭐ DIE WOCHENTAGE UND DIE ISLAMISCHEN MONATE (23.10.2026) — data/kalender.js.
+   Elias: „ich will auch die 7 wochentagen und alle monate als eigene vokabel" (seine Wahl
+   im Auswahlfeld: „Islamische Monate"), dann: „die islamischen monat bitte auch dazu
+   schreiben welcher im jahr dieser monat ist damit ich weiß weil ich weiß nicht wann
+   welcher monat ist".
+   Dieselbe Tür wie bei den Fachbegriffen darüber, und aus demselben Grund VOR
+   initProgress(): ohne Startbox kämen sie nie in „Jetzt lernen". Was er ausgeblendet hat
+   (vt_geloescht), bleibt draußen — direkt aus dem Speicher gelesen, weil GELOESCHT hier
+   noch in der zeitlichen Totzone liegt (siehe oben).
+   ⚠️ Die Kennungen kal-… bestehen nicht nur aus Ziffern: diese Karten gibt es bei
+   arabicroots nicht. istArabicrootsWort() (js/lernen.js) und der Server
+   (functions/api/arabicroots.js) nehmen nur Kennungen aus lauter Ziffern — die Karten
+   zählen also bewusst nur hier. */
+if (typeof KALENDER_VOKABELN !== 'undefined' && Array.isArray(KALENDER_VOKABELN)){
+  const wegRoh = LS.get('vt_geloescht', {});
+  const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
+  VOCAB_DATA.push(...KALENDER_VOKABELN.filter(w => w && w.id && !(weg[w.id] && weg[w.id].an)));
+}
+
 /* ⛔⛔ HAT ELIAS DIESE KARTE BESTELLT? (23.09.2026)
    Elias um 15:08, zur Karte „Übereinstimmung“ im Hörmodus: „ich hattte
    spezifisch darum gebeten akkusativ, genitiv und nominativ und vielleicht noch
@@ -2481,8 +2500,14 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    gewählt. arabicroots und arabdict sagen „Christ"; für das Eigenschaftswort „christlich"
    nennt arabdict ein anderes Wort (masīḥiyyun) — so hat er es im Chat erfahren. In seinem
    abgeglichenen Stand (KV 23.10.2026, 21:06) kein Eintrag in vt_einzeln_frei und
-   vt_bekannt, kein eigenes Wort mit „Christ"; in vt_progress ein unbewerteter Eintrag. */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913'];
+   vt_bekannt, kein eigenes Wort mit „Christ"; in vt_progress ein unbewerteter Eintrag.
+   23.10.2026: يَوْمُ الثُّلَاثَاءِ 47254 „Dienstag" dazu. Elias: „ich will auch die 7
+   wochentagen und alle monate als eigene vokabel". Dienstag ist der einzige Wochentag, den
+   arabicroots führt (Madina 3, Kapitel 12 — das Buch hat er nicht gewählt); die anderen
+   sechs stehen als eigene Karten in data/kalender.js. Im abgeglichenen Stand (KV 23.10.2026,
+   21:29) kein Eintrag in vt_einzeln_frei, vt_bekannt, vt_geloescht, vt_wortAenderungen,
+   kein eigenes Wort mit einem Wochentag; in vt_progress ein unbewerteter Eintrag. */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)
