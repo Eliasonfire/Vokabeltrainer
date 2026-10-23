@@ -42,7 +42,7 @@ const KORAN = new Function(fs.readFileSync(path.join(HIER, 'quran-text.js'), 'ut
 
 const Z = (...c) => String.fromCodePoint(...c);
 const LAM = Z(0x0644), SUKUN = Z(0x0652), SUKUN_MUSHAF = Z(0x06E1);
-const FATHA_PUNKT = Z(0x064E, 0x06EC), FATHA_RAUTE = Z(0x064E, 0x06EB);
+const FATHA_PUNKT = Z(0x064E, 0x06EC), RAUTE_UNTEN = Z(0x06EA), PLATZ = Z(0x034F);
 /* Hamza-Alif + Madda — quran.com schreibt das Hamza-Alif als EIN Zeichen (U+0623);
    die alte Datei schrieb es zerlegt (U+0627 + U+0654). Gezählt wird beides. */
 const HAMZA_MADDA = [Z(0x0623, 0x0653), Z(0x0627, 0x0654, 0x0653)];
@@ -78,17 +78,18 @@ function pruefeAlles(quelle, koran){
     const html = f.quranWortSpans(ar);
     const roh = f.quranWorte(ar);
     /* ` data-raute` kennzeichnet seit v711 die zwei Wörter mit der hohlen Raute. */
-    const spans = [...html.matchAll(/<span class="qw" data-w="(\d+)"( data-raute)?>([^<]*)<\/span>/g)].map(m => entities(m[3]));
+    const spans = [...html.matchAll(/<span class="qw" data-w="(\d+)"( data-raute="[a-z]+")?>([^<]*)<\/span>/g)].map(m => entities(m[3]));
     const gezeigt = spans.join(' ');
     woerter += roh.length;
     mitMushaf += zaehleHM(gezeigt, LAM + SUKUN_MUSHAF);
     mitRund += zaehleHM(gezeigt, LAM + SUKUN);
     mitSukun += zaehleHM(ar, LAM + SUKUN_MUSHAF) + zaehleHM(ar, LAM + SUKUN);
-    /* Die einzige gewollte Abweichung (24.10.2026, v711): in 12:11 zeigt der Leser nach
-       dem Fatha die hohle Raute U+06EB statt U+06EC. Elias: „auch das hier in sura yusuf
-       vers 11 sollte aussehen wie quran.com". Dass es genau dieses eine Wort trifft,
-       bewacht test-quran-raute.mjs; hier gilt jedes andere Zeichen weiter unverändert. */
-    const soll = ar.trim().split(FATHA_PUNKT).join(FATHA_RAUTE);
+    /* Die einzigen gewollten Abweichungen (24.10.2026, v712): in 11:41 und 12:11 steht
+       statt des Punkts U+034F (unsichtbar, gleich lang), die hohle Raute zeichnet CSS.
+       Elias: „auch das hier in sura yusuf vers 11 sollte aussehen wie quran.com" und „sie
+       soll zwischen mim und nun stehen". Dass es genau diese zwei Wörter trifft, bewacht
+       test-quran-raute.mjs; hier gilt jedes andere Zeichen weiter unverändert. */
+    const soll = ar.trim().split(RAUTE_UNTEN).join(PLATZ).split(FATHA_PUNKT).join(FATHA_PUNKT[0] + PLATZ);
     if (gezeigt !== soll && !anders) anders = `${s}:${i + 1}`;
     if (spans.length !== roh.length && !zahl) zahl = `${s}:${i + 1} (${spans.length} statt ${roh.length})`;
     else if (!laenge) {

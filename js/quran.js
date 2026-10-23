@@ -1615,22 +1615,41 @@ function quranOhneVersnummer(text){
    Wort 9 (U+06EC oben auf dem Alif). Die hohle Raute gehört nur zu den ersten
    beiden; 41:44 ist ein gefüllter Punkt und bleibt, wie es ist.
 
-   Deshalb steht ein solches Wort in Scheherazade New, der einzigen Schrift der
-   App, die die hohle Raute malt (CSS: `.qw[data-raute]` in index.html). In
-   12:11 steht bei quran.com dasselbe Zeichen wie in 41:44 (U+06EC, gefüllt);
-   für die Anzeige wird es gegen U+06EB getauscht, das Zeichen der hohlen Raute
-   oben. Beide sind ein einzelnes Zeichen, deshalb verschiebt sich keine
-   Markierung (die Stellen zählen Buchstaben, js/quran-markierung.js).
+   ⛔ v711 setzte die zwei Wörter in Scheherazade New. Elias danach mit
+   Bildern: „jetzt wird das ra abgeschnitten aufgrund der notiz" (das markierte
+   rā in Scheherazade ragt aus seinem Kasten, die Farbe endet am Kasten), und
+   zu 12:11: „das hier solltest du zwischen mim und nun platzieren. ich will
+   später das nun markieren weil die raute bezieht sich auf das nun deswegen
+   kannst du das irgendwie im code miteinander verbinden aber wie gesagt sie
+   soll zwischen mim und nun stehen."
+
+   Deshalb seit v712: beide Wörter bleiben in Uthmanic Hafs. Das Zeichen wird
+   für die Anzeige gegen U+034F getauscht (unsichtbar, ein Zeichen lang, im
+   selben Buchstaben-Cluster — keine Markierung verschiebt sich). Die hohle
+   Raute zeichnet CSS an der Stelle, an der Hafs ihren Punkt malt, gemessen am
+   24.10.2026 in em ab der Wortmitte (index.html, `[data-raute]::after`):
+     „unten"    11:41 unter dem rā; sie gehört zum rā,
+     „zwischen" 12:11 auf der Grenze zwischen mīm und nūn; sie gehört zum nūn.
+   Ihre Farbe ist die des Buchstabens, zu dem sie gehört (quranRauteZiel,
+   gesetzt in js/quran-markierung.js für Lesetext und Karte).
    ⛔ Nicht über `unicode-range` lösen: gemessen am 23.10.2026, Chromium nimmt
    Buchstabe und Zeichen aus derselben Schrift, die Ersatzschrift greift nicht.
    Bewacht von test-quran-raute.mjs. */
+const QW_RAUTE_PLATZ = String.fromCodePoint(0x34F);
 const QW_RAUTE_UNTEN = String.fromCodePoint(0x6EA);
 const QW_FATHA_PUNKT = String.fromCodePoint(0x64E, 0x6EC);
-const QW_FATHA_RAUTE = String.fromCodePoint(0x64E, 0x6EB);
 function quranRaute(w){
-  if (w.includes(QW_RAUTE_UNTEN)) return { wort: w, raute: true };
-  if (w.includes(QW_FATHA_PUNKT)) return { wort: w.split(QW_FATHA_PUNKT).join(QW_FATHA_RAUTE), raute: true };
-  return { wort: w, raute: false };
+  if (w.includes(QW_RAUTE_UNTEN)) return { wort: w.split(QW_RAUTE_UNTEN).join(QW_RAUTE_PLATZ), raute: 'unten' };
+  if (w.includes(QW_FATHA_PUNKT)) return { wort: w.split(QW_FATHA_PUNKT).join(QW_FATHA_PUNKT[0] + QW_RAUTE_PLATZ), raute: 'zwischen' };
+  return { wort: w, raute: '' };
+}
+/** Der Buchstabe, zu dem die Raute gehört: „unten" der eigene (rā),
+ *  „zwischen" der folgende (nūn). `cluster` aus tajweedCluster() über den
+ *  angezeigten Text. */
+function quranRauteZiel(cluster, art){
+  const k = cluster.findIndex(c => c.text.includes(QW_RAUTE_PLATZ));
+  if (k < 0) return null;
+  return art === 'zwischen' ? (cluster[k + 1] || null) : cluster[k];
 }
 
 /** Derselbe Text, jedes Wort in einem `<span>`. Die Nummer ist 1-basiert und
@@ -1644,7 +1663,7 @@ function quranWortSpans(text){
   return quranWorte(text)
     .map((w, i) => {
       const r = quranRaute(w);
-      return '<span class="qw" data-w="' + (i + 1) + '"' + (r.raute ? ' data-raute' : '') + '>' + r.wort + '</span>';
+      return '<span class="qw" data-w="' + (i + 1) + '"' + (r.raute ? ' data-raute="' + r.raute + '"' : '') + '>' + r.wort + '</span>';
     })
     .join(' ');
 }

@@ -4420,10 +4420,24 @@ button:disabled{cursor:default;}
   padding:var(--sp-2) var(--sp-4) var(--sp-6);
 }
 .verse-ar{font-family:var(--quran-font);font-size:calc(1.55rem * var(--quran-ar, 1));direction:rtl;text-align:right;line-height:2.15;color:#fff;}
-/* Die hohle Raute in 11:41 und 12:11 malt nur Scheherazade New (Elias,
-   24.10.2026: „sollte aussehen wie quran.com"). Warum und welche Wörter:
-   quranRaute() in js/quran.js. */
-.verse-ar .qw[data-raute]{font-family:'Scheherazade New',var(--quran-font);}
+/* Die hohle Raute in 11:41 und 12:11 (Elias, 24.10.2026: „sollte aussehen wie
+   quran.com", „sie soll zwischen mim und nun stehen"). Das Wort bleibt in
+   Hafs, sein Punkt ist durch ein unsichtbares Zeichen ersetzt; die Raute
+   zeichnet diese Regel an die Stelle, an der Hafs den Punkt malt — gemessen
+   in em ab der Mitte des Wortkastens (Breite = Wort, Höhe = Schriftkasten;
+   im Lesetext ist das der <span>, auf der Karte die Zeile, beide mittig).
+   Farbe: --raute-farbe, gesetzt von js/quran-markierung.js, sobald der
+   Buchstabe markiert ist, zu dem sie gehört. Warum: quranRaute() in
+   js/quran.js. Bewacht von test-quran-raute.mjs. */
+.verse-ar .qw[data-raute], #tjWort[data-raute]{position:relative;}
+#tjWort[data-raute]{font-family:'Uthmanic Hafs',var(--font-ar);}
+.verse-ar .qw[data-raute]::after, #tjWort[data-raute]::after{
+  content:'';position:absolute;pointer-events:none;box-sizing:border-box;
+  width:.13em;height:.13em;border:max(1px,.024em) solid var(--raute-farbe, currentColor);
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.verse-ar .qw[data-raute="unten"]::after, #tjWort[data-raute="unten"]::after{left:calc(50% + .085em);top:calc(50% + .715em);}
+.verse-ar .qw[data-raute="zwischen"]::after, #tjWort[data-raute="zwischen"]::after{left:calc(50% - .191em);top:calc(50% - .02em);}
 .verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
 /* ⭐ Die englische Zeile (08.09.2026). Sie erbt die Deutsch-Größe: es ist
    dieselbe Sorte Text an derselben Stelle, und zwei Größenregler für zwei
