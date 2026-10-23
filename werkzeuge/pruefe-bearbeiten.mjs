@@ -61,7 +61,7 @@ const lies   = rel => fs.readFileSync(path.join(WURZEL, rel), 'utf8');
 const befunde = [];
 
 /* In der Reihenfolge von index.html, nur was js/kern.js braucht. */
-const DATEN = ['vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js',
+const DATEN = ['vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js', 'data/kalender.js',
                'data/feld-ausnahmen.js', 'data/de-mehrzahl.js', 'grammar-data.js'];
 const SKRIPTE = DATEN.map(rel => new vm.Script(lies(rel), { filename: rel }));
 const KERN = lies('js/kern.js');
@@ -84,6 +84,20 @@ const FOLGE = ['wendeFeldErgaenzungenAn(VOCAB_DATA)', 'wendeWortAenderungenAn()'
     ab = i + aufruf.length;
   }
 }
+/* ⭐ Weg 6 (23.10.2026): zwischen wendeFeldErgaenzungenAn und wendeWortAenderungenAn setzt
+   js/buecher.js „Rajab (7. Monat)" (KALENDER_BUCHKARTEN aus data/kalender.js) — VOR seinen
+   Änderungen, damit gewinnt, was er selbst eintippt. Der Schritt ist eine Schleife, kein
+   Aufruf: hier wird er nachgespielt, und seine Stelle in js/buecher.js wird geprüft. */
+const KAL_SCHRITT = 'for (const w of VOCAB_DATA){ const e = (typeof KALENDER_BUCHKARTEN !== "undefined" && KALENDER_BUCHKARTEN) '
+  + '? KALENDER_BUCHKARTEN[String(w.id)] : null; if (e && e.de && w.de !== e.de) w.de = e.de; }';
+{
+  const b = lies('js/buecher.js');
+  const a = b.indexOf(FOLGE[0]), k = b.indexOf('KALENDER_BUCHKARTEN[String(w.id)]', a), z = b.indexOf(FOLGE[1], a);
+  if (a < 0 || k < 0 || z < 0 || !(k < z)) befunde.push('js/buecher.js: „Rajab (7. Monat)" (KALENDER_BUCHKARTEN) steht nicht mehr zwischen '
+    + FOLGE[0] + ' und ' + FOLGE[1] + ' — den Nachbau in diesem Prüfer nachziehen.');
+}
+/* Die Folge, die starte() ausführt. Der Störtest unten tauscht sie kurz aus. */
+let LAUF = [FOLGE[0], KAL_SCHRITT, ...FOLGE.slice(1)];
 
 /* ---------- Die Buchkarten mit Fachbegriff-Tausch, einmal geladen ---------- */
 const fach = (() => {
@@ -95,6 +109,15 @@ const fach = (() => {
 const tauschZiele = new Set(fach.liste.filter(f => f && f.buchTausch
   && Object.prototype.hasOwnProperty.call(fach.auftrag, String(f.id))).map(f => String(f.buchTausch)));
 const buchKarten = [];
+/* Weg 6: die Buchkarten, denen data/kalender.js einen Zusatz gibt (Rajab, 45926). Eigene
+   Liste — buchKarten[0] ist unten das Ziel des Fachbegriff-Tauschs. */
+const kalBuchIds = (() => {
+  const c = { window: {} };
+  vm.createContext(c);
+  try { vm.runInContext(lies('data/kalender.js') + '\n;window.__k = Object.keys(KALENDER_BUCHKARTEN || {});', c); } catch (e) { /* keine Datei */ }
+  return new Set((c.window.__k || []).map(String));
+})();
+const kalBuchKarten = [];
 {
   const c = { window: {} };
   vm.createContext(c);
@@ -107,6 +130,7 @@ const buchKarten = [];
   for (const liste of Object.values(c.window.VOKABELN || {}))
     for (const w of (Array.isArray(liste) ? liste : []))
       if (w && tauschZiele.has(String(w.id)) && !buchKarten.some(x => String(x.id) === String(w.id))) buchKarten.push(w);
+      else if (w && kalBuchIds.has(String(w.id)) && !kalBuchKarten.some(x => String(x.id) === String(w.id))) kalBuchKarten.push(w);
 }
 
 /* ---------- Ein Start der App ----------
@@ -138,11 +162,11 @@ function starte(speicher, kernQuelle, vorKern){
   if (vorKern) vm.runInContext(vorKern, c);
   vm.runInContext(kernQuelle, c, { filename: 'js/kern.js' });
   /* Was js/buecher.js beim Einhängen tut, für die Buchkarten, die hier zählen. */
-  c.__buch = JSON.parse(JSON.stringify(buchKarten));
+  c.__buch = JSON.parse(JSON.stringify(buchKarten.concat(kalBuchKarten)));
   vm.runInContext(`{
     const da = new Set(VOCAB_DATA.map(w => String(w.id)));
     for (const w of __buch) if (!da.has(String(w.id))) VOCAB_DATA.push(w);
-    ${FOLGE.join(';\n    ')};
+    ${LAUF.join(';\n    ')};
   }`, c);
   return c;
 }
@@ -180,13 +204,16 @@ function miss(kernQuelle){
   const wahl = vm.runInContext(`(() => {
     const imGeraet = new Set((typeof PERSONAL_VOCAB !== 'undefined' ? PERSONAL_VOCAB : []).map(w => String(w.id)));
     const fachIds = new Set((typeof FACHBEGRIFF_VOKABELN !== 'undefined' ? FACHBEGRIFF_VOKABELN : []).map(w => String(w.id)));
+    const kalIds = new Set((typeof KALENDER_VOKABELN !== 'undefined' ? KALENDER_VOKABELN : []).map(w => String(w.id)));
     const erstes = f => { const w = VOCAB_DATA.find(f); return w ? w.id : null; };
     return [
       ['Buchwort (vocab-data.js)',         erstes(w => w.chapter !== 'personal' && w.book !== 'grammar' && !w.istPlural && !fachIds.has(String(w.id)))],
-      ['eigene, arabicroots-Liste',        erstes(w => w.chapter === 'personal' && !imGeraet.has(String(w.id)) && !fachIds.has(String(w.id)))],
+      ['eigene, arabicroots-Liste',        erstes(w => w.chapter === 'personal' && !imGeraet.has(String(w.id)) && !fachIds.has(String(w.id)) && !kalIds.has(String(w.id)))],
       ['Fachbegriff',                      erstes(w => fachIds.has(String(w.id)))],
       ['in der App angelegt (p_)',         ${JSON.stringify(pId)}],
       ['Buchkarte mit Fachbegriff-Tausch', ${JSON.stringify(ziel ? ziel.id : null)}],
+      ['Kalenderkarte (data/kalender.js)', erstes(w => kalIds.has(String(w.id)))],
+      ['Buchkarte mit Kalender-Zusatz',    ${JSON.stringify(kalBuchKarten[0] ? String(kalBuchKarten[0].id) : null)}],
     ];
   })()`, c1);
 
@@ -425,6 +452,22 @@ for (const s of STOERUNGEN){
   catch (e){ befunde.push('Störtest „' + s.name + '" ließ sich nicht ausführen: ' + String(e.message).slice(0, 120)); continue; }
   if (!r[s.gruppe].length) befunde.push('Störtest „' + s.name + '": blieb grün — die Prüfung kann diesen Fehler nicht sehen.');
   else stoer.push(s.name + ': rot, wie es sein muss (' + r[s.gruppe].length + ')');
+}
+/* Störtest Weg 6: „Rajab (7. Monat)" erst NACH seinen Änderungen gesetzt — dann verlöre er seine
+   eigene Bedeutung bei jedem Start. Die Prüfung „Neustart" muss das sehen. */
+{
+  const name = '„Rajab (7. Monat)" nach seinen Änderungen gesetzt';
+  if (!kalBuchKarten.length) stoer.push(name + ': übersprungen (keine Buchdatei)');
+  else {
+    const vorher = LAUF;
+    LAUF = [...FOLGE.slice(0, 2), KAL_SCHRITT, ...FOLGE.slice(2)];
+    try {
+      const r = befundeAus(miss(KERN));
+      if (!r.neustart.length) befunde.push('Störtest „' + name + '": blieb grün — die Prüfung kann diesen Fehler nicht sehen.');
+      else stoer.push(name + ': rot, wie es sein muss (' + r.neustart.length + ')');
+    } catch (e){ befunde.push('Störtest „' + name + '" ließ sich nicht ausführen: ' + String(e.message).slice(0, 120)); }
+    finally { LAUF = vorher; }
+  }
 }
 
 /* Störtests für den Teil „Mehrzahlkarte": je eine Regel zurückgebaut, die passende Prüfung muss rot werden. */

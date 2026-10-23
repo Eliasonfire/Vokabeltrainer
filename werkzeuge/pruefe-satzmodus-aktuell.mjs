@@ -141,7 +141,7 @@ function ladeApp(){
   ctx.globalThis = ctx; ctx.self = ctx; ctx.window.document = DOM; ctx.window.localStorage = ctx.localStorage;
   ctx.SETTINGS = { buecher: auswahl, eigene:true, fachbegriffe:true };
   vm.createContext(ctx);
-  const DATEIEN = ['vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js', 'grammar-data.js',
+  const DATEIEN = ['vocab-data.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js', 'data/kalender.js', 'grammar-data.js',
     'lehrbuch-saetze.js', 'regelsammlung-data.js',
     ...fs.readdirSync(path.join(WURZEL, 'data')).filter(f => /^vokabeln-.*\.js$/.test(f)).map(f => 'data/' + f),
     /* v606 (Teil H): js/regeln.js dazu — Übung 9 („Welche Regel?") ruft
@@ -178,6 +178,17 @@ function ladeApp(){
      dieselben Verstöße, nur größere Zahlen. */
   { const FV = hole('FACHBEGRIFF_VOKABELN') || [], FA = hole('FACHBEGRIFF_AUFTRAG') || {};
     for (const w of FV) if (Object.prototype.hasOwnProperty.call(FA, String(w.id)) && !bekannt.has(String(w.id))){ VD.push(w); bekannt.add(String(w.id)); } }
+  /* ⭐ Weg 6 (23.10.2026): die Kalenderkarten hängt js/kern.js IMMER ein (keine Bestellung),
+     ihre Sätze kommen aus data/beispielsaetze.js (saetzeNachtragen in js/buecher.js). Im
+     Lexikon unten entscheiden sie mit, wie ihre Sätze zerlegt werden (Ramaḍāna als Genitiv mit
+     Fatha erkennt js/irab.js an der Karte). Rajab trägt in der App „(7. Monat)". */
+  { const KV = hole('KALENDER_VOKABELN') || [], KB = hole('KALENDER_BUCHKARTEN') || {};
+    for (const w of KV) if (w && w.id && !bekannt.has(String(w.id))){
+      const s = BS[w.id] || {};
+      VD.push({ ...w, sentAr: w.sentAr || s.sentAr, sentDe: w.sentDe || s.sentDe });
+      bekannt.add(String(w.id));
+    }
+    for (const w of VD){ const e = KB[String(w.id)]; if (e && e.de) w.de = e.de; } }
   ctx.istBekannt = w => !!w && (w.chapter === 'personal' || bekannt.has(String(w.id)));
   return { ctx, hole, auswahl, fehlt, bekannt, aufWunsch: aufWunsch || new Set() };
 }

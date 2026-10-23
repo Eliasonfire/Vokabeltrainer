@@ -168,6 +168,20 @@ try {
   errors.push(`data/fachbegriffe.js nicht lesbar: ${e.message}`);
 }
 
+/* ⭐ Weg 6, die Kalenderkarten (23.10.2026): in der App immer in VOCAB_DATA (js/kern.js). */
+try {
+  const kal = path.join(DIR, 'data', 'kalender.js');
+  if (fs.existsSync(kal)){
+    const o = (new Function(fs.readFileSync(kal, 'utf8')
+      + ';return typeof KALENDER_VOKABELN!=="undefined"?KALENDER_VOKABELN:[];'))();
+    if (o && o.length) quellen.push({ name: 'data/kalender.js (Weg 6)', woerter: o });
+  } else {
+    errors.push('data/kalender.js fehlt — die Kalenderkarten sind UNGEMESSEN.');
+  }
+} catch (e) {
+  errors.push(`data/kalender.js nicht lesbar: ${e.message}`);
+}
+
 /* ---------- --fenster: nur, was Elias JETZT erreichen kann ----------
 
    ⛔ OHNE DIESEN SCHALTER IST DIE ZAHL FUER EINEN WARTUNGSLAUF NUTZLOS.
@@ -202,7 +216,10 @@ if (FENSTER){
          wurde geleert — auch seine 14 eigenen Woerter und die 15
          Fachbegriffe, die er JEDEN Tag vor sich hat.
          [[app_auswahl_entscheidet]] */
-      if (/\(Weg [34]\)$/.test(q.name)){ n += (q.woerter || []).length; continue; }
+      /* Weg 6, die Kalenderkarten (23.10.2026): chapter 'personal' wie Weg 3 und 4. Ohne
+         die 6 hier wurde ihre Quelle unten zu qVocab und verdraengte vocab-data.js
+         (gemessen: 342 statt 364 Woerter). */
+      if (/\(Weg [346]\)$/.test(q.name)){ n += (q.woerter || []).length; continue; }
       /* ⛔⛔ DER FUENFTE WEG — bis zum 20.08.2026 stand hier `q.woerter = []`.
 
          Fuer die 160 Woerter, die ohnehin ueber ihre Buchdatei kommen, ist

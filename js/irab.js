@@ -461,8 +461,23 @@ const istIndeklinabelGenau = w => {
   const roh = ohneVokale(w).replace(/[.،؟!«»:؛]/g, '');
   return INDEKLINABEL.includes(roh) || PERSONALPRONOMEN.includes(roh);
 };
-const istIndeklinabel = w => vorsilbeAbtrennbar(w) ? istIndeklinabelMitVorsilbe(w)
-                                                   : istIndeklinabelGenau(w);
+/* ⭐ al-yawmu MIT DAMMA IST DAS NOMEN, NICHT DAS ADVERB (23.10.2026, Regel von Claude).
+   INDEKLINABEL fuehrt al-yawma („heute") als Adverb, und ohne Vokale ist jedes al-yawm
+   dasselbe Wort. In «al-yawmu yawmu l-ahadi.» („Heute ist Sonntag.", kal-sonntag und
+   47254) galt al-yawmu deshalb als unveraenderlich und yawmu als mubtada — Uebung 1
+   haette yawmu als mubtada abgefragt. Ein Adverb steht aber auf Fatha; mit Artikel UND
+   sichtbarer Damma oder Kasra ist es das gebeugte Nomen. Von den Eintraegen mit Artikel
+   (al-ana, al-yawm, alladhi, allati, alladhina) betrifft das nur al-yawm: al-ana steht
+   immer auf Fatha, die Relativwoerter enden nie auf Damma oder Kasra.
+   ⚠️ Pfeilfunktion: istBestimmt() und endung() werden erst beim Aufruf gebraucht. */
+const nomenStattAdverb = w => {
+  if (!istBestimmt(w)) return false;
+  const e = endung(w);
+  return !!e && (e.kasus === 'raf' || e.kasus === 'jarr');
+};
+const istIndeklinabel = w => (vorsilbeAbtrennbar(w) ? istIndeklinabelMitVorsilbe(w)
+                                                    : istIndeklinabelGenau(w))
+                             && !nomenStattAdverb(w);
 
 /* Ein angeschriebenes لِلْ / بِالْ / كَالْ ist selbst ein حَرْف جَرّ - لِلطَّبِيبِ
    ist nicht "zufaellig Genitiv", sondern لِ + الطبيب.
@@ -553,6 +568,75 @@ const istZarf = w => {
  * Bedingung an der Fundstelle ohnehin. */
 const FUENF_NOMEN = ['أبو', 'أخو', 'حمو', 'أبا', 'أخا', 'حما', 'أبي', 'أخي', 'حمي'];
 const istFuenfNomen = w => istInListe(w, FUENF_NOMEN);
+
+/* ⭐ DHU / DHI („Besitzer von") — NUR DIE SATZROLLE, KEINE ENDUNG (23.10.2026).
+   Anlass: die Monatskarten Dhu l-Qada und Dhu l-Hijja (data/kalender.js; Elias am
+   23.10.2026: „ich will auch die 7 wochentagen und alle monate als eigene vokabel").
+   Ohne diese Zeilen las die Analyse dhi als „Yaa des Sprechers" und das Nomen
+   dahinter als khabar — in «Muharramun bada dhi l-hijjati.» (kal-muharram) haette er
+   gelernt, al-hijjati sei die Aussage und muesse Damma tragen.
+   ⛔ dhu gehoert zu den fuenf Nomen, und die stehen auf SEINEN Wunsch noch nicht im
+   Satzmodus (asma-khamsa-vollstaendig-01, Elias am 11.09.2026: „später wenn mein
+   lehrer es aufgreift und das erklärt dann kann man das rein nehmen aber jetzt noch
+   nicht"). Deshalb bewusst NICHT in FUENF_NOMEN: dhu/dhi bekommt seine Satzrolle und
+   wird mudaf (das Nomen danach steht im Genitiv — die Idafa kennt er), aber KEINE
+   Kasusaussage und nicht die Auskunft „fuenf Nomen". Behandelt sein Lehrer die fuenf
+   Nomen vollstaendig: IHN fragen, dann hier in FUENF_NOMEN uebernehmen.
+   ⛔ Der Absatz ueber FUENF_NOMEN gilt weiter fuer dha: es faellt mit dem Hinweiswort
+   zusammen (man dha lladhi, 2:255) und bleibt draussen. Erkannt wird nur die VOLLE
+   Schreibung dhu (Damma) und dhi (Kasra), als ganzes Wort.
+   Zeichen als \u-Folgen, an seinen Saetzen kal-dhulqada und kal-muharram gegengeprueft. */
+const DHU_VOLL = ['ذُو', 'ذِي'];   // dhu · dhi
+const SATZZEICHEN_RE = /[.،؟!«»:؛]/g;
+const istDhu = w => DHU_VOLL.includes(String(w == null ? '' : w).normalize('NFC')
+  .replace(SATZZEICHEN_RE, '').trim().replace(/^[وف]َ/, ''));
+
+/* ⭐ MONATSNAMEN SIND EIGENNAMEN — UND DAMIT BESTIMMT (23.10.2026, Regel von Claude).
+   «Rajabun qaribun.» (45926, „Rajab ist nah.") wurde bisher als EINE Wortgruppe
+   gelesen: beide Woerter mit Tanwin, also qaribun ein nat — „ein naher Rajab". Ein
+   Eigenname ist aber bestimmt, auch mit Tanwin; dann ist das unbestimmte Adjektiv
+   danach die Aussage (khabar), genau wie nat-bestimmtheit-01 es verlangt. Und ein
+   Eigenname ist nie mudaf: «Shabanu bada Rajabin.» galt als „mubtada (mudaf)", weil
+   Shaban (mamnu min as-sarf) kein Tanwin traegt.
+   ⛔ Bewusst eng: nur die einwortigen Monatsnamen aus data/kalender.js und seiner
+   Karte Rajab, VOLL vokalisiert und ohne Fallendung verglichen. Nicht dabei: Muharram
+   (auch „verboten", ein Adjektiv) und Rabi (auch „Fruehling") — die beiden sind nur mit
+   ihrem Zusatz eindeutig (MONATS_PAARE darunter). Fuer ALLE Eigennamen gaelte dasselbe,
+   dafuer fehlt aber eine Liste der Namen: eine offene Frage, keine stille Erweiterung.
+   Zeichen als \u-Folgen, per Skript aus data/kalender.js und seinem Satz zu 45926. */
+const MONATSNAMEN = [
+  'صَفَر',                     // Safar
+  'شَعْبَان',   // Shaban
+  'رَمَضَان',   // Ramadan
+  'شَوَّال',         // Shawwal
+  'رَجَب',                     // Rajab
+  'جُمَادَى'    // Jumada (steht nur mit Zusatz)
+];
+const istMonatsname = w => MONATSNAMEN.includes(String(w == null ? '' : w).normalize('NFC')
+  .replace(SATZZEICHEN_RE, '').trim().replace(/^[وف]َ/, '')
+  .replace(/ًا$/, '').replace(/[ً-ِ]$/, ''));
+/* Die zweiteiligen Monatsnamen: Rabi al-Awwal / al-Akhir, Jumada al-Ula / al-Akhira.
+   Der Zusatz ist ein nat des Namens — bestimmt wie der Name selbst, im selben Fall.
+   Ohne diese Paare galt al-awwalu als khabar („Rabi ist der erste"), und in
+   «… bada Rabiin al-awwali.» als khabar mit falscher Kasra.
+   Als Skelett verglichen (skelett(): ohne Vokale, Alif-Varianten gleich). Die
+   Nebenformen ath-thani / ath-thaniya fehlen: sie stehen in keiner seiner Karten. */
+const MONATS_PAARE = [
+  ['ربيع', 'الاول'],               // Rabi al-Awwal
+  ['ربيع', 'الاخر'],               // Rabi al-Akhir
+  ['جمادى', 'الاولى'],   // Jumada al-Ula
+  ['جمادى', 'الاخرة']    // Jumada al-Akhira
+];
+const istMonatsZusatz = (vorher, wort) => {
+  const putz = x => skelett(String(x == null ? '' : x).replace(SATZZEICHEN_RE, '').trim());
+  const k = putz(vorher).replace(/^[وف](?=...)/, ''), z = putz(wort);
+  return MONATS_PAARE.some(([a, b]) => a === k && b === z);
+};
+/* Rollennamen und Fachbegriff aus den Zeichen, die diese Datei schon benutzt (per
+   Skript herausgezogen, nicht getippt): nat, und mamnu min as-sarf wie in
+   funktionenVon() Punkt 5. */
+const NAT_MONAT = 'نَعْت (Teil des Monatsnamens)';
+const MAMNU = 'مَمْنُوع مِنَ الصَّرْف';
 
 /* Verben, die in den Beispielsaetzen dieses Repos vorkommen. Ohne diese Liste
    haengt ihre Erkennung am geladenen Vokabelbestand — und der ist bei Elias
@@ -830,7 +914,10 @@ function funktionenVon(w){
   const ohneAl = !/^(اَ?ل|ال)/.test(wort);
   const endetAufDamma = /ُ\s*$/.test(wort);
   const hatTanwin = /[ًٌٍ]/.test(wort);
-  if (ohneAl && endetAufDamma && !hatTanwin && !karteUnveraenderlich
+  /* ⚠️ Nur EIN Wort (23.10.2026): bei Jumada al-Akhira (kal-jumada2) endet die Karte auf
+     Damma ohne Tanwin, „nie Kasra" stimmt aber nicht — al-akhira traegt im Genitiv
+     Kasra. Ueber alle 4.687 Karten gemessen: die einzige Mehrwortkarte, die das traf. */
+  if (ohneAl && endetAufDamma && !hatTanwin && !karteUnveraenderlich && !/\s/.test(wort)
       && (w.type === 'noun' || w.type === 'adjective'))
     nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwin, nie Kasra');
 
@@ -1235,6 +1322,32 @@ function LEXIKON_hat(w){
   const genau = String(w).replace(/[.،؟!«»:؛]/g, '').trim();
   return LEXIKON.has(genau) || (LEXIKON_ROH && LEXIKON_ROH.has(skelett(genau)));
 }
+/* ⭐ DER GENITIV AUF FATHA — mamnu min as-sarf (23.10.2026).
+   Seine Karte sagt es schon („nie Tanwin, nie Kasra", funktionenVon Punkt 5; Regel
+   mamnu-min-as-sarf-01): ein solches Wort steht im Genitiv auf Fatha. «Ramadanu bada
+   Shabana.» und «Shawwalun bada Ramadana.» (kal-ramadan, kal-shawwal) wurden deshalb
+   als Kasusfehler gemeldet. Elias am 23.10.2026 auf die Frage, ob die Monatssaetze die
+   Reihenfolge zeigen sollen (dafuer muesse die Erklaerung erweitert werden): „wir
+   gehen nach deiner empfehlung".
+   ⭐ Erkannt am WORTSCHATZ: ein mamnu steht dort mit seiner Grundform ohne Tanwin auf
+   blankem Damma (Ramadanu, Shabanu — auch Mehrzahlen wie masajidu). Verglichen wird
+   die VOLLE Schreibung, Damma statt Fatha — kein Skelett, also keine Verwechslung.
+   ⛔ Haengt am Wortschatz. Die Monatskarten stehen in der App IMMER darin (chapter
+   'personal', js/kern.js), ihre Saetze werden also in jeder Buchauswahl gleich
+   zerlegt. Fuer ein Wort aus einem Buch meldet der LEXIKON-VERGLEICH in
+   pruefe-saetze.js jede Abhaengigkeit als schwer.
+   ⛔ Gegenprobe in pruefe-saetze.js (EICH_KAL): ein Wort, dessen Grundform Tanwin
+   traegt (Muharramun), wird mit Fatha nach bada weiter als Fehler gemeldet. */
+function genitivMitFatha(w){
+  if (!LEXIKON) return false;
+  const rein = String(w == null ? '' : w).normalize('NFC').replace(SATZZEICHEN_RE, '').trim();
+  if (!/َ$/.test(rein) || istBestimmt(rein) || hatSuffix(rein)) return false;
+  return [rein, rein.replace(/^[وف]َ/, '')].some(f => {
+    const typ = LEXIKON.get(f.slice(0, -1) + 'ُ');
+    return typ === 'noun' || typ === 'adjective';
+  });
+}
+
 /* ⛔⛔ وَالِدِي IST NICHT وَ + الِدِي (25.09.2026). Mitten im Satz galt jedes
    Wort mit و vorn als „Anschluss mit وَ", wenn es nicht als Ganzes im
    Wortschatz stand — und وَالِدِي, وَالِدُهُ, وَالِدَتُهُ stehen dort nie so, nur
@@ -1334,6 +1447,11 @@ function schliesstIdafaAus(naechstes){
      der Schreibfehler weiter als solcher gemeldet werden (Gegenprobe in
      pruefe-saetze.js, EICH_SATZ). */
   if (e && e.kasus === 'nasb' && !e.tanwin && istBestimmt(w)) return true;
+  /* ⭐ VOR EINEM ZARF AUF FATHA KEINE IDAFA (23.10.2026, Regel von Claude). In
+     «Shabanu bada Rajabin.» (kal-shaban) galt Shabanu als mudaf: blankes Damma
+     (mamnu min as-sarf), und bada traegt kein Tanwin. Ein zarf auf Fatha steht aber
+     im Akkusativ und kann nie mudaf ilayh sein — der stuende im Genitiv. */
+  if (e && e.kasus === 'nasb' && !e.tanwin && istZarf(w)) return true;
   return !!(e && e.kasus === 'raf' && !e.tanwin && ohneVokale(w).charCodeAt(0) === 0x0648);   // و
 }
 
@@ -1676,6 +1794,11 @@ function analysiereSatz(satz){
          nicht sein: dazu fehlt ein مُبْتَدَأ. */
       rolle = 'نَعْت (zum مَفْعُول مُطْلَق)';
       erwartet = letzterKasus;
+    } else if (i > 0 && letzterKasus && !nachKomma && istMonatsZusatz(woerter[i - 1], wort)){
+      /* Der Zusatz eines zweiteiligen Monatsnamens (MONATS_PAARE oben): nat des Namens,
+         im selben Fall — Rabiun al-awwalu, bada Rabiin al-awwali. */
+      rolle = NAT_MONAT;
+      erwartet = letzterKasus;
     } else if ((istInListe(wort, ADJEKTIVE) || wortart(wort) === 'adjective') && letzterKasus && !nachKomma
                && !nachNida && istBestimmt(wort) === (letzteBestimmtheit || hatSuffix(woerter[i - 1] || ''))){
       /* ⛔ Die Besitzendung macht das Wort davor BESTIMMT (v650, 05.10.2026).
@@ -1933,12 +2056,13 @@ function analysiereSatz(satz){
         /* Entweder eine lesbare Endung ohne Tanwin - oder eines der fuenf
            Nomen, deren Endung ein Buchstabe ist und die `endung()` deshalb
            gar nicht sieht. */
-        && ((gelesen && !gelesen.tanwin) || istFuenfNomen(wort))
+        && ((gelesen && !gelesen.tanwin) || istFuenfNomen(wort) || istDhu(wort))
         /* ⛔ Trägt das folgende Wort Tanwīn im Nominativ oder Akkusativ, kann
            es kein مُضَاف إِلَيْه sein — dann war auch das Wort davor kein مُضَاف,
            sondern ein مَمْنُوع مِنَ الصَّرْف (20.08.2026). */
         && !schliesstIdafaAus(naechstes)
-        && !istBestimmt(wort)){
+        /* Ein Monatsname ist ein Eigenname und nie mudaf (MONATSNAMEN oben). */
+        && !istBestimmt(wort) && !istMonatsname(wort)){
       /* Ein مُضَاف kann selbst im Genitiv stehen: عَلى مَكْتَبِ الْمُدَرِّسِ.
          Die Bedingung \"nicht im Genitiv\" hat genau diese Verkettung
          verworfen (harf-jarr-idafa-01). */
@@ -1948,7 +2072,13 @@ function analysiereSatz(satz){
       if (angerufen) erwartet = null;
     }
 
-    if (erwartet){ letzterKasus = erwartet; letzteBestimmtheit = istBestimmt(wort); }
+    /* dhu / dhi: Satzrolle ja, Kasus nein (DHU_VOLL oben, sein Wunsch vom 11.09.2026). */
+    if (istDhu(wort) && erwartet){
+      erwartet = null;
+      rolle += ' — ' + DHU_VOLL[0] + ': die Endung kommt erst im zweiten Buch (noch nicht geprüft)';
+    }
+    /* Ein Monatsname zaehlt als bestimmt (MONATSNAMEN oben). */
+    if (erwartet){ letzterKasus = erwartet; letzteBestimmtheit = istBestimmt(wort) || istMonatsname(wort); }
     /* Nach einem Punkt, Frage- oder Ausrufezeichen faengt ein neuer Satz an:
        in مَا اسْمُكِ؟ اسْمِي آمِنَةُ. ist اسْمِي wieder ein مُبْتَدَأ und nicht der
        خَبَر des vorigen Satzes. Ohne dieses Zuruecksetzen liefen die Rollen
@@ -1963,8 +2093,17 @@ function analysiereSatz(satz){
          weiterhin als Verbalsatz und sein Praedikat wird zum مَفْعُول بِهِ. */
       imVerbalsatz = false;
     }
-    const stimmt = (erwartet && gelesen && !dualOderPlural) ? (gelesen.kasus === erwartet) : null;
-    out.push({ wort, rein, rolle, erwartet, gelesen, stimmt });
+    /* Der Genitiv auf Fatha eines mamnu min as-sarf (genitivMitFatha unten): die Fatha
+       IST hier der Genitiv. `gelesen.zeichen` bleibt, was dasteht (Fatha) — Uebung 9
+       fragt das Zeichen ab, und die Aufloesung nennt den Grund aus der Rolle. */
+    let gelesenEff = gelesen;
+    if (erwartet === 'jarr' && gelesen && gelesen.kasus === 'nasb' && !gelesen.tanwin
+        && !dualOderPlural && genitivMitFatha(wort)){
+      gelesenEff = { kasus: 'jarr', tanwin: false, zeichen: gelesen.zeichen };
+      rolle += ' (' + MAMNU + ': Genitiv mit Fatha)';
+    }
+    const stimmt = (erwartet && gelesenEff && !dualOderPlural) ? (gelesenEff.kasus === erwartet) : null;
+    out.push({ wort, rein, rolle, erwartet, gelesen: gelesenEff, stimmt });
   });
 
   return out;

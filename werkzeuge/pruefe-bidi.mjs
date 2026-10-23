@@ -230,6 +230,10 @@ try {
     ESELSBRUECKEN_ALT:   (new Function(lies('data', 'eselsbruecken-alt.js') + ';return ESELSBRUECKEN_ALT;'))(),
     BEISPIELSAETZE:      (new Function(lies('data', 'beispielsaetze.js') + ';return BEISPIELSAETZE;'))(),
     FACHBEGRIFF_VOKABELN:(new Function(lies('data', 'fachbegriffe.js') + ';return FACHBEGRIFF_VOKABELN;'))(),
+    /* Weg 6 (23.10.2026): heute trägt kein Textfeld der Kalenderkarten das Muster (ihre
+       Bedeutungen sind rein deutsch). Steht dort einmal Arabisch, meldet der Abschnitt
+       unten das Feld als „steht in KEINEM Eintrag". */
+    KALENDER_VOKABELN:   (new Function(lies('data', 'kalender.js') + ';return KALENDER_VOKABELN;'))(),
   };
   const felder = feldpfade(QUELLEN);
   mitMuster = [...felder.entries()].filter(([, e]) => e.n > 0).sort((a, b) => b[1].n - a[1].n);

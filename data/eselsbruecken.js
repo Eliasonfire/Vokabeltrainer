@@ -773,7 +773,45 @@ const BUCH_ESELSBRUECKEN = {
 
   "46549": "Gebaut wie كَبِيرٌ (groß), صَغِيرٌ (klein), قَرِيبٌ (nah) und بَعِيدٌ (fern) — alle vier hast du schon: Adjektive mit langem ī vor dem letzten Buchstaben. ضَعِيفٌ gehört in dieselbe Reihe und heißt schwach.",
 
-  "50339": "Ein Ort auf مَـ: مَطْبَخٌ (Küche) ist der Ort, an dem gekocht wird, مَكْتَبٌ (Schreibtisch, Büro) der Ort, an dem geschrieben wird — beide hast du. مَلْعَبٌ ist der Ort, an dem gespielt wird: der Spiel- oder Sportplatz."
+  "50339": "Ein Ort auf مَـ: مَطْبَخٌ (Küche) ist der Ort, an dem gekocht wird, مَكْتَبٌ (Schreibtisch, Büro) der Ort, an dem geschrieben wird — beide hast du. مَلْعَبٌ ist der Ort, an dem gespielt wird: der Spiel- oder Sportplatz.",
+
+  "46913": "نَصْرَانِيٌّ hat die Buchstaben ن ص ر wie naṣr in Sure an-Naṣr, die du auswendig kannst: إِذَا جَآءَ نَصْرُ ٱللَّهِ (110:1).",
+
+  "47254": "Dienstag ist Tag drei: يَوْمُ الثُّلَاثَاءِ hat die Wurzel ث ل ث wie ثَلَاثَةٌ (drei), das du schon hast.",
+
+  "kal-sonntag": "Die arabische Woche zählt ab Sonntag: يَوْمُ الْأَحَدِ heißt wörtlich „Tag des Einen“, also Tag eins. Das Wort kennst du aus al-Ikhlāṣ: قُلْ هُوَ ٱللَّهُ أَحَدٌ (112:1).",
+
+  "kal-montag": "Montag ist Tag zwei: In يَوْمُ الِاثْنَيْنِ steckt die Zahl إِثْنَانِ (zwei), die du schon hast. Wörtlich heißt al-ithnayn „die zwei“.",
+
+  "kal-mittwoch": "Mittwoch ist Tag vier: يَوْمُ الْأَرْبَعَاءِ hat die Wurzel ر ب ع wie أَرْبَعَةٌ (vier), das du schon hast.",
+
+  "kal-donnerstag": "Donnerstag ist Tag fünf: يَوْمُ الْخَمِيسِ hat die Wurzel خ م س wie خَمْسَةٌ (fünf), das du schon hast.",
+
+  "kal-freitag": "Freitag ist der Tag des Freitagsgebets, Ṣalāt al-Jumuʿa: Die Muslime kommen in der مَسْجِدٌ (Moschee) zum gemeinsamen صَلَاةٌ (Gebet) zusammen. Darum heißt er يَوْمُ الْجُمُعَةِ, der Tag der Versammlung.",
+
+  "kal-samstag": "as-sabt klingt wie „Sabbat“: der Samstag, der Ruhetag der Juden. يَوْمُ السَّبْتِ ist der Samstag.",
+
+  "kal-muharram": "Mit مُحَرَّمٌ beginnt das islamische Jahr: Der 1. Muharram ist das islamische Neujahr. Am 10. Muharram ist ʿĀshūrāʾ.",
+
+  "kal-safar": "صَفَرٌ hat dieselben drei Buchstaben ص ف ر wie صِفْرٌ (Null), das du schon hast. Merk dir: Safar ist der 2. Monat.",
+
+  "kal-rabi1": "Im Rabīʿ al-Awwal wurde der Prophet ﷺ geboren — sein Geburtsmonat ist der 3. Monat.",
+
+  "kal-rabi2": "al-ākhir ist dasselbe Wort wie al-Ākhira, das Jenseits: آخِرٌ (letzter). رَبِيعٌ الْآخِرُ ist der letzte der zwei Rabīʿ, der 4. Monat.",
+
+  "kal-jumada1": "Jumādā ist weiblich: darum heißt es al-ūlā (die erste) und nicht al-awwal wie bei رَبِيعٌ الْأَوَّلُ. جُمَادَى الْأُولَى ist die erste Jumādā, der 5. Monat.",
+
+  "kal-jumada2": "al-ākhira kennst du: das Jenseits, die weibliche Form von آخِرٌ (letzter). جُمَادَى الْآخِرَةُ ist die letzte der zwei Jumādā, der 6. Monat.",
+
+  "kal-shaban": "Shaʿbān ist der Monat direkt vor Ramadan: die Zeit, in der man sich auf das Fasten vorbereitet.",
+
+  "kal-ramadan": "Der Fastenmonat: Im Ramadan fasten die Muslime von der Morgendämmerung bis zum Sonnenuntergang.",
+
+  "kal-shawwal": "Am 1. Shawwāl ist ʿĪd al-Fiṭr, das Fest des Fastenbrechens: Shawwāl kommt direkt nach Ramadan.",
+
+  "kal-dhulqada": "Einer der vier heiligen Monate, wie رَجَبٌ und مُحَرَّمٌ: In ihm war Kampf verboten.",
+
+  "kal-dhulhijja": "Der Monat der Pilgerfahrt (Ḥajj): Am 9. ist der Tag von ʿArafa, am 10. ʿĪd al-Aḍḥā, das Opferfest."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

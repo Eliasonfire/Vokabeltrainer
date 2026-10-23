@@ -3693,6 +3693,88 @@ const SENTENCE_TAGS = {
   "mb1-79-5": [
     { ruleId: "ismul-isara-ulaika-01", matchText: "أُولَئِكَ" },
     { ruleId: "mamnu-min-as-sarf-plural-01", matchText: "وُزَرَاءُ" }
+  ],
+  "kal-sonntag": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْأَحَدِ" }
+  ],
+  "kal-montag": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الِاثْنَيْنِ" }
+  ],
+  "47254": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الثُّلَاثَاءِ" }
+  ],
+  "kal-mittwoch": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْأَرْبَعَاءِ" }
+  ],
+  "kal-donnerstag": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْخَمِيسِ" }
+  ],
+  "kal-freitag": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْجُمُعَةِ" }
+  ],
+  "kal-samstag": [
+    { ruleId: "mubtada-khabar-01", matchText: "الْيَوْمُ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "السَّبْتِ" }
+  ],
+  "kal-muharram": [
+    { ruleId: "mubtada-khabar-01", matchText: "مُحَرَّمٌ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْحِجَّةِ" }
+  ],
+  "kal-safar": [
+    { ruleId: "mubtada-khabar-01", matchText: "صَفَرٌ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" }
+  ],
+  "kal-rabi1": [
+    { ruleId: "mubtada-khabar-01", matchText: "رَبِيعٌ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" }
+  ],
+  "kal-rabi2": [
+    { ruleId: "mubtada-khabar-01", matchText: "رَبِيعٌ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" }
+  ],
+  "kal-jumada1": [
+    { ruleId: "mubtada-khabar-01", matchText: "جُمَادَى" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" }
+  ],
+  "kal-jumada2": [
+    { ruleId: "mubtada-khabar-01", matchText: "جُمَادَى" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" }
+  ],
+  "kal-shaban": [
+    { ruleId: "mubtada-khabar-01", matchText: "شَعْبَانُ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" },
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "شَعْبَانُ" }
+  ],
+  "kal-ramadan": [
+    { ruleId: "mubtada-khabar-01", matchText: "رَمَضَانُ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" },
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "شَعْبَانَ" }
+  ],
+  "kal-shawwal": [
+    { ruleId: "mubtada-khabar-01", matchText: "شَوَّالٌ" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" },
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "رَمَضَانَ" }
+  ],
+  "kal-dhulqada": [
+    { ruleId: "mubtada-khabar-01", matchText: "ذُو" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْقَعْدَةِ" }
+  ],
+  "kal-dhulhijja": [
+    { ruleId: "mubtada-khabar-01", matchText: "ذُو" },
+    { ruleId: "zarf-01", matchText: "بَعْدَ" },
+    { ruleId: "idafa-zweitglied-01", matchText: "الْحِجَّةِ" }
+  ],
+  "46913": [
+    { ruleId: "mubtada-khabar-01", matchText: "هُوَ" },
+    { ruleId: "marfu-grundfall-01", matchText: "نَصْرَانِيٌّ" }
   ]
 };
 

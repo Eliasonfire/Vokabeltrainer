@@ -498,6 +498,33 @@ export const PFLEGEPLAN = [
       wie: 'Fachbegriffe bekommen wie Vokabeln Eselsbrücken und Beispielsatz' },
   },
   {
+    /* ⭐ 23.10.2026 (v709) — die Wochentage und die islamischen Monate als eigene Karten.
+       Elias: „ich will auch die 7 wochentagen und alle monate als eigene vokabel" (seine
+       Wahl im Auswahlfeld: „Islamische Monate") und „die islamischen monat bitte auch dazu
+       schreiben welcher im jahr dieser monat ist damit ich weiß weil ich weiß nicht wann
+       welcher monat ist". 17 Karten kal-… in data/kalender.js. Dienstag (47254) ist eine
+       Buchkarte und kommt über FREISCHALTEN_AUF_WUNSCH, Rajab (45926) bekommt „(7. Monat)"
+       über KALENDER_BUCHKARTEN. Eingehängt in js/kern.js (VOCAB_DATA, vor initProgress) und
+       js/buecher.js (Sätze, Eselsbrücken, Rajab). */
+    funktion: 'Kalenderkarten (Wochentage und islamische Monate)',
+    dateien: ['data/kalender.js'],
+    bildschirme: [],
+    neuerInhalt: { routine: W, schritt: '1c.5', beleg: 'node pruefe-duplikate.js', werkzeug: 'pruefe-duplikate.js',
+      wie: 'Sieben Tage und zwölf Monate sind vollständig, es kommt keine Karte dazu. Bringt ein neu freigeschaltetes Kapitel '
+        + 'einen dieser Tage oder Monate als Buchkarte, findet pruefe-duplikate.js das Paar (Herkunft „Kalenderkarte"). Bei '
+        + 'gleicher Bedeutung tauscht die App beim Start selbst (tauscheDubletten: die Buchkarte bleibt und bekommt seinen '
+        + 'Stand), sonst steht das Paar als Frage auf seiner Seite' },
+    eingaben: { nein: 'Er trägt hier nichts Eigenes ein, das jemand weiterverarbeiten müsste. Bearbeiten und Ausblenden wirken '
+        + 'wie bei jeder Karte (vt_wortAenderungen, vt_geloescht, beide je Wort abgeglichen); ändert er Rajab selbst, gewinnt '
+        + 'seine Fassung über „(7. Monat)", weil KALENDER_BUCHKARTEN in js/buecher.js vor wendeWortAenderungenAn() steht. '
+        + 'Nach arabicroots geht nichts: die Kennungen kal-… gibt es dort nicht, und der Server überträgt nur Kennungen, '
+        + 'die arabicroots kennt (offeneVersuche in functions/api/arabicroots.js).' },
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs', werkzeug: 'pruefe-saetze.js',
+      wie: 'Der Kalender ändert sich nicht, die Satzanalyse schon: pruefe-saetze.js zerlegt im Sammellauf die Sätze der 17 '
+        + 'Kalenderkarten, von Dienstag und von Rajab und hält in EICH_KAL neun Fälle fest (dhū, Monatsnamen, Genitiv mit '
+        + 'Fatha, al-yawmu als Nomen, zwei Gegenproben); pruefe-eselsbruecken.js prüft ihre Eselsbrücken' },
+  },
+  {
     /* ⭐⭐ 22.09.2026 (v566) — DIE ÜBERSETZUNGSÜBUNG IM SATZMODUS.
 
        Elias am 22.09.2026, 21:15: „es sollte auch im satzmodus eine übung

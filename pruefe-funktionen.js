@@ -82,6 +82,9 @@ const hol = n => vm.runInContext('typeof ' + n + ' !== "undefined" ? ' + n + ' :
 laden('vocab-data.js');
 laden('data/buecher.js');
 laden('data/fachbegriffe.js', false);
+/* ⭐ Die Kalenderkarten (23.10.2026, data/kalender.js): in der App immer in VOCAB_DATA
+   (js/kern.js), also wie die Fachbegriffe mitzumessen. */
+laden('data/kalender.js', false);
 laden('data/vokabeln-eigene.js', false);
 laden('data/feld-ausnahmen.js', false);
 for (const b of (hol('BUECHER') || [])) laden(b.datei, false);
@@ -183,6 +186,7 @@ const _EIGENE_GEPFLEGT = (ctx.window.EIGENE_VOKABELN || [])
   .map(w => _gepflegt.get(String(w.id)) || w);
 _EIGENE_GEPFLEGT.forEach(w => woerter.push({ ...w, quelle: 'eigene' }));
 (hol('FACHBEGRIFF_VOKABELN') || []).forEach(w => woerter.push({ ...w, quelle: 'fachbegriff' }));
+(hol('KALENDER_VOKABELN') || []).forEach(w => woerter.push({ ...w, quelle: 'kalender' }));
 
 /* ⛔ Der vierte Weg: seine SELBST ANGELEGTEN Woerter aus vt_personalVocab.
    Sie stehen nur im localStorage; `vorrat.mjs --stand … --app auto` holt sie

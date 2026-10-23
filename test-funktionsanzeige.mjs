@@ -240,7 +240,7 @@ const STOER = [
   { name: 'V1: die Schranke gibt immer frei', alt: '  return !(m && /[\\u0651\\u0652]/.test(m[1]));', neu: '  return true;', erwartet: 'V1' },
   { name: 'V1: die Schranke liest das Sukun nicht', alt: '/[\\u0651\\u0652]/.test(m[1])', neu: '/[\\u0651]/.test(m[1])', erwartet: 'V1' },
   { name: 'V2: die Schranke liest das Schadda nicht', alt: '/[\\u0651\\u0652]/.test(m[1])', neu: '/[\\u0652]/.test(m[1])', erwartet: 'V2' },
-  { name: 'V1: der Satz fragt die Schranke nicht', alt: 'const istIndeklinabel = w => vorsilbeAbtrennbar(w) ? istIndeklinabelMitVorsilbe(w)', neu: 'const istIndeklinabel = w => true ? istIndeklinabelMitVorsilbe(w)', erwartet: 'V1' },
+  { name: 'V1: der Satz fragt die Schranke nicht', alt: 'const istIndeklinabel = w => (vorsilbeAbtrennbar(w) ? istIndeklinabelMitVorsilbe(w)', neu: 'const istIndeklinabel = w => (true ? istIndeklinabelMitVorsilbe(w)', erwartet: 'V1' },
   { name: 'V3: Hamza mit Damma gilt als Fragepartikel', alt: '  if (/^\\u0623[\\u064F\\u0650\\u0652]/.test(rein)) return false;\n', neu: '', erwartet: 'V3' },
   { name: 'V4: Tanwin hinter der Fragepartikel', alt: '  if (/[\\u064C\\u064D]/.test(rein)) return false;\n', neu: '', erwartet: 'V4' },
   { name: 'V3: ohneFragepartikel fragt nicht nach', alt: '  if (!fragepartikelMoeglich(w))\n', neu: '  if (false)\n', erwartet: 'V3' },

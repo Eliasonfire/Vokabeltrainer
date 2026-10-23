@@ -93,6 +93,13 @@ try {
 const EIGENE = EIGENE_ALT.concat(EIGENE_NEU);
 const FACH = vm.runInContext(
   'typeof FACHBEGRIFF_VOKABELN !== "undefined" ? FACHBEGRIFF_VOKABELN : []', kiste);
+/* ⭐ Weg 6, die Kalenderkarten (data/kalender.js, 23.10.2026). Sie tragen wie die
+   Fachbegriffe `chapter: 'personal'`, und deshalb tauscht die App eine Kalenderkarte beim
+   Start gegen die Buchkarte, sobald ein Buch dasselbe Wort bringt (tauscheDubletten in
+   js/kern.js nimmt JEDES 'personal'). Dienstag (47254) und Rajab (45926) sind Buchkarten
+   und stehen deshalb gar nicht erst in der Datei. */
+const KAL = vm.runInContext(
+  'typeof KALENDER_VOKABELN !== "undefined" ? KALENDER_VOKABELN : []', kiste);
 const BUCH = [];
 Object.entries(kiste.window.VOKABELN || {}).forEach(([b, l]) =>
   (l || []).forEach(w => BUCH.push(Object.assign({}, w, { book: b }))));
@@ -130,7 +137,7 @@ try {
     || vm.runInContext("typeof VOCAB_DATA !== 'undefined' ? VOCAB_DATA : []", kisteV) || [];
 } catch (e) { console.log("  ⚠ vocab-data.js nicht lesbar: " + e.message); }
 const _bezugIds  = new Set(bezug.map(w => String(w.id)));
-const _sonderIds = new Set([...EIGENE, ...FACH].map(w => String(w.id)));
+const _sonderIds = new Set([...EIGENE, ...FACH, ...KAL].map(w => String(w.id)));
 const NUR_VOCAB  = VOCAB_DATA.filter(w =>
   !_bezugIds.has(String(w.id)) && !_sonderIds.has(String(w.id)));
 bezug.push(...NUR_VOCAB);
@@ -298,7 +305,7 @@ console.log('  Verglichen gegen ' + (bezug.length - NUR_VOCAB.length) + ' von ' 
 console.log('  Eichung: ' + EICHUNG.length + ' Faelle, alle wie erwartet.');
 console.log('');
 
-const ausblendung = ausblendenPruefen([...AUSGEBLENDET], BUCH, bezug.concat(EIGENE, FACH));
+const ausblendung = ausblendenPruefen([...AUSGEBLENDET], BUCH, bezug.concat(EIGENE, FACH, KAL));
 if (ausblendung.entschieden.length) {
   console.log('=== in zwei Büchern, im zweiten ausgeblendet (kein Befund): ' + ausblendung.entschieden.length + ' ===');
   ausblendung.entschieden.forEach(({ w, zwilling }) => console.log('  ' + String(w.ar).padEnd(20) + ' '
@@ -316,7 +323,7 @@ if (ausblendung.veraltet.length) {
 }
 
 const befunde = [];
-for (const [herkunft, liste] of [['eigene Vokabel', EIGENE], ['Fachbegriff', FACH]]) {
+for (const [herkunft, liste] of [['eigene Vokabel', EIGENE], ['Fachbegriff', FACH], ['Kalenderkarte', KAL]]) {
   for (const e of liste) {
     /* ⭐ Dazu, was die App ohne Artikel als gleich erkennt (16.09.2026) —
        أَلْمُهَنْدِسٌ fand die Schriftbild-Suche nicht. */
@@ -362,7 +369,12 @@ const BEWUSST_NEBENEINANDER = [
      übernommen, nicht selbst vokalisiert). Die Warteseite hatte ihn unter
      „Ein Wort steht doppelt" mit „beide Karten haben Fortschritt" geführt —
      beides stimmte nicht. Gefunden von einem Helfer (Block 02:50, C1). */
-  { a: 46013, b: 46011, grund: 'سَكَنٌ = Wohnort/Unterkunft (Nomen) gegen سَكَنَ = wohnen (Verb, bayna-yadayk-1 K3) — zwei Wörter derselben Wurzel' }
+  { a: 46013, b: 46011, grund: 'سَكَنٌ = Wohnort/Unterkunft (Nomen) gegen سَكَنَ = wohnen (Verb, bayna-yadayk-1 K3) — zwei Wörter derselben Wurzel' },
+  /* 23.10.2026, gemessen mit --alle: die Kalenderkarte Ṣafar trifft das Verb ṣafara
+     „pfeifen" (madina-3 K27, noch nicht frei) — ohne den Endvokal dasselbe Schriftbild.
+     Im normalen Lauf taucht es erst auf, wenn er das Kapitel freischaltet. Die App
+     tauscht hier nichts: tauscheDublette() verlangt dieselbe Bedeutung. */
+  { a: 'kal-safar', b: 47800, grund: 'Ṣafar = 2. islamischer Monat (Kalenderkarte) gegen ṣafara = pfeifen (Verb, madina-3 K27) — anderes Wort, gleiches Schriftbild' }
 ];
 const bewusst = [];
 for (let i = befunde.length - 1; i >= 0; i--) {

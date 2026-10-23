@@ -631,6 +631,26 @@ try {
   console.log('     Die Fachbegriffe sind damit UNGEPRUEFT.');
 }
 
+/* ⭐ DIE FÜNFTE QUELLE — data/kalender.js, die Kalenderkarten (Weg 6, 23.10.2026).
+   Wie die Fachbegriffe echte Karteikarten: js/kern.js schiebt sie in VOCAB_DATA. Ihr
+   Arabisch stammt aus den Beugungstabellen von en.wiktionary, nicht aus einem
+   gegengelesenen Abzug — also aus derselben Ecke wie die Fachbegriffe. Ihre Sätze stehen
+   in data/beispielsaetze.js und laufen oben schon mit. */
+try {
+  const kd = path.join(DIR, 'data', 'kalender.js');
+  if (fs.existsSync(kd)){
+    const { KALENDER_VOKABELN } = (new Function(fs.readFileSync(kd, 'utf8') + ';return {KALENDER_VOKABELN};'))();
+    for (const w of (KALENDER_VOKABELN || [])){
+      if (w) woerterGeprueft += pruefeEintrag(w, 'data/kalender.js');
+    }
+  } else {
+    console.log('  ⚠️ data/kalender.js fehlt — die 17 Kalenderkarten sind UNGEPRUEFT.');
+  }
+} catch (e) {
+  console.log('  ⚠️ data/kalender.js nicht lesbar: ' + e.message);
+  console.log('     Die Kalenderkarten sind damit UNGEPRUEFT.');
+}
+
 /* Surentitel, seit 04.08.2026 (Elias' Punkt 5). Geprueft wird NUR
    `arTaschkil` - das Feld `ar` daneben ist absichtlich unvokalisiert, es ist
    der Suchname und die Rueckfallebene. Deshalb eine eigene Runde mit eigenem

@@ -50,7 +50,12 @@ const FELD_REGELN = {
        nicht in die Wurzelansicht: die ist eine Lernfunktion für Vokabeln
        (js/wurzel.js), und Metasprache in einer Wortfamilie verwässert sie.
        ⚠️ Umkehrbar — steht Elias als EINE Frage vor, nicht als zehn. */
-    quellen: ['fachbegriffe'],
+    quellen: ['fachbegriffe', 'kalender'],
+    /* ⭐ Die Kalenderkarten (data/kalender.js, 23.10.2026): eine Wurzel nur mit Beleg.
+       Die Monatsnamen sind Eigennamen; wo keine Quelle eine Wurzel nennt (Safar,
+       Jumada, Shaban, Ramadan, Dhu l-Qada), bleibt das Feld leer — nicht geraten. */
+    quellenGrund: { kalender: 'Kalenderkarte: Monatsname (Eigenname) oder Wochentag — '
+                            + 'eine Wurzel steht nur da, wo eine Quelle sie nennt.' },
     /* ⭐⭐ WORTGRUPPEN HABEN KEINE WURZEL — eine Regel aus der Sache, kein
        Einzelfall (07.09.2026). Eine Wurzel gehört zu EINEM Wort; اِسْمٌ
        مَجْرُورٌ, مُضَافْ إِلَيْهِ und حَرْفُ الْجَرِّ sind Fügungen aus zweien.
@@ -73,7 +78,11 @@ const FELD_REGELN = {
      FACHBEGRIFF_VOKABELN. */
   gender: { quellen: ['fachbegriffe'], grund: 'Fachbegriff — Metasprache, kein Übungswort.' },
   sg:     { quellen: ['fachbegriffe'], grund: 'Fachbegriff — Metasprache, kein Übungswort.' },
-  pl:     { quellen: ['fachbegriffe'], grund: 'Fachbegriff — Metasprache, kein Übungswort.' },
+  /* Die Kalenderkarten haben keine Mehrzahlkarte — wie arabicroots bei Dienstag (47254)
+     und Rajab (45926), die beide keine führen (23.10.2026). */
+  pl:     { quellen: ['fachbegriffe', 'kalender'], grund: 'Fachbegriff — Metasprache, kein Übungswort.',
+            quellenGrund: { kalender: 'Kalenderkarte: Wochentag oder Monatsname — keine Mehrzahl, '
+                                    + 'wie bei Dienstag und Rajab in arabicroots.' } },
 
   /* Nur Adjektive haben eine weibliche Form. */
   femSg: { typen: ['noun', 'particle', 'verb', 'other'], grund: 'Nur Adjektive haben femSg.' },
@@ -298,7 +307,10 @@ function feldAusnahme(w, feld, quelle){
 
   const r = FELD_REGELN[feld];
   if (!r) return null;
-  if (r.quellen && r.quellen.includes(quelle)) return r.grund;
+  /* ⭐ Ein eigener Grund je Quelle, wo die Sache eine andere ist (23.10.2026,
+     die Kalenderkarten): sonst stuende bei „Ramadan (9. Monat)" der Grund der
+     Fachbegriffe — „Metasprache". */
+  if (r.quellen && r.quellen.includes(quelle)) return (r.quellenGrund && r.quellenGrund[quelle]) || r.grund;
   if (r.typen && r.typen.includes(String(w && w.type || ''))) return r.grund;
   /* ⭐ Wortgruppen (07.09.2026). Erkannt am Leerzeichen im arabischen Text —
      das ist die Sache selbst, nicht ein Namensmuster: was aus zwei Wörtern

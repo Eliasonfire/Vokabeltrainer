@@ -69,6 +69,12 @@ const ALT        = ladeAusSkript('data/eselsbruecken-alt.js', 'ESELSBRUECKEN_ALT
 try {
   VOCAB_DATA.push(...ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN'));
 } catch (e){ console.log('  hinw data/fachbegriffe.js nicht lesbar — ohne sie geprueft.'); }
+/* ⭐ Die Kalenderkarten (23.10.2026, data/kalender.js): in der App immer in VOCAB_DATA
+   (js/kern.js). Ohne diese Zeile hiessen ihre Eselsbruecken „Id kal-… gehoert zu
+   keiner Vokabel". */
+try {
+  VOCAB_DATA.push(...ladeAusSkript('data/kalender.js', 'KALENDER_VOKABELN'));
+} catch (e){ console.log('  hinw data/kalender.js nicht lesbar — ohne sie geprueft.'); }
 
 /* ⛔⛔ Und seine SELBST ANGELEGTEN Woerter — der vierte Weg in den Bestand.
 
@@ -489,6 +495,11 @@ console.log('=== 4. „das hast du auch" — steht das Wort wirklich im Lernbest
   /* Fachbegriffe aus dem Unterricht zaehlen mit - sie sind seit v157 Vokabeln. */
   try {
     ladeAusSkript('data/fachbegriffe.js', 'FACHBEGRIFF_VOKABELN')
+      .forEach(w => bekannt.add(flach(w.ar)));
+  } catch (e){ /* Datei fehlt: dann eben ohne */ }
+  /* Die Kalenderkarten zaehlen ebenso mit (23.10.2026) — immer in seiner App. */
+  try {
+    ladeAusSkript('data/kalender.js', 'KALENDER_VOKABELN')
       .forEach(w => bekannt.add(flach(w.ar)));
   } catch (e){ /* Datei fehlt: dann eben ohne */ }
   /* ⛔ Die Buchwoerter BIS zu seinem Kapitel zaehlen mit, und seine selbst

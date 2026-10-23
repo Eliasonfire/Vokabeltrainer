@@ -3474,4 +3474,99 @@ const ESELSBRUECKEN_ALT = {
     'Stell dir ein Fußballspiel vor: Der Rasen, auf dem die Mannschaften spielen, ist der مَلْعَبٌ. Für Kinder ist es der Spielplatz, für Mannschaften der Sportplatz — immer der Platz zum Spielen.',
     'Die Wurzel ل ع ب heißt spielen. In Bayna Yadayk 2, Kapitel 2, kommt das Verb لَعِبَ (spielen) — im selben Kapitel wie ضَعِيفٌ (schwach). Wer spielt, braucht einen Platz: مَلْعَبٌ.'
   ],
+
+  '46913': [
+    'Die Endung -iyy kennst du von كُرْسِيٌّ (Stuhl) und غَنِيٌّ (reich): نَصْرَانِيٌّ endet genauso, mit Schadda und Tanwīn.',
+    'Einzahl und Mehrzahl sind ganz verschieden: نَصْرَانِيٌّ ist ein Christ, naṣārā sind die Christen. Die Mehrzahlkarte kommt, sobald du die Einzahl kannst.'
+  ],
+
+  '47254': [
+    'Zähl ab Sonntag: يَوْمُ الْأَحَدِ ist Tag 1, يَوْمُ الِاثْنَيْنِ Tag 2, يَوْمُ الثُّلَاثَاءِ Tag 3.',
+    'Dienstag und Mittwoch enden beide auf -āʾ: يَوْمُ الثُّلَاثَاءِ (Tag 3) und يَوْمُ الْأَرْبَعَاءِ (Tag 4) stehen nebeneinander.'
+  ],
+
+  'kal-sonntag': [
+    'Fünf Tage tragen eine Zahl: Sonntag 1, Montag 2, Dienstag 3, Mittwoch 4, Donnerstag 5. يَوْمُ الْأَحَدِ steht am Anfang, so wie وَاحِدٌ (eins) am Anfang deiner Zahlen.',
+    'Nach يَوْمُ السَّبْتِ (Samstag) fängt die Zählung wieder bei eins an: يَوْمُ الْأَحَدِ. Freitag und Samstag haben eigene Namen, alle anderen Tage zählst du.'
+  ],
+
+  'kal-montag': [
+    'Zähl weiter: يَوْمُ الْأَحَدِ ist Tag eins, يَوْمُ الِاثْنَيْنِ Tag zwei. Wer den Sonntag kann, geht einfach einen Schritt weiter.',
+    'Die Endung -ayn klingt nach zwei Dingen: Montag ist der „Tag der Zwei“, so wie يَوْمُ الثُّلَاثَاءِ (Dienstag) der Tag der Drei ist.'
+  ],
+
+  'kal-mittwoch': [
+    'Mittwoch liegt in der Mitte: Sonntag 1, Montag 2, Dienstag 3, Mittwoch 4, Donnerstag 5 — يَوْمُ الْأَرْبَعَاءِ ist die Nummer vier.',
+    'Mittwoch ist der zweite Tag auf -āʾ: erst يَوْمُ الثُّلَاثَاءِ (3), dann يَوْمُ الْأَرْبَعَاءِ (4). Danach kommt يَوْمُ الْخَمِيسِ (5).'
+  ],
+
+  'kal-donnerstag': [
+    'Bis fünf wird gezählt: Sonntag 1, Montag 2, Dienstag 3, Mittwoch 4, يَوْمُ الْخَمِيسِ 5. Danach hören die Zahlen auf.',
+    'Donnerstag ist der Tag vor dem Freitag: erst يَوْمُ الْخَمِيسِ, dann يَوْمُ الْجُمُعَةِ. Am Donnerstagabend beginnt schon die Nacht zum Freitag.'
+  ],
+
+  'kal-freitag': [
+    'Die Wurzel ج م ع heißt „sammeln“. Dieselbe Wurzel hat جَامِعَةٌ (Universität), das du schon hast: der Ort, an dem viele zusammenkommen.',
+    'Hier hören die Zahlen auf: Sonntag bis Donnerstag sind Tag 1 bis 5, Freitag heißt nach dem gemeinsamen Gebet.'
+  ],
+
+  'kal-samstag': [
+    'Samstag kommt nach Freitag: erst يَوْمُ الْجُمُعَةِ, dann يَوْمُ السَّبْتِ. Danach beginnt die Woche wieder mit يَوْمُ الْأَحَدِ.',
+    'Zwei Tage ohne Zahl: يَوْمُ الْجُمُعَةِ und يَوْمُ السَّبْتِ. Die anderen fünf zählst du mit deinen Zahlwörtern.'
+  ],
+
+  'kal-muharram': [
+    'مُحَرَّمٌ ist einer der vier heiligen Monate, zusammen mit ذُو الْقَعْدَةِ, ذُو الْحِجَّةِ und رَجَبٌ. Muḥarram heißt „unantastbar“: In diesen Monaten war Kampf verboten.',
+    'Dieselbe Wurzel ح ر م wie ḥarām (verboten) und al-Masjid al-Ḥarām, die Moschee um die كَعْبَةٌ: unantastbar ist der Ort, und unantastbar ist dieser Monat.'
+  ],
+
+  'kal-safar': [
+    'Erst مُحَرَّمٌ (1), dann صَفَرٌ (2): die zwei kurzen Namen am Anfang des Jahres.',
+    'Klang-Brücke: Safar wie „Safari“. ⚠️ Geschrieben wird der Monat aber mit ص, nicht mit س wie safar (Reise).'
+  ],
+
+  'kal-rabi1': [
+    'رَبِيعٌ الْأَوَّلُ heißt wörtlich „der erste Frühling“: al-awwal ist أَوَّلُ (erster). Danach kommt der zweite, رَبِيعٌ الْآخِرُ.',
+    'Zwei Monate tragen denselben Namen: رَبِيعٌ الْأَوَّلُ (3) und رَبِيعٌ الْآخِرُ (4) — der erste und der letzte Rabīʿ.'
+  ],
+
+  'kal-rabi2': [
+    'Man hört auch Rabīʿ ath-Thānī, „der zweite Rabīʿ“ — beides meint den 4. Monat.',
+    'Erst رَبِيعٌ الْأَوَّلُ (3), dann رَبِيعٌ الْآخِرُ (4). Dahinter kommen die zwei Jumādā.'
+  ],
+
+  'kal-jumada1': [
+    'Nach den zwei Rabīʿ kommen die zwei Jumādā: جُمَادَى الْأُولَى (5) und جُمَادَى الْآخِرَةُ (6).',
+    'Zwei Paare hintereinander: Rabīʿ für 3 und 4, Jumādā für 5 und 6. Jeweils heißt der erste Monat „der erste“ und der zweite „der letzte“.'
+  ],
+
+  'kal-jumada2': [
+    'Man hört auch Jumādā ath-Thāniya, „die zweite Jumādā“ — beides meint den 6. Monat.',
+    'Erst جُمَادَى الْأُولَى (5), dann جُمَادَى الْآخِرَةُ (6). Danach kommt رَجَبٌ, der 7. Monat.'
+  ],
+
+  'kal-shaban': [
+    'Drei Monate hintereinander: رَجَبٌ (7), شَعْبَانُ (8), رَمَضَانُ (9).',
+    'Zwei Monate enden auf -ān: شَعْبَانُ und رَمَضَانُ. Sie stehen nebeneinander, 8 und 9.'
+  ],
+
+  'kal-ramadan': [
+    'Im Ramadan liegt Laylat al-Qadr, die Nacht der Bestimmung. Von ihr spricht Sure al-Qadr, die du auswendig kannst (97:1).',
+    'Ramadan ist der 9. Monat: تِسْعَةٌ (neun). Danach kommt im 10. Monat das Fest.'
+  ],
+
+  'kal-shawwal': [
+    'Shawwāl ist der 10. Monat: عَشَرَةٌ (zehn). Gefastet wird im 9., gefeiert am Anfang des 10.',
+    'Erst رَمَضَانُ (9), dann شَوَّالٌ (10): auf den Fastenmonat folgt der Festmonat.'
+  ],
+
+  'kal-dhulqada': [
+    'Die zwei letzten Monate beginnen beide mit dhū, „der mit“: ذُو الْقَعْدَةِ (11) und ذُو الْحِجَّةِ (12).',
+    'Dhū l-Qaʿda kommt direkt vor dem Monat der Pilgerfahrt: erst ذُو الْقَعْدَةِ (11), dann ذُو الْحِجَّةِ (12).'
+  ],
+
+  'kal-dhulhijja': [
+    'ḥijja hat die Wurzel ح ج ج wie Ḥajj: Dhū l-Ḥijja heißt „der mit der Pilgerfahrt“.',
+    'Der 12. und letzte Monat: Danach beginnt mit مُحَرَّمٌ ein neues Jahr.'
+  ],
 };

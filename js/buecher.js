@@ -1075,6 +1075,15 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if (typeof FACHBEGRIFF_VOKABELN !== 'undefined' && Array.isArray(FACHBEGRIFF_VOKABELN))
     saetzeNachtragen(FACHBEGRIFF_VOKABELN);
 
+  /* ⭐ Und die Kalenderkarten (23.10.2026, data/kalender.js) — damit dieselbe Lücke nicht
+     ein viertes Mal entsteht: ihr Satz steht in data/beispielsaetze.js, ihre erste
+     Eselsbrücke in data/eselsbruecken.js, wie bei jeder Buchkarte. Ohne diese zwei Zeilen
+     hätten sie beides nie bekommen. Gefahrlos, wenn nichts passt (siehe oben). */
+  if (typeof KALENDER_VOKABELN !== 'undefined' && Array.isArray(KALENDER_VOKABELN)){
+    saetzeNachtragen(KALENDER_VOKABELN);
+    eselsbrueckenNachtragen(KALENDER_VOKABELN);
+  }
+
   /* ⭐ Einzeln freigeschaltete Wörter aus Büchern, die er nicht gewählt hat (20.10.2026,
      ḍaʿīf und malʿab) — Begründung bei einzelneAusAnderenBuechern() oben. HIER, weil
      danach seine Korrekturen, die Mehrzahlkarten und der Fortschritt über ALLE Wörter
@@ -1123,6 +1132,18 @@ document.addEventListener('DOMContentLoaded', async ()=>{
      ⚠️ VOR den Pluralkarten: die werden aus `pl` gebaut. Hat er `pl`
      korrigiert, soll die Karte seine Fassung tragen, nicht die des Abzugs. */
   if (typeof wendeFeldErgaenzungenAn === 'function') wendeFeldErgaenzungenAn(VOCAB_DATA);
+  /* ⭐ „Rajab (7. Monat)" (23.10.2026). Elias: „die islamischen monat bitte auch dazu
+     schreiben welcher im jahr dieser monat ist damit ich weiß weil ich weiß nicht wann
+     welcher monat ist". Rajab ist eine Buchkarte (madina-1, Kapitel 14, 45926) — die
+     Buchdatei schreibt jeder Abzug neu, und FELD_ERGAENZUNGEN füllt nur leere Felder.
+     Deshalb steht die Fassung in data/kalender.js (KALENDER_BUCHKARTEN) und wird hier bei
+     jedem Start gesetzt — VOR seinen eigenen Änderungen: was er selbst eintippt, gewinnt. */
+  if (typeof KALENDER_BUCHKARTEN !== 'undefined' && KALENDER_BUCHKARTEN){
+    for (const w of VOCAB_DATA){
+      const e = w && KALENDER_BUCHKARTEN[String(w.id)];
+      if (e && e.de && w.de !== e.de) w.de = e.de;
+    }
+  }
   if (typeof wendeWortAenderungenAn === 'function') wendeWortAenderungenAn();
 
   /* ---------- Pluralkarten NACH den Buechern neu bauen (18.08.2026) --------
