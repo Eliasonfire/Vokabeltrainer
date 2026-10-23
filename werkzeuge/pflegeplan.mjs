@@ -898,6 +898,24 @@ export const PFLEGEPLAN = [
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
       wie: 'test-tippen-tablet.mjs läuft im Sammellauf: fährt istTablet(), zeigeTippTasten(), tippTaste() und renderTippfeld() aus dem Quelltext gegen ein Doppel der Seite (Handy, Tablet hoch und quer, PC), prüft die 36 Tasten gegen das Alphabet und die Verdrahtung in index.html; sechs Störtests' },
   },
+  /* 23.10.2026 (v707), innerhalb von js/lernen.js, js/sync.js und
+     functions/api/arabicroots.js und deshalb von Hand hier: „schwer" zählt bei arabicroots
+     zur Hälfte als gewusst. Elias: „dass es bei arabicroots die hälfte davon als gewusst
+     eingetragen wird und die andere als nicht nicht gewusst". */
+  {
+    funktion: '„schwer" zählt bei arabicroots zur Hälfte als gewusst (schwerZaehltAlsGewusst, offeneVersuche)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Es ist eine Zählweise der Übertragung, kein Inhalt; es kommt nichts dazu.' },
+    eingaben: { nein: 'Seine Antworten verarbeitet die Übertragung bei jedem Abgleich von selbst (js/sync.js → functions/api/arabicroots.js). Neu sind nur zwei Felder am Wort in vt_progress (schwerGewusst, schwerNichtGewusst), kein neuer Speicherschlüssel.' },
+    /* ⛔ Still kaputtgehen kann die Hälfte (jedes „schwer" wieder falsch oder alle gewusst)
+       und die Sperre für eine ältere App: fiele sie weg, stünde ein „schwer" drüben doppelt,
+       und löschen kann die Übertragung nicht. Eine ältere App auf dem zweiten Gerät schreibt
+       bis zum Neuladen nichts — verloren geht dabei nichts, gezählt wird an der Zieltabelle.
+       Ohne `werkzeug`: der Test läuft im Sammellauf mit (Eintrag in alle-pruefer.mjs). */
+    veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
+      wie: 'test-schwer-halb.mjs läuft im Sammellauf: fährt die echte answer() (zehn „schwer" über vier arabicroots-Wörter: abwechselnd gewusst/nicht gewusst, ein Fachbegriff ohne Hälfte, Box und Fehlversuch in der App wie bisher), schickeNachArabicroots() und offeneVersuche()/onRequest() aus dem Quelltext (5 + 5 drüben, kein zweiter Lauf, kaputte Werte, ältere App schreibt nichts); elf Störtests' },
+  },
   /* 20.10.2026 (v704), innerhalb von js/kern.js und deshalb von Hand hier: die Dualformen
      sind bereit, aber aus. Elias: „du sollst es erstmal bereit machen aber ich will erstmal
      mich nur auf singular und plural konzentrieren". */
