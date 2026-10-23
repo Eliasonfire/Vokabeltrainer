@@ -46,6 +46,18 @@ export const Z = (...c) => String.fromCodePoint(...c);
 /** Woher der Text kommt — ein Abruf je Sure. */
 export const QUELLE_URL = s => `https://api.quran.com/api/v4/quran/verses/qpc_hafs?chapter_number=${s}`;
 export const QUELLE_FELD = 'text_qpc_hafs';
+/* Die PAUSENZEICHEN kommen seit dem 24.10.2026 aus `text_uthmani` (= quran.com „V1", die Schrift,
+   in der Elias liest). Elias, mit Bild aus 67:23: „und diese zeichen (alle) müssen auch identisch
+   sein weil jeder eine andere bedetuung hat". Gemischt wird mit quranPausenV1() aus js/quran.js —
+   aus der Datei geschnitten, damit Bau und Rückfall des Lesers nie verschieden mischen. */
+export const PAUSEN_URL = s => `https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${s}`;
+export const PAUSEN_FELD = 'text_uthmani';
+export function pausenV1(){
+  const q = fs.readFileSync(path.join(REPO, 'js', 'quran.js'), 'utf8');
+  const von = q.indexOf('function quranPausenV1('), bis = q.indexOf('/* ende quranPausenV1 */');
+  if (von < 0 || bis < von) throw new Error('quranPausenV1() steht nicht mehr in js/quran.js');
+  return new Function(q.slice(von, bis) + '\n;return quranPausenV1;')();
+}
 
 /* Die Versnummer am Ende des Feldes: Leerzeichen oder U+00A0, dann arabisch-indische
    Ziffern (gemessen: „ … قَدِيرٌ ١" in der Kapitel-Abfrage, U+00A0 vor der Ziffer in der

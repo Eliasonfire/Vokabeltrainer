@@ -19,6 +19,11 @@
  *       Feld von quran.com und schneidet die Versnummer ab
  *   K7  zuStandard() (für Karten und Vergleiche) lässt kein Zeichen der Muṣḥaf-Kodierung übrig und
  *       ändert keinen Buchstaben
+ *   K8  die PAUSENZEICHEN sind die von quran.com „V1" (Feld text_uthmani), in der Elias liest.
+ *       Elias, 24.10.2026, mit Bild aus 67:23: „und diese zeichen (alle) müssen auch identisch sein
+ *       weil jeder eine andere bedetuung hat". Geprüft: sein Beispiel 67:23 Wort 9 (ṣalā), der
+ *       Fingerabdruck nennt die Quelle, quranPausenV1() mischt richtig (Pausenzeichen in text_uthmani
+ *       als eigenes Wort), und der Rückfall ohne quran-text.js mischt genauso
  *
  * Gegen das HEUTIGE quran.com (mit Netz) prüft:  node werkzeuge/korantext-bauen.mjs --pruefen
  *
@@ -47,6 +52,13 @@ function funktionenAus(quelle){
   const von = quelle.indexOf('function quranWorte(text){'), bis = quelle.indexOf('function quranAnsicht');
   if (von < 0 || bis < 0 || bis <= von) return null;
   try { return new Function(quelle.slice(von, bis) + '\n;return { quranWorte, quranOhneVersnummer };')(); }
+  catch (e){ return null; }
+}
+
+function pausenAus(quelle){
+  const von = quelle.indexOf('function quranPausenV1('), bis = quelle.indexOf('/* ende quranPausenV1 */');
+  if (von < 0 || bis <= von) return null;
+  try { return new Function(quelle.slice(von, bis) + '\n;return quranPausenV1;')(); }
   catch (e){ return null; }
 }
 
@@ -106,6 +118,19 @@ function pruefe(koran, quelle){
   });
   if (rest) b.push(`K7: zuStandard() lässt ${rest}× ein Zeichen der Muṣḥaf-Kodierung stehen`);
   if (buchstabenAnders) b.push(`K7: zuStandard() ändert Buchstaben, zuerst in ${buchstabenAnders}`);
+  /* K8 */
+  const w67 = ((koran[67] && koran[67][22]) ? koran[67][22][0] : '').split(' ')[8] || '';
+  if (!w67.endsWith(Z(0x06D6))) b.push('K8: 67:23 Wort 9 trägt nicht das Pausenzeichen ṣalā wie quran.com V1');
+  if (!ABDRUCK.pausenzeichen || ABDRUCK.pausenzeichen.feld !== 'text_uthmani' || !(ABDRUCK.pausenzeichen.woerter > 0)) b.push('K8: der Fingerabdruck nennt keine Pausenzeichen aus text_uthmani');
+  const mische = pausenAus(quelle);
+  if (!mische) b.push('K8: quranPausenV1() liess sich nicht aus js/quran.js schneiden');
+  else {
+    /* Probe ohne echten Vers: in text_uthmani steht das Pausenzeichen als eigenes Wort */
+    const qpc = Z(0x0628, 0x064E, 0x06DA) + ' ' + Z(0x062A, 0x064E);
+    const uth = Z(0x0628, 0x064E) + ' ' + Z(0x06D6) + ' ' + Z(0x062A, 0x064E);
+    if (mische(qpc, uth) !== Z(0x0628, 0x064E, 0x06D6) + ' ' + Z(0x062A, 0x064E)) b.push('K8: quranPausenV1() übernimmt das Pausenzeichen aus text_uthmani nicht');
+  }
+  if (!/fields=text_qpc_hafs,text_uthmani/.test(rueck) || !/quranPausenV1\(qpc, v\.text_uthmani\)/.test(rueck)) b.push('K8: der Rückfall ohne quran-text.js mischt die Pausenzeichen nicht');
   return { befunde: b, verse };
 }
 
@@ -114,7 +139,7 @@ const lauf = pruefe(KORAN, QUELLE);
 console.log('Korantext = quran.com (Elias, 19.10.2026: „stelle sicher das sie gleich sind")');
 console.log(`  ${lauf.verse} Verse · Fingerabdruck vom ${ABDRUCK.gebaut} · Schrift „${SCHRIFT.name}" ${SCHRIFT.version}, ${SCHRIFT.zeichen.size} Zeichen`);
 if (lauf.befunde.length){ schlecht++; for (const x of lauf.befunde) console.log('  ⛔ ' + x); }
-else console.log('  ✅ K1–K7 grün');
+else console.log('  ✅ K1–K8 grün');
 
 const kopie = () => JSON.parse(JSON.stringify(KORAN));
 const STOERTESTS = [
@@ -123,6 +148,9 @@ const STOERTESTS = [
   ['ein abgetrenntes Alif wie bis v691 (hudan in 2:2)', () => { const k = kopie(); k[2][1][0] = k[2][1][0].replace(Z(0x0657, 0x0649), Z(0x0657) + ' ' + Z(0x0649)); return [k, QUELLE]; }, /^K4:/],
   ['quranWorte() trennt wieder an jedem Leerraum', () => [KORAN, QUELLE.replace("return String(text || '').trim().split(/ +/).filter(Boolean);", "return String(text || '').trim().split(/\\s+/).filter(Boolean);")], /^K5:/],
   ['der Rückfall lädt wieder text_uthmani', () => [KORAN, QUELLE.replace('fields=text_qpc_hafs', 'fields=text_uthmani')], /^K6:/],
+  ['67:23 Wort 9 wieder mit jīm wie text_qpc_hafs', () => { const k = kopie(); const w = k[67][22][0].split(' '); w[8] = w[8].replace(Z(0x06D6), Z(0x06DA)); k[67][22][0] = w.join(' '); return [k, QUELLE]; }, /^K8:/],
+  ['quranPausenV1() erkennt das Pausenzeichen als eigenes Wort nicht mehr', () => [KORAN, QUELLE.replace("String.fromCodePoint(0x6D6) + '-' + String.fromCodePoint(0x6DC) + String.fromCodePoint(0x6DE, 0x6E9)", 'String.fromCodePoint(0x6DE, 0x6E9)')], /^K8:/],
+  ['der Rückfall mischt die Pausenzeichen nicht mehr', () => [KORAN, QUELLE.replace('quranPausenV1(qpc, v.text_uthmani) || qpc', 'qpc')], /^K8:/],
 ];
 console.log('');
 console.log('Störtests (jeder muss rot werden):');
@@ -136,5 +164,5 @@ for (const [name, bau, erwartet] of STOERTESTS){
   else { schlecht++; console.log(`  ⛔ ${name} → blieb ${r.befunde.length ? 'rot, aber ohne ' + erwartet : 'GRÜN'}`); }
 }
 console.log('');
-console.log(schlecht ? '⛔ test-korantext: ' + schlecht + ' Befund(e).' : '✅ test-korantext: grün, alle 5 Störtests rot geworden.');
+console.log(schlecht ? '⛔ test-korantext: ' + schlecht + ' Befund(e).' : '✅ test-korantext: grün, alle ' + STOERTESTS.length + ' Störtests rot geworden.');
 process.exit(schlecht ? 1 : 0);

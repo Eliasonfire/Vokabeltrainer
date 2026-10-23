@@ -1367,9 +1367,14 @@ export const PFLEGEPLAN = [
        (Fingerabdruck je Sure in werkzeuge/korantext-fingerabdruck.json, jedes Zeichen
        in der Muṣḥaf-Schrift, kein abgetrenntes Alif, Wortzählung wie quran.com).
        Neuer Inhalt: keiner. Eingaben: keine. Veralten: nur, wenn quran.com selbst
-       ein Zeichen ändert — das zeigt Korantext gegen quran.com (frisch von api.quran.com): 6236 Verse, 6236 gleich, 0 verschieden
-  ✅ Fingerabdruck passt
-       (mit Netz; am 19.10.2026: 6236 von 6236 gleich). MEINE Entscheidung: kein
+       ein Zeichen ändert — das zeigt node werkzeuge/korantext-bauen.mjs --pruefen
+       (mit Netz; am 19.10.2026: 6236 von 6236 gleich; hier stand bis v712 statt des
+       Befehls seine Ausgabe — durch die Shell geschrieben, der Befehl in Backticks
+       war ausgeführt worden). ⭐ Seit 24.10.2026 (v713) kommen die PAUSENZEICHEN aus
+       text_uthmani (= quran.com „V1", in der Elias liest; Elias: „und diese zeichen
+       (alle) müssen auch identisch sein weil jeder eine andere bedetuung hat"),
+       gemischt mit quranPausenV1() aus js/quran.js; --pruefen vergleicht mit beiden
+       Feldern, test-korantext.mjs (K8) bewacht es ohne Netz. MEINE Entscheidung: kein
        Routineschritt dafür — der Text des King-Fahd-Komplexes ist festgelegt, und
        ein Schritt, der nie etwas findet, wird nicht gelesen (dieselbe Überlegung wie
        beim Verszeichen darüber). Wird der Text neu gebaut: danach

@@ -15,6 +15,10 @@
  * heißt, steht in werkzeuge/korantext-lib.mjs: das Feld `text_qpc_hafs`, ohne die Versnummer am
  * Ende, unverändert. Die deutsche Übersetzung bleibt, wie sie in quran-text.js steht (Bubenheim &
  * Elyas); sie wird Vers für Vers aus der vorhandenen Datei übernommen.
+ * ⭐ Seit dem 24.10.2026 mit EINER Ausnahme: das Pausenzeichen jedes Wortes kommt aus `text_uthmani`
+ * (= quran.com „V1", in der Elias liest). Elias: „und diese zeichen (alle) müssen auch identisch sein
+ * weil jeder eine andere bedetuung hat". Gemischt mit quranPausenV1() aus js/quran.js; die
+ * Antworten liegen mit `--quelle` als uthmani-<n>.json neben qpc_hafs-<n>.json.
  *
  * ⛔ Geschrieben wird erst, wenn ALLES stimmt (114 Suren, je Sure dieselbe Verszahl wie
  * surah-data.js und wie die alte Datei, kein leerer Vers, kein doppelter Leerraum) — sonst
@@ -23,7 +27,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { REPO, QUELLE_URL, QUELLE_FELD, ohneVersnummer, fingerabdruck, ladeKoran } from './korantext-lib.mjs';
+import { REPO, QUELLE_URL, QUELLE_FELD, PAUSEN_URL, PAUSEN_FELD, pausenV1, ohneVersnummer, fingerabdruck, ladeKoran } from './korantext-lib.mjs';
 
 const ZIEL = path.join(REPO, 'quran-text.js');
 const ABDRUCK = path.join(REPO, 'werkzeuge', 'korantext-fingerabdruck.json');
@@ -37,10 +41,10 @@ const SUREN = JSON.parse(fs.readFileSync(path.join(REPO, 'surah-data.js'), 'utf8
   .replace(/^[\s\S]*?(\[)/, '$1').replace(/;\s*$/, ''));
 const VERSZAHL = Object.fromEntries(SUREN.map(s => [s.id, s.verses]));
 
-async function sureHolen(s){
-  const datei = QUELLE ? path.join(QUELLE, `qpc_hafs-${s}.json`) : null;
+async function sureHolen(s, art = 'qpc_hafs'){
+  const datei = QUELLE ? path.join(QUELLE, `${art}-${s}.json`) : null;
   if (datei && fs.existsSync(datei)) return JSON.parse(fs.readFileSync(datei, 'utf8'));
-  const r = await fetch(QUELLE_URL(s));
+  const r = await fetch(art === 'uthmani' ? PAUSEN_URL(s) : QUELLE_URL(s));
   if (!r.ok) throw new Error(`Sure ${s}: HTTP ${r.status}`);
   const roh = await r.text();
   if (datei){ fs.mkdirSync(QUELLE, { recursive: true }); fs.writeFileSync(datei, roh); }
@@ -48,16 +52,25 @@ async function sureHolen(s){
   return JSON.parse(roh);
 }
 
-/* 1. quran.com lesen */
+/* 1. quran.com lesen: text_qpc_hafs, und die Pausenzeichen aus text_uthmani (V1) */
 const NEU = {};
 const fehler = [];
+const mische = pausenV1();
+const nachVers = (j) => (j.verses || []).slice().sort((a, b) => Number(String(a.verse_key).split(':')[1]) - Number(String(b.verse_key).split(':')[1]));
+let pausenWoerter = 0, pausenVerse = 0;
 for (let s = 1; s <= 114; s++){
-  const j = await sureHolen(s);
-  const verse = (j.verses || []).slice().sort((a, b) => Number(String(a.verse_key).split(':')[1]) - Number(String(b.verse_key).split(':')[1]));
+  const verse = nachVers(await sureHolen(s));
+  const uth = new Map(nachVers(await sureHolen(s, 'uthmani')).map(v => [v.verse_key, v[PAUSEN_FELD]]));
   NEU[s] = verse.map(v => {
     const t = ohneVersnummer(v[QUELLE_FELD]);
     if (t === v[QUELLE_FELD]) fehler.push(`${v.verse_key}: keine Versnummer am Ende — Feld anders gebaut als erwartet`);
-    return t;
+    if (!uth.has(v.verse_key)){ fehler.push(`${v.verse_key}: fehlt in ${PAUSEN_FELD}`); return t; }
+    const m = mische(t, uth.get(v.verse_key));
+    if (m === null){ fehler.push(`${v.verse_key}: Pausenzeichen aus ${PAUSEN_FELD} lassen sich keinem Wort zuordnen`); return t; }
+    const vorher = t.split(' '), nachher = m.split(' ');
+    const n = nachher.filter((w, i) => w !== vorher[i]).length;
+    if (n){ pausenWoerter += n; pausenVerse++; }
+    return m;
   });
   if (NEU[s].length !== VERSZAHL[s]) fehler.push(`Sure ${s}: ${NEU[s].length} Verse bei quran.com, ${VERSZAHL[s]} in surah-data.js`);
   NEU[s].forEach((t, i) => {
@@ -80,6 +93,7 @@ if (PRUEFEN){
   const da = fs.existsSync(ABDRUCK) ? JSON.parse(fs.readFileSync(ABDRUCK, 'utf8')) : null;
   const jetzt = fingerabdruck(NEU);
   console.log(`Korantext gegen quran.com (${QUELLE ? 'gespeicherte Antworten aus ' + QUELLE : 'frisch von api.quran.com'}): ${verse} Verse, ${verse - anders.length} gleich, ${anders.length} verschieden`);
+  console.log(`  Pausenzeichen aus ${PAUSEN_FELD} (V1): ${pausenWoerter} Wörter in ${pausenVerse} Versen anders als in ${QUELLE_FELD}`);
   if (anders.length) console.log('  ⛔ verschieden, zuerst: ' + anders.slice(0, 10).join(', '));
   if (fehler.length) console.log('  ⛔ ' + fehler.slice(0, 5).join(' | '));
   const abdruckOk = !!da && da.gesamt === jetzt.gesamt;
@@ -109,6 +123,11 @@ const kopf = `/* ===================== QURAN-VOLLTEXT ===================== */
    Elias: „stelle sicher das sie gleich sind damit keine fehler da sind". Quelle:
    ${QUELLE_URL('N')}, Feld ${QUELLE_FELD}
    (King Fahd Complex, Muṣḥaf al-Madīna, Ḥafṣ), ohne die Versnummer am Ende.
+   ⭐ Mit EINER Ausnahme (seit 24.10.2026): das Pausenzeichen jedes Wortes kommt aus
+   ${PAUSEN_URL('N')}, Feld ${PAUSEN_FELD} — so zeigt sie
+   quran.com in der Schrift „V1", in der Elias liest (${pausenWoerter} Wörter in ${pausenVerse} Versen).
+   Elias: „und diese zeichen (alle) müssen auch identisch sein weil jeder eine andere
+   bedetuung hat". Gemischt mit quranPausenV1() aus js/quran.js.
    Bewacht von test-korantext.mjs über werkzeuge/korantext-fingerabdruck.json;
    gegen das heutige quran.com prüft: node werkzeuge/korantext-bauen.mjs --pruefen
 
@@ -139,8 +158,11 @@ for (let s = 1; s <= 114; s++) for (let i = 0; i < NEU[s].length; i++) if (probe
 const summe = Object.values(NEU).reduce((a, l) => a + l.length, 0);
 if (gleich !== summe){ fs.unlinkSync(ZIEL + '.neu'); console.log(`⛔ Gegenprobe: nur ${gleich} von ${summe} Versen gleich — nichts ersetzt.`); process.exit(1); }
 fs.renameSync(ZIEL + '.neu', ZIEL);
-const abdruck = { quelle: QUELLE_URL('N'), feld: QUELLE_FELD, ohne: 'die Versnummer am Ende', gebaut: heute, verse: summe, ...fingerabdruck(NEU) };
+const abdruck = { quelle: QUELLE_URL('N'), feld: QUELLE_FELD, ohne: 'die Versnummer am Ende',
+  pausenzeichen: { quelle: PAUSEN_URL('N'), feld: PAUSEN_FELD, woerter: pausenWoerter, verse: pausenVerse },
+  gebaut: heute, verse: summe, ...fingerabdruck(NEU) };
 fs.writeFileSync(ABDRUCK + '.neu', JSON.stringify(abdruck, null, 1) + '\n', 'utf8');
 fs.renameSync(ABDRUCK + '.neu', ABDRUCK);
 console.log(`✔ quran-text.js geschrieben: ${summe} Verse, ${gleich} gegengeprüft (Arabisch = quran.com, Deutsch = vorher) · ${(fs.statSync(ZIEL).size / 1024 / 1024).toFixed(2)} MB`);
+console.log(`✔ Pausenzeichen wie quran.com V1 (${PAUSEN_FELD}): ${pausenWoerter} Wörter in ${pausenVerse} Versen`);
 console.log('✔ werkzeuge/korantext-fingerabdruck.json geschrieben');

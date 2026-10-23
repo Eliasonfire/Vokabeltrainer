@@ -95,6 +95,18 @@
    offizielle Seite war am 08.09.2026 nicht erreichbar. */
 @font-face{font-family:'Uthmanic Hafs';font-style:normal;font-weight:400;font-display:swap;
   src:url(./fonts/kfgqpc-hafs-18.woff2) format('woff2');}
+/* Der Hizb-Stern wie bei quran.com „V1" (24.10.2026). Elias mit Bild (die
+   V1-Rosette neben dem kleinen Stern der App): „ich möchte das von quran.com
+   haben". Gemessen: von den Schriften der App zeichnet nur Scheherazade New
+   U+06DE wie V1, als Rosette mit acht Blättern, Ring und Punkt. Diese Regel
+   steht NACH der Hafs-Regel und trägt denselben Namen: für ein Zeichen in
+   ihrem unicode-range gewinnt die zuletzt definierte Regel, alle anderen
+   Zeichen bleiben in Hafs. Das geht hier, weil U+06DE ein eigenes Zeichen ist
+   und kein Kombinationszeichen (bei der Raute griff es nicht). Die Zeilenhöhe
+   bestimmt weiter Hafs: diese Regel enthält kein Leerzeichen und ist darum
+   nie die erste Schrift der Zeile. Bewacht von test-quran-raute.mjs. */
+@font-face{font-family:'Uthmanic Hafs';font-style:normal;font-weight:400;font-display:swap;
+  src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');unicode-range:U+06DE;}
 @font-face{font-family:'Scheherazade New';font-style:normal;font-weight:400;font-display:swap;
   src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');
   unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;}
@@ -4437,7 +4449,19 @@ button:disabled{cursor:default;}
   transform:translate(-50%,-50%) rotate(45deg);
 }
 .verse-ar .qw[data-raute="unten"]::after, #tjWort[data-raute="unten"]::after{left:calc(50% + .085em);top:calc(50% + .715em);}
-.verse-ar .qw[data-raute="zwischen"]::after, #tjWort[data-raute="zwischen"]::after{left:calc(50% - .191em);top:calc(50% - .02em);}
+/* 12:11 seit v713: schmal und hoch, über der Verbindung, rechts vom Punkt des nūn.
+   Elias nach v712 mit Bild der großen Karte: „kannst du zwischen der raute und
+   dem nun ein kleines bisschen mehr abstand machen", dann mit einem Bild aus
+   seiner Notiz „sonstige Zeichen" (gedruckter Muṣḥaf): „so möchte ich das es
+   aussieht" — dort steht eine hohe, schmale Raute über der Verbindung, der
+   Punkt des nūn links unter ihr. Gewählt aus vier Lagen im echten Leser
+   (Spitze zu Spitze .13em breit, .23em hoch): das Quadrat wird gedreht und
+   waagerecht gestaucht; der dickere Rand gleicht das Stauchen aus. */
+.verse-ar .qw[data-raute="zwischen"]::after, #tjWort[data-raute="zwischen"]::after{
+  left:calc(50% - .185em);top:calc(50% - .13em);
+  width:.163em;height:.163em;border-width:max(1.6px,.03em);
+  transform:translate(-50%,-50%) scaleX(.565) rotate(45deg);
+}
 .verse-de{font-size:calc(var(--fs-md) * var(--quran-de, 1));color:var(--text-dim);margin-top:var(--sp-2);line-height:1.6;}
 /* ⭐ Die englische Zeile (08.09.2026). Sie erbt die Deutsch-Größe: es ist
    dieselbe Sorte Text an derselben Stelle, und zwei Größenregler für zwei
