@@ -9443,3 +9443,14 @@ Elias auf die Frage, ob die App die Endung von dhū schon jetzt erklären soll: 
 - Sammellauf 189 Prüfer, 5 rot, keiner NEU rot. Probe mit seinem Stand (KV 23:29:47): 0 von 47 Kalender-Zeilen falsch erklärt.
 - Hochgeladen 23:54:51, Production main aus `efc5004` (`7e2e0421`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v710.
 - Offen (v711): Imāla-Raute in 11:41 (die Hafs-Schrift malt U+06EA als Punkt), abgeschnittenes kleines sīn in 75:27 und 83:14 beim Markieren; danach Koransätze für „Koran häufigste" (194 Karten in seiner Auswahl ohne Satz).
+
+## 2026-10-24 00:22 – Sitzung: die hohle Raute in 11:41 und 12:11 — **v711 ausgeliefert** (`6aa88ca`)
+
+Elias zu 11:41 (Bilder): *„… sollte das so ein rechteckiges zeiczhen sein wie bei quran.com und nicht so ein punkt. das muss verbessert werden"*; zu 12:11 (Bilder): *„auch das hier in sura yusuf vers 11 sollte aussehen wie quran.com"*, *„mach das jetzt sofort so schnell wie möglich"*, *„die hohle raute wird nur in 2 versen vertreten, nicht drei"*; danach *„mach danach die anderen zeichen im koran damit die auch richtig sind, dann kannst du weiter am rest arbeiten der an steht"*.
+
+- Gemessen: drei Wörter tragen ein Rauten-/Punktzeichen (11:41:6 U+06EA, 12:11:6 U+06EC nach Fatha, 41:44:9 U+06EC auf Alif); Uthmanic Hafs malt alle als Punkt, hat keine hohle Raute und kein U+06EB. Scheherazade New malt U+06EA und U+06EB als hohle Raute.
+- `js/quran.js`: `quranRaute()` gibt den zwei Wörtern `data-raute`, in 12:11 nur für die Anzeige U+06EC → U+06EB (gleich lang, Markierungen bleiben). `index.html`: `.verse-ar .qw[data-raute]` in Scheherazade New. 41:44 bleibt (gefüllter Punkt).
+- `test-quran-raute.mjs` (neu, im Sammellauf): echter Leser in Edge, ganzer Koran, 13 von 13; mit quran.js von v710 6 rot. `test-hamza-lamalif.mjs` nachgezogen (Spans mit `data-raute`, H3 erlaubt nur den Tausch in 12:11, Störtest auf der neuen Zeile; alle 4 Störtests rot).
+- Sammellauf 190 Prüfer: zuerst 6 rot, davon test-hamza-lamalif neu (behoben, s. o.); die übrigen 5 bekannt (Auslieferung, Warteliste).
+- Hochgeladen 00:22:17, Production main aus `6aa88ca` (`68979cea`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v711.
+- Inventur des Korantexts: 72 verschiedene Zeichen, alle in der Zeichentabelle von Uthmanic Hafs. Als Nächstes: jedes Sonderzeichen gegen quran.com vergleichen (sein Auftrag), danach sīn (75:27, 83:14) und Koransätze.
