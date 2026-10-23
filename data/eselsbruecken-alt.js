@@ -387,7 +387,7 @@ const ESELSBRUECKEN_ALT = {
 
   /* وَسِخٌ - schmutzig */
   '45796': [
-    'Das Muster fällt aus der Reihe und genau das macht es merkbar: وَسِخ ist NICHT فَعِيل wie نَظِيف, sondern فَعِل — kurz, ohne langen Vokal. Sprich beide hintereinander: na-ẓīf gegen wa-six. Das saubere Wort ist lang und rund, das schmutzige kurz und rau.',
+    'Ein Bild aus deinem eigenen Buch: الْقَمِيصُ وَسِخٌ — „Das Hemd ist schmutzig“ (Madina 1, Seite 15). Stell dir genau dieses Hemd vor: du willst los, ziehst es an, und vorne prangt ein Fleck. Bei وَسِخٌ siehst du ab jetzt das fleckige Hemd vor dir — ein Gegenstand, kein abstraktes Wort.',
     'Drei deiner Vokabeln fangen mit و an: وَسِخٌ, وَرَقٌ (Papier), وَاقِفٌ (stehend). Dazu kommt وَ (und) selbst. Übe sie als kleine Gruppe — der w-Anlaut ist im Arabischen selten genug, dass er als eigener Haken taugt.'
   ],
 

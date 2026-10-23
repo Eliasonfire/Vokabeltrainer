@@ -1,6 +1,6 @@
 {
-  "stempel": 1792464740918,
-  "geholt": "22.10.2026",
+  "stempel": 1792715659626,
+  "geholt": "23.10.2026",
   "woerter": {
     "45760": [
       {
@@ -104,6 +104,13 @@
         "nr": 2,
         "text": "⚠️ Nicht mit بَعْدَ („nach, danach“) verwechseln — dieselben drei Buchstaben ب ع د, aber ein anderes Wort. Der Unterschied ist hörbar: ba-ʿīd mit langem ī gegen baʿ-da. Wenn du im Koran بَعْدُ liest, ist die Zeit gemeint und nicht die Entfernung.",
         "zeit": 1788046786659
+      }
+    ],
+    "45796": [
+      {
+        "nr": 1,
+        "text": "Das Muster fällt aus der Reihe und genau das macht es merkbar: وَسِخ ist NICHT فَعِيل wie نَظِيف, sondern فَعِل — kurz, ohne langen Vokal. Sprich beide hintereinander: na-ẓīf gegen wa-six. Das saubere Wort ist lang und rund, das schmutzige kurz und rau.",
+        "zeit": 1792715659625
       }
     ],
     "45806": [
