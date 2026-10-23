@@ -1601,15 +1601,51 @@ function quranOhneVersnummer(text){
    U+0653, keine mit U+0652), der Tausch ist entfallen. Bewacht weiter von
    test-hamza-lamalif.mjs, jetzt am Text selbst. */
 
+/* ⭐ Die hohle Raute wie bei quran.com (24.10.2026, v711). Elias mit Bildern
+   zu 11:41: „hier beim 41 vers da ist unter dem ra bei mir in der app so ein
+   punkt aber eigentlich sollte das so ein rechteckiges zeiczhen sein wie bei
+   quran.com und nicht so ein punkt. das muss verbessert werden". Dann zu
+   12:11: „auch das hier in sura yusuf vers 11 sollte aussehen wie quran.com",
+   und: „die hohle raute wird nur in 2 versen vertreten, nicht drei".
+
+   Gemessen am 24.10.2026: Uthmanic Hafs malt beide Zeichen als Punkt und hat
+   keine hohle Raute (alle Zeichen U+0610–U+08FF unter einem rā durchprobiert).
+   Im ganzen Text tragen drei Wörter so ein Zeichen: 11:41 Wort 6 (majrēhā,
+   U+06EA unten), 12:11 Wort 6 (taʾmannā, U+06EC oben nach Fatha) und 41:44
+   Wort 9 (U+06EC oben auf dem Alif). Die hohle Raute gehört nur zu den ersten
+   beiden; 41:44 ist ein gefüllter Punkt und bleibt, wie es ist.
+
+   Deshalb steht ein solches Wort in Scheherazade New, der einzigen Schrift der
+   App, die die hohle Raute malt (CSS: `.qw[data-raute]` in index.html). In
+   12:11 steht bei quran.com dasselbe Zeichen wie in 41:44 (U+06EC, gefüllt);
+   für die Anzeige wird es gegen U+06EB getauscht, das Zeichen der hohlen Raute
+   oben. Beide sind ein einzelnes Zeichen, deshalb verschiebt sich keine
+   Markierung (die Stellen zählen Buchstaben, js/quran-markierung.js).
+   ⛔ Nicht über `unicode-range` lösen: gemessen am 23.10.2026, Chromium nimmt
+   Buchstabe und Zeichen aus derselben Schrift, die Ersatzschrift greift nicht.
+   Bewacht von test-quran-raute.mjs. */
+const QW_RAUTE_UNTEN = String.fromCodePoint(0x6EA);
+const QW_FATHA_PUNKT = String.fromCodePoint(0x64E, 0x6EC);
+const QW_FATHA_RAUTE = String.fromCodePoint(0x64E, 0x6EB);
+function quranRaute(w){
+  if (w.includes(QW_RAUTE_UNTEN)) return { wort: w, raute: true };
+  if (w.includes(QW_FATHA_PUNKT)) return { wort: w.split(QW_FATHA_PUNKT).join(QW_FATHA_RAUTE), raute: true };
+  return { wort: w, raute: false };
+}
+
 /** Derselbe Text, jedes Wort in einem `<span>`. Die Nummer ist 1-basiert und
  *  entspricht der Nummer der Zeitmarke.
  *  ⛔ Der Verstext geht UNVERÄNDERT hinein — er ist der Text von quran.com.
+ *  Einzige Ausnahme: die hohle Raute in zwei Wörtern (quranRaute, oben).
  *  ⚠️ Die Spans stehen IMMER im Markup, auch wenn wortweises Mitlesen aus ist —
  *  dasselbe Prinzip wie bei `.verse-en` und `.ayah-schluss`: ein DOM für alle
  *  Ansichten, und das Umschalten braucht keinen Neuaufbau. */
 function quranWortSpans(text){
   return quranWorte(text)
-    .map((w, i) => '<span class="qw" data-w="' + (i + 1) + '">' + w + '</span>')
+    .map((w, i) => {
+      const r = quranRaute(w);
+      return '<span class="qw" data-w="' + (i + 1) + '"' + (r.raute ? ' data-raute' : '') + '>' + r.wort + '</span>';
+    })
     .join(' ');
 }
 

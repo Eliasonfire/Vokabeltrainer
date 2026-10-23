@@ -42,6 +42,7 @@ const KORAN = new Function(fs.readFileSync(path.join(HIER, 'quran-text.js'), 'ut
 
 const Z = (...c) => String.fromCodePoint(...c);
 const LAM = Z(0x0644), SUKUN = Z(0x0652), SUKUN_MUSHAF = Z(0x06E1);
+const FATHA_PUNKT = Z(0x064E, 0x06EC), FATHA_RAUTE = Z(0x064E, 0x06EB);
 /* Hamza-Alif + Madda — quran.com schreibt das Hamza-Alif als EIN Zeichen (U+0623);
    die alte Datei schrieb es zerlegt (U+0627 + U+0654). Gezählt wird beides. */
 const HAMZA_MADDA = [Z(0x0623, 0x0653), Z(0x0627, 0x0654, 0x0653)];
@@ -76,13 +77,19 @@ function pruefeAlles(quelle, koran){
     verse++;
     const html = f.quranWortSpans(ar);
     const roh = f.quranWorte(ar);
-    const spans = [...html.matchAll(/<span class="qw" data-w="(\d+)">([^<]*)<\/span>/g)].map(m => entities(m[2]));
+    /* ` data-raute` kennzeichnet seit v711 die zwei Wörter mit der hohlen Raute. */
+    const spans = [...html.matchAll(/<span class="qw" data-w="(\d+)"( data-raute)?>([^<]*)<\/span>/g)].map(m => entities(m[3]));
     const gezeigt = spans.join(' ');
     woerter += roh.length;
     mitMushaf += zaehleHM(gezeigt, LAM + SUKUN_MUSHAF);
     mitRund += zaehleHM(gezeigt, LAM + SUKUN);
     mitSukun += zaehleHM(ar, LAM + SUKUN_MUSHAF) + zaehleHM(ar, LAM + SUKUN);
-    if (gezeigt !== ar.trim() && !anders) anders = `${s}:${i + 1}`;
+    /* Die einzige gewollte Abweichung (24.10.2026, v711): in 12:11 zeigt der Leser nach
+       dem Fatha die hohle Raute U+06EB statt U+06EC. Elias: „auch das hier in sura yusuf
+       vers 11 sollte aussehen wie quran.com". Dass es genau dieses eine Wort trifft,
+       bewacht test-quran-raute.mjs; hier gilt jedes andere Zeichen weiter unverändert. */
+    const soll = ar.trim().split(FATHA_PUNKT).join(FATHA_RAUTE);
+    if (gezeigt !== soll && !anders) anders = `${s}:${i + 1}`;
     if (spans.length !== roh.length && !zahl) zahl = `${s}:${i + 1} (${spans.length} statt ${roh.length})`;
     else if (!laenge) {
       const k = roh.findIndex((w, n) => w.length !== (spans[n] || '').length);
@@ -117,7 +124,7 @@ const STOERTESTS = [
   ['die Anzeige tauscht U+06E1 gegen U+0652 (so sah der Text bis v691 aus)',
     '  return quranWorte(text)\n', '  return quranWorte(String(text).split(String.fromCodePoint(0x06E1)).join(String.fromCodePoint(0x0652)))\n', /^H1:/],
   ['die Anzeige hängt ein Zeichen an jedes Wort: die Markierungen würden verrutschen',
-    "'\">' + w + '</span>'", "'\">' + w + String.fromCodePoint(0x200F) + '</span>'", /^H3:/],
+    "'>' + r.wort + '</span>'", "'>' + r.wort + String.fromCodePoint(0x200F) + '</span>'", /^H3:/],
   ['der Leser setzt den Verstext roh ein',
     '${quranWortSpans(v.text_uthmani)}', '${v.text_uthmani}', /^H7:/],
 ];

@@ -785,6 +785,11 @@ const PRUEFER = [
      möchte ich nicht." Fährt die echte App im Browser: Antwort tippen, zur Suche, zurück —
      dieselbe Frage muss dastehen. Störtest mit `--hoeren <alte hoeren.js>`. */
   ['test-hoeren-fortsetzen.mjs', []],
+  /* ⭐ Neu am 24.10.2026 (v711). Elias zu 11:41 und 12:11: „auch das hier in sura yusuf
+     vers 11 sollte aussehen wie quran.com" und „die hohle raute wird nur in 2 versen
+     vertreten, nicht drei". Fährt den echten Leser: genau zwei Wörter in Scheherazade New,
+     41:44 bleibt, sonst kein Zeichen anders. Störtest mit `--quran <alte quran.js>`. */
+  ['test-quran-raute.mjs', []],
   /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner
      ist": „das auch" (selbst mit den Wörterbüchern entscheiden). Schneidet
      plBeschriftung() und bauePluralKarte() aus js/kern.js und legt die
