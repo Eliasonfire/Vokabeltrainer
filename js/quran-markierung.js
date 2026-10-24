@@ -34,33 +34,49 @@
    markiertes Wort zeigt seine Notizen unter dem Wort, der Koran bleibt
    stehen. Bearbeiten geht von dort in die große Karte.
 
-   ⛔⛔ DER TEXT WIRD NICHT ANGEFASST. Die Markierung wird ÜBER die Stelle
-   gezeichnet, nicht in den Text hineingeschnitten. Der Grund ist das
-   Arabische selbst: Buchstaben verbinden sich innerhalb eines Wortes, und
-   diese Verbindung reißt in jedem Browser, sobald zwei Buchstaben in zwei
-   verschiedenen Elementen stehen. Wer das Wort in `<span>` je Buchstabe
-   zerlegt, bekommt lauter Einzelformen — im Muṣḥaf stünde dann ein anderes
-   Schriftbild als im Leser. Dasselbe Verbot steht seit dem 13.09.2026 schon
-   über quranWorte() in js/quran.js. [[zitieren_am_original]]
+   ⛔⛔ DAS WORT BLEIBT EIN WORT — nur der markierte Buchstabe bekommt ein
+   eigenes <span> mit seiner Farbe (seit v714, 24.10.2026).
 
-   ⭐ Das Werkzeug dafür heißt CSS Custom Highlight API: `new Range()` über
-   die Zeichen, `new Highlight(...)` darum, `CSS.highlights.set(name, h)` —
-   und in der Formatvorlage `::highlight(name){…}`. Der DOM bleibt dabei
-   unverändert, es entsteht kein einziges neues Element im Text.
+   Bis v713 wurde die Farbe mit der CSS Custom Highlight API ÜBER den Text
+   gezeichnet (`new Range()`, `CSS.highlights`, `::highlight(name){color:…}`),
+   der DOM blieb unberührt. Die Begründung dafür war MEINE (20.09.2026), nicht
+   seine: die Verbindung der Buchstaben reiße, sobald zwei Buchstaben in zwei
+   Elementen stehen.
 
-   ⚠️ Erlaubt sind in `::highlight()` nur `color`, `background-color`,
-   `text-decoration` (samt Longhands) und `text-shadow`. Kein Rahmen, keine
-   Polsterung, keine Schriftgröße. Und KEIN Hintergrund: der füllt die ganze
-   Zeilenbox — über einem 120 Pixel hohen Wort stand ein 250 Pixel hoher
-   Balken. Gefärbt wird der Buchstabe selbst, dazu eine GERADE Linie
-   darunter (Elias 20.09.: „ich will das das unterstrichene gerade ist";
-   die Wellenlinie zerfiel bei der Koranschrift in Stücke).
+   Elias am 23.10.2026, 23:55, mit Bild: „das sin oben drüber wird plötzlich
+   abgeschnitten, fix das an beiden stellen. 75/27 und 83/14". Nachgestellt am
+   24.10.2026 (Edge, sechsfach vergrößert): ein Highlight malt den Buchstaben
+   nur INNERHALB seines Kastens. Das kleine sīn (U+06DC) über dem nūn bzw. lām
+   ragt nach links über diesen Kasten hinaus, und genau dieser Teil fehlte.
+   Das trifft jedes Zeichen, das über seinen Buchstaben hinausragt.
 
-   ⚠️ Es gibt Browser ohne diese Schnittstelle (Chrome vor 105, Safari vor
-   17.2, Firefox vor 149). Dort darf die Markierung nicht einfach unsichtbar
-   sein — das wäre der stille Ausfall: Elias markiert, und nichts steht da.
-   Der Rückfall färbt stattdessen das GANZE Wort ein (Klasse `tj-wort`).
-   Ungenauer, aber sichtbar. [[ausfall_ist_unsichtbar_gebaut]]
+   Ein eigenes <span> um den markierten Buchstaben malt ihn ganz. Die
+   Verbindung reißt dabei in Chromium NICHT: es formt über Elementgrenzen
+   hinweg, solange Schrift und Größe gleich bleiben und nur die Farbe
+   wechselt. Gemessen am 24.10.2026 in test-quran-sin-markierung.mjs:
+   Wortbreite und Tinte markiert = unmarkiert, an 75:27, 83:14 und einem
+   verbundenen Wort aus al-Fātiḥa. Beide Geräte von Elias laufen auf
+   Chromium (Pixel 10 Pro XL, Galaxy Tab S9 Ultra). ⚠️ Safari und Firefox
+   sind dabei NICHT gemessen.
+
+   ⛔ Was deshalb gilt:
+     - Das Wort wird NIE in Buchstaben zerlegt, außer an den markierten
+       Stellen. Das Verbot über quranWorte() in js/quran.js (13.09.2026)
+       gilt weiter. [[zitieren_am_original]]
+     - Die Farb-Spans tragen NUR die Farbe: kein Rand, keine Polsterung,
+       keine Schriftgröße, kein letter-spacing — jedes davon zerreißt die
+       Verbindung.
+     - Gemessen wird immer am FLACHEN Wort; tajweedFlaechenBauen() macht
+       das große Wort deshalb zuerst wieder flach.
+     - Vor jedem Neuzeichnen werden die markierten Wörter wieder flach
+       gemacht — sonst bliebe eine weggenommene Farbe stehen.
+     - Gefärbt wird nur der Buchstabe selbst, ohne Hintergrund und ohne
+       Linie (Elias 20.09.2026: „lass die unterstreichungen ganz weg am
+       besten"; siehe die Regeln in index.html).
+
+   ⭐ Damit braucht es auch keinen Rückfall mehr für Browser ohne
+   `::highlight()` (bis v713 die Klasse `tj-wort` am ganzen Wort): ein
+   <span> mit Farbe kann jeder Browser.
 
    ---------------------------------------------------------------------
    DIE FORM IM SPEICHER — von Anfang an mit Zeitstempel
@@ -310,30 +326,60 @@ function tajweedClusterAn(cluster, pos){
    Zeichnen im Lesetext
    --------------------------------------------------------------------- */
 
-function tajweedKannHighlight(){
-  return typeof CSS !== 'undefined' && CSS.highlights && typeof Highlight === 'function';
+/* ⚠️ Die vier Klassennamen stehen AUSGESCHRIEBEN da, nicht als
+   `'tj-' + farbe`: klassen-ohne-fundstelle.mjs erkennt zusammengesetzte Namen
+   erst ab vier Zeichen Präfix und hielt die vier CSS-Regeln deshalb für
+   verwaist (20.09.2026). Nebenbei bekommt so nur eine BEKANNTE Farbe eine
+   Klasse. */
+const TJ_FARBKLASSE = { rot:'tj-rot', orange:'tj-orange', blau:'tj-blau', lila:'tj-lila' };
+
+/* Setzt den Text eines Wortes neu: flach, und jeder markierte Buchstabe in
+   einem eigenen <span class="tj-buchstabe tj-<farbe>">. `farbig` ist eine
+   Liste { c: Buchstabe aus tajweedCluster(), farbe }.
+   ⛔ Nur Textknoten und diese Spans, kein innerHTML: der Korantext geht nie
+   als Markup durch. textContent bleibt Zeichen für Zeichen derselbe — Zettel,
+   Karte und Mitlesen lesen weiter textContent. */
+function tajweedWortFaerben(el, text, farbig){
+  el.textContent = text;
+  if (!farbig.length) return;
+  const sortiert = farbig.slice().sort((a, b) => a.c.i - b.c.i);
+  const teile = document.createDocumentFragment();
+  let bis = 0;
+  for (const { c, farbe } of sortiert){
+    const klasse = TJ_FARBKLASSE[farbe];
+    if (!klasse || c.i < bis) continue;
+    if (c.i > bis) teile.appendChild(document.createTextNode(text.slice(bis, c.i)));
+    const b = document.createElement('span');
+    b.className = 'tj-buchstabe ' + klasse;
+    b.textContent = text.slice(c.i, c.i + c.len);
+    teile.appendChild(b);
+    bis = c.i + c.len;
+  }
+  if (bis < text.length) teile.appendChild(document.createTextNode(text.slice(bis)));
+  el.textContent = '';
+  el.appendChild(teile);
 }
 
 /* Baut alle Markierungen der offenen Sure neu auf.
 
-   ⛔ Aufzurufen nach JEDEM Neuaufbau der Verse: die Bereiche zeigen auf
-   Textknoten, und nach einem Neuaufbau sind das andere Knoten. Die alten
-   zeigen dann ins Leere — sichtbar bleibt nichts, gemeldet wird nichts.
-   Deshalb steht der Aufruf in renderVerses() an der Quelle, nicht bei den
-   einzelnen Auslösern. [[wirkung_an_der_quelle_stilllegen]] */
+   ⛔ Aufzurufen nach JEDEM Neuaufbau der Verse: die Farbe steckt in den
+   Wörtern, und ein Neuaufbau setzt sie flach. Deshalb steht der Aufruf in
+   renderVerses() an der Quelle, nicht bei den einzelnen Auslösern.
+   [[wirkung_an_der_quelle_stilllegen]] */
 function tajweedZeichnen(){
   const liste = document.getElementById('verseList');
   if (!liste) return;
   const sure = (typeof OFFENE_SURE !== 'undefined') ? OFFENE_SURE : null;
 
-  /* Der Rückfall hinterlässt Klassen im DOM — die müssen zuerst weg, sonst
-     bliebe eine weggenommene Markierung als Farbe stehen. */
-  liste.querySelectorAll('.qw.tj-wort').forEach(el => { el.className = 'qw'; });
+  /* Erst alles, was markiert WAR, wieder flach — sonst bliebe eine
+     weggenommene Markierung als Farbe stehen. Nur die Klasse weg, nicht
+     `className = 'qw'`: das nähme auch die Marke des Mitlesens (`laeuft`). */
+  liste.querySelectorAll('.qw.tj-hat').forEach(el => {
+    el.classList.remove('tj-hat');
+    if (el.childElementCount) el.textContent = el.textContent;
+  });
   liste.querySelectorAll('.qw[data-raute]').forEach(el => { el.style.removeProperty('--raute-farbe'); });
-
-  const proFarbe = {};
-  TJ_FARBEN.forEach(f => { proFarbe[f.id] = []; });
-  if (!sure){ tajweedHighlightsSetzen('tajweed-', proFarbe); return; }
+  if (!sure) return;
 
   const jeWort = tajweedJeWort();
   liste.querySelectorAll('.verse-item[data-versnr]').forEach(karte => {
@@ -341,22 +387,11 @@ function tajweedZeichnen(){
     karte.querySelectorAll('.verse-ar .qw').forEach(span => {
       const stellen = jeWort.get(`${sure}:${vers}:${span.dataset.w}`);
       if (!stellen || !stellen.length) return;
-      const knoten = span.firstChild;
-      if (!knoten || knoten.nodeType !== 3) return;
+      const text = span.textContent || '';
+      if (!text) return;
       /* Fürs Antippen: das Wort weiß, dass es markiert ist (Zettel). */
       span.classList.add('tj-hat');
-      if (!tajweedKannHighlight()){
-        /* ⚠️ Die vier Klassennamen stehen AUSGESCHRIEBEN da, nicht als
-           `'tj-' + farbe`: klassen-ohne-fundstelle.mjs erkennt zusammengesetzte
-           Namen erst ab vier Zeichen Präfix und hielt die vier CSS-Regeln des
-           Rückfalls deshalb für verwaist (20.09.2026). Nebenbei bekommt so nur
-           eine BEKANNTE Farbe eine Klasse. */
-        const rueckfall = { rot:'tj-rot', orange:'tj-orange', blau:'tj-blau', lila:'tj-lila' }[stellen[0].farbe];
-        span.classList.add('tj-wort');
-        if (rueckfall) span.classList.add(rueckfall);
-        return;
-      }
-      const cluster = tajweedCluster(knoten.nodeValue);
+      const cluster = tajweedCluster(text);
       /* Die hohle Raute (11:41, 12:11) trägt die Farbe des Buchstabens, zu dem
          sie gehört. Elias, 24.10.2026: „die raute bezieht sich auf das nun
          deswegen kannst du das irgendwie im code miteinander verbinden".
@@ -366,37 +401,15 @@ function tajweedZeichnen(){
         const st = ziel && stellen.find(s => tajweedClusterAn(cluster, s.pos) === ziel);
         if (st) span.style.setProperty('--raute-farbe', 'var(--tj-' + st.farbe + ')');
       }
+      const farbig = [];
       for (const st of stellen){
         const c = tajweedClusterAn(cluster, st.pos);
-        if (!c) continue;
-        try {
-          const r = document.createRange();
-          r.setStart(knoten, c.i);
-          r.setEnd(knoten, c.i + c.len);
-          proFarbe[st.farbe].push(r);
-        } catch (e){ /* Position passt nicht mehr zum Text: still übergehen */ }
+        /* Position passt nicht mehr zum Text: still übergehen */
+        if (c) farbig.push({ c, farbe: st.farbe });
       }
+      tajweedWortFaerben(span, text, farbig);
     });
   });
-  tajweedHighlightsSetzen('tajweed-', proFarbe);
-}
-
-/* ⛔ NICHT CSS.highlights.clear() — das Register gehört der ganzen Seite,
-   und ein Aufräumen dort würde fremde Markierungen mit wegwerfen, sobald es
-   je eine gibt. Nur die eigenen Namen werden gesetzt und gelöscht.
-   `vorsatz` unterscheidet Lesetext („tajweed-") und Karte („tajweed-karte-"):
-   beide leben gleichzeitig, und ein Neuzeichnen des einen darf das andere
-   nicht leeren. */
-function tajweedHighlightsSetzen(vorsatz, proFarbe){
-  if (!tajweedKannHighlight()) return;
-  for (const f of TJ_FARBEN){
-    const name = vorsatz + f.id;
-    const bereiche = proFarbe[f.id] || [];
-    try {
-      if (bereiche.length) CSS.highlights.set(name, new Highlight(...bereiche));
-      else CSS.highlights.delete(name);
-    } catch (e){ stillerFehler('Markierung zeichnen (' + name + ')', e); }
-  }
 }
 
 /* ---------------------------------------------------------------------
@@ -473,10 +486,10 @@ function tajweedZettelSchliessen(){
    --------------------------------------------------------------------- */
 
 /* Das angetippte Wort groß, damit ein Finger einen einzelnen Buchstaben
-   trifft. Auch hier wird der Text NICHT zerlegt: die antippbaren Flächen
-   liegen als eigene Kästchen darüber, ausgemessen mit denselben Bereichen,
-   die auch die Markierung zeichnen. Eine Technik für beides — sonst
-   beantworten zwei Stellen dieselbe Frage verschieden.
+   trifft. Die antippbaren Flächen liegen als eigene Kästchen darüber,
+   ausgemessen am flachen Wort; gefärbt wird wie im Lesetext mit
+   tajweedWortFaerben(). Eine Technik für beides — sonst beantworten zwei
+   Stellen dieselbe Frage verschieden.
    [[entscheidung_gilt_fuer_das_zweite_werkzeug]] */
 function tajweedKarteOeffnen(span, vers, wort){
   const sure = (typeof OFFENE_SURE !== 'undefined') ? OFFENE_SURE : null;
@@ -523,9 +536,6 @@ function tajweedKarteSchliessen(){
   if (overlayZuUeberHistorie('tajweedKarte')) return;
   karte.classList.add('hidden');
   document.getElementById('tajweedBackdrop').classList.add('hidden');
-  const leer = {};
-  TJ_FARBEN.forEach(f => { leer[f.id] = []; });
-  tajweedHighlightsSetzen('tajweed-karte-', leer);
   TJ_OFFEN = null;
 }
 
@@ -636,7 +646,7 @@ function tajweedKanten(sortiert, breite){
 
 /* Misst jeden Buchstaben des großen Wortes aus und legt eine Trefferfläche
    darüber. Die Flächen sind durchsichtig — sichtbar ist die Markierung
-   selbst (Highlight in der jeweiligen Farbe) und beim aktiven Buchstaben
+   selbst (der Buchstabe in seiner Farbe) und beim aktiven Buchstaben
    ein Strich darunter.
 
    ⚠️ Die Maße stehen in Pixeln relativ zur Bühne. Sie gelten nur für diese
@@ -647,6 +657,9 @@ function tajweedFlaechenBauen(){
   const wortEl = document.getElementById('tjWort');
   const flaechen = document.getElementById('tjFlaechen');
   if (!buehne || !wortEl || !flaechen || !TJ_OFFEN) return;
+  /* ⛔ Erst wieder flach: gemessen wird am ungeteilten Text, die Farb-Spans
+     vom letzten Aufbau kommen erst am Ende wieder hinein (siehe Kopf). */
+  wortEl.textContent = TJ_OFFEN.text;
   const knoten = wortEl.firstChild;
   flaechen.innerHTML = '';
   if (!knoten || knoten.nodeType !== 3) return;
@@ -654,22 +667,21 @@ function tajweedFlaechenBauen(){
 
   const bb = buehne.getBoundingClientRect();
   const cluster = tajweedCluster(TJ_OFFEN.text);
-  const proFarbe = {};
-  TJ_FARBEN.forEach(f => { proFarbe[f.id] = []; });
+  const farbig = [];
   /* Erst alle Buchstaben ausmessen, dann die Flächen verteilen — die Breite
      eines Buchstabens hängt von seinen Nachbarn ab. */
   const gemessen = [];
   for (const c of cluster){
-    let rect = null, bereich = null;
+    let rect = null;
     try {
-      bereich = document.createRange();
+      const bereich = document.createRange();
       bereich.setStart(knoten, c.i);
       bereich.setEnd(knoten, c.i + c.len);
       rect = bereich.getBoundingClientRect();
     } catch (e){ continue; }
     if (!rect || !rect.width) continue;
     const b = TJ_OFFEN.buchstaben.get(c.i);
-    if (b && bereich) proFarbe[b.farbe].push(bereich);
+    if (b) farbig.push({ c, farbe: b.farbe });
     gemessen.push({ c, links: rect.left - bb.left, rechts: rect.right - bb.left });
   }
 
@@ -709,7 +721,7 @@ function tajweedFlaechenBauen(){
     if (b) wortEl.style.setProperty('--raute-farbe', 'var(--tj-' + b.farbe + ')');
     else wortEl.style.removeProperty('--raute-farbe');
   }
-  tajweedHighlightsSetzen('tajweed-karte-', proFarbe);
+  tajweedWortFaerben(wortEl, TJ_OFFEN.text, farbig);
 }
 
 /* ⭐ Speichern heißt hier: jeden Buchstaben, der VORHER markiert war oder
@@ -874,7 +886,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if (hinter) hinter.addEventListener('click', tajweedKarteSchliessen);
 
   /* Dreht er das Gerät, stimmen die ausgemessenen Flächen nicht mehr. Die
-     Markierungen im Text brauchen nichts davon — Bereiche wandern mit dem
-     Text, das ist der Vorteil dieser Technik gegenüber gezeichneten Kästen. */
+     Markierungen im Text brauchen nichts davon — die Farbe steckt im Text
+     selbst und wandert mit ihm. */
   window.addEventListener('resize', ()=>{ if (TJ_OFFEN) tajweedFlaechenBauen(); if (TJ_ZETTEL) tajweedZettelSchliessen(); });
 });

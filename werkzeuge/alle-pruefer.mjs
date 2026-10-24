@@ -790,6 +790,11 @@ const PRUEFER = [
      vertreten, nicht drei". Fährt den echten Leser: genau zwei Wörter in Scheherazade New,
      41:44 bleibt, sonst kein Zeichen anders. Störtest mit `--quran <alte quran.js>`. */
   ['test-quran-raute.mjs', []],
+  /* ⭐ Neu am 24.10.2026 (v714). Elias: „das sin oben drüber wird plötzlich abgeschnitten,
+     fix das an beiden stellen. 75/27 und 83/14". Fährt den echten Leser sechsfach
+     vergrößert: markiert fehlt kein Pixel, das Wort bleibt verbunden, auch auf der Karte.
+     Störtest mit `--mark <alte quran-markierung.js> --index <alte index.html>` (v713). */
+  ['test-quran-sin-markierung.mjs', []],
   /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner
      ist": „das auch" (selbst mit den Wörterbüchern entscheiden). Schneidet
      plBeschriftung() und bauePluralKarte() aus js/kern.js und legt die
