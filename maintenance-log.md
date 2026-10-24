@@ -9488,3 +9488,15 @@ Elias (23.10.2026, 23:55, mit Bild): *„das sin oben drüber wird plötzlich ab
 - Sammellauf: kein Prüfer neu rot. `pruefe-gedaechtnis-zahlen` war rot durch eine GEPLANTE Fassungsnummer in der To-Do (aus der Liste der Nacht) → durch „eine Fassung nach v714" ersetzt, grün.
 - Hochgeladen 02:34:21, Production main aus `d63c93e` (`9a4a3e4f`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v714.
 - Gemessen nebenbei: die 3 Verse mit anderer Wortzahl (15:7, 27:20, 36:22) tragen in keiner Fassung ein Pausenzeichen — nichts zu tun. Sajda: in V1 eine eigene Glyphe der Seitenschrift (15 Stellen auf 15 Seiten, die 15 Originalschriften zusammen 1166 KB).
+
+## 2026-10-24 02:49 – Nachtschicht: Hizb-Rosette so groß wie in quran.com V1 — **v715 ausgeliefert** (`43735ea`)
+
+Elias (24.10.2026, 01:2x): *„ich möchte das von quran.com haben"* und *„und diese zeichen (alle) müssen auch identisch sein weil jeder eine andere bedetuung hat"*; mitten in der Schicht (02:26): *„kümmere dich vorallem um die zeichen im koran"*. Die Größe der Rosette selbst hat er nicht beanstandet.
+
+- Zeichenvergleich V1 gegen App für alle 38 Sonderzeichen (je ein Beispielwort, vergrößert): jedes steht an derselben Stelle und in derselben Art; die Tanwīn übereinander und versetzt stimmen (2:2:6 und 2:17:15 in beiden versetzt). Anders nur die Größe der Hizb-Rosette und die Form des Sajda-Zeichens (wartet auf Elias).
+- Rosette gemessen als Tinte auf der Leinwand, im Verhältnis zum Wort daneben, an 2:26:1, 2:44:1, 2:60:1: V1 0,845 / 0,747 / 1,011, App vorher 1,061 / 0,907 / 1,305 (1,26 / 1,21 / 1,29-mal so groß).
+- `index.html`: `size-adjust:80%` an der @font-face 'Uthmanic Hafs' mit `unicode-range:U+06DE`; danach 0,857 / 0,732 / 1,053. Messung und seine Sätze im Kommentar.
+- `test-quran-raute.mjs` Abschnitt 3: Rosette im Leser 0,8 × Scheherazade New (23/23); mit index.html von v714 21/23, der Störtest wird rot.
+- Sammellauf 191 Prüfer: kein Prüfer neu rot.
+- Hochgeladen 02:49:06, Production main aus `43735ea` (`bd555eff`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v715.
+- Offen: Sajda-Zeichen (seine Wahl, vier Möglichkeiten), Koransätze für „Koran häufigste".
