@@ -204,8 +204,12 @@ try {
       hatZeichen: wort.textContent.codePointAt(0) === 0x6DE, schrift: getComputedStyle(wort).fontFamily };
   });
   pruefe('2:26 Wort 1 beginnt mit dem Hizb-Stern und steht in Uthmanic Hafs', hizb.hatZeichen && HAFS.test(hizb.schrift), hizb);
+  /* Seit v715 mit `size-adjust:80%` (so groß wie in V1, Messung im Kommentar an der
+     @font-face in index.html): im Leser 0,8-mal so breit wie in Scheherazade New. */
   pruefe('der Hizb-Stern kommt aus Scheherazade New (Rosette wie V1), nicht aus Hafs (kleiner Stern)',
-    Math.abs(hizb.leser - hizb.sch) < 0.5 && Math.abs(hizb.rein - hizb.sch) > 2, hizb);
+    Math.abs(hizb.leser - 0.8 * hizb.sch) < 0.5 && Math.abs(hizb.rein - hizb.leser) > 2, hizb);
+  pruefe('… und ist auf 80 % verkleinert, so groß wie in V1 (nicht in voller Scheherazade-Größe)',
+    Math.abs(hizb.leser / hizb.sch - 0.8) < 0.01, { leser: hizb.leser, sch: hizb.sch, verhaeltnis: hizb.leser / hizb.sch });
   if (BILD){
     await page.evaluate(() => document.querySelector('#verseList .verse-item[data-versnr="26"] .verse-ar').scrollIntoView({ block: 'center', behavior: 'instant' }));
     await page.waitForTimeout(400);

@@ -104,9 +104,16 @@
    Zeichen bleiben in Hafs. Das geht hier, weil U+06DE ein eigenes Zeichen ist
    und kein Kombinationszeichen (bei der Raute griff es nicht). Die Zeilenhöhe
    bestimmt weiter Hafs: diese Regel enthält kein Leerzeichen und ist darum
-   nie die erste Schrift der Zeile. Bewacht von test-quran-raute.mjs. */
+   nie die erste Schrift der Zeile. Bewacht von test-quran-raute.mjs.
+   ⭐ `size-adjust:80%` (v715, 24.10.2026): so GROSS wie in V1. Gemessen als
+   Tinte auf der Leinwand, Rosette im Verhältnis zum Wort daneben, an 2:26:1,
+   2:44:1, 2:60:1: V1 0,845 / 0,747 / 1,011 — ohne Verkleinerung in der App
+   1,061 / 0,907 / 1,305, also 1,26 / 1,21 / 1,29-mal so groß; daraus 80 %.
+   Grundlage sind seine Sätze „ich möchte das von quran.com haben" und „diese
+   zeichen (alle) müssen auch identisch sein" — die Größe selbst hat er NICHT
+   beanstandet. */
 @font-face{font-family:'Uthmanic Hafs';font-style:normal;font-weight:400;font-display:swap;
-  src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');unicode-range:U+06DE;}
+  src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');unicode-range:U+06DE;size-adjust:80%;}
 @font-face{font-family:'Scheherazade New';font-style:normal;font-weight:400;font-display:swap;
   src:url(./fonts/scheherazade-new-400-ar.woff2) format('woff2');
   unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;}
