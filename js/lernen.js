@@ -726,6 +726,10 @@ function renderCard(){
      `.gram-passiv`. Deshalb innerHTML statt textContent; buildSentenceHtml
      maskiert den Text selbst mit escapeHtml (js/kern.js). */
   const sentBox = document.getElementById('cardSentenceBox');
+  const satzRef = document.getElementById('cardSentenceRef');
+  if (satzRef){ satzRef.textContent = ''; satzRef.classList.add('hidden'); }
+  /* Ein Koransatz steht nur da, wo die Karte keinen eigenen Satz hat (koranSatzHtml() unten). */
+  const koranSatzDa = !w.sentAr && !!(w.koranSatz && w.koranSatz.ar);
   if (w.sentAr){
     sentBox.classList.remove('hidden');
     document.getElementById('cardSentenceAr').innerHTML =
@@ -734,10 +738,18 @@ function renderCard(){
     /* Jede Karte kommt mit verschwommener Übersetzung — Begründung und sein
        Wortlaut bei kartenSatzDeVerwischen() weiter unten. */
     kartenSatzDeVerwischen();
+  } else if (koranSatzDa){
+    sentBox.classList.remove('hidden');
+    document.getElementById('cardSentenceAr').innerHTML = koranSatzHtml(w.koranSatz);
+    document.getElementById('cardSentenceDe').textContent = w.koranSatz.de || '';
+    if (satzRef){ satzRef.textContent = `${w.koranSatz.surah} ${w.koranSatz.ayah}`; satzRef.classList.remove('hidden'); }
+    kartenSatzDeVerwischen();
   } else sentBox.classList.add('hidden');
 
   const qBox = document.getElementById('cardQuranBox');
-  if (w.quran && SETTINGS.showQuran){
+  /* Derselbe Vers zweimal untereinander hilft nicht: steht er schon als Koransatz da, bleibt der
+     Quran-Bezug zu. */
+  if (w.quran && SETTINGS.showQuran && !(koranSatzDa && w.koranSatz.ayah === w.quran.ayah)){
     qBox.classList.remove('hidden');
     document.getElementById('cardQuranAr').innerHTML = quranMitTreffer(w.quran.ar, w);
     document.getElementById('cardQuranRef').textContent = `${w.quran.surah} ${w.quran.ayah}`;
@@ -966,6 +978,23 @@ function quranMitTreffer(vers, w){
     return escapeHtml(stueck);
   }).join('');
   return getroffen ? html : escapeHtml(text);
+}
+
+/* ---------- Der Koransatz (24.10.2026) ----------
+   Elias, 23.10.2026: „für die koranwörter von den häufigsten gibt es keinen beispielsatz, da kannst du
+   ruhig aus dem koran die nehmen vorallem wenn ich sie bereits kenne". Die Karten von „Koran häufigste"
+   tragen deshalb `koranSatz` { surah, ayah, ar, de, w } (erzeugt von werkzeuge/koran-haeufig-bauen.mjs):
+   zuerst eine Stelle aus seinem auswendigen Bereich, sonst ein kurzer Vers.
+   Das Wort der Karte steht an Stelle `w` des Zitats — der Erzeuger hat dort GENAU die Form der Karte
+   geprüft. Deshalb wird hier gezählt und nicht gesucht: eine Suche wie in quranMitTreffer() fände bei
+   einer anderen Form (yuḥibbu zu aḥabba) nichts.
+   Hervorgehoben wie im Quran-Bezug (`.quran-treffer`, sein Wunsch vom 29.07.2026).
+   ⛔ Bewusst NICHT als `sentAr`: das läsen Satzmodus, Satzübungen und Iʿrāb-Erklärung (MEINE Bauart —
+   ob die Verse auch dort hinein sollen, ist seine Frage). Bewacht von test-koran-haeufig.mjs. */
+function koranSatzHtml(ks){
+  const woerter = String((ks && ks.ar) || '').split(/\s+/).filter(Boolean);
+  return woerter.map((x, i) => i + 1 === Number(ks && ks.w)
+    ? `<span class="quran-treffer">${escapeHtml(x)}</span>` : escapeHtml(x)).join(' ');
 }
 
 /* ---------- Ab Box 4 eintippen ----------

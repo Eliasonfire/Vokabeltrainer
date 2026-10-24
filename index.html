@@ -1535,6 +1535,8 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 /* 1,5rem gegen --fs-md ergab 1,70 - jetzt aus dem deutschen Partner abgeleitet. */
 .example-ar{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));direction:rtl;text-align:center;line-height:2;color:#fff;}
 .example-de{font-size:var(--fs-md);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);}
+/* Sure und Vers unter einem Koransatz — dieselbe Zeile wie .quran-ref im Quran-Bezug. */
+.example-ref{font-size:var(--fs-sm);color:var(--text-dim);text-align:center;margin-top:var(--sp-2);font-weight:700;}
 
 .quran-box{
   width:100%;margin-top:var(--sp-4);background:var(--red-wash);
@@ -6022,6 +6024,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
               <div class="example-box" id="cardSentenceBox">
                 <div class="example-ar" id="cardSentenceAr" lang="ar" dir="rtl"></div>
                 <div class="example-de" id="cardSentenceDe"></div>
+                <!-- Woher der Satz kommt, wenn er ein Koransatz ist (koranSatzHtml() in js/lernen.js). -->
+                <div class="example-ref hidden" id="cardSentenceRef"></div>
               </div>
               <div class="quran-box hidden" id="cardQuranBox">
                 <div class="quran-label"><svg class="ic"><use href="#ic-crescent"/></svg>Quran-Bezug</div>

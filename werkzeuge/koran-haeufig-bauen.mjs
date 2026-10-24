@@ -22,6 +22,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stelle, zitat, bereich, kannStelle, lade, VORLAGEN } from './koran-stellen-lib.mjs';
 import { stamm, nurAr } from './koran-satz-lib.mjs';
+import { formImWort } from './koran-form-lib.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const LISTE = path.join(REPO, 'werkzeuge', 'koran-haeufig-liste.txt');
@@ -185,7 +186,7 @@ const WASLA = new RegExp(Z(0x671), 'g');
 const buchstaben = t => nurAr(t).replace(NUR_MARKEN, '').replace(HAMZA_FORMEN, Z(0x621)).replace(WASLA, Z(0x627));
 const MARKE_Q = new RegExp('[' + Z(0x64B) + '-' + Z(0x65F) + Z(0x670) + ']');
 const TRAEGT_Q = new RegExp('[' + Z(0x620) + '-' + Z(0x64A) + Z(0x64B) + '-' + Z(0x65F) + Z(0x670) + Z(0x66E) + '-' + Z(0x6D3) + ']');
-const ohneTraeger = t => { let n = 0; for (let i = 0; i < t.length; i++) if (MARKE_Q.test(t[i]) && !(i > 0 && TRAEGT_Q.test(t[i - 1]))) n++; return n; };
+export const ohneTraeger = t => { let n = 0; for (let i = 0; i < t.length; i++) if (MARKE_Q.test(t[i]) && !(i > 0 && TRAEGT_Q.test(t[i - 1]))) n++; return n; };
 const VORSILBEN = [0x648, 0x641, 0x628, 0x644, 0x643, 0x64A].map(Z);                      /* wa fa bi li ka · yā */
 const ARTIKEL_B = Z(0x627) + Z(0x644);
 const DOLCH_G = new RegExp(Z(0x670), 'g');
@@ -253,13 +254,89 @@ export function leseStellen(text, karten, felder = new Map()){
       if (ohneTraeger(ar)) throw new Error('im Zitat steht eine Marke ohne Träger — anders schneiden');
       const sure = SUREN.find(s => Number(s.id) === st.sure);
       if (!sure || !sure.name) throw new Error(`der Name der Sure ${st.sure} steht nicht in surah-data.js`);
-      stellen.set(id, { surah: sure.name, ayah: st.sure + ':' + st.vers, ar, de });
+      /* `w` = das Wort der Karte im Zitat (1 = erstes Wort) — für den Koransatz, nicht für das Feld `quran`. */
+      stellen.set(id, { surah: sure.name, ayah: st.sure + ':' + st.vers, ar, de, w: e.wort - von + 1 });
     } catch (f){ fehler.push(`${id}: ${f.message}`); }
   }
   return { stellen, ohne, fehler };
 }
 
-export function baueDatei(karten, felder = new Map(), stellen = new Map()){
+/* ---------- Der Koransatz (24.10.2026) ----------
+ *
+ * Elias, 23.10.2026, 23:25: „für die koranwörter von den häufigsten gibt es keinen beispielsatz, da kannst du ruhig
+ * aus dem koran die nehmen vorallem wenn ich sie bereits kenne". Der Beispielsatz einer Karte der Gruppe ist darum
+ * ein Vers. Er steht in einem EIGENEN Feld `koranSatz` und nicht in `sentAr`: ein `sentAr` holen der Satzmodus, die
+ * Satzübungen und die Iʿrāb-Erklärung, und die würden einen Koranvers zerlegen, als wäre er ein Lehrbuchsatz
+ * (MEINE Bauart; ob die Verse auch dorthin sollen, ist seine Frage). Gezeigt wird er nur, wo die Karte keinen
+ * eigenen Satz hat (js/lernen.js, js/kategorien.js).
+ *
+ * Woher: hat die Karte eine Stelle aus seinem auswendigen Bereich (stellen.json), ist DIESE ihr Koransatz.
+ * Sonst steht er in werkzeuge/koran-vorlagen/satzverse.json — vorgeschlagen von werkzeuge/koran-satzverse-suchen.mjs,
+ * am Wort gelesen, hier aufgelöst. Anders als bei der Stelle gilt KEINE Bereichspflicht (sein „ruhig aus dem
+ * koran"). Geprüft wird je Eintrag:
+ *   1. ein Vers; `wort` liegt im Ausschnitt;
+ *   2. an der Wortnummer steht GENAU die Form der Karte, mit Vokalen verglichen (werkzeuge/koran-form-lib.mjs) —
+ *      oder, mit `form: "andere"` und einem Grund in `warum`, eine andere Form desselben Wortes: dann stehen die
+ *      festen Buchstaben der Karte (ohne Alif, Wāw, Yāʾ und ohne ein Hamza vorn) in ihrer Reihenfolge im Wort;
+ *   3. das Deutsch steht WÖRTLICH in der Übersetzung, die quran-text.js zu dem Vers führt („*" = die ganze);
+ *   4. im Zitat steht keine Marke ohne Träger;
+ *   5. jede Karte hat einen Koransatz oder einen Grund (`ohne`) — sonst fehlt einem neuen Wort der Satz still.
+ * Die Form an der Karte: { surah, ayah, ar, de, w } — `w` ist das Wort der Karte im Zitat, die App hebt es hervor. */
+export const SATZVERSE = path.join(VORLAGEN, 'satzverse.json');
+const FEST_WEG = new Set([Z(0x627), Z(0x648), Z(0x64A), Z(0x649)]);
+/** Die festen Buchstaben einer Form: ohne Alif, Wāw, Yāʾ, alif maqṣūra und ohne ein Hamza am Anfang. */
+const festeBuchstaben = t => { const b = [...buchstaben(t)].filter(x => !FEST_WEG.has(x)); return b[0] === Z(0x621) ? b.slice(1) : b; };
+export function leseSatzverse(text, karten, stellen = new Map()){
+  const fehler = [], saetze = new Map();
+  let ohne = 0, andere = 0, v;
+  try { v = JSON.parse(text); } catch (e){ return { saetze, ohne, andere, fehler: ['satzverse.json ist kein lesbares JSON: ' + e.message] }; }
+  const nachId = new Map(karten.map(k => [k.id, k]));
+  const SUREN = lade('surah-data.js', 'SURAH_DATA') || [];
+  for (const [id, e] of Object.entries(v)){
+    if (id === '_') continue;
+    const k = nachId.get(id);
+    if (!k){ fehler.push(`${id}: keine Karte mit dieser Kennung`); continue; }
+    if (stellen.has(id)){ fehler.push(`${id}: hat schon eine Stelle aus seinem Bereich (stellen.json) — die ist ihr Koransatz, der Eintrag hier muss weg`); continue; }
+    if (e.ohne !== undefined){
+      if (e.wo) fehler.push(`${id}: „ohne" und „wo" zugleich`);
+      else if (String(e.ohne).trim().length < 10) fehler.push(`${id}: der Grund unter „ohne" fehlt`);
+      else ohne++;
+      continue;
+    }
+    try {
+      const st = stelle(String(e.wo));
+      if (st.art !== 'vers') throw new Error('keine Koranstelle — eine Dua ist kein Vers');
+      const von = e.von || 1, bis = e.bis || st.w.length;
+      const ar = zitat(String(e.wo), von, bis).normalize('NFC');
+      if (!(Number.isInteger(e.wort) && e.wort >= von && e.wort <= bis)) throw new Error('„wort" fehlt oder liegt nicht im Ausschnitt');
+      const wort = st.w[e.wort - 1];
+      if (e.form === 'andere'){
+        if (String(e.warum || '').trim().length < 10) throw new Error('„form: andere" ohne Grund unter „warum"');
+        const fest = festeBuchstaben(String(k.ar));
+        let i = 0;
+        for (const b of buchstaben(wort)) if (i < fest.length && b === fest[i]) i++;
+        if (!fest.length || i !== fest.length) throw new Error(`Wort ${e.wort} von ${e.wo}: die festen Buchstaben der Karte stehen nicht in dieser Reihenfolge im Wort`);
+        andere++;
+      } else if (e.form !== undefined) throw new Error(`„form: ${e.form}" kennt der Erzeuger nicht — nur „andere"`);
+      else if (!formImWort(String(k.ar), k.type, wort)) throw new Error(`Wort ${e.wort} von ${e.wo}: dort steht nicht genau die Form der Karte`);
+      const ganz = String(st.de).replace(/\s+/g, ' ').trim();
+      if (e.de === '*' && (von !== 1 || bis !== st.w.length)) throw new Error('„*" gilt nur für den ganzen Vers');
+      const de = e.de === '*' ? ganz : String(e.de || '').trim();
+      if (!de || !ganz.includes(de)) throw new Error('das Deutsch steht nicht wörtlich in der Übersetzung, die quran-text.js zu diesem Vers führt');
+      if (ohneTraeger(ar)) throw new Error('im Zitat steht eine Marke ohne Träger — anders schneiden');
+      const sure = SUREN.find(s => Number(s.id) === st.sure);
+      if (!sure || !sure.name) throw new Error(`der Name der Sure ${st.sure} steht nicht in surah-data.js`);
+      saetze.set(id, { surah: sure.name, ayah: st.sure + ':' + st.vers, ar, de, w: e.wort - von + 1 });
+    } catch (f){ fehler.push(`${id}: ${f.message}`); }
+  }
+  /* Die Stellen aus seinem Bereich sind Koransätze, ohne hier zu stehen. */
+  for (const [id, q] of stellen) saetze.set(id, { surah: q.surah, ayah: q.ayah, ar: q.ar, de: q.de, w: q.w });
+  const fehlt = karten.filter(k => !saetze.has(k.id) && !(v[k.id] && v[k.id].ohne !== undefined)).map(k => k.id);
+  if (fehlt.length) fehler.push(`${fehlt.length} Karte(n) ohne Koransatz und ohne Grund: ${fehlt.slice(0, 8).join(', ')}${fehlt.length > 8 ? ' …' : ''} — Vorschlag: node werkzeuge/koran-satzverse-suchen.mjs ${fehlt.slice(0, 3).join(' ')}`);
+  return { saetze, ohne, andere, fehler };
+}
+
+export function baueDatei(karten, felder = new Map(), stellen = new Map(), saetze = new Map()){
   /* ⛔ Nur, was die App LIEST. Die Häufigkeit (`n`) und der Zusatz `dort` bleiben in der Liste:
      die Zeile „N-mal im Koran", die beide gezeigt hätte, hat Elias am 11.10.2026 abgesagt („das
      sollst du nicht bauen, ist glaube unnötig"). In der App wirkt die Häufigkeit über `rang`.
@@ -271,6 +348,8 @@ export function baueDatei(karten, felder = new Map(), stellen = new Map()){
     if (f) for (const name of FELD_FOLGE) if (f[name]) e[name] = f[name];
     const q = stellen.get(k.id);
     if (q) e.quran = { surah: q.surah, ayah: q.ayah, ar: q.ar, de: q.de };
+    const s = saetze.get(k.id);
+    if (s) e.koranSatz = { surah: s.surah, ayah: s.ayah, ar: s.ar, de: s.de, w: s.w };
     return ' ' + JSON.stringify(e);
   };
   return [
@@ -286,6 +365,8 @@ export function baueDatei(karten, felder = new Map(), stellen = new Map()){
     '   masdar) kommen aus werkzeuge/koran-haeufig-felder.txt; dort steht zu jedem Feld der Beleg.',
     '   `quran` = eine Stelle aus seinem auswendigen Bereich, in der das Wort steht (Vorlage:',
     '   werkzeuge/koran-vorlagen/stellen.json; Wortlaut und Übersetzung aus quran-text.js).',
+    '   `koranSatz` = der Beispielsatz aus dem Koran (Elias, 23.10.2026): die Stelle aus seinem Bereich, sonst ein',
+    '   Vers aus werkzeuge/koran-vorlagen/satzverse.json; `w` = das Wort der Karte im Zitat (1 = erstes Wort).',
     '   Was die App damit tut, steht in js/buecher.js beim Abschnitt „Koran häufigste". */',
     'const KORAN_HAEUFIG = [',
     karten.map(zeile).join(',\n'),
@@ -306,7 +387,11 @@ if (direkt){
   for (const f of S.fehler) console.log('FEHLER  ' + f);
   if (S.fehler.length){ console.log(S.fehler.length + ' Fehler in den Koranstellen — nichts geschrieben.'); process.exit(1); }
   console.log('Koranstellen: ' + S.stellen.size + ' Karten mit Stelle, ' + S.ohne + ' bewusst ohne.');
-  const text = baueDatei(karten, F.felder, S.stellen);
+  const K = leseSatzverse(fs.existsSync(SATZVERSE) ? fs.readFileSync(SATZVERSE, 'utf8') : '{}', karten, S.stellen);
+  for (const f of K.fehler) console.log('FEHLER  ' + f);
+  if (K.fehler.length){ console.log(K.fehler.length + ' Fehler in den Koransätzen — nichts geschrieben.'); process.exit(1); }
+  console.log('Koransätze: ' + K.saetze.size + ' Karten (' + S.stellen.size + ' aus seinem Bereich, ' + K.andere + ' mit einer anderen Form), ' + K.ohne + ' bewusst ohne.');
+  const text = baueDatei(karten, F.felder, S.stellen, K.saetze);
   if (process.argv.includes('--pruefen')){
     const da = fs.existsSync(ZIEL) ? fs.readFileSync(ZIEL, 'utf8').replace(/\r\n/g, '\n') : null;
     if (da !== text){ console.log('koran-haeufig-data.js passt nicht zur Liste — den Erzeuger ohne --pruefen laufen lassen.'); process.exit(1); }

@@ -755,6 +755,16 @@ node werkzeuge/markierung-setzen.mjs data-ersatz/arbeit/koran-zwischenordner/sat
 #     Der Erzeuger löst auf und prüft: im Bereich? Wort der Karte an der Stelle? Deutsch wörtlich?
 node werkzeuge/koran-haeufig-bauen.mjs
 
+# 3c. Koransatz (seit 24.10.2026; Elias 23.10.2026: „für die koranwörter von den häufigsten gibt es
+#     keinen beispielsatz, da kannst du ruhig aus dem koran die nehmen vorallem wenn ich sie bereits
+#     kenne"): der Beispielsatz aus dem Koran, Feld koranSatz, gezeigt nur ohne eigenen Satz.
+#     Eine Karte MIT Stelle (3b) braucht nichts — ihre Stelle ist ihr Koransatz. Sonst in
+#     werkzeuge/koran-vorlagen/satzverse.json: wo / [von, bis] / wort / de, bei einer anderen Form
+#     des Wortes form "andere" + warum, oder "ohne" mit Grund. Erst vorschlagen lassen (sein Bereich
+#     zuerst, sonst der kürzeste mit 4–14 Wörtern), am Wort lesen, dann eintragen:
+node werkzeuge/koran-satzverse-suchen.mjs kh-NNN
+node werkzeuge/koran-haeufig-bauen.mjs
+
 # 4. Gleichstand und Eichung
 node werkzeuge/pruefe-koran-vorlagen.mjs
 node werkzeuge/eiche-koran-satz.mjs
