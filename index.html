@@ -3335,16 +3335,15 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 /* =====================================================================
    ⭐⭐ FEHLERSTELLEN IM KORANTEXT (20.09.2026) — js/quran-markierung.js
    =====================================================================
-   ⛔ Die Markierung wird ÜBER den Text gezeichnet (CSS Custom Highlight
-   API), nicht hineingeschnitten: arabische Buchstaben verbinden sich nur
-   innerhalb EINES Elements. Erlaubt sind in `::highlight()` nur Farbe,
-   Hintergrund, Textdekoration und Schatten — deshalb Fläche plus
-   Wellenlinie und kein Rahmen.
-
-   ⭐ Die Wellenlinie ist nicht Zierde: eine Markierung darf nicht allein
-   an der Farbe hängen. Vier Farben auseinanderzuhalten ist schwer genug;
-   DASS dort etwas markiert ist, muss auch ohne Farbunterscheidung
-   ankommen. */
+   ⛔⛔ Seit v714 (24.10.2026) steht der markierte Buchstabe in einem eigenen
+   <span class="tj-buchstabe tj-<farbe>">, nicht mehr als `::highlight()`
+   über dem Text. Elias: „das sin oben drüber wird plötzlich abgeschnitten,
+   fix das an beiden stellen. 75/27 und 83/14" — ein Highlight malt nur im
+   Kasten des Buchstabens, das kleine sīn ragt darüber hinaus. Begründung
+   und Messung im Kopf von js/quran-markierung.js.
+   ⛔ Die Spans tragen NUR `color`: Rand, Polsterung, Schriftgröße oder
+   letter-spacing zerreißen die Verbindung der Buchstaben. Die Wellenlinie
+   von v536 und die gerade Linie von v538 sind Geschichte (siehe unten). */
 :root{
   --tj-rot:#ff4d6a;
   --tj-orange:#ffa726;
@@ -3369,25 +3368,16 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    darf nicht allein an der Farbe hängen"). Die Welle davor (v536) und die
    gerade Linie (v538: „ich will das das unterstrichene gerade ist") sind
    damit beide Geschichte.
-   Dieselben Regeln ein zweites Mal mit „tajweed-karte-": das große Wort in
-   der Karte (js/quran-markierung.js, tajweedHighlightsSetzen); dort zeigen
-   die Flächen unter den Buchstaben ohnehin, was gewählt ist. */
-::highlight(tajweed-rot),    ::highlight(tajweed-karte-rot){    color:var(--tj-rot); }
-::highlight(tajweed-orange), ::highlight(tajweed-karte-orange){ color:var(--tj-orange); }
-::highlight(tajweed-blau),   ::highlight(tajweed-karte-blau){   color:var(--tj-blau); }
-::highlight(tajweed-lila),   ::highlight(tajweed-karte-lila){   color:var(--tj-lila); }
+   Dieselben Regeln gelten für das große Wort in der Karte; dort zeigen die
+   Flächen unter den Buchstaben ohnehin, was gewählt ist. */
+.tj-buchstabe.tj-rot{    color:var(--tj-rot); }
+.tj-buchstabe.tj-orange{ color:var(--tj-orange); }
+.tj-buchstabe.tj-blau{   color:var(--tj-blau); }
+.tj-buchstabe.tj-lila{   color:var(--tj-lila); }
 
-/* Der Rückfall für Browser ohne diese Schnittstelle: das GANZE Wort wird
-   unterstrichen. Ungenauer als ein Buchstabe, aber sichtbar — sonst
-   markierte Elias und nichts stünde da. */
-#verseList .verse-ar .qw.tj-wort{ text-decoration:underline solid; text-decoration-thickness:.08em; }
 /* Ein markiertes Wort ist antippbar — auch ohne Markier-Modus zeigt es
    seinen Zettel. */
 #verseList .verse-ar .qw.tj-hat{ cursor:pointer; }
-#verseList .verse-ar .qw.tj-wort.tj-rot{    text-decoration-color:var(--tj-rot);    background:rgba(255,77,106,.16); }
-#verseList .verse-ar .qw.tj-wort.tj-orange{ text-decoration-color:var(--tj-orange); background:rgba(255,167,38,.16); }
-#verseList .verse-ar .qw.tj-wort.tj-blau{   text-decoration-color:var(--tj-blau);   background:rgba(79,195,247,.16); }
-#verseList .verse-ar .qw.tj-wort.tj-lila{   text-decoration-color:var(--tj-lila);   background:rgba(179,136,255,.16); }
 
 /* Im Markier-Modus ist jedes Wort anfassbar. Der Zeiger sagt das, und die
    Textauswahl bleibt aus — sonst zöge ein Tipp auf dem Handy eine
@@ -3460,9 +3450,8 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
      Schnitt in den Text, nur sichtbar anders. */
 }
 /* Jede Fläche trägt die Farbe IHRES Buchstabens (seit v538 hat jeder
-   Buchstabe seine eigene). Der Strich darunter ist die Rückversicherung
-   für Browser ohne `::highlight()`; der AKTIVE Buchstabe — an ihm hängen
-   Farbreihe und Notizfeld — bekommt den dickeren Strich. */
+   Buchstabe seine eigene) und einen Strich darunter; der AKTIVE Buchstabe
+   — an ihm hängen Farbreihe und Notizfeld — bekommt den dickeren Strich. */
 .tj-flaeche.tj-rot{color:var(--tj-rot);}
 .tj-flaeche.tj-orange{color:var(--tj-orange);}
 .tj-flaeche.tj-blau{color:var(--tj-blau);}

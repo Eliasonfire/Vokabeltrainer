@@ -1,5 +1,5 @@
-/* Halten die markierten Fehlerstellen im Korantext — und bleibt der Text
- * dabei unangetastet?
+/* Halten die markierten Fehlerstellen im Korantext — und bleibt das Wort
+ * dabei ein Wort (seit v714 bekommt nur der markierte Buchstabe ein Span)?
  *
  * ⛔⛔ DER AUFTRAG (Elias am 19.09.2026, vom Handy): „Ich will auch im Koran
  *    den Text markieren irgendwie können für Fehler zB wo ich tajweed etwas
@@ -11,8 +11,10 @@
  *    etwas überdenken".
  *
  * ⛔ Zwei Dinge könnten hier still kaputtgehen, und beide sieht man nicht:
- *    1. Der arabische Text wird zerschnitten. Dann stehen die Buchstaben
- *       unverbunden da — ein anderes Schriftbild als im Muṣḥaf.
+ *    1. Der arabische Text wird zerschnitten — mehr als die markierten
+ *       Buchstaben, oder mit einer Regel am Span, die die Verbindung
+ *       zerreißt. Dann stehen die Buchstaben unverbunden da — ein anderes
+ *       Schriftbild als im Muṣḥaf.
  *    2. Eine weggenommene Markierung kommt vom anderen Gerät zurück, weil
  *       sie als FEHLENDER Eintrag gespeichert wurde statt als `an:false` mit
  *       Zeitstempel. Genau dieser Fehler war am 06.09.2026 schon einmal da.
@@ -248,29 +250,48 @@ const ECHT_GEMESSEN = [
     api.tajweedKanten([{ c: { i: 0 }, links: 100, rechts: 112 }], 300).length);
 }
 
-/* ============ 6. Der Text selbst wird nicht angefasst ===================== */
+/* ===== 6. Das Wort bleibt ein Wort — nur der markierte Buchstabe bekommt ein Span =====
+   Seit v714 (24.10.2026). Elias am 23.10.2026: „das sin oben drüber wird plötzlich
+   abgeschnitten, fix das an beiden stellen. 75/27 und 83/14" — das `::highlight()` bis v713
+   malte nur im Kasten des Buchstabens. Ob die Verbindung hält und nichts mehr fehlt, misst
+   test-quran-sin-markierung.mjs im echten Browser; hier steht, was der Quelltext dafür
+   einhalten muss. */
 {
-  console.log('Der Korantext bleibt unzerschnitten:');
-  pruefe('die Markierung läuft über CSS.highlights', true, /CSS\.highlights\.set\(/.test(markNackt));
-  pruefe('kein innerHTML auf dem Wort im Lesetext', false,
-    /\.qw[^\n]*innerHTML/.test(markNackt) || /span\.innerHTML\s*=/.test(markNackt));
+  console.log('Das Wort bleibt ein Wort, gefärbt wird nur der markierte Buchstabe:');
+  pruefe('gefärbt wird über tajweedWortFaerben(), im Lesetext UND auf der Karte', true,
+    /\nfunction tajweedWortFaerben\(el, text, farbig\)\{/.test(markNackt)
+    && /tajweedWortFaerben\(span, text, farbig\)/.test(markNackt) && /tajweedWortFaerben\(wortEl, TJ_OFFEN\.text, farbig\)/.test(markNackt));
+  pruefe('kein ::highlight() mehr (schnitt das kleine sīn ab)', false,
+    /CSS\.highlights/.test(markNackt) || /::highlight\(/.test(htmlNackt));
+  pruefe('kein innerHTML auf dem Wort (der Korantext geht nie als Markup durch)', false,
+    /\.qw[^\n]*innerHTML/.test(markNackt) || /span\.innerHTML\s*=/.test(markNackt) || /wortEl\.innerHTML/.test(markNackt)
+    || /\nfunction tajweedWortFaerben[\s\S]*?\n\}\n/.exec(markNackt)[0].includes('innerHTML'));
   pruefe('quranWortSpans zerlegt weiter in WÖRTER, nicht in Buchstaben', true,
     /class="qw" data-w="/.test(quran) && !/class="qb"/.test(quran));
   pruefe('kein letter-spacing auf dem großen Wort', false,
     /\.tj-wort\{[^}]*letter-spacing\s*:/.test(htmlNackt));
-  pruefe('räumt nur die eigenen Namen weg', false, /CSS\.highlights\.clear\(\)/.test(markNackt));
-  pruefe('es gibt einen sichtbaren Rückfall ohne die Schnittstelle', true,
-    /classList\.add\('tj-wort'/.test(markNackt) && /\.qw\.tj-wort\{/.test(htmlNackt));
-  /* Elias 20.09.2026: „ich will das das unterstrichene gerade ist". */
+  /* Rand, Polsterung, Schriftgröße oder letter-spacing am Span zerreißen die Verbindung. */
+  const spanRegeln = [...htmlNackt.matchAll(/\.tj-buchstabe[^{]*\{([^}]*)\}/g)].map(m => m[1].trim());
+  pruefe('die Farb-Spans tragen NUR die Farbe (vier Regeln, je nur color)', true,
+    spanRegeln.length === 4 && spanRegeln.every(r => /^color:var\(--tj-[a-z]+\);?$/.test(r.replace(/\s/g, ''))));
   /* Elias 20.09.2026, 02:2x: „lass die unterstreichungen ganz weg am besten"
      — die Kasra unter dem Dhāl riss die Linie auf. Das hebt sein „gerade"
-     aus v538 auf: die Markierung ist jetzt NUR die Farbe. */
-  pruefe('KEINE Linie in den Farbregeln (Elias: „ganz weg")', false,
-    /::highlight\(tajweed-[a-z-]+\)[^}]*text-decoration/.test(htmlNackt));
-  pruefe('… die Farbe bleibt', true,
-    ['rot', 'orange', 'blau', 'lila'].every(f => new RegExp('::highlight\\(tajweed-' + f + '\\)[^}]*color:var\\(--tj-' + f + '\\)').test(htmlNackt)));
-  pruefe('Karte und Lesetext haben getrennte Highlight-Namen', true,
-    /tajweedHighlightsSetzen\('tajweed-karte-'/.test(markNackt) && /tajweedHighlightsSetzen\('tajweed-'/.test(markNackt));
+     aus v538 auf: die Markierung ist NUR die Farbe. */
+  pruefe('… also auch KEINE Linie (Elias: „ganz weg")', false, spanRegeln.some(r => /text-decoration/.test(r)));
+  pruefe('… und jede der vier Farben hat ihre Regel', true,
+    ['rot', 'orange', 'blau', 'lila'].every(f => new RegExp('\\.tj-buchstabe\\.tj-' + f + '\\{\\s*color:var\\(--tj-' + f + '\\)').test(htmlNackt)));
+  const zeichnen = /\nfunction tajweedZeichnen\(\)\{[\s\S]*?\n\}\n/.exec(markNackt);
+  pruefe('vor dem Neuzeichnen wird jedes markierte Wort wieder flach', true,
+    !!zeichnen && /querySelectorAll\('\.qw\.tj-hat'\)[\s\S]*?el\.textContent = el\.textContent/.test(zeichnen[0]));
+  pruefe('… ohne die Marke des Mitlesens zu löschen (kein className = )', false,
+    !!zeichnen && /className\s*=/.test(zeichnen[0]));
+  const flaechenBau = /\nfunction tajweedFlaechenBauen\(\)\{[\s\S]*?\n\}\n/.exec(markNackt);
+  pruefe('die Karte misst am FLACHEN Wort und färbt erst danach', true,
+    !!flaechenBau && flaechenBau[0].indexOf('wortEl.textContent = TJ_OFFEN.text') > 0
+    && flaechenBau[0].indexOf('wortEl.textContent = TJ_OFFEN.text') < flaechenBau[0].indexOf('getBoundingClientRect')
+    && flaechenBau[0].lastIndexOf('tajweedWortFaerben(') > flaechenBau[0].lastIndexOf('getBoundingClientRect'));
+  pruefe('der Browser-Prüfer dafür steht im Sammellauf', true,
+    /\['test-quran-sin-markierung\.mjs', \[\]\]/.test(lies('./alle-pruefer.mjs')));
 }
 
 /* ==================== 7. Verdrahtung: sieht es jemand? ==================== */
@@ -429,6 +450,6 @@ const ECHT_GEMESSEN = [
 }
 
 console.log(fehler === 0
-  ? '\nAlles gruen: die Markierungen halten, und der Korantext bleibt unangetastet.'
+  ? '\nAlles gruen: die Markierungen halten, und das Wort bleibt ein Wort.'
   : '\n' + fehler + ' Probe(n) rot.');
 process.exit(fehler === 0 ? 0 : 1);
