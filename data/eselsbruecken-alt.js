@@ -732,8 +732,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* أَنْفٌ - Nase */
   '45852': [
-    'Geh die Wuḍūʾ-Reihenfolge durch, dann hast du fünf Vokabeln in einer Bewegung: يَدٌ (Hände), فَمٌ (Mund), أَنْفٌ (Nase), وَجْه, يَدٌ, رَأْس, أُذُنٌ (Ohren), رِجْلٌ (Füße). Die fünf, die du als Vokabel hast, kommen dabei alle vor — üb sie in der Reihenfolge, nicht alphabetisch.',
-    '⭐ Im Sujūd berührt die Nase den Boden mit — sie gehört zu den sieben Körperteilen, auf denen man sich niederwirft. Wer sich das einmal beim Beten bewusst macht, hat die Vokabel fünfmal am Tag geübt. ⚠️ Und dieselbe Wurzel أ ن ف trägt أَنَفَة, den Stolz: die Nase hoch tragen heißt auf Arabisch dasselbe wie auf Deutsch.'
+    'Die Nase hört mit ف auf, und mit genau diesem ف fängt فَمٌ (Mund) an: أَنْفٌ → فَمٌ. So sitzen die beiden auch im Gesicht — die Nase direkt über dem Mund, und das ف ist die Stelle, an der sie sich berühren. Lies beide als eine Kette.',
+    '⚠️ Nicht mit أُذُنٌ (Ohr) verwechseln: beide fangen mit أ an, beide haben ein ن, beide sitzen am Kopf. Der Unterschied ist, wo das ن steht — bei der Nase in der Mitte (أ ن ف), beim Ohr am Ende (أ ذ ن). Die Nase sitzt mitten im Gesicht, ihr ن mitten im Wort.'
   ],
 
   /* فَمٌ - Mund */
@@ -1132,8 +1132,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* أَرْبَعَةٌ - vier */
   '50298': [
-    'Die Wurzel ر ب ع trägt رُبْع, das Viertel — und أَرْبَعِين, die Vierzig. ⭐ Und der Begriff الْأَرْبَعِينَ النَّوَوِيَّة, die vierzig Hadithe an-Nawawis, kommt dir sicher unter. Eine Wurzel, drei Wörter, alle mit der Vier.',
-    'Nimm die Zahlen in Zweierschritten, das hält besser als die Reihe am Stück: ثَلَاثَة–أَرْبَعَة, خَمْسَة–سِتَّة, سَبْعَة–ثَمَانِيَة, تِسْعَة–عَشَرَة. Sprich jedes Paar zusammen. ⚠️ Alle acht tragen die تاء مَرْبُوطة, die hier nichts über das Geschlecht sagt.'
+    '⭐ Drei deiner fünf Gebete haben vier Rakʿas: الظُّهْر, الْعَصْر und الْعِشَاء. Die Vier betest du also dreimal am Tag — nur الْفَجْر und الْمَغْرِب weichen davon ab. Wer أَرْبَعَةٌ hört, denkt an diese drei Gebete.',
+    '⭐ الْخُلَفَاءُ الرَّاشِدُونَ, die rechtgeleiteten Kalifen, sind vier: Abū Bakr, ʿUmar, ʿUṯmān und ʿAlī. Vier Namen, die du ohnehin in einem Atemzug sagst — zähl sie an den Fingern ab, und beim vierten, ʿAlī, bist du bei أَرْبَعَةٌ.'
   ],
 
   /* خَمْسَةٌ - fünf */
