@@ -9511,3 +9511,18 @@ Elias (23.10.2026, 23:25): *„für die koranwörter von den häufigsten gibt es
 - App: `koranKarten()` reicht durch; Lernkarte zeigt den Vers im Satzkasten nur ohne eigenen Satz (Wort an Stelle `w` hervorgehoben, Deutsch verwischt, neue Zeile Sure und Vers), Wortkarte unter „Beispielsatz · aus dem Koran". Nicht als `sentAr` (Satzmodus, Satzübungen, Iʿrāb bleiben ohne Verse — Frage an Elias).
 - Tests: neu `test-koransatz-karte.mjs` (echte App, 9/9; mit lernen.js von v715 5 rot), `test-koran-haeufig.mjs` 96 grün mit neuen Störtests; beide und `koran-satzverse-suchen.mjs --bereich` im Sammellauf (193 Prüfer, keiner neu rot). VOLLES-PROGRAMM.md Block 3c (4 Kopien gleich), Pflegeplan, `pruefe-koran-vorlagen.mjs`.
 - Hochgeladen 03:29:53, Production main aus `a4c1e1e` (`82abb237`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v716.
+
+## 2026-10-24 16:22 – Eselsbrücken ersetzt
+
+Routine „Eselsbrücken": 6 abgelehnte Texte an 2 Wörtern ersetzt (alle drei Stellen je Wort, abgelehnt am 23.10.2026 zwischen 23:33 und 23:35) — **v717 ausgeliefert**.
+
+- **45852 أَنْفٌ (Nase)**
+  - `mnemo`: Sure 105 الفيل — der Elefant mit der riesigen Nase, gegen seinen eigenen Satz هَذَا أَنْفٌ صَغِيرٌ.
+  - `alt[0]`: Buchstabenkette — die Nase endet mit ف, mit dem فَمٌ (Mund) beginnt; so sitzen beide auch im Gesicht.
+  - `alt[1]`: Verwechslungsgefahr mit أُذُنٌ — bei der Nase steht das ن in der Mitte (أ ن ف), beim Ohr am Ende (أ ذ ن).
+- **50298 أَرْبَعَةٌ (vier)**
+  - `mnemo`: Al-Ikhlāṣ (112) und Quraisch (106) haben genau vier Verse (mit `vers.mjs` belegt).
+  - `alt[0]`: Ẓuhr, ʿAṣr und ʿIšāʾ haben vier Rakʿas (Formen aus der Eselsbrücke zu رَكْعَةٌ übernommen).
+  - `alt[1]`: الْخُلَفَاءُ الرَّاشِدُونَ sind vier (Form aus einer vorhandenen Eselsbrücke übernommen).
+- Prüfungen: `pruefe-eselsbruecken.js` 0 (2165 Einzelprüfungen), `vorschlaege-holen.mjs --auftrag` Exit 3, `pruefe-quran`, `pruefe-taschkil`, `taschkil-belegen`, `pruefe-duplikate`, `validate` 0; `alle-pruefer.mjs`: 193 Prüfer, kein NEU ROT.
+- Hochgeladen 16:22:50 (`--mit-daten`), `pruefe-ausgeliefert` 0, Stempel v717.

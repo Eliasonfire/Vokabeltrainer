@@ -2283,7 +2283,7 @@ const VOCAB_DATA = [
  {
   "id": "45852",
 
-  "mnemo": "Wudū'-Gruppe: أَنْفٌ (Nase), فَمٌ (Mund), يَدٌ (Hand), رِجْلٌ (Fuß), أُذُنٌ (Ohr) — alle fünf hast du, und alle fünf kommen bei der Gebetswaschung vor. Geh sie in der Reihenfolge des Wudū' durch.",
+  "mnemo": "⭐ Denk an Sure 105, die du auswendig kannst: الفيل, der Elefant — das Tier, dessen Rüssel eine riesige Nase ist. Und dann an deinen eigenen Satz: هَذَا أَنْفٌ صَغِيرٌ. Beim Elefanten wäre der أَنْف alles andere als صَغِيرٌ — das Bild bleibt hängen.",
   "ar": "أَنْفٌ",
   "de": "Nase",
   "type": "noun",
@@ -3623,7 +3623,7 @@ const VOCAB_DATA = [
  {
   "id": "50298",
 
-  "mnemo": "Wurzel ر ب ع — dieselbe wie in رُبْع (Viertel). Vier und Viertel gehören zusammen, im Arabischen wie im Deutschen.",
+  "mnemo": "⭐ Zwei Suren, die du auswendig kannst, haben genau vier Verse: الإخلاص (112) und قريش (106). Zähl beim nächsten Rezitieren mit — bei beiden hörst du bei أَرْبَعَةٌ auf.",
   "ar": "أَرْبَعَةٌ",
   "de": "vier",
   "type": "noun",
