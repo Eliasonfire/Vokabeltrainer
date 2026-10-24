@@ -9477,3 +9477,14 @@ Elias (mit Bildern aus meinem V1-Vergleich): *„ich möchte das von quran.com h
 - Sammellauf 190 Prüfer: neu rot nur `pruefe-datumsangaben` und `notiz-umraeumen` (mein Projektnotiz-Block: geschätzte Zeit, falsche Reihenfolge) → Commit-Zeiten eingesetzt, umgeräumt, beide grün.
 - Hochgeladen 01:35:25, Production main aus `af6f7a2` (`430a5dde`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v713.
 - Offen: Sajda-Zeichen (keine Schrift der App trifft V1 — Frage an Elias), kleines sīn 75:27/83:14, Koransätze.
+
+## 2026-10-24 02:34 – Nachtschicht: kleines sīn beim Markieren ganz — **v714 ausgeliefert** (`d63c93e`)
+
+Elias (23.10.2026, 23:55, mit Bild): *„das sin oben drüber wird plötzlich abgeschnitten, fix das an beiden stellen. 75/27 und 83/14"*. Mitten in der Schicht (02:26): *„kümmere dich vorallem um die zeichen im koran"*.
+
+- Nachgestellt (Edge, sechsfach): das `::highlight()` malt den markierten Buchstaben nur in seinem Kasten; das kleine sīn ragt links hinaus und fehlte.
+- `js/quran-markierung.js`: neu `tajweedWortFaerben()` — der markierte Buchstabe steht als `<span class="tj-buchstabe tj-<farbe>">` im Wort, sonst Textknoten, kein innerHTML; im Lesetext (`tajweedZeichnen`, vorher alle `.qw.tj-hat` wieder flach, ohne `className =`) und auf der Karte (`tajweedFlaechenBauen` misst am flachen Wort, färbt danach). `CSS.highlights`, der Rückfall `tj-wort` und `tajweedHighlightsSetzen` sind weg. `index.html`: vier Regeln `.tj-buchstabe.tj-<farbe>{color}` statt `::highlight()`.
+- Neu `test-quran-sin-markierung.mjs` (26/26, im Sammellauf): verschwundene Pixel 0/0/0 an 75:27, 83:14 und 1:2:1 (v713: 129/25/1002), alle Buchstaben markiert gegen ganzes Wort rot 1,0004/1,0000/0,9987 (v713: 0,9720/0,9951/0,8557), Wortbreite gleich, Karte ebenso. Störtest mit quran-markierung.js + index.html von v713: 10 von 26 grün. `pruefe-markierung.mjs` Abschnitt 6 auf die neue Regel.
+- Sammellauf: kein Prüfer neu rot. `pruefe-gedaechtnis-zahlen` war rot durch eine GEPLANTE Fassungsnummer in der To-Do (aus der Liste der Nacht) → durch „eine Fassung nach v714" ersetzt, grün.
+- Hochgeladen 02:34:21, Production main aus `d63c93e` (`9a4a3e4f`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v714.
+- Gemessen nebenbei: die 3 Verse mit anderer Wortzahl (15:7, 27:20, 36:22) tragen in keiner Fassung ein Pausenzeichen — nichts zu tun. Sajda: in V1 eine eigene Glyphe der Seitenschrift (15 Stellen auf 15 Seiten, die 15 Originalschriften zusammen 1166 KB).
