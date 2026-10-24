@@ -795,6 +795,8 @@ const PRUEFER = [
      vergrößert: markiert fehlt kein Pixel, das Wort bleibt verbunden, auch auf der Karte.
      Störtest mit `--mark <alte quran-markierung.js> --index <alte index.html>` (v713). */
   ['test-quran-sin-markierung.mjs', []],
+  ['test-koransatz-karte.mjs', []],
+  ['werkzeuge/koran-satzverse-suchen.mjs', ['--bereich']],
   /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner
      ist": „das auch" (selbst mit den Wörterbüchern entscheiden). Schneidet
      plBeschriftung() und bauePluralKarte() aus js/kern.js und legt die

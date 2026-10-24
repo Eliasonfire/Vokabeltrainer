@@ -722,6 +722,16 @@ function baueWortKarte(w){
       <div class="ar" lang="ar" dir="rtl">${buildSentenceHtml(w, { ohneLuecke:true, karteikarte:true })}</div>
       <div class="de">${escapeHtml(w.sentDe || '')}</div>
     </div>`);
+  } else if (w.koranSatz && w.koranSatz.ar && typeof koranSatzHtml === 'function'){
+    /* Der Koransatz einer Karte von „Koran häufigste" (koranSatzHtml() in js/lernen.js) — derselbe
+       Satz wie auf der Lernkarte, mit Sure und Vers als Quelle. Elias, 23.10.2026: „für die
+       koranwörter von den häufigsten gibt es keinen beispielsatz, da kannst du ruhig aus dem koran
+       die nehmen vorallem wenn ich sie bereits kenne". */
+    t.push(`<div class="wk-abschnitt">
+      <div class="wk-marke"><span>Beispielsatz</span><span class="wk-quelle">aus dem Koran, ${escapeHtml(w.koranSatz.surah + ' ' + w.koranSatz.ayah)}</span></div>
+      <div class="ar" lang="ar" dir="rtl">${koranSatzHtml(w.koranSatz)}</div>
+      <div class="de">${escapeHtml(w.koranSatz.de || '')}</div>
+    </div>`);
   }
 
   /* ⛔ HIER STAND DER QURAN-BEZUG. Elias am 20.08.2026: „koranbezug kannst du

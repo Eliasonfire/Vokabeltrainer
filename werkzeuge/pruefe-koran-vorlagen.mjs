@@ -40,7 +40,7 @@ console.log('--- Vorlagen der Gruppe „Koran häufigste" ---');
 /* Arabisch, Arabisch-Ergänzung, Arabisch-Erweitert-A und die zwei Blöcke der Darstellungsformen. */
 const ARABISCH = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/g;
 const arabischeZeichen = text => (String(text).match(ARABISCH) || []).length;
-const DATEIEN = ['eselsbruecken.json', 'saetze.json', 'saetze-kopf.txt', 'stellen.json'];
+const DATEIEN = ['eselsbruecken.json', 'saetze.json', 'saetze-kopf.txt', 'stellen.json', 'satzverse.json'];
 const texte = {};
 for (const d of DATEIEN){
   const p = path.join(VORLAGEN, d);

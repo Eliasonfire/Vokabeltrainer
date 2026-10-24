@@ -1,0 +1,1053 @@
+{
+ "_": "Vorlage der Koransätze für die Karten von „Koran häufigste“ — der Beispielsatz aus dem Koran. Elias, 23.10.2026: „für die koranwörter von den häufigsten gibt es keinen beispielsatz, da kannst du ruhig aus dem koran die nehmen vorallem wenn ich sie bereits kenne“. Kein arabisches Wort ist getippt: wo = Sure:Vers · von/bis = Wörter des Verses (fehlen sie: der ganze Vers) · wort = an welcher Stelle des Verses das Wort der Karte steht · de = „*“ für die Übersetzung des ganzen Verses aus quran-text.js, sonst ein Stück, das WÖRTLICH darin steht · form = „andere“, wenn die Form der Karte nicht oder nur in einem schlechten Vers im Koran steht (dann sagt warum, welche Form es ist) · ohne = der Grund, warum die Karte keinen Koransatz hat. Eine Karte mit einer Stelle aus stellen.json bekommt diese als Koransatz und steht hier NICHT. Vorgeschlagen von werkzeuge/koran-satzverse-suchen.mjs (zuerst ein Vers aus seinem auswendigen Bereich, sonst der kürzeste mit 4 bis 14 Wörtern), jede Wahl am Wort gelesen; aufgelöst und geprüft von werkzeuge/koran-haeufig-bauen.mjs (leseSatzverse).",
+ "kh-001": {
+  "wo": "20:27",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-010": {
+  "wo": "95:7",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-003": {
+  "wo": "103:2",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-008": {
+  "wo": "93:9",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-006": {
+  "wo": "105:3",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-007": {
+  "wo": "107:1",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-014": {
+  "wo": "99:7",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-012": {
+  "wo": "67:24",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-019": {
+  "wo": "107:2",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-020": {
+  "wo": "102:8",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-034": {
+  "wo": "1:4",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-024": {
+  "wo": "15:62",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-025": {
+  "wo": "37:14",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-027": {
+  "wo": "99:5",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-032": {
+  "wo": "26:107",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-036": {
+  "wo": "106:3",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-037": {
+  "wo": "67:16",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-038": {
+  "wo": "75:2",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-044": {
+  "wo": "47:17",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-047": {
+  "wo": "26:2",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-050": {
+  "wo": "114:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-051": {
+  "wo": "19:3",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-053": {
+  "wo": "37:41",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-081": {
+  "wo": "95:7",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-055": {
+  "wo": "32:18",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-060": {
+  "wo": "6:55",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-062": {
+  "wo": "41:33",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-064": {
+  "wo": "92:5",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-065": {
+  "wo": "67:26",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-066": {
+  "wo": "94:5",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-067": {
+  "wo": "26:198",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-070": {
+  "wo": "93:4",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-107": {
+  "wo": "47:6",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-075": {
+  "wo": "17:103",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-077": {
+  "wo": "20:9",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-078": {
+  "wo": "26:111",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-080": {
+  "wo": "10:10",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-082": {
+  "wo": "26:89",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-083": {
+  "wo": "19:2",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-085": {
+  "wo": "15:67",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-087": {
+  "wo": "19:88",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-088": {
+  "wo": "26:129",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-091": {
+  "wo": "67:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-094": {
+  "wo": "27:77",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-096": {
+  "wo": "27:11",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-097": {
+  "wo": "67:8",
+  "wort": 9,
+  "de": "*"
+ },
+ "kh-100": {
+  "wo": "37:113",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-101": {
+  "wo": "102:5",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-102": {
+  "wo": "2:255",
+  "von": 48,
+  "bis": 50,
+  "wort": 50,
+  "de": "Er ist der Erhabene und Allgewaltige"
+ },
+ "kh-103": {
+  "wo": "78:30",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-106": {
+  "wo": "79:29",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-109": {
+  "wo": "67:3",
+  "von": 13,
+  "bis": 18,
+  "wort": 15,
+  "de": "Wende den Blick zurück: Siehst du irgendwelche Risse"
+ },
+ "kh-110": {
+  "wo": "12:14",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-111": {
+  "wo": "95:7",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-112": {
+  "wo": "20:28",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-114": {
+  "wo": "55:12",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-115": {
+  "wo": "53:39",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-116": {
+  "wo": "89:22",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-117": {
+  "wo": "105:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-118": {
+  "wo": "43:56",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-119": {
+  "wo": "37:88",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-120": {
+  "wo": "111:2",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-121": {
+  "wo": "33:65",
+  "wort": 6,
+  "de": "*"
+ },
+ "kh-122": {
+  "wo": "27:77",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-123": {
+  "wo": "31:2",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-124": {
+  "wo": "4:70",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-125": {
+  "wo": "87:15",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-126": {
+  "wo": "107:5",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-127": {
+  "wo": "55:46",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-128": {
+  "wo": "5:30",
+  "wort": 6,
+  "de": "*"
+ },
+ "kh-129": {
+  "wo": "79:29",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-130": {
+  "wo": "37:149",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-131": {
+  "wo": "15:17",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-132": {
+  "wo": "105:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-135": {
+  "wo": "89:28",
+  "wort": 1,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit raja‘a steht nur in drei langen Versen; hier der Befehl irji‘ī „kehre zurück“."
+ },
+ "kh-136": {
+  "wo": "67:11",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-137": {
+  "wo": "26:223",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-138": {
+  "wo": "58:1",
+  "von": 1,
+  "bis": 8,
+  "wort": 2,
+  "de": "Gehört hat ja Allah die Aussage derjenigen, die mit dir über ihren Gatten streitet"
+ },
+ "kh-139": {
+  "wo": "70:17",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-140": {
+  "wo": "67:6",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-141": {
+  "wo": "80:23",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-142": {
+  "wo": "67:2",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-143": {
+  "wo": "94:4",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-144": {
+  "wo": "26:7",
+  "wort": 10,
+  "de": "*"
+ },
+ "kh-145": {
+  "wo": "71:28",
+  "von": 1,
+  "bis": 8,
+  "wort": 6,
+  "de": "Mein Herr, vergib mir und meinen Eltern und demjenigen, der als Gläubiger mein Haus betritt"
+ },
+ "kh-146": {
+  "wo": "7:151",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-147": {
+  "wo": "37:61",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-148": {
+  "wo": "37:112",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-149": {
+  "wo": "112:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-150": {
+  "wo": "4:14",
+  "wort": 9,
+  "de": "*"
+ },
+ "kh-151": {
+  "wo": "67:5",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-152": {
+  "wo": "26:11",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-153": {
+  "wo": "1:2",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-154": {
+  "wo": "76:12",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-155": {
+  "wo": "67:28",
+  "von": 10,
+  "bis": 15,
+  "wort": 15,
+  "de": "wer wird dann den Ungläubigen Schutz vor schmerzhafter Strafe gewähren"
+ },
+ "kh-157": {
+  "wo": "4:80",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-158": {
+  "wo": "99:5",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-159": {
+  "wo": "99:3",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-160": {
+  "wo": "67:2",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-161": {
+  "wo": "55:27",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-162": {
+  "wo": "18:38",
+  "wort": 6,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit ashraka steht nur in einem langen Vers (7:173); hier die Gegenwart ushriku „ich geselle bei“."
+ },
+ "kh-163": {
+  "wo": "20:20",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-164": {
+  "wo": "75:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-165": {
+  "wo": "102:8",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-166": {
+  "wo": "5:9",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-167": {
+  "wo": "15:51",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-168": {
+  "wo": "15:91",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-169": {
+  "wo": "8:3",
+  "wort": 6,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit anfaqa steht nur in zwei langen Versen; hier die Gegenwart yunfiqūna „sie geben aus“."
+ },
+ "kh-171": {
+  "wo": "106:3",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-172": {
+  "wo": "43:76",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-173": {
+  "wo": "20:17",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-174": {
+  "wo": "36:27",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-175": {
+  "wo": "37:69",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-176": {
+  "wo": "7:181",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-177": {
+  "wo": "3:76",
+  "wort": 8,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Form ahabba steht im Koran nur in 9:24, und dort heißt sie „lieber“; hier die Gegenwart yuhibbu „liebt“."
+ },
+ "kh-178": {
+  "wo": "42:39",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-179": {
+  "wo": "26:99",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-180": {
+  "wo": "19:34",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-181": {
+  "wo": "67:2",
+  "wort": 10,
+  "de": "*"
+ },
+ "kh-182": {
+  "wo": "67:30",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-183": {
+  "wo": "20:122",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-184": {
+  "wo": "95:6",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-186": {
+  "wo": "67:2",
+  "wort": 11,
+  "de": "*"
+ },
+ "kh-187": {
+  "wo": "111:2",
+  "wort": 6,
+  "de": "*"
+ },
+ "kh-188": {
+  "wo": "67:9",
+  "von": 8,
+  "bis": 12,
+  "wort": 9,
+  "de": "Allah hat nichts offenbart"
+ },
+ "kh-189": {
+  "wo": "39:12",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-190": {
+  "wo": "98:2",
+  "wort": 4,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit talā steht nur in 91:2, und dort heißt sie „folgen“; hier die Gegenwart yatlū „verliest“."
+ },
+ "kh-191": {
+  "wo": "5:88",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-192": {
+  "wo": "26:142",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-193": {
+  "wo": "19:54",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-194": {
+  "wo": "3:42",
+  "wort": 11,
+  "de": "*"
+ },
+ "kh-195": {
+  "wo": "2:117",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-196": {
+  "wo": "3:123",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-197": {
+  "wo": "67:26",
+  "wort": 8,
+  "de": "*"
+ },
+ "kh-198": {
+  "wo": "42:43",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-199": {
+  "wo": "102:7",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-200": {
+  "wo": "21:95",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-201": {
+  "wo": "43:78",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-202": {
+  "wo": "36:38",
+  "wort": 2,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit jarā steht nicht im Koran; hier die Gegenwart tajrī „sie läuft“."
+ },
+ "kh-203": {
+  "wo": "21:20",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-204": {
+  "wo": "19:88",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-205": {
+  "wo": "70:20",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-206": {
+  "wo": "29:35",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-207": {
+  "wo": "67:21",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-208": {
+  "wo": "36:78",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-209": {
+  "wo": "54:54",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-210": {
+  "wo": "48:22",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-211": {
+  "wo": "2:43",
+  "wort": 1,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit aqāma steht nur in drei langen Versen; hier der Befehl aqīmū „verrichtet“."
+ },
+ "kh-212": {
+  "wo": "54:44",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-213": {
+  "wo": "28:21",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-214": {
+  "wo": "37:71",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-215": {
+  "wo": "15:5",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-216": {
+  "wo": "67:3",
+  "von": 6,
+  "bis": 12,
+  "wort": 9,
+  "de": "Du kannst in der Schöpfung des Allerbarmers keine Ungesetzmäßigkeit sehen"
+ },
+ "kh-217": {
+  "wo": "25:41",
+  "wort": 9,
+  "de": "*"
+ },
+ "kh-219": {
+  "wo": "53:44",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-220": {
+  "wo": "79:35",
+  "wort": 2,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit tadhakkara steht nur in einem langen Vers (35:37); hier die Gegenwart yatadhakkaru „bedenkt“."
+ },
+ "kh-221": {
+  "wo": "67:28",
+  "von": 1,
+  "bis": 9,
+  "wort": 4,
+  "de": "Sag: Was meint ihr, wenn Allah mich und wer mit mir ist, vernichten oder wenn Er Sich unser erbarmen sollte"
+ },
+ "kh-222": {
+  "wo": "26:156",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-223": {
+  "wo": "67:2",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-224": {
+  "wo": "93:11",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-225": {
+  "wo": "3:94",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-226": {
+  "wo": "26:77",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-227": {
+  "wo": "67:12",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-228": {
+  "wo": "15:45",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-229": {
+  "wo": "67:25",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-230": {
+  "wo": "47:17",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-231": {
+  "wo": "12:2",
+  "wort": 6,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit ‘aqala steht nicht in dieser Form im Koran; hier die Gegenwart ta‘qilūna „ihr begreift“."
+ },
+ "kh-232": {
+  "wo": "58:21",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-233": {
+  "wo": "67:4",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-234": {
+  "wo": "19:24",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-235": {
+  "wo": "38:46",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-236": {
+  "wo": "67:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-239": {
+  "wo": "54:1",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-241": {
+  "wo": "84:14",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-242": {
+  "wo": "111:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-243": {
+  "wo": "54:35",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-244": {
+  "wo": "66:3",
+  "von": 26,
+  "bis": 29,
+  "wort": 27,
+  "de": "Er sagte: Kundgetan hat (es) mir der Allwissende und Allkundige"
+ },
+ "kh-245": {
+  "wo": "40:54",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-246": {
+  "wo": "6:82",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-247": {
+  "wo": "1:1",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-248": {
+  "wo": "1:7",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-250": {
+  "wo": "40:48",
+  "wort": 10,
+  "de": "*"
+ },
+ "kh-251": {
+  "wo": "7:186",
+  "wort": 7,
+  "de": "*"
+ },
+ "kh-252": {
+  "wo": "17:22",
+  "wort": 6,
+  "de": "*"
+ },
+ "kh-253": {
+  "wo": "93:9",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-254": {
+  "wo": "94:1",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-255": {
+  "wo": "67:1",
+  "wort": 9,
+  "de": "*"
+ },
+ "kh-256": {
+  "wo": "70:11",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-257": {
+  "wo": "15:94",
+  "wort": 6,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Einzahl mushrik steht nur in zwei langen Versen; hier die Mehrzahl al-mushrikīna „die Götzendiener“."
+ },
+ "kh-258": {
+  "wo": "29:4",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-259": {
+  "wo": "41:20",
+  "wort": 5,
+  "de": "*"
+ },
+ "kh-260": {
+  "wo": "20:89",
+  "wort": 8,
+  "de": "*",
+  "form": "andere",
+  "warum": "Die Vergangenheit malaka steht nicht in dieser Form im Koran; hier die Gegenwart yamliku „er vermag, besitzt“."
+ },
+ "kh-261": {
+  "wo": "19:3",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-262": {
+  "wo": "54:36",
+  "wort": 2,
+  "de": "*"
+ },
+ "kh-263": {
+  "wo": "26:59",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-264": {
+  "wo": "1:2",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-265": {
+  "wo": "67:23",
+  "wort": 10,
+  "de": "*"
+ },
+ "kh-266": {
+  "wo": "26:105",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-267": {
+  "wo": "35:20",
+  "wort": 4,
+  "de": "*"
+ },
+ "kh-268": {
+  "wo": "53:41",
+  "wort": 3,
+  "de": "*"
+ },
+ "kh-269": {
+  "wo": "93:5",
+  "wort": 1,
+  "de": "*"
+ },
+ "kh-270": {
+  "wo": "33:41",
+  "wort": 7,
+  "de": "*"
+ }
+}

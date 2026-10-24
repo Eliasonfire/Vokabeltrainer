@@ -233,6 +233,11 @@ function koranKarten(){
        die Lernkarte zeigt sie hinter „Quran-Bezug anzeigen", die Kategorie „Wörter mit
        Quran-Bezug" zählt sie mit. */
     if (e.quran) k.quran = e.quran;
+    /* Der Koransatz (24.10.2026): der Beispielsatz aus dem Koran, gezeigt nur, wo die Karte keinen
+       eigenen Satz hat (js/lernen.js, js/kategorien.js). Elias, 23.10.2026: „für die koranwörter von
+       den häufigsten gibt es keinen beispielsatz, da kannst du ruhig aus dem koran die nehmen vorallem
+       wenn ich sie bereits kenne". Erzeugt aus werkzeuge/koran-vorlagen/satzverse.json und stellen.json. */
+    if (e.koranSatz) k.koranSatz = e.koranSatz;
     return k;
   });
 }
