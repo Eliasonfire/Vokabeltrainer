@@ -9500,3 +9500,14 @@ Elias (24.10.2026, 01:2x): *„ich möchte das von quran.com haben"* und *„und
 - Sammellauf 191 Prüfer: kein Prüfer neu rot.
 - Hochgeladen 02:49:06, Production main aus `43735ea` (`bd555eff`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v715.
 - Offen: Sajda-Zeichen (seine Wahl, vier Möglichkeiten), Koransätze für „Koran häufigste".
+
+## 2026-10-24 03:29 – Nachtschicht: Koransätze für „Koran häufigste" — **v716 ausgeliefert** (`a4c1e1e`)
+
+Elias (23.10.2026, 23:25): *„für die koranwörter von den häufigsten gibt es keinen beispielsatz, da kannst du ruhig aus dem koran die nehmen vorallem wenn ich sie bereits kenne"*.
+
+- Neues Feld `koranSatz {surah, ayah, ar, de, w}` an allen 255 Karten der Gruppe: die Stelle aus seinem Bereich (`stellen.json`, 53 Karten), sonst ein Vers aus der neuen Vorlage `werkzeuge/koran-vorlagen/satzverse.json` (202 Einträge, kein arabisches Zeichen; 68 Vorschläge aus seinem Bereich, 11 Verben/Nomen mit `form:"andere"` und Grund, 7 Ausschnitte langer Verse).
+- Neu `werkzeuge/koran-form-lib.mjs` (steht GENAU die Form der Karte im Verswort: Vokale verglichen, Vorsilben, Artikel, Suffixe ab) und `werkzeuge/koran-satzverse-suchen.mjs` (Vorschlag je Karte; `--bereich` meldet, wenn sein Bereich gewachsen ist). Fehlgriffe des ersten Laufs eingebaut: jannāt und āyāt als Einzahl, ātaynā als ātā, aḥabba in 9:24 = „lieber"; 8 Vorschläge mit Marke ohne Träger (kleines Wāw mit Madda) ersetzt.
+- `koran-haeufig-bauen.mjs`: `leseSatzverse()` prüft Form, Deutsch wörtlich, Marke ohne Träger, jede Karte mit Koransatz oder Grund. `koran-haeufig-data.js` 46 → 111 KB.
+- App: `koranKarten()` reicht durch; Lernkarte zeigt den Vers im Satzkasten nur ohne eigenen Satz (Wort an Stelle `w` hervorgehoben, Deutsch verwischt, neue Zeile Sure und Vers), Wortkarte unter „Beispielsatz · aus dem Koran". Nicht als `sentAr` (Satzmodus, Satzübungen, Iʿrāb bleiben ohne Verse — Frage an Elias).
+- Tests: neu `test-koransatz-karte.mjs` (echte App, 9/9; mit lernen.js von v715 5 rot), `test-koran-haeufig.mjs` 96 grün mit neuen Störtests; beide und `koran-satzverse-suchen.mjs --bereich` im Sammellauf (193 Prüfer, keiner neu rot). VOLLES-PROGRAMM.md Block 3c (4 Kopien gleich), Pflegeplan, `pruefe-koran-vorlagen.mjs`.
+- Hochgeladen 03:29:53, Production main aus `a4c1e1e` (`82abb237`), `pruefe-ausgeliefert` 0, Oberfläche ohne Seiten- und Konsolenfehler, Stempel v716.
