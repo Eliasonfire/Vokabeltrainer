@@ -650,6 +650,26 @@
       "entscheidung": "abgelehnt",
       "grund": "Beispielwort (Plural von rajul) in drei Plural-Regeln, kein Fachbegriff",
       "am": "2026-10-21"
+    },
+    "ابراهيم": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname (Prophet Ibrāhīm), Beispielwort der Regel mamnu-min-as-sarf-namen-01 und in zuruf-makan-weitere-01, kein Fachbegriff",
+      "am": "2026-10-25"
+    },
+    "وليم": {
+      "entscheidung": "abgelehnt",
+      "grund": "Eigenname (William) aus dem Dialog Madina 1 L14, Beispielwort der Regel mamnu-min-as-sarf-namen-01, kein Fachbegriff",
+      "am": "2026-10-25"
+    },
+    "بيتنا جديد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwortgruppe (unser neues Haus) der Regel nat-bestimmter-mudaf-01, kein Fachbegriff",
+      "am": "2026-10-25"
+    },
+    "اي": {
+      "entscheidung": "abgelehnt",
+      "grund": "Fragewort (ayyu, welcher), das die Regel idafa-ayyu-01 benennt — eine Buchvokabel wie die abgelehnten Hinweiswörter, kein Fachbegriff",
+      "am": "2026-10-25"
     }
   }
 }

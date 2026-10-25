@@ -1019,5 +1019,38 @@ const LEHRBUCH_SAETZE = [
   { id: 'by1-32-1', werk: 'bayna-yadayk-1', seite: 32, kapitel: 2, vokalisationErgaenzt: true,
     gedruckt: 'هَذا ohne Fatha vor dem Alif, أذانُ ohne Zeichen auf Hamza und ذ, الفَجْرِ ohne Sukun am Artikel-Lam; اللَّهُ wie gedruckt mit Schadda und Fatha auf dem Lam, أكْبَرُ ohne Fatha auf dem Hamza; im Buch zweimal hintereinander (hier einmal)',
     sentAr: 'هَذَا أَذَانُ الْفَجْرِ. اللَّهُ أَكْبَرُ.',
-    sentDe: 'Das ist der Gebetsruf zum Fajr. Allah ist der Größte.' }
+    sentDe: 'Das ist der Gebetsruf zum Fajr. Allah ist der Größte.' },
+
+  /* ===================== Drei Belegsätze für die Regeln aus Folge 29 ========
+     Eingetragen am 25.10.2026 (Wartung So). Madina 1, Lektion 14; im
+     beschrifteten PDF liegt Buchseite N auf PDF-Seite N + 22. Alle drei Zeilen
+     bei 600 dpi gelesen. Im Bestand gab es vorher keinen Satz mit einem
+     nicht-arabischen Namen, keinen mit einem Adjektiv am Possessiv-Mudaf und
+     zu أَيُّ nur zwei Sätze, deren أَيُّ كِتَابٍ schon idafa-erkennen-01 trägt.
+
+     mb1-82-2: Seite 82, Dialog, Antwort auf «أين بيتُكم الجديدُ؟». Der Lehrer
+     liest sie in Folge 29 bei 10:15 („Beytuna al-Jadidu qaribun min al-Matar").
+     Ergänzt aus Belegen: بَيْتٌ und das Suffix ـنَا, الْجَدِيدُ (45911),
+     قَرِيبٌ مِنَ (lehrbuch-saetze), الْمَطَارِ (lehrbuch-saetze).
+     Die Frage davor steht hier NICHT: das Helfervokal-Damma auf بَيْتُكُمُ
+     vor اَلْ ist im Bestand nirgends geschrieben belegt.
+
+     mb1-83-1: Seite 83, Dialog: Ḥāmid fragt «ما اسمـه؟», Maḥmūd antwortet
+     «اسمُه وِلْيَمُ». Lehrer Folge 29, 16:15 („ismuhu William. Nicht
+     Williamun, Williamu"). مَا اسْمُهُ؟ اِسْمُهُ wie in mb1-64-1.
+
+     mb1-85-1: Seite 85, Übung 4 «اقرأ», erste Zeile. Lehrer Folge 29, 19:45
+     („ayyu yawmin hadha, welcher Tag ist dies? Hadha yawmu s-sabt"). */
+  { id: 'mb1-82-2', seite: 82, kapitel: 14, vokalisationErgaenzt: true,
+    gedruckt: 'nur الْمَطار mit Fatha auf dem م; بيتنا الجديد قريب من ohne Zeichen',
+    sentAr: 'بَيْتُنَا الْجَدِيدُ قَرِيبٌ مِنَ الْمَطَارِ.',
+    sentDe: 'Unser neues Haus ist nahe beim Flughafen.' },
+  { id: 'mb1-83-1', seite: 83, kapitel: 14, vokalisationErgaenzt: true,
+    gedruckt: 'Frage ما اسمـه ohne Zeichen; Antwort اسمُه mit Damma auf dem م, وِلْيَمُ vollständig mit einfacher Damma am Ende',
+    sentAr: 'مَا اسْمُهُ؟ اِسْمُهُ وِلْيَمُ.',
+    sentDe: 'Wie heißt er? Sein Name ist William.' },
+  { id: 'mb1-85-1', seite: 85, kapitel: 14, vokalisationErgaenzt: true,
+    gedruckt: 'أَيُّ und die Kasratan auf يومٍ, يَوْمُ السَّبْتِ vollständig; هذا beide Male ohne Zeichen',
+    sentAr: 'أَيُّ يَوْمٍ هَذَا؟ هَذَا يَوْمُ السَّبْتِ.',
+    sentDe: 'Welcher Tag ist dies? Dies ist Samstag.' }
 ];

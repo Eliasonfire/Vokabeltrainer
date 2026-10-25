@@ -1649,6 +1649,45 @@ const GRAMMAR_RULES = [
       "chapter": 13
     }
   },
+  {
+    "id": "mamnu-min-as-sarf-namen-01",
+    "name": "Nicht-arabische Namen ohne Tanwīn (وِلْيَمُ, إِبْرَاهِيمُ)",
+    "shortExplanation": "Ein Name, der nicht aus dem Arabischen kommt, bekommt kein Tanwīn. Dein Lehrer (Folge 29, 12:45) stellt es neben die arabischen Namen: „Mahmudun ist ein arabischer Name und hat Tanwin … Warum hat der Name Ibrahim und Yusuf kein Tanwin? Der Grund daran liegt, dass diese Namen mamnūʿ min aṣ-ṣarf sind. Warum? … da sie keine arabischen Ursprungsnamen sind.“ Und gleich weiter: „selbst wenn wir einen deutschen Namen jetzt ins Arabische bringen, dann hat dieser kein Tanwin.“ Die Propheten nennt er als Beispiel: Ibrāhīm und Yūsuf „lebten vor dem Islam … die hatten nicht den Islam und auch kein Arabisch natürlich.“\n\nIm Dialog des Kapitels (16:15): ismuhu William — „nicht Williamun, Williamu“; und der Vater, Doktor Edward: „auch kein Tanwin.“ Bei einem Mitschüler (14:15): nicht Rafāʾīlun, sondern Rafāʾīlu, „weil dein Name keinen arabischen Ursprung hat.“\n\nIm Satz: مَا اسْمُهُ؟ اِسْمُهُ وِلْيَمُ. — „Wie heißt er? Sein Name ist William.“ (Madina 1, Seite 83)\n\nBei Übung 5 (19:45) liest er die ganze Reihe: William, Edward, London, Paris, Pakistan, Istanbul, dann die Propheten — Ibrāhīmu, Ismāʿīlu, Isḥāqu, Yaʿqūbu, Ayyūbu, Sulaimānu, Dāwūdu, Yūnus — und die Engel Jibrīl und Mīkāʾīl, dazu Firʿaun: „Firʿaunu, nicht Firʿaunun.“ Er sagt dazu: „haben kein Tanwin und auch kein Kasra.“\n\nDer Schlüssel zu Band 1 sagt dasselbe (Lektion 14, Punkt 5): „nicht-arabische Eigennamen [haben] auch kein Tanwîn“, mit den Beispielen وِلْيَمُ ، لَنْدَنُ ، بَاكِسْتَانُ, und „die Namen der meisten Propheten sind nicht-arabischen Ursprungs“, etwa إِبْرَاهِيمُ.\n\nDer Oberbegriff steht in mamnu-min-as-sarf-01; die weiblichen Namen in tanwin-eigennamen-01.\n\n⚠️ Aus dem Schlüssel, nicht aus dem Unterricht: Ein nicht-arabischer Name, der männlich ist und nur drei Buchstaben mit Sukūn auf dem zweiten hat, BEHÄLT sein Tanwīn — der Schlüssel nennt Nūḥ und Lūṭ. Dein Lehrer hat diese Ausnahme nicht erwähnt.",
+    "color": "other",
+    "kapitel": 14,
+    "source": {
+      "folge": 29,
+      "video": "Folge 29",
+      "approxTimestamp": "12:45",
+      "chapter": 14
+    }
+  },
+  {
+    "id": "nat-bestimmter-mudaf-01",
+    "name": "Adjektiv am مُضَافٌ: es trägt اَلْ (بَيْتُنَا الْجَدِيدُ)",
+    "shortExplanation": "Ein Wort mit Besitzendung ist bestimmt — also bekommt sein Adjektiv اَلْ, auch wenn das Wort selbst keins hat. Dein Lehrer (Folge 29, 8:45) bei ayna baytukumu l-jadīdu, „wo ist euer neues Haus?“: „das Naʿt … und zwar ist beides bestimmt, okay, warum? Weil euer Haus ist bestimmt, das gehört ja wem — euch. Und das [Adjektiv] ist auch bestimmt, beide sind bestimmt. Sie müssen nicht dieselbe Bestimmtheit haben, also dass sie beide mit Alif und Lām sind zum Beispiel, das müssen sie nicht.“\n\nDie Antwort im Buch (10:15): بَيْتُنَا الْجَدِيدُ قَرِيبٌ مِنَ الْمَطَارِ. — „Unser neues Haus ist nahe beim Flughafen.“ (Madina 1, Seite 82)\n\nبَيْتُنَا ist bestimmt durch ـنَا, الْجَدِيدُ durch اَلْ — verschiedene Wege, dieselbe Bestimmtheit. Darum ist الْجَدِيدُ hier ein Adjektiv und keine Aussage.\n\nDer Schlüssel zu Band 1 sagt dasselbe (Lektion 14, Punkt 6): „Mudâf [ist] durch seine Position als bestimmt definiert. Wenn also ein Mudâf durch ein Adjektiv näher beschrieben wird, muss das Adjektiv in seiner bestimmten Form verwendet werden“ — „gleiches gilt für einen Mudâf, dessen Mudâf ilaihi ein Possessivpronomen ist“: بَيْتُهُ الْجَدِيدُ, „sein neues Haus“.\n\nDas baut auf mudaf-ohne-al-01 (der مُضَافٌ ist bestimmt, ohne اَلْ), possessiv-ist-idafa-01 (die Besitzendung ist ein مُضَافٌ إِلَيْهِ) und nat-bestimmtheit-01 (Adjektiv und Nomen gleich bestimmt) auf.\n\n⚠️ Aus dem Schlüssel, nicht aus dem Unterricht: Hängt ein zweites Nomen am مُضَافٌ, zeigt die Endung, wen das Adjektiv beschreibt — baytu l-imāmi l-jadīdu „das neue Haus des Imams“, aber baytu l-imāmi l-jadīdi „das Haus des neuen Imams“ (siehe auch nat-wen-beschreibt-01).",
+    "color": "mubtada",
+    "kapitel": 14,
+    "source": {
+      "folge": 29,
+      "video": "Folge 29",
+      "approxTimestamp": "8:45",
+      "chapter": 14
+    }
+  },
+  {
+    "id": "idafa-ayyu-01",
+    "name": "أَيُّ (welcher) — wie ein مُضَافٌ",
+    "shortExplanation": "أَيُّ heißt „welcher“ und steht immer vor einem Nomen, das dann im Genitiv steht. Dein Lehrer (Folge 29, 19:45): „ayyu heißt welcher … Und er funktioniert wie ein Mudaf, das heißt, er macht das Wort danach Mudaf ilayhi. Okay, also ayyu yawmin hādhā — welcher Tag ist dies?“\n\nIm Satz: أَيُّ يَوْمٍ هَذَا؟ هَذَا يَوْمُ السَّبْتِ. — „Welcher Tag ist dies? Dies ist Samstag.“ (Madina 1, Seite 85, Übung 4)\n\nأَيُّ hat wie jeder مُضَافٌ kein Tanwīn, يَوْمٍ hat die Kasra des مُضَافٌ إِلَيْهِ.\n\nUnd أَيُّ selbst ändert seine Endung (21:15): „Es kann auch majrūr werden, wenn vorher ein Ḥarf jarr ist, zum Beispiel min ayyi … Kann aber auch manṣūb werden, je nach Kontext, dann mit Fetha.“ Das Buch zeigt den Genitiv in derselben Übung: fī ayyi madrasatin anta? — „In welcher Schule bist du?“\n\nDer Schlüssel zu Band 1 führt أَيُّ in Lektion 14 als „welcher“, als مُضَاف. Wie man einen مُضَافٌ erkennt, steht in idafa-erkennen-01.\n\n⚠️ Der Satz mit fī ayyi … steht in Umschrift: er ist noch nicht als Satz in der App eingetragen.",
+    "color": "idafa",
+    "kapitel": 14,
+    "source": {
+      "folge": 29,
+      "video": "Folge 29",
+      "approxTimestamp": "19:45",
+      "chapter": 14
+    }
+  },
 ];
 
 const SENTENCE_TAGS = {
@@ -3775,6 +3814,15 @@ const SENTENCE_TAGS = {
   "46913": [
     { ruleId: "mubtada-khabar-01", matchText: "هُوَ" },
     { ruleId: "marfu-grundfall-01", matchText: "نَصْرَانِيٌّ" }
+  ],
+  "mb1-83-1": [
+    { ruleId: "mamnu-min-as-sarf-namen-01", matchText: "وِلْيَمُ" }
+  ],
+  "mb1-82-2": [
+    { ruleId: "nat-bestimmter-mudaf-01", matchText: "بَيْتُنَا الْجَدِيدُ" }
+  ],
+  "mb1-85-1": [
+    { ruleId: "idafa-ayyu-01", matchText: "أَيُّ يَوْمٍ" }
   ]
 };
 

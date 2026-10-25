@@ -104,11 +104,16 @@ const REGELN = ktx.R, TAGS = ktx.T, THEMEN = ktx.TH;
    nicht (mit ihnen 645 Stellen, ohne 602). */
 const satzKtx = { window: {}, console: { log(){}, warn(){}, error(){} }, document: { addEventListener(){} } };
 vm.createContext(satzKtx);
-for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js']) {
+/* 25.10.2026 (Wartung So): data/kalender.js dazu (Weg 6, v709). Die 17 Kalenderkarten
+   (kal-…) sind 'personal', also immer frei, und bekommen ihren Satz aus
+   data/beispielsaetze.js über saetzeNachtragen(KALENDER_VOKABELN) in js/buecher.js.
+   Ohne diese Quelle brach das Werkzeug mit „17 markierte Sätze aus keiner bekannten
+   Quelle" ab. */
+for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js', 'data/kalender.js']) {
   try { vm.runInContext(fs.readFileSync(path.join(REPO, datei), 'utf8'), satzKtx); }
   catch (e) { console.log('  ⛔ ' + datei + ' nicht lesbar: ' + e.message); process.exit(1); }
 }
-vm.runInContext('globalThis.S = { VD: VOCAB_DATA, LB: LEHRBUCH_SAETZE, BS: BEISPIELSAETZE, FB: FACHBEGRIFF_VOKABELN };', satzKtx);
+vm.runInContext('globalThis.S = { VD: VOCAB_DATA, LB: LEHRBUCH_SAETZE, BS: BEISPIELSAETZE, FB: FACHBEGRIFF_VOKABELN, KAL: KALENDER_VOKABELN };', satzKtx);
 const S = satzKtx.S;
 const EIGENE = JSON.parse(fs.readFileSync(path.join(REPO, 'data/eigene-woerter.json'), 'utf8')).woerter || [];
 const LERNSTAND = JSON.parse(fs.readFileSync(path.join(REPO, 'data/lernstand.json'), 'utf8'));
@@ -138,6 +143,8 @@ S.LB.forEach(s => ECHTE_SAETZE.add(String(s.id)));
 Object.keys(S.BS).filter(id => id.startsWith('satz-lang-') && S.BS[id] && S.BS[id].sentAr)
   .forEach(id => ECHTE_SAETZE.add(id));
 S.FB.concat(EIGENE).filter(w => w && w.sentAr).forEach(w => ECHTE_SAETZE.add(String(w.id)));
+S.KAL.filter(w => w && (w.sentAr || (S.BS[String(w.id)] && S.BS[String(w.id)].sentAr)))
+  .forEach(w => ECHTE_SAETZE.add(String(w.id)));
 let buchSaetze = 0;
 for (const [slug, bis] of Object.entries(ANGABE)) {
   if (NICHT_IN_ARBEIT[slug]) continue;
