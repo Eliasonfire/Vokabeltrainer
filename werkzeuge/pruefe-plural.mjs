@@ -126,6 +126,11 @@ const GESEHEN = {
      45908 'nah' — MEINE Einordnung: seine Mehrzahl ist die seiner Karte 45817 und das Adjektiv dahinter.
      45841 und p_1787185012359 (ein selbst angelegtes Wort) 'wartet' — ihm in die To-Do gelegt. */
   '45908': 'nah', '45841': 'wartet', 'p_1787185012359': 'wartet',
+  /* 25.10.2026 (Wartung So), zwei neue aus Madina 1 Kapitel 14 — beide ihm in die To-Do
+     gelegt („Wartet auf Elias"): 45928 Flughafen (MEINE Einschätzung: nah, weiblicher
+     Plural auf -āt am unveränderten Stamm) und 45933 Prophet (MEINE Einschätzung: weit,
+     eigene Karte lohnt). */
+  '45928': 'wartet', '45933': 'wartet',
 };
 
 /* ---------- Zeichen, als Codepunkte (nichts Arabisches getippt) ---------- */

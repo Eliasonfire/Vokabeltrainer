@@ -897,27 +897,37 @@
       "grund": "Uebung 1 (dhalika rajulun mudarrisun — ulaika rijalun mudarrisuna) als freiwillige Hausaufgabe, dann Verabschiedung und Aufruf, online dabei zu sein. Anwendung von ismul-isara-ulaika-01, kein neuer Lehrsatz."
     },
     "f29-1245": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "mamnu-min-as-sarf-namen-01",
+      "eingebaut": "2026-10-25",
       "grund": "Der Lehrer: Ibrahim und Yusuf haben kein Tanwin, weil sie nicht arabischen Ursprungs sind (mamnu min as-sarf); ein deutscher Name im Arabischen hat ebenso kein Tanwin, und auch keine Kasra. Der Schluessel sagt dasselbe in L14, Punkt 5: nicht-arabische Eigennamen haben kein Tanwin, die meisten Prophetennamen sind nicht-arabisch (Adam, Ibrahim, Ishaq, Ismail, Yaqub). Lehrer und Schluessel einig, bisher nur in mamnu-min-as-sarf-01 als vertagter Grund erwaehnt. Die Ausnahme des Schluessels (maennlich, drei Buchstaben, Sukun auf dem zweiten: Nuh, Lut) nennt der Lehrer nicht; das ist eine Luecke, kein Widerspruch. Kein Kasra passt zu L23 (Diptot: Fatha statt Kasra).",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md, Punkt 5; Folge 29 @ 12:45"
     },
     "f29-1415": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "mamnu-min-as-sarf-namen-01",
+      "eingebaut": "2026-10-25",
       "grund": "Fortsetzung von f29-1245 mit einem Schuelernamen: nicht Raphaelun, sondern Rafailu, weil der Name keinen arabischen Ursprung hat; ebenso Louis. Dieselbe Regel wie f29-1245 (nicht-arabische Eigennamen ohne Tanwin), eine Regel, nicht zwei.",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md, Punkt 5; Folge 29 @ 14:15"
     },
     "f29-1615": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "mamnu-min-as-sarf-namen-01",
+      "eingebaut": "2026-10-25",
       "grund": "Dialog Kapitel 14: ismuhu William, nicht Williamun; ad-duktur Eduardu, auch kein Tanwin. Der Schluessel nennt in L14.5 genau wilyamu als Beispiel. Dieselbe Regel wie f29-1245.",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md, Punkt 5 (Beispiel wilyamu); Folge 29 @ 16:15"
     },
     "f29-1945": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "mamnu-min-as-sarf-namen-01",
+      "eingebaut": "2026-10-25",
       "grund": "Uebung 5: nicht-arabische Namen haben kein Tanwin und auch keine Kasra (William, Edward, London, Paris, Pakistan, Istanbul, die Prophetennamen, Jibril, Mikail, Firaun). Der Schluessel L14.5 nennt London und Pakistan als Beispiele. Dieselbe Regel wie f29-1245. Danach beginnt ayyu (welcher) als Mudaf, das gehoert zu f29-2115.",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md, Punkt 5 (Beispiele landanu, bakistanu); Folge 29 @ 19:45"
     },
     "f29-2115": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "idafa-ayyu-01",
+      "eingebaut": "2026-10-25",
       "grund": "Der Lehrer (ab 19:45): ayyu heisst welcher und funktioniert wie ein Mudaf, das Wort danach wird Mudaf ilayhi (ayyu yawmin hadha); ayyu selbst kann majrur werden, wenn eine Praeposition davor steht (min ayyi), oder mansub. Der Schluessel fuehrt in L14 ayyu als welcher, als Mudaf. Lehrer und Schluessel einig; eine eigene Regel zu ayyu gibt es im Bestand nicht (gesucht in grammar-data.js nach ayy).",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md (Einleitung: ayyu als Mudaf); Folge 29 @ 19:45 und 21:15"
     },
@@ -930,12 +940,16 @@
       "grund": "Fortsetzung von f29-2815: fi ayyi shari in, dann der Antwortsatz (fi sharii lladhi amama l-mahkamati) und Wortkunde (al-mahkama, das Gericht). Anwendung von f29-2115 und ismun-mawsul-alladhi-01, kein neuer Lehrsatz."
     },
     "f29-845": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "nat-bestimmter-mudaf-01",
+      "eingebaut": "2026-10-25",
       "grund": "Der Lehrer zu ayna baytukumu l-jadidu: das Nat ist bestimmt, weil euer Haus bestimmt ist (es gehoert euch); beide sind bestimmt, muessen aber nicht dieselbe Bestimmtheit haben, also nicht beide mit al-. Der Schluessel L14, Punkt 6: ein Mudaf ist durch seine Position bestimmt, sein Adjektiv steht deshalb in der bestimmten Form, auch bei einem Possessivpronomen als Mudaf ilayhi (baytuhu l-jadidu). Lehrer und Schluessel einig. Bisher stand der Punkt nur gespeichert (Schluessel-Regeln.md, Zeile 6 der Gegenueberstellung, wegen Elias Filter vom 29.07.: neu fuer ihn) — jetzt hat ihn der Lehrer gesagt.",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md, Punkt 6 (baytuhu l-jadidu); Folge 29 @ 8:45"
     },
     "f29-1015": {
-      "urteil": "regel",
+      "urteil": "schon-regel",
+      "regel": "nat-bestimmter-mudaf-01",
+      "eingebaut": "2026-10-25",
       "grund": "Fortsetzung von f29-845: Wiederholung, dass beide nicht dieselbe Bestimmtheit haben muessen, dann baytuna l-jadidu qaribun mina l-matari. Dieselbe Regel wie f29-845 (Adjektiv am bestimmten Mudaf), danach Wortkunde (al-matar, ath-thanawiya, kulliya).",
       "quelle": "Schluessel 1, Lektion 14 (S. 52-55), Vault 04 - Wissen/Schluessel-Regeln.md, Punkt 6; Folge 29 @ 10:15"
     },
