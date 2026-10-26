@@ -137,9 +137,9 @@ function kapitelBeschriftung(w){
    sieht schlicht wie eine bewusste Grenze aus. Siehe die Lehre zum
    eingefrorenen Feld. */
 const FREIGESCHALTET = {
-  // Stand: arabicroots + App-Auswahl, abgefragt am 22.10.2026
+  // Stand: arabicroots + App-Auswahl, abgefragt am 26.10.2026
   'bayna-yadayk-1': [1,2,3,4],   // Elias am 05.10.2026 auf die Frage, ob Kapitel 5 noch stimmt: „nur bis 4“ — Kapitel 5 wieder zu
-  'madina-1': [1,2,3,4,5,6,7,8,9,10,11,12,13,14],   // Elias am 20.08.2026: „ich habe übrigens kapitel 12 freigeschaltet“
+  'madina-1': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],   // Elias am 20.08.2026: „ich habe übrigens kapitel 12 freigeschaltet“
   'madina-2': [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
 };
 
