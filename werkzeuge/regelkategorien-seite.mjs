@@ -1,5 +1,6 @@
 /* regelkategorien-seite.mjs — alle Regeln nach Kategorien, eine Frage je Regel.
  *
+ *   node werkzeuge/satzmodus-sichtbar.mjs      (zuerst: welche Sätze er im Satzmodus sieht)
  *   node werkzeuge/regelkategorien-seite.mjs
  *
  * Ergebnis: artefakte/regelkategorien.html (fertig zum Veröffentlichen)
@@ -49,9 +50,15 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { arabischInSeite, BIDI_CSS } from './arabisch-hervorheben.mjs';
 import { schreibeNetzfassung, hinweisVeroeffentlichen } from './seite-teilen.mjs';
+import { messungLesen, zaehleSichtbar } from './satzmodus-sichtbar.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ZIEL = path.join(REPO, 'artefakte', 'regelkategorien.html');
+/* --messung <datei>  eine andere Messung als .stand-satzmodus.json (für den Test)
+   --ziel <ordner>    woanders hinschreiben als artefakte/ (für den Test) */
+const ARGS = process.argv.slice(2);
+const argWert = name => { const i = ARGS.indexOf(name); return i >= 0 && ARGS[i + 1] ? ARGS[i + 1] : null; };
+const ZIELORDNER = argWert('--ziel') ? path.resolve(argWert('--ziel')) : path.join(REPO, 'artefakte');
+const ZIEL = path.join(ZIELORDNER, 'regelkategorien.html');
 const ADRESSE = 'https://claude.ai/artifact/DHhYFwtTNJADVwE2tVUDz3';
 const SPEICHER = 'regelkategorien-v1';
 
@@ -64,147 +71,61 @@ vm.runInContext(fs.readFileSync(path.join(REPO, 'grammar-data.js'), 'utf8')
   + '\nglobalThis.R = GRAMMAR_RULES; globalThis.T = SENTENCE_TAGS; globalThis.TH = SATZ_THEMEN;', ktx);
 const REGELN = ktx.R, TAGS = ktx.T, THEMEN = ktx.TH;
 
-/* ---------- ⛔ NUR STELLEN, DIE ER AUCH SIEHT (16.09.2026) ----------
+/* ---------- ⛔ NUR STELLEN, DIE ER IM SATZMODUS SIEHT ----------
 
-   SENTENCE_TAGS hat 617 Markierungen, aber nur 400 davon liegen auf einem Satz,
-   den es wirklich gibt. Der Rest hängt an Madina-1-Vokabeln ohne Beispielsatz
-   (113) und an Fachbegriffskarten (35) — beides Stellen, die im Satzmodus nie
-   auftauchen.
+   Warum das zählt (16.09.2026): über alle Markierungen gerechnet standen andere
+   Kategorien oben als über die, die er wirklich sieht. Eine Zahl, die
+   Unsichtbares mitzählt, schickt ihn an die falschen Kategorien — und die
+   Zahl auf jeder Regelkarte („· n Satzstellen") soll nicht mehr versprechen,
+   als er zu sehen bekommt. [[werkzeug_misst_kleineren_bestand]]
+   [[aufgabenzahl_haengt_am_filter]]
 
-   ⚠️ Der Unterschied ist nicht klein, und er ändert die REIHENFOLGE. Über alle
-   617 gerechnet stünden Nominalsatz, Adjektiv und Iḍāfa oben; über die 400, die
-   er sieht, sind es Genitiv, Kasus, اَلْ und Schrift — also genau die vier, die
-   ich ihm genannt habe. Eine Zahl, die Unsichtbares mitzählt, hätte ihn hier an
-   die falschen vier Kategorien geschickt. [[werkzeug_misst_kleineren_bestand]]
+   ⛔⛔ 26.10.2026: BIS HEUTE BAUTE DIESES WERKZEUG DIE AUSWAHL DES SATZMODUS AUS
+   DEN DATEIEN NACH (vocab-data.js, Lehrbuch, `satz-lang-…`, Fachbegriffe, eigene
+   Wörter, Kalender, Buchsätze bis zur `angabe` in data/lernstand.json). Seit dem
+   20.10.2026 zeigt die App den Satz einer Karte aber erst, wenn er die Karte
+   schon gesehen hat (schonGesehen() in js/kern.js), und gelöschte Karten, nicht
+   bestellte Fachbegriffe, einzeln freigeschaltete Wörter und seine eigenen
+   Satzänderungen kannte der Nachbau nie. Gemessen an seinem Stand vom
+   26.10.2026, 19:01: die Seite zählte 819 Satzstellen, er sah 628 — 236 zu viel
+   (212 davon an Karten, die er nie gesehen hat) und 45 zu wenig (Wörter aus
+   Kapiteln und aus „Koran häufigste", die der Nachbau nicht kannte).
+   Elias darauf: „Ja, korrigiere die Zählung auf der Seite „Regeln nach
+   Kategorien", damit nur Sätze zählen, die ich schon sehen kann."
 
-   ⚠️ Die Zahl auf jeder Regelkarte („· n Satzstellen") folgt derselben
-   Rechnung — sie soll nicht mehr versprechen, als er zu sehen bekommt.
+   Seitdem entscheidet die App: werkzeuge/satzmodus-sichtbar.mjs fragt
+   alleSaetze() mit seinem Stand und legt die Kennungen in .stand-satzmodus.json
+   ab. Gezählt wird nur, was dort steht. Fehlt die Messung, oder hat sich seit
+   ihr eine Datei der App geändert, baut dieses Werkzeug NICHT — still alles zu
+   zählen war genau der Fehler. Kennt die Messung einen markierten Satz gar
+   nicht, ebenso. Bewacht von test-satzmodus-sichtbar.mjs. */
+const MESS = messungLesen(argWert('--messung') ? path.resolve(argWert('--messung')) : undefined);
+if (MESS.fehler) { console.log('  ⛔ ' + MESS.fehler); process.exit(1); }
+const MESSUNG = MESS.messung;
+const ZAEHLUNG = zaehleSichtbar(TAGS, MESSUNG);
+if (ZAEHLUNG.unbekannt.length) {
+  console.log('  ⛔ ' + ZAEHLUNG.unbekannt.length + ' markierte Sätze, die die Messung nicht kennt (z. B. '
+    + ZAEHLUNG.unbekannt.slice(0, 5).join(', ') + ') — Messung und Daten passen nicht zusammen. Neu messen:'
+    + ' node werkzeuge/satzmodus-sichtbar.mjs');
+  process.exit(1);
+}
+const marken = ZAEHLUNG.marken;
+const SICHTBAR = new Set(MESSUNG.sichtbar.map(String));
+const STAND_GERAET = MESSUNG.geaendert
+  ? new Date(MESSUNG.geaendert).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  : 'unbekannt';
 
-   ⛔⛔ 17.09.2026: DIE VORAUSSETZUNG OBEN GALT NICHT MEHR. Seit dem 16.09.
-   trägt jede Markierung einen Satztext (data/beispielsaetze.js, Fachbegriffe,
-   eigene Wörter), und der Satzmodus zeigt mehr als vocab-data.js und das
-   Lehrbuch — js/saetze.js alleSaetze() + nichtVorausgeschrieben() und
-   js/kern.js istBekannt():
-     · die längeren Sätze `satz-lang-…` (immer)
-     · die Sätze der Fachbegriffe und eigenen Wörter (chapter 'personal',
-       immer bekannt)
-     · die Sätze aus data/beispielsaetze.js zu den Buchwörtern der Kapitel,
-       die er lernt (saetzeNachtragen in js/buecher.js)
-   Gezählt wurden nur 400 von 749 Markierungen. An seinem Gerätestand vom
-   16.09. 21:58 gemessen (scratchpad rangfolge-sichtbar.cjs): sichtbar sind
-   355 Sätze mit 645 Markierungen, und oben standen Genitiv · Kasus · Schrift
-   · Adjektiv, wo es Genitiv · إِضَافَة · Kasus · Adjektiv sein muss —
-   إِضَافَة stand auf Platz 7 und hat nach Genitiv die meisten offenen Stellen,
-   die er wirklich sieht. [[aufgabenzahl_haengt_am_filter]]
-
-   Der Kapitelstand kommt aus data/lernstand.json (`angabe` = seine eigene
-   Angabe, `nichtInArbeit` bleibt draußen), nicht aus seinem Browser. Seine
-   einzeln freigeschalteten Wörter kennt das Werkzeug nicht
-   [[einzeln_frei_ist_nur_im_browser]] — gemessen ändern sie die obersten fünf
-   nicht (mit ihnen 645 Stellen, ohne 602). */
+/* Die Satzquellen braucht das Werkzeug nur noch für die Beispielstelle je Regel (unten). */
 const satzKtx = { window: {}, console: { log(){}, warn(){}, error(){} }, document: { addEventListener(){} } };
 vm.createContext(satzKtx);
-/* 25.10.2026 (Wartung So): data/kalender.js dazu (Weg 6, v709). Die 17 Kalenderkarten
-   (kal-…) sind 'personal', also immer frei, und bekommen ihren Satz aus
-   data/beispielsaetze.js über saetzeNachtragen(KALENDER_VOKABELN) in js/buecher.js.
-   Ohne diese Quelle brach das Werkzeug mit „17 markierte Sätze aus keiner bekannten
-   Quelle" ab. */
-for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js', 'data/kalender.js']) {
+for (const datei of ['vocab-data.js', 'lehrbuch-saetze.js', 'data/beispielsaetze.js', 'data/fachbegriffe.js']) {
   try { vm.runInContext(fs.readFileSync(path.join(REPO, datei), 'utf8'), satzKtx); }
   catch (e) { console.log('  ⛔ ' + datei + ' nicht lesbar: ' + e.message); process.exit(1); }
 }
-vm.runInContext('globalThis.S = { VD: VOCAB_DATA, LB: LEHRBUCH_SAETZE, BS: BEISPIELSAETZE, FB: FACHBEGRIFF_VOKABELN, KAL: KALENDER_VOKABELN };', satzKtx);
+vm.runInContext('globalThis.S = { VD: VOCAB_DATA, LB: LEHRBUCH_SAETZE, BS: BEISPIELSAETZE, FB: FACHBEGRIFF_VOKABELN };', satzKtx);
 const S = satzKtx.S;
 const EIGENE = JSON.parse(fs.readFileSync(path.join(REPO, 'data/eigene-woerter.json'), 'utf8')).woerter || [];
-const LERNSTAND = JSON.parse(fs.readFileSync(path.join(REPO, 'data/lernstand.json'), 'utf8'));
-const ANGABE = LERNSTAND.angabe || {}, NICHT_IN_ARBEIT = LERNSTAND.nichtInArbeit || {};
-/* Der Buchabzug darf nicht ins Repo (arabicroots AGB 3.7/9) und liegt nur hier
-   auf der Platte. ⛔ Fehlt er für ein Buch, das er lernt, bricht das Werkzeug
-   ab: still weitergezählt käme die alte, zu kleine Rangfolge heraus. */
-const buchFenster = {};
-for (const n of fs.readdirSync(path.join(REPO, 'data')).filter(n => /^vokabeln-.*\.js$/.test(n)))
-  new Function('window', fs.readFileSync(path.join(REPO, 'data', n), 'utf8'))(buchFenster);
-const BUCH = buchFenster.VOKABELN || {};
-/* 14.10.2026 (Wartung): „Koran häufigste" (kh-…, seit v680) ist in der App ein
-   BUCH — js/buecher.js koranKarten(), slug koran-haeufig, Kapitel = `kap` —, und
-   seine Sätze aus data/beispielsaetze.js hängt saetzeNachtragen() erst an, wenn er
-   die Gruppe anhakt. Also hier wie jedes Buch: gezählt nur mit einer `angabe` in
-   data/lernstand.json. Ohne diese Zeile brach das Werkzeug mit „aus keiner
-   bekannten Quelle" ab. */
-try {
-  const KH = new Function(fs.readFileSync(path.join(REPO, 'koran-haeufig-data.js'), 'utf8') + ';return KORAN_HAEUFIG;')();
-  BUCH['koran-haeufig'] = KH.map(e => ({ id: e.id, chapter: e.kap }));
-} catch (e) { console.log('  ⛔ koran-haeufig-data.js nicht lesbar: ' + e.message); process.exit(1); }
 
-const lernIds = new Set(S.VD.map(w => String(w.id)));
-const ECHTE_SAETZE = new Set();
-S.VD.filter(w => w.sentAr).forEach(w => ECHTE_SAETZE.add(String(w.id)));
-S.LB.forEach(s => ECHTE_SAETZE.add(String(s.id)));
-Object.keys(S.BS).filter(id => id.startsWith('satz-lang-') && S.BS[id] && S.BS[id].sentAr)
-  .forEach(id => ECHTE_SAETZE.add(id));
-S.FB.concat(EIGENE).filter(w => w && w.sentAr).forEach(w => ECHTE_SAETZE.add(String(w.id)));
-S.KAL.filter(w => w && (w.sentAr || (S.BS[String(w.id)] && S.BS[String(w.id)].sentAr)))
-  .forEach(w => ECHTE_SAETZE.add(String(w.id)));
-let buchSaetze = 0;
-for (const [slug, bis] of Object.entries(ANGABE)) {
-  if (NICHT_IN_ARBEIT[slug]) continue;
-  if (!BUCH[slug]) {
-    console.log('  ⛔ data/vokabeln-' + slug + '.js fehlt — ohne den Buchabzug fehlen seine Buchsätze in der Rangfolge.');
-    process.exit(1);
-  }
-  for (const w of BUCH[slug]) {
-    const id = String(w.id);
-    if (lernIds.has(id) || ECHTE_SAETZE.has(id) || !(Number(w.chapter) <= Number(bis))) continue;
-    if (S.BS[id] && S.BS[id].sentAr) { ECHTE_SAETZE.add(id); buchSaetze++; }
-  }
-}
-if (!ECHTE_SAETZE.size) {
-  console.log('  ⛔ Keine Sätze gefunden — VOCAB_DATA/LEHRBUCH_SAETZE leer?');
-  process.exit(1);
-}
-
-/* ⛔ Nicht gezählt werden darf nur ein Buchwort außerhalb seines Fensters.
-   Jede andere Markierung, die hier herausfiele, gehört zu einer Satzquelle,
-   die dieses Werkzeug nicht kennt — genau so ist die Rangfolge vom 16.09.
-   still falsch geworden (neue Quellen, alte Zählung). Dann lieber abbrechen. */
-const buchIds = new Set(Object.values(BUCH).flat().map(w => String(w.id)));
-/* 14.10.2026 (Wartung): Fachbegriffe, deren Satz NUR in data/beispielsaetze.js
-   steht (gram-jam-…, v671). Damals hängte die App Fachbegriffen von dort keinen
-   Satz an — gelesen, nicht im Browser gemessen.
-   ⛔ 26.10.2026: DIESE BEGRÜNDUNG GILT SEIT 19.10.2026 NICHT MEHR. Commit 453a8d4
-   (js/buecher.js: saetzeNachtragen(FACHBEGRIFF_VOKABELN)) hängt die Sätze an, die App
-   zeigt sie also. Die drei Plural-Karten bleiben trotzdem zu Recht ungezählt: Elias hat
-   sie am 19.10.2026 selbst gelöscht (vt_geloescht, an: true). Gemessen an seinem
-   Gerätestand vom 26.10.2026, 19:01, in der echten App (Edge headless,
-   scratchpad bfde764d/nachbau-fachbegriff-saetze.mjs): keine der drei steht in
-   VOCAB_DATA, also auch kein Satz im Satzmodus.
-   Darum nur DIESE drei: jeder andere Fachbegriff, dessen Satz nur in
-   data/beispielsaetze.js steht, geht zu „fremd" — die App zeigt ihn, also erst
-   klären statt still weglassen. Seine Löschungen kennt dieses Werkzeug sonst nicht
-   (sie stehen nur in seinem Gerätestand). Holt er die drei zurück, diese Liste leeren. */
-const GELOESCHT_GEMESSEN = new Set(['gram-jam-mudhakkar-salim', 'gram-jam-muannath-salim', 'gram-jam-taksir']);
-const fbNurBs = new Set(S.FB.filter(w => w && !w.sentAr && S.BS[String(w.id)] && S.BS[String(w.id)].sentAr).map(w => String(w.id)));
-const ohneAnzeige = [];
-const marken = {};
-const fremd = [];
-for (const [satzId, liste] of Object.entries(TAGS)) {
-  if (!liste || !liste.length) continue;
-  if (!ECHTE_SAETZE.has(satzId)) {
-    if (fbNurBs.has(satzId)) (GELOESCHT_GEMESSEN.has(satzId) ? ohneAnzeige : fremd).push(satzId);
-    else if (!buchIds.has(satzId) || lernIds.has(satzId)) fremd.push(satzId);
-    continue;
-  }
-  for (const t of liste) marken[t.ruleId] = (marken[t.ruleId] || 0) + 1;
-}
-if (fremd.length) {
-  console.log('  ⛔ ' + fremd.length + ' markierte Sätze aus keiner bekannten Quelle (z. B. ' + fremd.slice(0, 5).join(', ')
-    + ') — erst klären, ob er sie sieht, sonst stimmt die Rangfolge nicht.');
-  process.exit(1);
-}
-if (ohneAnzeige.length) {
-  console.log('  ⚠️ ' + ohneAnzeige.length + ' Fachbegriff-Satz/Sätze mit Markierung nicht gezählt (' + ohneAnzeige.join(', ')
-    + '): Elias hat diese Karten am 19.10.2026 selbst gelöscht (gemessen 26.10.2026). Holt er sie zurück, zählen sie.');
-}
 
 /* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht.
    ⛔⛔ BIS ZUM 22.09.2026 STAND HIER NUR DAS EINE WORT, ohne Überschrift.
@@ -221,10 +142,17 @@ for (const s of S.LB) if (s && s.sentAr) SATZ_AR.set(String(s.id), s.sentAr);
 for (const [id, s] of Object.entries(S.BS)) if (s && s.sentAr) SATZ_AR.set(String(id), s.sentAr);
 for (const w of S.FB.concat(EIGENE)) if (w && w.sentAr) SATZ_AR.set(String(w.id), w.sentAr);
 
+/* ⭐ 26.10.2026: zuerst aus einem Satz, den er im Satzmodus sieht — der Zweck oben ist
+   „die Stelle, an der er die Regel wirklich sieht", und seit heute zählt nur, was er
+   sieht. MEINE Ableitung daraus, nicht sein Satz. Hat eine Regel keinen sichtbaren
+   Satz, bleibt es wie bisher beim ersten markierten. */
 const beispiel = {};
-for (const [satzId, liste] of Object.entries(TAGS))
-  for (const t of liste) if (!beispiel[t.ruleId])
-    beispiel[t.ruleId] = { wort: t.matchText, satz: SATZ_AR.get(String(satzId)) || null };
+for (const nurSichtbar of [true, false])
+  for (const [satzId, liste] of Object.entries(TAGS)) {
+    if (nurSichtbar && !SICHTBAR.has(satzId)) continue;
+    for (const t of liste) if (!beispiel[t.ruleId])
+      beispiel[t.ruleId] = { wort: t.matchText, satz: SATZ_AR.get(String(satzId)) || null };
+  }
 
 /* ---------- zuordnen ---------- */
 const mitMuster = THEMEN.filter(t => t.muster);
@@ -472,6 +400,8 @@ zwei getrennte Orte. Die Kategorien sind dieselben Reiter wie im Satzmodus.</p>
   <p class="klein">Danach kannst du aufhören — der Rest sind kleine Kategorien, bei denen
   eine Entscheidung ein oder zwei Stellen betrifft. Die Reihenfolge rechnet sich bei jedem
   Neubau der Seite neu: was du erledigt hast, rutscht nach unten.</p>
+  <p class="klein">Gezählt sind nur Stellen in Sätzen, die du im Satzmodus schon sehen
+  kannst (dein Stand vom ${esc(STAND_GERAET)}).</p>
 </div>
 
 ${bloecke}
@@ -649,12 +579,14 @@ fs.renameSync(ZIEL + '.neu', ZIEL);
    muss eine Sitzung vor jedem Neuveröffentlichen ganz lesen (über 200.000
    Token), deshalb stand die Seite am 11.10.2026 drei Wochen alt im Netz.
    Warum, wie und was dabei gleich bleiben muss: werkzeuge/seite-teilen.mjs. */
-const NETZ = schreibeNetzfassung(fertig, path.join(REPO, 'artefakte', 'netz', 'regelkategorien'));
+const NETZ = schreibeNetzfassung(fertig, path.join(ZIELORDNER, 'netz', 'regelkategorien'));
 
 console.log('Seite gebaut: ' + path.relative(REPO, ZIEL));
-console.log('  gezählt über ' + ECHTE_SAETZE.size + ' Sätze, die er sieht (davon ' + buchSaetze + ' Buchsätze bis '
-  + (Object.entries(ANGABE).filter(([b]) => !NICHT_IN_ARBEIT[b]).map(([b, k]) => b + ' K' + k).join(', ') || '—') + ') · '
-  + Object.values(marken).reduce((a, n) => a + n, 0) + ' Satzstellen');
+const NG = Object.entries(ZAEHLUNG.nichtGezaehlt).sort((a, b) => b[1].stellen - a[1].stellen);
+console.log('  gezählt: ' + ZAEHLUNG.stellen + ' Satzstellen in ' + ZAEHLUNG.saetze + ' markierten Sätzen, die er im Satzmodus sieht'
+  + ' (sein Stand vom ' + STAND_GERAET + ', gemessen ' + new Date(MESSUNG.abgefragt).toLocaleString('de-DE') + ')');
+console.log('  nicht gezählt: ' + NG.reduce((a, [, g]) => a + g.stellen, 0) + ' Satzstellen — '
+  + (NG.map(([grund, g]) => grund + ' ' + g.stellen + ' (' + g.saetze + (g.saetze === 1 ? ' Satz)' : ' Sätze)')).join(' · ') || '—'));
 console.log('  zuerst: ' + vorrangListe.map(([, g]) => g.name + ' (' + g.offeneStellen + ')').join(' · '));
 console.log('  ' + gesamt + ' Regeln in ' + [...gruppen.values()].filter(g => g.regeln.length).length + ' Kategorien');
 for (const [, g] of gruppen) if (g.regeln.length)
