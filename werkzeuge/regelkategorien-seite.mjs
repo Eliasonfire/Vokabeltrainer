@@ -169,9 +169,20 @@ if (!ECHTE_SAETZE.size) {
    still falsch geworden (neue Quellen, alte Zählung). Dann lieber abbrechen. */
 const buchIds = new Set(Object.values(BUCH).flat().map(w => String(w.id)));
 /* 14.10.2026 (Wartung): Fachbegriffe, deren Satz NUR in data/beispielsaetze.js
-   steht (gram-jam-…, v671). In der App hängt saetzeNachtragen() Sätze nur an
-   Buchkarten und eigene Wörter (js/buecher.js), nicht an FACHBEGRIFF_VOKABELN —
-   gelesen, nicht im Browser gemessen. Deshalb nicht gezählt, aber GEMELDET. */
+   steht (gram-jam-…, v671). Damals hängte die App Fachbegriffen von dort keinen
+   Satz an — gelesen, nicht im Browser gemessen.
+   ⛔ 26.10.2026: DIESE BEGRÜNDUNG GILT SEIT 19.10.2026 NICHT MEHR. Commit 453a8d4
+   (js/buecher.js: saetzeNachtragen(FACHBEGRIFF_VOKABELN)) hängt die Sätze an, die App
+   zeigt sie also. Die drei Plural-Karten bleiben trotzdem zu Recht ungezählt: Elias hat
+   sie am 19.10.2026 selbst gelöscht (vt_geloescht, an: true). Gemessen an seinem
+   Gerätestand vom 26.10.2026, 19:01, in der echten App (Edge headless,
+   scratchpad bfde764d/nachbau-fachbegriff-saetze.mjs): keine der drei steht in
+   VOCAB_DATA, also auch kein Satz im Satzmodus.
+   Darum nur DIESE drei: jeder andere Fachbegriff, dessen Satz nur in
+   data/beispielsaetze.js steht, geht zu „fremd" — die App zeigt ihn, also erst
+   klären statt still weglassen. Seine Löschungen kennt dieses Werkzeug sonst nicht
+   (sie stehen nur in seinem Gerätestand). Holt er die drei zurück, diese Liste leeren. */
+const GELOESCHT_GEMESSEN = new Set(['gram-jam-mudhakkar-salim', 'gram-jam-muannath-salim', 'gram-jam-taksir']);
 const fbNurBs = new Set(S.FB.filter(w => w && !w.sentAr && S.BS[String(w.id)] && S.BS[String(w.id)].sentAr).map(w => String(w.id)));
 const ohneAnzeige = [];
 const marken = {};
@@ -179,7 +190,7 @@ const fremd = [];
 for (const [satzId, liste] of Object.entries(TAGS)) {
   if (!liste || !liste.length) continue;
   if (!ECHTE_SAETZE.has(satzId)) {
-    if (fbNurBs.has(satzId)) ohneAnzeige.push(satzId);
+    if (fbNurBs.has(satzId)) (GELOESCHT_GEMESSEN.has(satzId) ? ohneAnzeige : fremd).push(satzId);
     else if (!buchIds.has(satzId) || lernIds.has(satzId)) fremd.push(satzId);
     continue;
   }
@@ -192,7 +203,7 @@ if (fremd.length) {
 }
 if (ohneAnzeige.length) {
   console.log('  ⚠️ ' + ohneAnzeige.length + ' Fachbegriff-Satz/Sätze mit Markierung nicht gezählt (' + ohneAnzeige.join(', ')
-    + '): der Satz steht nur in data/beispielsaetze.js, und die App hängt Fachbegriffen von dort keinen an.');
+    + '): Elias hat diese Karten am 19.10.2026 selbst gelöscht (gemessen 26.10.2026). Holt er sie zurück, zählen sie.');
 }
 
 /* Ein Beispielsatz je Regel — die Stelle, an der er die Regel wirklich sieht.
