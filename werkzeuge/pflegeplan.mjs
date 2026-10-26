@@ -204,6 +204,11 @@ export const PFLEGEPLAN = [
          „immer die aktuellsten und dann die zweit aktuellsten usw." */
       { nein: 'Die App schreibt den Zeitpunkt selbst mit, sobald er ein Kapitel anhakt (saveSettings) oder das Häkchen vom anderen Gerät ankommt (nach dem Abgleich). '
             + 'Die vier fest eingetragenen Zeitpunkte (KAPITEL_SEIT_GEMESSEN) sind Messwerte von vor dem Mitschreiben und ändern sich nicht mehr. Bewacht von test-kapitel-zuerst.mjs (im Sammellauf).' },
+      /* ⭐ 26.10.2026: drei Karten ganz ans Ende (ganzHinten() in js/kern.js,
+         gelesen von neueZuerst() und istGruppenwort()). Elias: „packe sie ganz
+         ans ende der liste damit ich diese wörter von den 3 büchern am letzten lerne" */
+      { nein: 'Die Liste der drei Kennungen (45929, 45930, 45931) steht im Code und wächst nur auf seinen Wunsch; von selbst kommt nichts dazu, und er trägt dafür nichts ein. '
+            + 'Veralten kann sie nicht: hat er die drei am Ende gelernt, stehen sie weiter hinten, ohne zu stören. Bewacht von test-ganz-hinten.mjs (im Sammellauf).' },
     ],
   },
   {

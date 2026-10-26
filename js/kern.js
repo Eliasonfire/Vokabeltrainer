@@ -3900,6 +3900,23 @@ function schonGesehen(w){
   const p = w && PROGRESS[w.id];
   return !!p && (Number(p.correct) > 0 || Number(p.wrong) > 0 || (Number(p.box) || 1) >= 2);
 }
+/* ⭐⭐ GANZ ANS ENDE (26.10.2026) — Elias, mit dem Bild seiner Suche (die drei Fakultäten aus
+   Madina 1, Kapitel 14): „diese 3 wörter will ich jetzt nicht lernen. packe sie ganz ans ende der
+   liste damit ich diese wörter von den 3 büchern am letzten lerne".
+   Die drei Karten: 45929 medizinische Fakultät, 45930 Ingenieursfakultät, 45931 Wirtschaftsfakultät.
+   Sie kommen HINTER jede andere Box-1-Karte, neue wie schon begonnene, auch hinter die Gruppe
+   „Koran häufigste" (neueZuerst() unten). Weg sind sie nicht: ist sonst nichts mehr da, kommen sie
+   dran — er will sie zuletzt lernen, nicht nie.
+   ⚠️ 45930 stand bei ihm seit dem 23.10. in der Lerngruppe (2× falsch; gemessen an seinem Stand von
+   26.10., 19:01). Ein Mitglied bleibt, bis er es mit „gut" beantwortet — darum zählt eine Karte
+   dieser Liste nicht als Gruppenwort (istGruppenwort() unten), sonst käme sie weiter jeden 2. Tag.
+   Sein Fortschritt bleibt unberührt: kein Code schreibt dafür in seinen Stand.
+   MEINE Bauart, nicht seine Vorgabe: die Liste steht im Code (wie FREISCHALTEN_AUF_WUNSCH) und wird
+   nur auf seinen Wunsch erweitert. Kommen die drei am Ende doch dran, zählen sie nicht als
+   Gruppenwort und können dann täglich kommen statt jeden 2. Tag. Bewacht von test-ganz-hinten.mjs. */
+function ganzHinten(w){
+  return !!w && ['45929', '45930', '45931'].includes(String(w.id));
+}
 function neueZuerst(liste){
   const neu = [], rest = [];
   for (const w of liste) (nieAbgefragt(w) ? neu : rest).push(w);
@@ -3949,7 +3966,11 @@ function neueZuerst(liste){
     return (an(b) - an(a))
       || (mitRang ? (String(a.book).localeCompare(String(b.book)) || (kapitelRang(b) - kapitelRang(a))) : 0);
   });
-  return neu.concat(rest);
+  /* ⭐ Ganz ans Ende (ganzHinten() oben): hinter alle neuen UND alle schon begonnenen
+     Box-1-Karten. Der typeof-Test hält Prüfstände lauffähig, die nur diese Funktion schneiden. */
+  const hinten = (typeof ganzHinten === 'function') ? ganzHinten : (() => false);
+  const alle = neu.concat(rest);
+  return alle.filter(w => !hinten(w)).concat(alle.filter(hinten));
 }
 
 /* ⭐⭐ DIE AKTUELLSTEN KAPITEL ZUERST (v654, 05.10.2026)
@@ -4158,6 +4179,8 @@ function zielHeuteOffen(){
 const GRUPPE_ABSTAND = 2;
 function istGruppenwort(w){
   const p = w && PROGRESS[w.id];
+  /* Was er ganz ans Ende gestellt hat, ist kein Mitglied (ganzHinten() bei neueZuerst()). */
+  if (typeof ganzHinten === 'function' && ganzHinten(w)) return false;
   return !!(p && p.gruppe && (p.box || 1) <= 1);
 }
 /** Alle Mitglieder der Lerngruppe in seiner Auswahl. */
