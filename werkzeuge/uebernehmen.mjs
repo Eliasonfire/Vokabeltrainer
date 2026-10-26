@@ -331,10 +331,30 @@ function pruefen(zeigeNur) {
       console.log(`     eingetragen, damit sie nicht unerreichbar herumliegt.`);
       fertig.push(b); continue;
     }
+    /* ⭐ Nennt der Entwurf seinen Satz (markierung.satzId), gilt DIESER Satz,
+       nicht der erste Treffer der Ladereihenfolge. Das Feld stand seit jeher im
+       Entwurf, gelesen hat es niemand. Am 26.10.2026 fiel es auf: al-yawma
+       (Folge 30) steht zeichengenau in 45787 und 48402. Der erste Treffer
+       45787 traegt das Wort schon als Markierung der Hamzat al-Wasl, gemeint
+       war 48402. Ohne diese Zeilen wartete der Entwurf wegen einer
+       Ueberschneidung in einem Satz, den er gar nicht wollte.
+       Ein leeres satzId (so legt --entwuerfe jeden Entwurf an) laesst alles
+       wie bisher: dann gilt der erste Treffer. */
+    const gewuenscht = String((b.e.markierung && b.e.markierung.satzId) || '').trim();
+    const satz = gewuenscht
+      ? b.treffer.find(s => String(s.id) === gewuenscht)
+      : b.treffer[0];
+    if (!satz) {
+      warten.push(b);
+      console.log(`⛔ ${kopf}: "${b.matchText}" steht nicht in Satz ${gewuenscht}`
+        + ` (markierung.satzId), nur in `
+        + b.treffer.slice(0, 4).map(s => s.id).join(', ')
+        + (b.treffer.length > 4 ? ' …' : ''));
+      continue;
+    }
     /* Ueberschneidung mit einer schon vorhandenen Markierung im selben Satz:
        zwei Unterstreichungen, die einander enthalten, ergeben in der App ein
        kaputtes Satzbild. Der Punkt am Wortende hat das schon einmal verdeckt. */
-    const satz = b.treffer[0];
     const bisher = SENTENCE_TAGS[satz.id] || [];
     const kollision = bisher.find(t => {
       const a = nfc(t.matchText);
@@ -363,12 +383,15 @@ function pruefen(zeigeNur) {
     fertig.push(b);
     /* Bei mehreren passenden Saetzen wird der erste genommen - das ist die
        Ladereihenfolge (Lehrbuch vor arabicroots), keine Auswahl. Deshalb wird
-       gesagt, WELCHER es ist und wie viele es noch gaebe. */
+       gesagt, WELCHER es ist und wie viele es noch gaebe. Ausnahme: der
+       Entwurf nennt seinen Satz selbst (siehe oben). */
+    const andere = b.treffer.filter(s => s !== satz);
     console.log(`✅ ${kopf}: Satz ${satz.id} (${satz.quelle})`
-      + `${b.treffer.length > 1
-        ? `  — von ${b.treffer.length} moeglichen der erste; andere: `
-          + b.treffer.slice(1, 4).map(s => s.id).join(', ')
-          + (b.treffer.length > 4 ? ' …' : '')
+      + `${andere.length
+        ? `  — von ${b.treffer.length} moeglichen `
+          + (gewuenscht ? 'der im Entwurf genannte' : 'der erste') + '; andere: '
+          + andere.slice(0, 3).map(s => s.id).join(', ')
+          + (andere.length > 3 ? ' …' : '')
         : ''}`);
   }
 
