@@ -9681,3 +9681,14 @@ Elias (26.10.2026, zwischen 17:35 und 17:41), wörtlich: *„im hörmodus sollen
 - Befund, nur als Frage an ihn: im Kalender „40 Tage am Stück", aber „28 längste Serie" — die längste Serie rechnet streng ohne Lücke, der Streak mit freiem Tag. Nach seiner Streak-Regel wären es 48 (ab 03.09.; sein Streak riss am 13.09. noch an der alten Wochen-Sperre, die am 14.09. fiel). Nicht gebaut.
 - Prüfungen: `validate.js` grün, Pflegeplan grün, Sammellauf 193 Prüfer, NEU rot 1 = `kandidaten-bewerten` (13 Kandidaten aus Folge 30, mein Rückstand, unabhängig von dieser Arbeit).
 - Hochgeladen 18:07:55 (`--mit-daten`), Production main `52b528cd` aus `92d1eda`, `pruefe-ausgeliefert` 0, `pruefe-erreichbarkeit` 0, Oberfläche 47 Prüfungen, 0 Seiten- und Konsolenfehler, Stempel v720.
+
+## 2026-10-26 18:43 – Neue Kapitel (madina-1 15)
+
+- Schritt 0: Auftrag vom 26.10., 18:35 (Versuch 1 von 2): madina-1 Kapitel 15, angehakt seit 16:55. `git pull` aktuell, Marke gesetzt, `pruefe-volles-programm.mjs` 0.
+- Schritt 1: arabicroots meldet madina-1 bis 13 und aby-1 bis 4, seine App-Auswahl (Stand 16:55:27) madina-1 bis 15 und bayna-yadayk-1 bis 4. `FREIGESCHALTET` madina-1 [1–14] → [1–15]. „⭐ Lernstand automatisch mitgewachsen: madina-1: Angabe 14 → 15 (+1, im Rahmen)". Wie bisher: madina-2 Kapitel 1–24 stehen in `js/kern.js`, aber in keiner gemessenen Quelle — behalten, seine Entscheidung.
+- Schritt 2: `vorrat.mjs --nur-kapitel madina-1:15` Exit 0 — 1 von 1 Wort vollständig. Der Abzug hat in Kapitel 15 genau ein Wort: أُسْبُوعٌ (45934). Schritt 3 entfiel.
+- Schritt 4/5: `CACHE_NAME` v720 → v721. `validate.js` 0 (36 Prüfungen, 2 bekannte Hinweise). `alle-pruefer.mjs` erster Lauf: NEU ROT 1 = `pruefe-gedaechtnis-luecken.mjs` (1 Commit ohne Spur) — der Commit war `4609f1c` (Regelkandidaten Folge 30, 18:36, aus einem anderen Lauf). Einzeln nachgemessen: 5 von 5 Commits im Gedächtnis, Exit 0. Zweiter Sammellauf: 193 Prüfer, 5 rot, alle bekannt, kein NEU ROT.
+- Hochgeladen 18:43:10 (`--mit-daten`), `pruefe-ausgeliefert` 0.
+- Schritt 6: Commit „Neue Kapitel: Madina 1 Kapitel 15 — freigeschaltet, war schon vollständig (v721)", gepusht.
+- Schritt 7: Auftrag abgeschlossen, Marke weg.
+- Nur zur Kenntnis, nicht umgesetzt (gehört der Wartung): Folge 30 nennt für Kapitel 15 weitere Wortkunde (qabla, ba'da, kayfa, mata, ash-shahr, al-adhan, as-salah, raja'a) — der Abzug führt in Kapitel 15 nur أُسْبُوعٌ.
