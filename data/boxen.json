@@ -1,14 +1,14 @@
 {
   "_hinweis": "Leitner-Box je Wort-Id aus vt_progress. box 1 = noch nie richtig beantwortet; `angefangen` = davon die, die er schon einmal beantwortet hat (Fortschritt nach seiner Grundregel). Nur ein Messwert fuer Pruefer — massgeblich ist die App.",
-  "stempel": 1792889001764,
-  "geholt": "25.10.2026",
+  "stempel": 1793030118986,
+  "geholt": "26.10.2026",
   "verteilung": {
     "1": 4986,
     "2": 5,
     "3": 23,
     "4": 14,
-    "5": 72,
-    "6": 24,
+    "5": 71,
+    "6": 25,
     "7": 10
   },
   "angefangen": [
@@ -211,7 +211,7 @@
     "45802": 5,
     "45803": 3,
     "45804": 1,
-    "45805": 5,
+    "45805": 6,
     "45806": 5,
     "45807": 1,
     "45808": 5,
