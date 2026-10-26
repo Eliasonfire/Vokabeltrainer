@@ -1688,6 +1688,19 @@ const GRAMMAR_RULES = [
       "chapter": 14
     }
   },
+  {
+    "id": "zarf-al-yawma-heute-01",
+    "name": "الْيَوْمَ mit Fatḥa heißt „heute“",
+    "shortExplanation": "Dein Lehrer (Folge 30, 9:28): „al-yawm heißt entweder Tag oder heute. Ist es al-yawm mit Fatḥa? Heißt es heute. Ist es al-yawm [mit Ḍamma], heißt es Tag.“\n\nIm Satz: الْمُدَرِّسُ هُنَا الْيَوْمَ. – „Der Lehrer ist heute hier.“ Das Wort sagt, wann der Lehrer hier ist, und trägt darum die Fatḥa.\n\nDer Madina-Schlüssel schreibt es genauso: „Hast du ihn heute gesehen?“ mit dem Hinweis āl-yaum-a (Band 2, Lektion 9, S. 40). Band 3 nennt den Grund (S. 29): Ein Nomen, das die Zeit der Handlung angibt, ist ein Adverb und steht mit Fatḥa. Es ist also ein ظَرْفٌ der Zeit – dieselbe Fatḥa wie bei den Ortsangaben (zarf-mansub-01).\n\n⚠️ Mit Ḍamma kann es trotzdem „heute“ heißen, nämlich am Satzanfang als Subjekt (Mubtadaʾ): الْيَوْمُ يَوْمُ الثُّلَاثَاءِ. – „Heute ist Dienstag“, wörtlich etwa „Der (heutige) Tag ist Dienstag“. Dort sagt الْيَوْمُ nicht, wann etwas passiert, sondern ist selbst das, worüber der Satz spricht.",
+    "color": "nasab",
+    "kapitel": 15,
+    "source": {
+      "folge": 30,
+      "video": "Folge 30",
+      "approxTimestamp": "9:28",
+      "chapter": 15
+    }
+  },
 ];
 
 const SENTENCE_TAGS = {
@@ -2501,7 +2514,8 @@ const SENTENCE_TAGS = {
     { ruleId: "madd-tabii-01", matchText: "عُصْفُورٌ" }
   ],
   "48402": [
-    { ruleId: "mudarris-lesung-herkunft-01", matchText: "الْمُدَرِّسُ" }
+    { ruleId: "mudarris-lesung-herkunft-01", matchText: "الْمُدَرِّسُ" },
+    { ruleId: "zarf-al-yawma-heute-01", matchText: "الْيَوْمَ" }
   ],
   "45888": [
     { ruleId: "mubtada-khabar-genus-01", matchText: "الْبَابُ مُغْلَقٌ" }
