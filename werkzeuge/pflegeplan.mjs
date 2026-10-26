@@ -768,7 +768,9 @@ export const PFLEGEPLAN = [
         + 'dran genommen werden … die ich bereits kenne oder zumindest mal gesehen habe") auch die Grenze schonGesehen() aus js/kern.js: '
         + 'kein nie gesehenes Wort im Hörvorrat, eigene Eichung und zwei Störtests. Seit 26.10.2026 (Elias: „im hörmodus sollen grundsätzlich '
         + 'keine wörter auftauchen die ich in der 7ten box habe") die Ausnahme: kein Wort aus Box 7 im Hörvorrat, eins aus Box 6 bleibt; '
-        + 'eigene Eichung und vier Störtests (ohne die Ausnahme, nur für die Kapitel-Wörter, erst über Box 7, schon ab Box 6)' },
+        + 'eigene Eichung und vier Störtests (ohne die Ausnahme, nur für die Kapitel-Wörter, erst über Box 7, schon ab Box 6). '
+        + 'Ebenfalls seit 26.10.2026: was er ganz ans Ende gestellt hat (ganzHinten() in js/kern.js, Elias: „mach da auch weg"), gilt in schonGesehen() '
+        + 'als nicht gesehen und fehlt damit in Hörmodus, Übungen, Satzmodus und Wurzelübung; bewacht von test-ganz-hinten.mjs' },
   },
   {
     /* ⭐ 22.09.2026 — BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE.

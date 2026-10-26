@@ -12,6 +12,9 @@
  *   H2  45930 (bei ihm seit 23.10. in der Lerngruppe) zählt nicht mehr als Gruppenwort
  *   H3  die Runde von heute nimmt keine der drei, solange andere Wörter da sind
  *   H4  weg sind sie nicht: ist sonst nichts mehr da, kommen sie dran
+ *   H5  auch nicht in Hörmodus, Übungen, Satzmodus und Wurzelübung: schonGesehen() sagt für
+ *       sie nein (alle vier fragen dort). Elias, auf meinen Hinweis, dass „Ingenieursfakultät"
+ *       in Übungen und Satzmodus noch vorkommen kann: „mach da auch weg".
  * Die übrigen Karten und Stände sind erfunden. Störtests am Ende.
  */
 import fs from 'node:fs';
@@ -60,7 +63,7 @@ const FORTSCHRITT = {
 };
 
 function laufe(kern){
-  const stuecke = ['function nieAbgefragt(', 'function ganzHinten(', 'function neueZuerst(',
+  const stuecke = ['function nieAbgefragt(', 'function schonGesehen(', 'function ganzHinten(', 'function neueZuerst(',
     'function istGruppenwort(', 'function lerngruppeHeute('].map(k => schneide(kern, k)).join('\n');
   const ctx = { console: { log(){}, warn(){}, error(){} } };
   vm.createContext(ctx);
@@ -68,7 +71,7 @@ function laufe(kern){
     const KARTEN = ${JSON.stringify(KARTEN)};
     const K = id => KARTEN.find(k => k.id === id);
     ${stuecke}
-    globalThis.__h = { neueZuerst, istGruppenwort, lerngruppeHeute, K, KARTEN };`, ctx);
+    globalThis.__h = { neueZuerst, istGruppenwort, lerngruppeHeute, schonGesehen, K, KARTEN };`, ctx);
   const h = ctx.__h;
   const ids = l => l.map(w => w.id);
   const erg = new Map();
@@ -99,6 +102,11 @@ function laufe(kern){
   const heute4 = ids(g4.heute);
   fall('H4 ist sonst nichts da, kommen sie dran (zuletzt, nicht nie)',
     heute4.some(id => DREI.includes(id)), heute4.join(' ') || '(leer)');
+
+  /* H5: 45930 hat er gesehen (2× falsch) — trotzdem nein; a1 (1× falsch) bleibt ja. */
+  fall('H5 Hörmodus, Übungen, Satzmodus, Wurzel: 45930 gilt nicht als gesehen, a1 schon',
+    !h.schonGesehen(h.K('45930')) && h.schonGesehen(h.K('a1')),
+    '45930: ' + h.schonGesehen(h.K('45930')) + ', a1: ' + h.schonGesehen(h.K('a1')));
   return erg;
 }
 
@@ -130,9 +138,11 @@ const STOER = [
   { name: 'S1 neueZuerst ohne das Ende', muss: ['H1'],
     kern: q => ersetze(q, '  return alle.filter(w => !hinten(w)).concat(alle.filter(hinten));', '  return alle;', 'S1') },
   { name: 'S2 die Lerngruppe hält 45930 weiter fest', muss: ['H2', 'H3'],
-    kern: q => ersetze(q, "  if (typeof ganzHinten === 'function' && ganzHinten(w)) return false;\n", '', 'S2') },
-  { name: 'S3 die Liste ohne 45930', muss: ['H1', 'H2'],
+    kern: q => ersetze(q, "  if (typeof ganzHinten === 'function' && ganzHinten(w)) return false;\n  return !!(p && p.gruppe", '  return !!(p && p.gruppe', 'S2') },
+  { name: 'S3 die Liste ohne 45930', muss: ['H1', 'H2', 'H5'],
     kern: q => ersetze(q, "['45929', '45930', '45931']", "['45929', '45931']", 'S3') },
+  { name: 'S4 die Übungsmodi fragen wieder nur „gesehen?"', muss: ['H5'],
+    kern: q => ersetze(q, "  if (typeof ganzHinten === 'function' && ganzHinten(w)) return false;\n  const p = w && PROGRESS[w.id];\n  return !!p && (Number(p.correct) > 0", "  const p = w && PROGRESS[w.id];\n  return !!p && (Number(p.correct) > 0", 'S4') },
 ];
 console.log('\n=== Störtests: ohne die Regel MUSS der zuständige Fall scheitern ===');
 for (const s of STOER){

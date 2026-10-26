@@ -3897,6 +3897,12 @@ function nieAbgefragt(w){
    Gemessen am 20.10.2026 (sein Stand, 05:15): 0 solche Wörter im Hörvorrat.
    Bewacht von werkzeuge/pruefe-hoer-auswahl.mjs. */
 function schonGesehen(w){
+  /* ⭐ Was er ganz ans Ende gestellt hat (ganzHinten() unten), gilt hier als NICHT gesehen —
+     dann nehmen es Hörmodus, Übungen, Satzmodus und Wurzelübung nicht, die alle hier fragen.
+     Elias (26.10.2026) auf meinen Hinweis, Übungen und Satzmodus nähmen nur gesehene Wörter und
+     „Ingenieursfakultät" könne dort noch vorkommen: „mach da auch weg". Den Hörmodus (gleiche
+     Grenze, im selben Bericht zuerst genannt) zähle ich dazu — MEINE Lesart seines „auch". */
+  if (typeof ganzHinten === 'function' && ganzHinten(w)) return false;
   const p = w && PROGRESS[w.id];
   return !!p && (Number(p.correct) > 0 || Number(p.wrong) > 0 || (Number(p.box) || 1) >= 2);
 }
