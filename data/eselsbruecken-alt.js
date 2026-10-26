@@ -388,7 +388,7 @@ const ESELSBRUECKEN_ALT = {
   /* وَسِخٌ - schmutzig */
   '45796': [
     'Ein Bild aus deinem eigenen Buch: الْقَمِيصُ وَسِخٌ — „Das Hemd ist schmutzig“ (Madina 1, Seite 15). Stell dir genau dieses Hemd vor: du willst los, ziehst es an, und vorne prangt ein Fleck. Bei وَسِخٌ siehst du ab jetzt das fleckige Hemd vor dir — ein Gegenstand, kein abstraktes Wort.',
-    'Drei deiner Vokabeln fangen mit و an: وَسِخٌ, وَرَقٌ (Papier), وَاقِفٌ (stehend). Dazu kommt وَ (und) selbst. Übe sie als kleine Gruppe — der w-Anlaut ist im Arabischen selten genug, dass er als eigener Haken taugt.'
+    'Ein Bild aus deinem Alltag: Vor jedem Gebet machst du Wuḍūʾ. Was vom Tag وَسِخٌ geworden ist — Hände, Gesicht, Füße —, wäscht das Wasser ab. Denk bei dem Wort an deine Hände unter dem Wasserhahn vor dem Gebet, fünfmal am Tag.'
   ],
 
   /* صَغِيرٌ - klein */
@@ -3568,5 +3568,10 @@ const ESELSBRUECKEN_ALT = {
   'kal-dhulhijja': [
     'ḥijja hat die Wurzel ح ج ج wie Ḥajj: Dhū l-Ḥijja heißt „der mit der Pilgerfahrt“.',
     'Der 12. und letzte Monat: Danach beginnt mit مُحَرَّمٌ ein neues Jahr.'
+  ],
+
+  '46070': [
+    'In Sūrat al-Qadr, die du auswendig kannst: خَيْرٌ مِّنْ أَلْفِ شَهْرٍ (97:3) — die Nacht der Bestimmung ist „besser als tausend Monate".',
+    'Dieselbe Wurzel ش ه ر wie مَشْهُورٌ (berühmt), das du aus Madina 1 hast. Zusammen klingen sie wie ein Reim: شَهْرٌ مَشْهُورٌ, „ein berühmter Monat".'
   ],
 };

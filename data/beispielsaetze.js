@@ -204,6 +204,13 @@ const BEISPIELSAETZE = {
     sentDe: 'Das ist ein großer Sportplatz.'
   },
 
+  /* شَهْرٌ — Monat (bayna-yadayk-1, Kapitel 7, einzeln freigeschaltet)
+     Nominalsatz: der Monatsname als Subjekt (ohne Tanwīn, mamnūʿ min aṣ-ṣarf wie bei den Kalenderkarten), Nomen mit Adjektiv als Prädikat. Alle drei Wörter stehen so auf seinen Karten (kal-ramadan, 46070, 45882); geschrieben am 26.10.2026 auf seinen Wunsch „monat brauche ich auch als vokabel". Im Repo steht kein Satz mit dem Wort (alle Text- und Datendateien nach der Wurzel ش ه ر durchsucht: 0 Sätze). šahrun mašhūrun: dieselbe Wurzel zweimal, das hilft beim Merken. */
+  '46070': {
+    sentAr: 'رَمَضَانُ شَهْرٌ مَشْهُورٌ.',
+    sentDe: 'Ramadan ist ein berühmter Monat.'
+  },
+
 
   /* زَمِيلٌ — Kollege / Mitschüler (madina-1, Kapitel 10)
      Nominalsatz mit Nisba-Anschluss: زَمِيلِي ist durch das angehaengte ي
