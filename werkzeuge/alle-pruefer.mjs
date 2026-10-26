@@ -838,6 +838,9 @@ const PRUEFER = [
      sieht (Elias: „damit nur Sätze zählen, die ich schon sehen kann"), und baut
      ohne gültige Messung nicht. Ohne Browser, mit gestellten Messungen. */
   ['test-satzmodus-sichtbar.mjs', []],
+  /* ⭐ 26.10.2026: ein leer gespeichertes Feld verdeckt nur, was er absichtlich geleert hat
+     (Elias: „die zwei Karten sollen ihren Beispielsatz wieder zeigen"). Echte js/kern.js im vm. */
+  ['test-leer-gewollt.mjs', []],
   /* ⭐ VIER EICHUNGEN, die bis zum 21.08.2026 ebenfalls niemand gestartet hat.
      Sie halten Grenzfaelle fest, die teuer erkauft wurden — etwa die
      Zahlwort-Trennung, deren erster Entwurf 8 von 9 Faellen in beide

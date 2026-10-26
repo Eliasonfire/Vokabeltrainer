@@ -2160,6 +2160,11 @@ function wendeWortAenderungenAn(){
     if (!a || typeof a !== 'object' || a.verworfen) return;   /* zurückgesetzt, siehe verwirfWortAenderung() */
     AENDERBAR.forEach(f => {
       if (typeof a[f] !== 'string') return;
+      /* ⭐ Ein leer gespeichertes Feld verdeckt nur, was er absichtlich geleert hat
+         (`leerGewollt`, siehe speichereWortAenderung()). Sonst bleibt, was die Daten haben —
+         so bekam „Zeit- oder Ortsangabe" ihren Satz zurück (26.10.2026). */
+      if (a[f] === '' && !(Array.isArray(a.leerGewollt) && a.leerGewollt.includes(f))
+          && String(w[f] == null ? '' : w[f]).trim() !== '') return;
       /* Nur beim ERSTEN Mal sichern — ein zweiter Lauf würde sonst den bereits
          geänderten Wert als Original festschreiben. */
       if (!WORT_ORIGINAL[id]) WORT_ORIGINAL[id] = {};
@@ -2186,6 +2191,23 @@ function speichereWortAenderung(id, felder){
      melden. Der bisherige Wert bleibt dann stehen — das ist der harmlosere
      der beiden Fehler. */
   if (sauber.type !== undefined && !WORTARTEN.includes(sauber.type)) delete sauber.type;
+
+  /* ⭐⭐ LEER HEISST NICHT „GELÖSCHT" (26.10.2026).
+     Elias auf meinen Befund, dass „Zeit- oder Ortsangabe" (gram-zarf) keinen Beispielsatz
+     zeigt: „Ja, die zwei Karten sollen ihren Beispielsatz wieder zeigen." (Die zweite, die
+     Adjektiv-Karte gram-nat, steht in seiner App gar nicht: dort steht die Buchkarte 50428
+     mit Satz — mein Irrtum, im eigenen Edge nachgemessen.)
+     Das Formular schickt immer alle Felder mit (Kommentar weiter unten). Am 19.08.2026 hat er
+     an gram-zarf nur das Tanwin ergänzt (werkzeuge/pruefe-eigene-vorrang.mjs), die damals
+     leeren Satzfelder kamen als '' mit. Der Satz kam erst am 20.08. (v248), und
+     wendeWortAenderungenAn() hielt das '' für seinen Willen.
+     Darum wird ein leeres Feld nur gespeichert, wenn VORHER etwas darin stand: dann hat er
+     es wirklich geleert, und `leerGewollt` hält das fest. Ein Feld, das schon leer war,
+     bleibt draußen. Gemessen an seinem Stand (26.10.2026): 14 Bearbeitungen, 18 leere
+     Felder, nur zwei davon verdeckten etwas — beide Satzfelder von gram-zarf.
+     MEINE Bauart, nicht seine Vorgabe. Bewacht von test-leer-gewollt.mjs. */
+  const geleert = AENDERBAR.filter(f => sauber[f] === '' && String(w[f] == null ? '' : w[f]).trim() !== '');
+  AENDERBAR.forEach(f => { if (sauber[f] === '' && !geleert.includes(f)) delete sauber[f]; });
 
   /* ⛔⛔ JEDE ÄNDERUNG GEHT NACH vt_wortAenderungen — AUCH BEI DEN EIGENEN (24.09.2026)
 
@@ -2232,6 +2254,12 @@ function speichereWortAenderung(id, felder){
   /* Ein Vermerk „zurückgesetzt" (siehe verwirfWortAenderung) wird nicht
      fortgeschrieben: die neue Änderung beginnt neu. */
   const bisher = (WORT_AENDERUNGEN[id] && !WORT_AENDERUNGEN[id].verworfen) ? WORT_AENDERUNGEN[id] : {};
+  /* Was er absichtlich leer will: das schon Vermerkte ohne die Felder, die er jetzt wieder
+     füllt, dazu die gerade geleerten (siehe oben). */
+  const schonLeer = Array.isArray(bisher.leerGewollt) ? bisher.leerGewollt : [];
+  const leerGewollt = schonLeer.filter(f => !(typeof sauber[f] === 'string' && sauber[f] !== ''))
+    .concat(geleert.filter(f => !schonLeer.includes(f)));
+  if (leerGewollt.length || schonLeer.length) sauber.leerGewollt = leerGewollt;
   WORT_AENDERUNGEN[id] = Object.assign({}, bisher, sauber, { zeit: Date.now() });
   /* ⭐ Ändert sich die BEDEUTUNG der Einzahl, folgt ihr die Mehrzahlkarte wieder, auch wenn er
      dort vorher eine eigene Bedeutung eingetragen hatte (sein Satz von 02:24 bei MEHRZAHL_EIGENE).
