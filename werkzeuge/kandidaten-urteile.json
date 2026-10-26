@@ -979,6 +979,66 @@
     "f29-3915": {
       "urteil": "weg",
       "grund": "Ueberblick ueber die restlichen Kapitel von Buch 1 (Zahlen, Zusammenfassung, Kapitel 22 und 23 zu mamnu min as-sarf), Rueckfragen zur Hausaufgabe, Ende der Stunde. Organisation und Ausblick, kein Lehrsatz."
+    },
+    "f30-315": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe aus Kapitel 14 reihum: fi baytikum hadiqa? - naam, fi baytina hadiqa; a-indakum sayyara? - la, ma indana sayyara; aina mudarrisukum?; a-antum mudarrisun? - la, nahnu tullab. Der Lehrer erinnert nur daran, eine Frage mit euer mit unser zu beantworten. Anwendung der Personalsuffixe, kein eigener Lehrsatz."
+    },
+    "f30-445": {
+      "urteil": "schon-regel",
+      "grund": "Kapitel 14 beendet, Einfuehrung in Kapitel 15 (wie Kapitel 14, noch einmal die weiblichen Formen), die getrennten Pronomen - der Lehrer: die hatten wir schon alle -, Dual noch nicht; dann Wortkunde (qabla vor, ba'da nach, kayfa wie, mata wann, al-usbu' Woche, ash-shahr Monat, al-adhan Gebetsruf, as-salah Gebet, raja'a zurueckkehren). Die vierzehn Pronomen samt antunna stehen im Bestand.",
+      "quelle": "verb-madi-endungen-01"
+    },
+    "f30-615": {
+      "urteil": "schon-regel",
+      "grund": "Lesen des Kapiteltexts: man antunna (ihr Frauen; seine Angabe mehr als drei berichtigt er um 12:45 selbst zu mindestens drei, siehe f30-1245), banatu sh-shaykhi Abbas als Mudaf und Mudaf ilayhi, dhahabat qabla usbu'in. Dazu: qabla und ba'da sind Mudaf, das Wort danach ist Mudaf ilayhi, usbu'in unbestimmt = vor einer Woche. Steht im Bestand (Zeit- und Ortsangabe wie ein Mudaf, mit Markierungen an qabla und ba'da); Schluessel 1, Lektion 15, Punkt 4 sagt dasselbe (qabla und ba'da immer Mudaf, das Substantiv danach im Genitiv).",
+      "quelle": "zarf-als-mudaf-01"
+    },
+    "f30-745": {
+      "urteil": "schon-regel",
+      "grund": "Fortsetzung von f30-615: qabla usbu'in = vor einer Woche (qabla als Mudaf), man dhahaba ma'aha, kayfa halukunna, dann Wortkunde (ikhtibar = Pruefung). Dieselbe Regel wie f30-615, sonst Lesen.",
+      "quelle": "zarf-als-mudaf-01"
+    },
+    "f30-915": {
+      "urteil": "regel",
+      "grund": "Zwei Punkte. Erstens ikhtibaruna ba'da shahrin (nach einem Monat): qabla und ba'da sind Mudaf - steht im Bestand (zarf-als-mudaf-01). Zweitens neu: al-yawm mit Fatha (al-yawma) heisst heute, sonst Tag. Anlass ist der Satz des Kapitels, ob man heute in die Schule gegangen ist (dhahabna wa raja'na). Im Bestand steht al-yawma nur als Markierung fuer die Hamzat al-Wasl; seine Karte 48402 fuehrt die Grundform mit Damma als heute. Der Schluessel bestaetigt den Lehrer: Band 2 schreibt heute ausdruecklich als al-yaum-a, Band 3 dieselbe Form fuer heute. Belegt, also einbauen. Beim Einbauen dazusagen, dass al-yawmu als Subjekt am Satzanfang mit Damma steht (al-yawmu yawmu th-thulatha'i, Heute ist Dienstag, seine Wochentagskarten) - das ist dann keine Zeitangabe.",
+      "quelle": "Folge 30 @ 9:15 (der Lehrer: al-yawm mit Fatha heisst heute, sonst Tag); Madina-Schluessel Band 2, Lektion 9, PDF-Seite 44 (Hast du ihn heute gesehen? mit dem Hinweis al-yaum-a); Band 3, Lektion 3, PDF-Seite 29 (Bilal und ein anderer Student waren heute abwesend, al-yawma mit Fatha); Band 3, Lektion 12, PDF-Seite 78 (maf'ulun fihi, Zarf der Zeit)"
+    },
+    "f30-1045": {
+      "urteil": "weg",
+      "grund": "Abschweifung: im Deutschen sage man meist ging nach Hause statt kehrte zurueck; sich gut ausdruecken als schoene Eigenschaft; dann die Frage nach unbekannten Woertern. Kein Lehrsatz."
+    },
+    "f30-1245": {
+      "urteil": "schon-regel",
+      "grund": "Rueckfrage eines Schuelers, der Lehrer berichtigt sich: der Dual ist zwei, der Plural beginnt bei drei (vorher hatte er bei antunna mehr als drei gesagt). Dann Aufgabe 4 (anta, antum, anti, antunna; a-anta muslimun? a-anti maridatun?). Steht im Bestand: verb-madi-endungen-01 nennt Singular, Dual (genau zwei) und Plural (ab drei).",
+      "quelle": "verb-madi-endungen-01"
+    },
+    "f30-1515": {
+      "urteil": "schon-regel",
+      "grund": "Aufgabe 5 (ka, kum, ki, kunna je nach Angesprochenem) und dazu: ya Hamidu - wegen ya faellt das Tanwin weg. Steht im Bestand, sogar mit demselben Namen (ya-nida-01: a-laka akhun ya Hamidu).",
+      "quelle": "ya-nida-01"
+    },
+    "f30-1945": {
+      "urteil": "weg",
+      "grund": "Aufgaben 1 bis 3 werden ausgelassen (wichtig, aber fuer zu Hause), dann Lesen mit Vokalen und Uebersetzen: dhahaba abi ila l-qahira qabla usbu'in. Organisation und Anwendung von zarf-als-mudaf-01, kein Lehrsatz."
+    },
+    "f30-2245": {
+      "urteil": "weg",
+      "grund": "Uebung reihum: dhahabtu ila l-masjidi qabla l-adhani (vor dem Gebetsruf), mata dhahaba ammuki ila r-riyadi ya Amina? - dhahaba qabla shahrin. Anwendung von zarf-als-mudaf-01 und ya-nida-01, kein eigener Lehrsatz."
+    },
+    "f30-2515": {
+      "urteil": "weg",
+      "grund": "Kapitel 15 beendet; Ausblick auf Kapitel 16 (eine wichtige Regel zum Plural), auf das Ende von Buch 1 und danach al-Arabiyya bayna yadayk; dann Vokabeln fuer das Konjugieren diktieren (khalaqa, nazara, taraka, hadara, razaqa). Organisation, kein Lehrsatz."
+    },
+    "f30-2815": {
+      "urteil": "schon-regel",
+      "grund": "Konjugieren reihum (nazara, dann taraka durch alle vierzehn Formen; der Lehrer ruft dafuer Elias auf), dazu ein Aussprachehinweis zum Ra (Zunge nach vorn an die oberen Zaehne). Die Endungen stehen im Bestand; der Aussprachehinweis ist eine Korrektur an einen Schueler, keine Regel.",
+      "quelle": "verb-madi-endungen-01"
+    },
+    "f30-3145": {
+      "urteil": "schon-regel",
+      "grund": "Konjugieren: huma, hunna, anta, antuma, antum, anti, antuma, antunna, ana, nahnu - wir haben nur vierzehn. Dann die naechsten Verben (amara befehlen, ghasala waschen, raja'a zurueckkehren, kasara zerbrechen, hamala tragen). Die vierzehn Formen stehen im Bestand.",
+      "quelle": "verb-madi-endungen-01"
     }
   }
 }
