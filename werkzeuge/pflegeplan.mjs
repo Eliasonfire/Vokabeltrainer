@@ -761,7 +761,9 @@ export const PFLEGEPLAN = [
         + '(ohne die Zeile zeigt sie den Fehler vom 23.09.). Störtests: Vereinigung entfernt, bekannteVokabeln() statt VOCAB_DATA, '
         + 'Ersetzung statt Vereinigung = je Exit 1. Seit 20.10.2026 (Elias: „du sollst sichergehen, dass ich wirklich nur die vokabeln '
         + 'dran genommen werden … die ich bereits kenne oder zumindest mal gesehen habe") auch die Grenze schonGesehen() aus js/kern.js: '
-        + 'kein nie gesehenes Wort im Hörvorrat, eigene Eichung und zwei Störtests' },
+        + 'kein nie gesehenes Wort im Hörvorrat, eigene Eichung und zwei Störtests. Seit 26.10.2026 (Elias: „im hörmodus sollen grundsätzlich '
+        + 'keine wörter auftauchen die ich in der 7ten box habe") die Ausnahme: kein Wort aus Box 7 im Hörvorrat, eins aus Box 6 bleibt; '
+        + 'eigene Eichung und vier Störtests (ohne die Ausnahme, nur für die Kapitel-Wörter, erst über Box 7, schon ab Box 6)' },
   },
   {
     /* ⭐ 22.09.2026 — BEISPIELSÄTZE FÜR DIE FACHBEGRIFFE.

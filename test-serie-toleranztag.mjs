@@ -110,8 +110,24 @@ const setzeSerie = s => { c.speicher['vt_streak'] = s; c.toasts = []; };
   pruefe('ein Tag ausgelassen: Serie bleibt stehen', s.count === 41, s.count);
   pruefe('ein Tag ausgelassen: der Tag wird als Gnade vermerkt',
     s.gnadeAm === '2026-09-14', s.gnadeAm);
-  pruefe('ein Tag ausgelassen: Elias wird es gesagt',
-    c.toasts.some(t => t.includes('Serie zählt trotzdem weiter')), c.toasts.join(' | '));
+  /* Seit 26.10.2026 sagt die Meldung beides, was er verlangt hat: nicht abgerissen, und der
+     ausgelassene Tag zählt nicht mit (vorher „die Serie zählt trotzdem weiter"). */
+  pruefe('ein Tag ausgelassen: Elias wird gesagt, dass die Serie nicht abreißt und der Tag nicht mitzählt',
+    c.toasts.some(t => t.includes('reißt nicht ab') && t.includes('zählt nicht mit')), c.toasts.join(' | '));
+}
+
+/* ---------- 1b. ⭐ Die Serie zaehlt nur geuebte Tage — Elias am 26.10.2026 ---------- */
+/* „… er soll an diesem tag auch nicht weiter hoch gehen, nur wenn ich wirklich gelernt habe.
+   ich möchte bei den streak tagen wirklich nur die tage sehen die ich auch wirklich geübt habe".
+   Fuenf Kalendertage, am vierten nicht geuebt, je zwei Karten pro Lerntag: danach steht die
+   Serie auf 4, nicht auf 5 — und die zweite Karte eines Tages zaehlt nicht doppelt. */
+{
+  setzeSerie({ count: 0, last: null, gnadeAm: null });
+  const geuebt = ['2026-09-10', '2026-09-11', '2026-09-12', '2026-09-14'];   /* der 13. fehlt */
+  let s;
+  for (const tag of geuebt){ c.HEUTE = tag; touch(); s = touch(); }
+  pruefe('vier geübte von fünf Tagen: die Serie zeigt 4, nicht 5 — „nur die tage … die ich auch wirklich geübt habe"',
+    s.count === geuebt.length, s.count);
 }
 
 /* ---------- 2. Zwei ausgelassene Tage reissen sie ab ---------- */
