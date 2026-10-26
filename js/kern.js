@@ -2506,8 +2506,14 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    arabicroots führt (Madina 3, Kapitel 12 — das Buch hat er nicht gewählt); die anderen
    sechs stehen als eigene Karten in data/kalender.js. Im abgeglichenen Stand (KV 23.10.2026,
    21:29) kein Eintrag in vt_einzeln_frei, vt_bekannt, vt_geloescht, vt_wortAenderungen,
-   kein eigenes Wort mit einem Wochentag; in vt_progress ein unbewerteter Eintrag. */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254'];
+   kein eigenes Wort mit einem Wochentag; in vt_progress ein unbewerteter Eintrag.
+   26.10.2026: shahr 46070 „Monat" dazu. Elias, mit einem Bild des Wortes (al-shahr, daneben
+   rot von Hand „Monat"): „monat brauche ich auch als vokabel". Die Karte steht in Bayna
+   Yadayk 1, Kapitel 7 — das Buch hat er gewählt, aber nur Kapitel 1–4. In seinem
+   abgeglichenen Stand (KV 26.10.2026, geändert 16:11 UTC) kein Eintrag in vt_einzeln_frei,
+   vt_bekannt, vt_geloescht, vt_wortAenderungen, kein eigenes Wort „Monat"; in vt_progress
+   ein unbewerteter Eintrag. Satz, drei Eselsbrücken und Markierungen kamen im selben Zug. */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254', '46070'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)

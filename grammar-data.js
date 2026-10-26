@@ -3823,6 +3823,11 @@ const SENTENCE_TAGS = {
   ],
   "mb1-85-1": [
     { ruleId: "idafa-ayyu-01", matchText: "أَيُّ يَوْمٍ" }
+  ],
+  "46070": [
+    { ruleId: "mubtada-khabar-01", matchText: "رَمَضَانُ" },
+    { ruleId: "nat-vier-bedingungen-01", matchText: "شَهْرٌ مَشْهُورٌ" },
+    { ruleId: "mamnu-min-as-sarf-01", matchText: "رَمَضَانُ" }
   ]
 };
 

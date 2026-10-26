@@ -811,7 +811,9 @@ const BUCH_ESELSBRUECKEN = {
 
   "kal-dhulqada": "Einer der vier heiligen Monate, wie رَجَبٌ und مُحَرَّمٌ: In ihm war Kampf verboten.",
 
-  "kal-dhulhijja": "Der Monat der Pilgerfahrt (Ḥajj): Am 9. ist der Tag von ʿArafa, am 10. ʿĪd al-Aḍḥā, das Opferfest."
+  "kal-dhulhijja": "Der Monat der Pilgerfahrt (Ḥajj): Am 9. ist der Tag von ʿArafa, am 10. ʿĪd al-Aḍḥā, das Opferfest.",
+
+  "46070": "Jede deiner Monatskarten trägt dieses Wort im Deutsch: „Ramadan (9. Monat)\". Den Fastenmonat nennt man شَهْرُ رَمَضَانَ — „der Monat Ramadan\"."
 };
 
 /* ---------- Korrigierte Schreibweisen ----------
