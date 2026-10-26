@@ -1159,6 +1159,13 @@ export const PFLEGEPLAN = [
     veralten: [
       { routine: W, schritt: '1d.3', beleg: 'werkzeuge/regelkategorien-seite.mjs',
         wie: 'die Seite trägt ihr Baudatum und wird bei jedem Lauf neu erzeugt; eine Regel, die aus SATZ_THEMEN fällt, landet sichtbar unter „Nicht zuordbar"' },
+      /* ⭐ 26.10.2026: die Satzstellen zählen nur noch Sätze, die er im Satzmodus
+         sieht. Elias: „Ja, korrigiere die Zählung auf der Seite „Regeln nach
+         Kategorien", damit nur Sätze zählen, die ich schon sehen kann."
+         Welche das sind, sagt die echte App mit seinem Stand (.stand-satzmodus.json);
+         diese Messung veraltet mit jedem Lernschritt und jeder Datenänderung. */
+      { routine: W, schritt: '1d.3', beleg: 'node werkzeuge/satzmodus-sichtbar.mjs', werkzeug: 'werkzeuge/satzmodus-sichtbar.mjs',
+        wie: 'misst vor jedem Bau neu; ist eine Datei der App seit der Messung geändert, baut regelkategorien-seite.mjs nicht (Exit 1) — test-satzmodus-sichtbar.mjs' },
       /* ⭐ 11.10.2026: geteilt veröffentlicht wie die Regelprüfungs-Seite
          (werkzeuge/seite-teilen.mjs) — derselbe Prüfer bewacht beide. */
       { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',

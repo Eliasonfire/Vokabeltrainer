@@ -834,6 +834,10 @@ const PRUEFER = [
      ueber fertiges HTML laeuft, muss beweisen, dass es Attribute, <script> und
      <style> in Ruhe laesst; genau das steht in diesem Test. */
   ['test-arabisch-hervorheben.mjs', []],
+  /* ⭐ 26.10.2026: die Kategorien-Seite zählt nur Sätze, die er im Satzmodus
+     sieht (Elias: „damit nur Sätze zählen, die ich schon sehen kann"), und baut
+     ohne gültige Messung nicht. Ohne Browser, mit gestellten Messungen. */
+  ['test-satzmodus-sichtbar.mjs', []],
   /* ⭐ VIER EICHUNGEN, die bis zum 21.08.2026 ebenfalls niemand gestartet hat.
      Sie halten Grenzfaelle fest, die teuer erkauft wurden — etwa die
      Zahlwort-Trennung, deren erster Entwurf 8 von 9 Faellen in beide
