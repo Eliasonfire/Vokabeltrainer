@@ -203,7 +203,23 @@ function hoerbareVokabeln(){
      Bayna Yadayk 1, 18 aus Madina 1, je eins aus Madina 2 und Bayna Yadayk 2. Was „gesehen" heißt,
      sagt schonGesehen() in js/kern.js. Es gilt für Fragen UND Ablenker, wie die Grenze vom 17.08.
      oben, und damit auch für den Geh-Modus (er fragt dieselbe Funktion). */
-  const brauchbar = w => w.ar && w.de && String(w.de).trim().length > 1 && schonGesehen(w);
+  /* ⛔⛔ UND NIE EIN WORT AUS BOX 7 (26.10.2026). Elias: „im hörmodus sollen grundsätzlich keine
+     wörter auftauchen die ich in der 7ten box habe". Darum steht es in `brauchbar`: das gilt für
+     alles, was in den Vorrat kommt — die Kapitel-Wörter hier und die Vereinigung weiter unten —,
+     also für Fragen UND Ablenker und damit auch für den Geh-Modus und hoerFrageFortsetzbar()
+     (alle fragen diese Funktion). Und die Kapitel-Einengung zählt so nur Wörter, die wirklich
+     drankommen dürfen; sonst hielte sie eine Auswahl aus lauter Box-7-Wörtern für groß genug, und
+     am Ende blieben zu wenige für alle Antworten. Es ist die Ausnahme zu seinem Satz vom 23.09.
+     unten („alle vokabeln die abgefragt werden soll er haben"): die Kartei fragt Box 7 weiter ab,
+     der Hörmodus nicht. Box 7 ist heute die letzte (HOECHSTE_BOX in js/kern.js, gemessen
+     26.10.2026). Meine Lesart, nicht seine: `>=` statt `===`, damit eine spätere achte Box nicht
+     wieder hereinrutscht, und es zählt die Box der Karte selbst (eine Mehrzahlkarte hat ihre
+     eigene). Gemessen mit seinem Stand (KV, 26.10.2026, 17:15): vorher 10 von 271 Hörwörtern in
+     Box 7, in 400 Hörfragen 15-mal gefragt und 62-mal als Antwort angeboten; danach 0 von 261.
+     Bewacht von werkzeuge/pruefe-hoer-auswahl.mjs. */
+  const HOER_OHNE_AB_BOX = 7;
+  const nichtInBox7 = w => { const p = PROGRESS[w.id]; return !(p && (Number(p.box) || 1) >= HOER_OHNE_AB_BOX); };
+  const brauchbar = w => w.ar && w.de && String(w.de).trim().length > 1 && schonGesehen(w) && nichtInBox7(w);
   let pool = bekannteVokabeln().filter(brauchbar);
   /* Die Kapitelauswahl von der Startseite gilt auch hier - sonst uebt man das
      halbe Buch, obwohl oben "Kapitel 3" eingestellt ist. Nur wenn dabei zu

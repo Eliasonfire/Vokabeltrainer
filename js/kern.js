@@ -3377,9 +3377,19 @@ function touchStreak(){
   else if (s.last === vy) {
     /* Genau ein Tag ausgelassen: Serie bleibt stehen. Ohne Sperrfrist — siehe
        oben, Elias' Entscheidung vom 14.09.2026. `gnadeAm` wird weiter gesetzt:
-       der Uebungskalender braucht es, um den ausgelassenen Tag zu erkennen. */
+       der Uebungskalender braucht es, um den ausgelassenen Tag zu erkennen.
+       ⭐ 26.10.2026, Elias: „und wenn ich mal einen tag lang nicht übe dann soll
+       meine tage streak wie gehabt nicht abreisen aber er soll an diesem tag auch
+       nicht weiter hoch gehen, nur wenn ich wirklich gelernt habe. ich möchte bei
+       den streak tagen wirklich nur die tage sehen die ich auch wirklich geübt
+       habe". Das galt schon: `+= 1` zählt HEUTE, den ausgelassenen Tag nicht.
+       Gemessen mit seinem Stand (KV, 26.10.2026): Serie 40 = genau seine
+       Übungstage seit dem 13.09. (43 Kalendertage; ausgelassen 20.09., 25.09.,
+       27.09.). Missverständlich war nur diese Meldung — bis v719 „die Serie zählt
+       trotzdem weiter", das klang, als zähle der ausgelassene Tag mit.
+       Bewacht von test-serie-toleranztag.mjs, Fall 1 und 1b. */
     s.count += 1; s.last = t; s.gnadeAm = t;
-    toast('Gestern ausgelassen — die Serie zählt trotzdem weiter.');
+    toast('Gestern ausgelassen: Die Serie reißt nicht ab, aber der Tag zählt nicht mit.');
   }
   else { s.count = 1; s.last = t; }
   LS.set('vt_streak', s);
