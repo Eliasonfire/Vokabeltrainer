@@ -9657,3 +9657,15 @@ Gemessen am 25.10.2026 und weiter offen:
 - 6× `pl` in Kapitel 14 · 5 Regelkandidaten für ihn · 11 Entscheidungen auf seiner Warteseite.
 - Übung 17: Lücke huma-f. Tagesziel steht auf 15, seine Erinnerung war am 11.10. fällig. Box-1-Schlange 511 → 538.
 - Wurzel von أَمَامَ. Balance 9,6 %. `regelkategorien-seite.mjs` zählt die drei `gram-jam-…`-Sätze nicht (Befund vom 21.10.).
+
+## 2026-10-26 17:31 – „Monat" als Vokabel (sein Wunsch) — **v719 ausgeliefert** (`259e18c`)
+
+Elias (26.10.2026, mit einem Bild des Wortes, daneben rot „Monat"): *„monat brauche ich auch als vokabel"*.
+
+- Die Karte gab es schon: **46070 shahr „Monat"**, Bayna Yadayk 1, Kapitel 7 (gewählt hat er Kapitel 1–4). Keine zweite Karte, sondern `FREISCHALTEN_AUF_WUNSCH` in `js/kern.js` (wie ḍaʿīf, malʿab, Christ, Dienstag). Sein Stand (KV, geändert 16:11 UTC): kein Eintrag in `vt_einzeln_frei`, `vt_bekannt`, `vt_geloescht`, `vt_wortAenderungen`, kein eigenes Wort „Monat"; Mehrzahlkarten hat er ausgeschaltet (`pluralKarten: false`).
+- Volles Programm: Satz „Ramadan ist ein berühmter Monat." (`data/beispielsaetze.js`, nur Kartenwörter kal-ramadan / 46070 / 45882; im Repo stand kein Satz mit der Wurzel), drei Eselsbrücken (shahr ramadan · 97:3 aus Sure al-Qadr · Wurzel wie mashhur „berühmt"), Markierungen `mubtada-khabar-01`, `nat-vier-bedingungen-01`, `mamnu-min-as-sarf-01`. Arabisch nur aus Karten und Korantext (`zuStandard`).
+- Nebenbei die abgelehnte Eselsbrücke alt[1] an 45796 wasikh „schmutzig" (abgelehnt 25.10., 02:42; im Eintrag darüber für die Routine vorgemerkt) ersetzt: ein Bild aus seinem Alltag (Wuḍūʾ vor dem Gebet), kein Muster und kein Anfangsbuchstabe — beides hat er abgelehnt. `artefakte/regeln.json` neu erzeugt (`pruefe-kreislaeufe` war rot).
+- Nachbau mit seinem Stand (headless Edge, KV-Abzug): 46070 in `bekannteVokabeln()`, einzeln frei, Satz und Eselsbrücke auf der Lernkarte, 0 Seitenfehler.
+- Prüfungen: Kette aus VOLLES-PROGRAMM grün (`vorrat.mjs` Exit 2 = Rückstand madina-1 K14, unverändert). Sammellauf 193 Prüfer, NEU rot 4: drei durch diese Arbeit erledigt (`pruefe-eselsbruecken`, `eiche-dua-zitate`, `pruefe-kreislaeufe`), offen bleibt `kandidaten-bewerten` (13 Kandidaten aus Folge 30 ohne mein Urteil).
+- Hochgeladen 17:31:06 (`--mit-daten`), Production main `523b2c74` aus `259e18c`, `pruefe-ausgeliefert` 0, `pruefe-erreichbarkeit` 0, Oberfläche 0 Seiten- und Konsolenfehler, Stempel v719.
+- Seine Antwort auf Frage (15), wörtlich: *„erstmal sollen die koranverse nicht in satzmodus kommen"* — so gebaut seit v716, nichts geändert.
