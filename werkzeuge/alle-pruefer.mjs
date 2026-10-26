@@ -601,6 +601,9 @@ const PRUEFER = [
   /* v654 (05.10.2026): neue Wörter nach der Aktualität ihres Kapitels —
      Elias: „immer die aktuellsten und dann die zweit aktuellsten usw." */
   ['test-kapitel-zuerst.mjs', []],
+  /* v723 (26.10.2026): drei Karten ganz ans Ende der Lernreihenfolge, auch
+     aus der Lerngruppe heraus — Elias: „packe sie ganz ans ende der liste". */
+  ['test-ganz-hinten.mjs', []],
   /* v656 (06.10.2026): auch beim Auffüllen einer fortgesetzten Runde bekommt
      ein neues Wort Infokarte, Übung und Abfrage — Elias zur Karte „Gast":
      „das hat keine introduction bekommen. warum?" */
