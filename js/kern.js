@@ -1013,9 +1013,12 @@ function istPluralKarte(id){
    Hörmodus, keine Zählung. Deshalb steht diese Prüfung in istBekannt(), der Wissensgrenze,
    und wirkt über passtZurAuswahl() und bekannteVokabeln() überall zugleich.
 
-   „Kennen" heißt hier: die Einzahl ist mindestens in Box 2. MEINE Lesart — sie stützt sich
-   auf seinen Satz zur Lerngruppe (25.09.2026): „… bis sie bei mir sitzen und ich sie in box
-   2 rein mache". Ebenso zählt eine Einzahl, die er mit „Kenne ich schon" abgelegt hat.
+   „Kennen" heißt hier: die Einzahl ist mindestens in Box 2. ⛔ Seit 27.10.2026 SEINE
+   Entscheidung, nicht mehr meine Lesart: auf meine Frage „Die Mehrzahlkarte kommt erst,
+   wenn die Einzahl in Box 2 liegt. Passt das?" schrieb Elias „ja passt". Gebaut hatte ich
+   die Grenze am 19.10. aus seinem Satz zur Lerngruppe (25.09.2026): „… bis sie bei mir sitzen
+   und ich sie in box 2 rein mache". Ebenso zählt eine Einzahl, die er mit „Kenne ich schon"
+   abgelegt hat — das bleibt MEINE Lesart, seine Antwort galt der Box.
    Hat die Mehrzahlkarte selbst schon angefangen (beantwortet, in der Lerngruppe, über
    Box 1), bleibt sie, auch wenn die Einzahl zurückfällt: sein Fortschritt verschwindet nie.
    In die Runde kommt eine bereite Mehrzahl nur über den Mehrzahl-Platz in lerngruppeHeute().
