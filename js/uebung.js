@@ -2749,7 +2749,11 @@ function uebungAblenker(rule, anzahl, verboten, bevorzugt){
      · Aus anderen Themen (`rest`) nur noch Regeln, deren Name das Wort nennt
        (der Verrat-Fall unten). Eine beliebige Regel aus einem anderen Thema
        kann am Wort ebenso gelten — al-ṭullābu ist zugleich Sonnenbuchstabe,
-       marfūʿ und bestimmt —, und das prüft niemand. */
+       marfūʿ und bestimmt —, und das prüft niemand.
+       Dass die Fragen, die dadurch wegfallen, nicht mit falschen Antworten aus
+       anderen Themen zurückkommen, hat Elias am 27.10.2026 entschieden: „Nein, die
+       weggefallenen Fragen in „Welche Regel?“ sollen wegbleiben.“ Bewacht von
+       test-welche-regel-eindeutig.mjs (Prüfung 7). */
   const reihe = shuffle(passend).concat(typeof bevorzugt === 'function' ? shuffle(rest.filter(bevorzugt)) : []);
   /* ⛐ Bevorzugte zuerst — aber NICHT gefiltert: wer nur sie zuliesse, saehe
      bei einem seltenen Wort gar keine Ablenker mehr und verloere die Aufgabe,

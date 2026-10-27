@@ -916,7 +916,7 @@ export const PFLEGEPLAN = [
        nimmt eine Mehrzahl wieder einen Platz des Unterrichts, kämen 174 Mehrzahlen vor seine
        neuen Wörter. Ohne `werkzeug`: der Test läuft im Sammellauf mit (alle-pruefer.mjs). */
     veralten: { routine: W, schritt: '1b.6', beleg: 'node werkzeuge/alle-pruefer.mjs',
-      wie: 'test-plural-platz.mjs läuft im Sammellauf: A — jede Mehrzahl seiner Bücher bekommt eine gültige Art, gleich mit Übung 16, wo die entscheidet, die offenen Fälle wie begründet (Liste OFFEN_SOLL, meldet eine verschwundene Kennung); B — die Mehrzahlkarte nennt ihre Art vor „Plural von …"; C — pluralBereit() und seine Stelle in istBekannt(); D — der Mehrzahl-Platz in lerngruppeHeute() (eine am Tag, höchstens zwei in der Gruppe, nie auf Plätzen des Unterrichts); 14 Störtests. test-lernlast.mjs prüft die Zählung der wartenden.' }
+      wie: 'test-plural-platz.mjs läuft im Sammellauf: A — jede Mehrzahl seiner Bücher bekommt eine gültige Art, gleich mit Übung 16, wo die entscheidet, die offenen Fälle wie begründet (Liste OFFEN_SOLL, meldet eine verschwundene Kennung); B — die Mehrzahlkarte nennt ihre Art vor „Plural von …"; C — pluralBereit() und seine Stelle in istBekannt(), die Grenze Box 2 von beiden Seiten (seit 27.10.2026 seine Entscheidung: „ja passt"); D — der Mehrzahl-Platz in lerngruppeHeute() (eine am Tag, höchstens zwei in der Gruppe, nie auf Plätzen des Unterrichts); 15 Störtests. test-lernlast.mjs prüft die Zählung der wartenden.' }
   },
   /* 11.10.2026, innerhalb von index.html und js/lernen.js und deshalb von Hand hier:
      arabische Tasten unter dem Tippfeld der Lernkarte, NUR am Tablet. Elias: „für

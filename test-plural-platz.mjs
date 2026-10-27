@@ -8,6 +8,9 @@
  *    ich bereits kenne"
  *   „bei den plural vokabeln sollte noch irgendwie gekennzeichnet werden ob sie regelmässig sind oder
  *    unregelmässig"
+ * Und am 27.10.2026 auf meine Frage „Die Mehrzahlkarte kommt erst, wenn die Einzahl in Box 2 liegt.
+ * Passt das?": „ja passt". Box 2 ist damit SEINE Grenze, nicht mehr meine Lesart. C1 bewacht sie von
+ * beiden Seiten: die Störtests „ab Box 1" und „erst ab Box 3" müssen rot werden.
  * Gebaut in js/kern.js (pluralBereit, istBekannt, lerngruppeHeute, kapitelBeschriftung) und
  * js/uebung.js (pluralArtText). Geprüft mit den ECHTEN Funktionen, aus dem Quelltext geschnitten:
  *   A  Art: jede Mehrzahl seiner Bücher bekommt „regelmäßig männlich/weiblich" oder „unregelmäßig";
@@ -133,7 +136,7 @@ function teilC(q){
   const faelle = [
     ['Einzahl in Box 1 → wartet', bereit({ s1: { box: 1, correct: 2 } }, {}, pl), false],
     ['Einzahl nicht im Fortschritt → wartet', bereit({}, {}, pl), false],
-    ['Einzahl in Box 2 → bereit (sein „… bis sie bei mir sitzen und ich sie in box 2 rein mache")', bereit({ s1: { box: 2 } }, {}, pl), true],
+    ['Einzahl in Box 2 → bereit (Elias, 27.10.2026, auf „… erst, wenn die Einzahl in Box 2 liegt. Passt das?": „ja passt")', bereit({ s1: { box: 2 } }, {}, pl), true],
     ['Einzahl in Box 7 → bereit', bereit({ s1: { box: 7 } }, {}, pl), true],
     ['Einzahl mit „Kenne ich schon" → bereit', bereit({ s1: { box: 1 } }, { s1: { an: true } }, pl), true],
     ['„Kenne ich schon" zurückgenommen (an:false) → wartet', bereit({ s1: { box: 1 } }, { s1: { an: false } }, pl), false],
@@ -283,6 +286,7 @@ const STOER = [
   ['auch wenn heute schon eine fällig ist', /^P2:/, q => ({ ...q, kern: ersetze(q.kern, 'if (plW.length && !faellig.some(pluralwort) && ', 'if (plW.length && ') })],
   ['jede Mehrzahl gleich bereit', /^C1:/, q => ({ ...q, kern: ersetze(q.kern, '    return !!sg && (sg.box || 1) >= 2;', '    return true;') })],
   ['„Kennen" schon ab Box 1', /^C1:/, q => ({ ...q, kern: ersetze(q.kern, '    return !!sg && (sg.box || 1) >= 2;', '    return !!sg;') })],
+  ['„Kennen" erst ab Box 3 (gegen sein „ja passt" zu Box 2)', /^C1:/, q => ({ ...q, kern: ersetze(q.kern, '    return !!sg && (sg.box || 1) >= 2;', '    return !!sg && (sg.box || 1) >= 3;') })],
   ['istBekannt fragt pluralBereit nicht', /^C3:/, q => ({ ...q, kern: ersetze(q.kern, "  if (typeof pluralBereit === 'function' && !pluralBereit(w)) return false;\n", '') })],
   ['-āʾ → -āwāt gilt nicht mehr', /^A3: 45824/, q => ({ ...q, uebung: ersetze(q.uebung, "  if (s.endsWith(ALIF + HAMZA) && p === s.slice(0, -1) + WAW + ALIF + TA) return 'f';\n", '') })],
   ['ein Alif am Ende → -ayāt gilt nicht mehr', /^A3: 45910/, q => ({ ...q, uebung: ersetze(q.uebung, "  if ((s0.endsWith(ALIF) || s0.endsWith(MAQ)) && p === s0.slice(0, -1) + YA + ALIF + TA) return 'f';\n", '') })],
