@@ -63,8 +63,14 @@ const ANALYSEN = SAETZE.map(s => ({ s, z: irab.analysiereSatz(s.sentAr) }));
 /* Die vier aus dem Bildschirmfoto, und die fünfte sichtbare aus demselben Thema. */
 const AUS_DEM_FOTO = ['lafz-al-jalala-01', 'schakl-01', 'iltiqa-sakinain-01', 'hamzatul-wasl-01'];
 const SCHRIFT_SICHTBAR = [...AUS_DEM_FOTO, 'madd-tabii-01'];
-/* Bewusst drin (meine Lesart von „ähnlich", ihm so gesagt). */
-const BLEIBT = ['schams-qamar-01', 'mina-al-01'];
+/* Bewusst drin (meine Lesart von „ähnlich", ihm so gesagt). ⚠️ schams-qamar-01
+   stand hier bis zum 27.10.2026. Seit „je Frage nur eine richtige Antwort"
+   (Elias, Eingang 25.10.2026; js/uebung.js, uebungMitWahr) wird es nicht mehr
+   gefragt: an jedem Wort mit al gelten „al tilgt das Tanwīn", „bestimmt/
+   unbestimmt" und „al = die Gesamtheit" mit, und mehr falsche Antworten hat das
+   Thema nicht. Die Regel bleibt markiert und in der Regelsammlung; ob sie mit
+   falschen Antworten aus anderen Themen zurückkommt, ist seine Frage (Warteseite). */
+const BLEIBT = ['mina-al-01'];
 /* Ein Name, der schon sagt, dass es keine Regel ist. */
 const NAME_KEINE_REGEL = /Überblick|Merkhilfe|so heißen|so heissen/;
 
@@ -82,6 +88,11 @@ function schneideZeile(text, kopf){
   const a = text.indexOf(kopf);
   if (a < 0) return null;
   return text.slice(a, text.indexOf(';\n', a) + 1);
+}
+function schneideMitWahr(text){
+  const a = text.indexOf('const UEBUNG_ZUSAMMEN = [');
+  const f = schneideFunktion(text, 'uebungMitWahr');
+  return (a < 0 || !f) ? null : text.slice(a, text.indexOf('function uebungMitWahr(')) + f;
 }
 function schneideListe(text, kopf){
   const a = text.indexOf(kopf);
@@ -108,6 +119,9 @@ function laufe(quelle, still){
     schneideZeile(quelle, 'const uebungOhneZeichen ='),
     schneideZeile(quelle, 'const uebungNamensstamm ='),
     schneideZeile(quelle, 'const UEBUNG_KEINE_REGEL ='),
+    /* Seit 27.10.2026: was am selben Wort mitgilt (Daten + uebungMitWahr) —
+       baue() ruft es auf. Bewacht wird es von test-welche-regel-eindeutig.mjs. */
+    schneideMitWahr(quelle),
     schneideFunktion(quelle, 'uebungKeineRegel'),
     schneideFunktion(quelle, 'uebungHervorWorte'),
     schneideFunktion(quelle, 'uebungNameNennt'),
