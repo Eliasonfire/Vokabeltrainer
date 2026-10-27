@@ -1083,6 +1083,25 @@ export const PFLEGEPLAN = [
      Pflegebedarf: welche Wörter Orts-/Zeitangaben sind, steht in EINER Liste
      (ZURUF in js/irab.js) — ein neues Wort dort gilt hier von selbst.
      Bewacht von test-zarf-als-mudaf.mjs über alle-pruefer.mjs. */
+  /* 27.10.2026, innerhalb von js/uebung.js und deshalb von Hand hier:
+     uebungMitWahr() mit seinen Listen (UEBUNG_ZUSAMMEN, UEBUNG_DAZU…,
+     UEBUNG_OBERBEGRIFF…) und uebungKettenmitte() — „Welche Regel?" bietet keine
+     falsche Antwort mehr an, die an der hervorgehobenen Stelle mit der richtigen
+     gilt, keine mit demselben Namen vor der Klammer und aus anderen Themen nur,
+     was das Wort beim Namen nennt. Elias (Eingang 25.10.2026): „Die Distraktoren
+     sind keine echten Falschantworten, sondern Beschreibungen derselben Regel."
+     Kein neuer Schlüssel. Pflegebedarf JA, und er meldet sich selbst:
+     · neuer Inhalt — eine neue Regel oder ein neu markierter Satz bringt neue
+       Paare „richtige → falsche Antwort". test-welche-regel-eindeutig.mjs ist rot,
+       bis jedes neue Paar gelesen und eingetragen ist: gilt es mit, in js/uebung.js,
+       sonst in GEPRUEFT im Test. Der läuft über alle-pruefer.mjs (Wartung 1b.6),
+       also genau dann, wenn neue Regeln oder Markierungen ausgeliefert werden;
+     · seine Eingaben — keine;
+     · veralten — schreibt js/irab.js die Rolle „muḍāf ilayh (muḍāf)" anders,
+       greift uebungKettenmitte() nicht mehr: Prüfung „kette" im selben Test wird
+       rot. Ändert sich die Rolle „fiʿl", schließt _AM_NOMEN mehr aus als nötig —
+       das kostet Aufgaben, nie eine zweite richtige Antwort.
+     ⚠️ Welche Regeln zusammen gelten, ist MEINE Lesart der Regeltexte. */
   {
     funktion: 'Satzmodus und Grammatik-Hervorhebung',
     dateien: ['js/saetze.js', 'js/uebung.js', 'grammar-data.js', 'lehrbuch-saetze.js'],

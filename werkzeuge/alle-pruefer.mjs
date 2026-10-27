@@ -664,6 +664,18 @@ const PRUEFER = [
      neuen Eintrag, der „Überblick", „Merkhilfe" oder „so heißen" im Namen
      trägt. */
   ['test-welche-regel.mjs', []],
+  /* ⛔ Neu am 27.10.2026. Elias' Eingang vom 25.10. zu „Welche Regel?" (bintu in
+     hadhihi bintu l-mudarrisi, zur Wahl auch „muḍāf erkennen" und „Iḍāfa"): „Die
+     Distraktoren sind keine echten Falschantworten, sondern Beschreibungen
+     derselben Regel." Wird rot, sobald eine falsche Antwort an der Stelle mit der
+     richtigen gilt (uebungMitWahr() und neun feste Stichproben), denselben Namen
+     vor der Klammer trägt oder ohne Namenstreffer aus einem anderen Thema kommt.
+     Dazu ein Wort mitten in einer Iḍāfa-Kette (zweites UND erstes Glied), und
+     ⛔ jedes NEUE Paar „richtige → falsche Antwort" (neue Regel, neu markierter
+     Satz) ist rot, bis jemand es gelesen hat — Liste GEPRUEFT im Test, 363 Paare
+     am 27.10.2026. Lexikon wie in der App, mit den Buchvokabeln. Zehn Störtests
+     und eine Gegenprobe mit `--stoertest` (rund eine Minute, deshalb nicht hier). */
+  ['test-welche-regel-eindeutig.mjs', []],
   /* ⛔ Neu am 19.09.2026. Elias: „die beiden sind wie mudaf, wenn das der fall
      ist dann ist das ja auch grundsätzlich richtig" und „lass die zwei dann
      gelten und auch andere ähnliche ortangaben oder zeitangeben" — Orts- und

@@ -188,7 +188,11 @@ const uebungNackt = s => String(s||'')
 const uebungOhneZeichen = s => String(s || '')
   .replace(/[ً-ْٰـ]/g, '').replace(/[.،؟!«»:؛]/g, '').trim();
 
-function uebungHervorWorte(z, von, bis){
+/* `mindestStamm` (27.10.2026): uebungMitWahr() fragt mit 2, damit auch maʿaki
+   seinen Stamm maʿa zeigt. Dort schliesst ein Treffer nur AUS — zu viel
+   Treffen kostet eine falsche Antwort, nie eine richtige. Hier, beim Verrat,
+   bleibt es bei 3 (Begruendung unten). */
+function uebungHervorWorte(z, von, bis, mindestStamm){
   const out = [];
   for (let i = von; i <= bis && i < z.length; i++){
     const roh = uebungOhneZeichen((z[i] || {}).wort);
@@ -206,7 +210,7 @@ function uebungHervorWorte(z, von, bis){
     for (const suf of ['كما','كم','كن','هما','هم','هن','ها','نا','ي','ك','ه']){
       if (!ohneAl.endsWith(suf)) continue;
       const stamm = ohneAl.slice(0, -suf.length);
-      if (stamm.length >= 3) out.push(stamm);
+      if (stamm.length >= (mindestStamm || 3)) out.push(stamm);
       break;
     }
   }
@@ -1706,7 +1710,10 @@ const UEBUNGEN = [
         const hervorWorte = uebungHervorWorte(z, idx, bis);
         const nenntWort   = r => uebungNameNennt(r, hervorWorte);
         const verraet     = hervorWorte.length > 0 && nenntWort(rule);
-        const ablenker = uebungAblenker(rule, 3, imSatz, verraet ? nenntWort : null);
+        /* ⛔ Und keine, die an DIESER Stelle mit der richtigen gilt (27.10.2026,
+           Elias' Fall bintu — Begründung bei uebungMitWahr()). */
+        const aus = new Set([...imSatz, ...uebungMitWahr(rule, z, idx, bis)]);
+        const ablenker = uebungAblenker(rule, 3, aus, verraet ? nenntWort : null);
         if (ablenker.length < 2) return;   // sonst ist es keine Wahl
         if (verraet && ablenker.filter(nenntWort).length < 2) return;
         const optionen = shuffle([rule, ...ablenker]).map(r=>({ wert:r.id, text:r.name }));
@@ -2499,6 +2506,201 @@ function uebungKeineRegel(r){
   return !!(schrift && schrift.muster && schrift.muster.test(r.id));
 }
 
+/* ⛔⛔ JE FRAGE NUR EINE RICHTIGE ANTWORT (27.10.2026)
+
+   Elias, Eingang vom 25.10.2026 (Notiz „2026-10-25 Vokabeltrainer To-Do –
+   Satz-Modus Mehrdeutigkeit"), M1 · Kap. 5, Satz hadhihi bintu l-mudarrisi,
+   hervorgehoben bintu, gewertet „muḍāf (bestimmt ohne al)". Zur Wahl standen
+   dazu „muḍāf erkennen", „Iḍāfa (Genitivverbindung)" und „Ortsangabe als
+   muḍāf". Seine Sätze (das Arabische im ersten hier in Umschrift):
+   „Außer ‚Ortsangabe als muḍāf (z.B. taḥta)' könnten alle Optionen richtig sein"
+   „Die Distraktoren sind keine echten Falschantworten, sondern Beschreibungen derselben Regel."
+   Sein Auftrag: Fragen/Distraktoren so prüfen, dass pro Frage nur eine Option
+   eindeutig stimmt.
+
+   Woran es lag: uebungAblenker() nimmt die falschen Antworten absichtlich aus
+   DEMSELBEN Thema und schloss nur aus, was im Satz markiert ist. Ob eine
+   falsche Antwort am hervorgehobenen Wort AUCH gilt, prüfte niemand. Im
+   selben Thema gilt aber oft mehr als eine Regel zugleich: der Oberbegriff
+   (Iḍāfa), das Erkennungsmerkmal (Nomen ohne Tanwin + Nomen), zwei
+   Eigenschaften derselben Stelle (muḍāf, bestimmt ohne al).
+
+   Deshalb steht hier, was am selben Wort zusammen gilt. ⚠️ Das ist MEINE
+   Lesart der Regeltexte (shortExplanation), nicht seine Entscheidung, und im
+   Zweifel steht eine Regel mit drin: eine Aufgabe weniger ist besser als zwei
+   richtige Antworten. Bleiben keine zwei falschen übrig, entsteht die Aufgabe
+   nicht (so arbeitet baue() seit dem 30.07.). Bewacht von
+   test-welche-regel-eindeutig.mjs.
+
+   So gilt eine Regel mit:
+   ① UEBUNG_ZUSAMMEN — jede Regel einer Zeile gilt am selben Wort mit jeder anderen.
+   ② UEBUNG_DAZU — ist die Regel links die Antwort, gelten die rechts mit.
+     _MEHRWORTIG nur, wenn mehrere Wörter hervorgehoben sind; _AM_NOMEN nur,
+     wenn das Wort laut Satzanalyse (js/irab.js) kein Verb ist. Ist das Wort
+     laut Satzanalyse mitten in einer Iḍāfa-Kette, gelten alle Stellen der
+     Iḍāfa mit (uebungKettenmitte).
+   ③ UEBUNG_OBERBEGRIFF — Oberbegriff und Sonderfall gelten füreinander immer mit.
+     _WORT: Sonderfälle, die an einem bestimmten Wort hängen. Ist der Sonderfall
+     die Antwort, gilt der Oberbegriff mit. Ist der Oberbegriff die Antwort, gilt
+     der Sonderfall nur dann mit, wenn sein Name das hervorgehobene Wort nennt
+     („fī und ʿalā" bei fī l-bayti, nicht bei mina l-bayti).
+   ④ Ist die Stelle mehrwortig und nennt der Name einer Regel JEDES ihrer Wörter,
+     beschreibt er genau diese Stelle (bi-l-jāmiʿati oder fī l-jāmiʿati bei fī l-jāmiʿati). */
+const UEBUNG_ZUSAMMEN = [
+  ['mudaf-01', 'mudaf-ohne-al-01', 'idafa-erkennen-01'],          // erstes Wort der Iḍāfa (bintu)
+  ['mudaf-ilayh-01', 'idafa-zweitglied-01'],                       // zweites Wort (l-mudarrisi)
+  ['ismul-isara-hadha-01', 'isara-genus-kongruenz-01'],            // hādhā
+  ['ismul-isara-dhalika-01', 'kaf-der-entfernung-01', 'isara-genus-kongruenz-01'],   // dhālika
+  ['ismul-isara-tilka-01', 'kaf-der-entfernung-01', 'isara-genus-kongruenz-01'],     // tilka
+  ['ismul-isara-ulaika-01', 'kaf-der-entfernung-01'],              // ulāʾika: auch das kāf am Ende
+  ['harf-jarr-li-01', 'li-al-lil-01', 'lil-vs-li-01'],             // lil-mudarrisi
+  ['harf-jarr-li-01', 'lil-vs-li-01', 'li-eigenname-01'],          // li-khālidin
+  ['harf-jarr-li-01', 'li-mit-suffix-01', 'li-vs-inda-01'],        // lī, laka
+  ['harf-jarr-li-01', 'istifham-liman-01', 'istifham-men-01', 'min-man-unterscheiden-01'],   // li-man
+  ['harf-jarr-min-ila-01', 'mina-al-01', 'min-man-unterscheiden-01'],                        // mina l-bayti
+  ['harf-jarr-min-ila-01', 'min-ayna-01', 'istifham-ayna-01', 'min-man-unterscheiden-01'],   // min ayna
+  ['harf-jarr-bi-01', 'harf-jarr-bi-fi-01', 'tanwin-nach-harf-jarr-01'],  // bi-khayrin (der Regeltext sagt es selbst)
+  ['fragepartikel-alif-01', 'fragepartikel-erforderlich-01'],      // a-hādhā
+  ['alif-maqsura-01', 'alif-maqsura-unveraenderlich-01'],          // al-mustashfā
+  ['schams-qamar-01', 'al-gesamtheit-01', 'al-tanwin-tilgung-01', 'nakira-marifa-01'],       // jedes Wort mit al
+  ['jumla-ismiya-filiya-01', 'wortstellung-fokus-01'],             // das erste Wort des Satzes
+  ['mubtada-khabar-01', 'mubtada-khabar-genus-01', 'satz-vs-wortgruppe-01'],                 // Satz aus mubtadaʾ und khabar
+  ['nat-fem-01', 'mutabaqa-genus-01', 'nat-bestimmtheit-01', 'nat-wen-beschreibt-01'],       // madīnatun kabīratun
+  ['ta-marbuta-fem-01', 'ta-marbuta-grenzen-01', 'fem-bildung-01'],                          // Wörter mit Tāʾ marbūṭa
+  ['koerperteile-genus-01', 'fem-ohne-ta-marbuta-01'],             // ʿaynun, yadun
+  ['possessiv-endungen-01', 'possessiv-ya-01', 'asma-khamsa-01'],  // kitābī, abūka, abī
+  ['possessiv-endungen-01', 'hu-nach-kasra-01'],                   // fīhi
+  ['verb-enthaelt-pronomen-01', 'verb-madi-endungen-01'],          // dhahaba: „er" steckt im Verb
+  ['zarf-makan-rollenname-01', 'zuruf-makan-weitere-01']           // amāma, fawqa
+];
+const UEBUNG_IDAFA_STELLEN = ['mudaf-01', 'mudaf-ohne-al-01', 'idafa-erkennen-01', 'mudaf-ilayh-01', 'idafa-zweitglied-01'];
+const UEBUNG_ZARF_IMMER = ['zarf-mansub-01', 'zarf-als-mudaf-01', 'zuruf-makan-weitere-01', 'zarf-makan-rollenname-01'];
+const UEBUNG_LI_BI = ['harf-jarr-li-01', 'li-al-lil-01', 'lil-vs-li-01', 'li-eigenname-01', 'li-mit-suffix-01',
+                      'li-vs-inda-01', 'harf-jarr-bi-01', 'harf-jarr-bi-fi-01'];
+const UEBUNG_DAZU = {
+  'mudaf-ilayh-01':        ['idafa-erkennen-01'],
+  'idafa-zweitglied-01':   ['idafa-erkennen-01'],
+  'idafa-erkennen-01':     ['mudaf-ilayh-01', 'idafa-zweitglied-01', 'idafa-ayyu-01'],   // auch an ayyu kitābin markiert
+  'possessiv-ist-idafa-01': [...UEBUNG_IDAFA_STELLEN, 'possessiv-endungen-01', 'possessiv-ya-01', 'asma-khamsa-01'],
+  'zarf-als-mudaf-01':     UEBUNG_IDAFA_STELLEN,   // seine Entscheidung vom 19.09.: Orts-/Zeitangabe vor Genitiv zählt als muḍāf
+  'idafa-verkettung-01':   UEBUNG_IDAFA_STELLEN,
+  'idafa-ayyu-01':         UEBUNG_IDAFA_STELLEN,
+  'harf-jarr-idafa-01':    ['harf-jarr-fi-ala-01', 'harf-jarr-min-ila-01', ...UEBUNG_IDAFA_STELLEN],   // ʿalā maktabi l-mudarrisi
+  'li-vs-inda-01':         ['inda-ort-und-zeit-01', 'zarf-maa-inda-01', 'zarf-01', 'possessiv-ya-01', ...UEBUNG_ZARF_IMMER],   // ʿindī
+  'li-eigenname-01':       ['tanwin-nach-harf-jarr-01', 'tanwin-eigennamen-01', 'alif-maqsura-01', 'alif-maqsura-unveraenderlich-01'],
+  'li-mit-suffix-01':      ['fragepartikel-alif-01'],     // a-laka
+  'zuruf-makan-01':        UEBUNG_ZARF_IMMER,             // markiert am Nomen nach der Ortsangabe
+  'zarf-makan-rollenname-01': ['zarf-als-mudaf-01'],
+  'zuruf-makan-weitere-01':   ['zarf-als-mudaf-01'],
+  'inda-ort-und-zeit-01':  ['zarf-maa-inda-01', 'li-vs-inda-01', 'zarf-als-mudaf-01'],
+  'zarf-maa-inda-01':      ['inda-ort-und-zeit-01', 'li-vs-inda-01', 'zarf-als-mudaf-01', 'zuruf-makan-weitere-01', 'zarf-makan-rollenname-01'],
+  'mubtada-khabar-01':     ['jumla-ismiya-filiya-01', 'wortstellung-fokus-01'],
+  'badal-01':              ['mubtada-khabar-01', 'jumla-ismiya-filiya-01', 'wortstellung-fokus-01', 'satz-vs-wortgruppe-01'],
+  'verb-enthaelt-pronomen-01': ['mudari-erkennen-01', 'mudari-sa-zukunft-01'],
+  'mudari-sa-zukunft-01':  ['mudari-erkennen-01', 'verb-enthaelt-pronomen-01'],
+  'mudari-erkennen-01':    ['verb-enthaelt-pronomen-01'],
+  'marfu-grundfall-01':    ['tanwin-eigennamen-01', 'tanwin-maennername-ta-01', 'mamnu-min-as-sarf-01',
+                            'mamnu-min-as-sarf-plural-01', 'mamnu-min-as-sarf-namen-01', 'ya-nida-01'],
+  'tanwin-eigennamen-01':  ['marfu-grundfall-01', 'eigennamen-fem-ohne-tanwin-01'],
+  'tanwin-nach-harf-jarr-01': ['tanwin-eigennamen-01', 'harf-jarr-01', 'harf-jarr-li-01', 'li-eigenname-01'],
+  'ya-nida-01':            ['marfu-grundfall-01', 'tanwin-eigennamen-01'],
+  'tanwin-maennername-ta-01': ['tanwin-eigennamen-01', 'marfu-grundfall-01', 'mamnu-min-as-sarf-namen-01'],
+  'mamnu-min-as-sarf-01':  ['marfu-grundfall-01'],
+  'mamnu-min-as-sarf-plural-01': ['marfu-grundfall-01', 'mamnu-min-as-sarf-namen-01', 'jam-taksir-01'],
+  'mamnu-min-as-sarf-namen-01':  ['marfu-grundfall-01', 'tanwin-eigennamen-01', 'tanwin-maennername-ta-01', 'mamnu-min-as-sarf-plural-01'],
+  'jam-taksir-01':         ['mamnu-min-as-sarf-plural-01'],
+  'eigennamen-fem-ohne-tanwin-01': ['tanwin-eigennamen-01', 'ta-marbuta-fem-01', 'ta-marbuta-grenzen-01', 'fem-bildung-01'],
+  'adjektive-an-ohne-tanwin-01': ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01', 'nakira-marifa-01'],
+  'nat-eigenname-01':      ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01', 'tanwin-eigennamen-01', 'mubtada-khabar-01'],
+  'nat-bestimmtheit-01':   ['nat-bestimmter-mudaf-01', 'nat-eigenname-01'],
+  'nat-bestimmter-mudaf-01': ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01']
+};
+const UEBUNG_DAZU_MEHRWORTIG = {
+  'mudaf-01':            ['mudaf-ilayh-01', 'idafa-zweitglied-01'],
+  'mudaf-ohne-al-01':    ['mudaf-ilayh-01', 'idafa-zweitglied-01'],
+  'mudaf-ilayh-01':      ['mudaf-01', 'mudaf-ohne-al-01'],
+  'idafa-zweitglied-01': ['mudaf-01', 'mudaf-ohne-al-01'],
+  'mubtada-khabar-genus-01': ['jumla-ismiya-filiya-01', 'wortstellung-fokus-01'],  // al-bābu mughlaqun
+  'satz-vs-wortgruppe-01':   ['jumla-ismiya-filiya-01', 'wortstellung-fokus-01']
+};
+/* Am Verb (dhahaba) beginnt ein Verbalsatz — dort gilt nichts vom Nominalsatz. */
+const UEBUNG_DAZU_AM_NOMEN = {
+  'jumla-ismiya-filiya-01': ['mubtada-khabar-01', 'mubtada-khabar-genus-01', 'satz-vs-wortgruppe-01'],
+  'wortstellung-fokus-01':  ['mubtada-khabar-01', 'mubtada-khabar-genus-01', 'satz-vs-wortgruppe-01']
+};
+const UEBUNG_OBERBEGRIFF = {
+  'idafa-01':              UEBUNG_IDAFA_STELLEN,
+  /* li- und bi- hängen am Wort; ihr Name nennt es nicht so, dass ③ es fände —
+     deshalb hier und nicht bei _WORT. */
+  'harf-jarr-01':          ['hurufu-jarr-bedeutungen-01', 'harf-jarr-idafa-01', ...UEBUNG_LI_BI],
+  'hurufu-jarr-bedeutungen-01': ['harf-jarr-idafa-01', ...UEBUNG_LI_BI.filter(id => !id.startsWith('harf-jarr-bi'))],
+  'zarf-01':               UEBUNG_ZARF_IMMER,
+  'zarf-mansub-01':        ['zarf-als-mudaf-01', 'zuruf-makan-weitere-01', 'zarf-makan-rollenname-01'],
+  'irab-drei-faelle-01':   ['marfu-grundfall-01', 'tanwin-fath-alif-01', 'tanwin-nach-harf-jarr-01', 'tanwin-eigennamen-01',
+                            'ya-nida-01', 'tanwin-maennername-ta-01', 'mamnu-min-as-sarf-01', 'mamnu-min-as-sarf-plural-01',
+                            'mamnu-min-as-sarf-namen-01'],
+  'mamnu-min-as-sarf-01':  ['mamnu-min-as-sarf-plural-01', 'mamnu-min-as-sarf-namen-01', 'tanwin-maennername-ta-01',
+                            'adjektive-an-ohne-tanwin-01', 'eigennamen-fem-ohne-tanwin-01', 'tanwin-eigennamen-01'],
+  'nat-vier-bedingungen-01': ['nat-fem-01', 'mutabaqa-genus-01', 'nat-bestimmtheit-01', 'nat-wen-beschreibt-01',
+                              'nat-bestimmter-mudaf-01', 'nat-eigenname-01', 'adjektive-an-ohne-tanwin-01']
+};
+/* Bei der Iḍāfa sind Ortsangabe, Besitzendung, Verkettung, ayyu und die Iḍāfa nach
+   einer Präposition Sonderfälle mit eigenem Merkmal: am bloßen kitābu ḥāmidin
+   liegt keins davon vor, sie bleiben dort falsche Antworten. Ihr Merkmal zeigt
+   der Name meist nicht — gilt eins davon an einem künftig markierten Wort doch,
+   steht es in aller Regel im selben Satz markiert und fällt über imSatz heraus. */
+const UEBUNG_OBERBEGRIFF_WORT = {
+  'idafa-01':              ['idafa-ayyu-01', 'zarf-als-mudaf-01', 'possessiv-ist-idafa-01', 'idafa-verkettung-01', 'harf-jarr-idafa-01'],
+  'harf-jarr-01':          ['harf-jarr-fi-ala-01', 'harf-jarr-min-ila-01', 'mina-al-01'],
+  'hurufu-jarr-bedeutungen-01': ['harf-jarr-fi-ala-01', 'harf-jarr-min-ila-01', 'mina-al-01', 'harf-jarr-bi-fi-01'],
+  'zarf-01':               ['zuruf-makan-01', 'inda-ort-und-zeit-01', 'zarf-maa-inda-01', 'zarf-al-yawma-heute-01'],
+  'zarf-mansub-01':        ['zuruf-makan-01', 'inda-ort-und-zeit-01', 'zarf-maa-inda-01', 'zarf-al-yawma-heute-01'],
+  'zarf-makan-rollenname-01': ['zuruf-makan-01', 'inda-ort-und-zeit-01'],
+  'zuruf-makan-weitere-01':   ['zuruf-makan-01', 'inda-ort-und-zeit-01', 'zarf-maa-inda-01'],
+  'wortarten-01':          ['huwa-hiya-01', 'huwa-hiya-weitere-01', 'verb-enthaelt-pronomen-01']
+};
+/* Die Rolle „Verb", wie js/irab.js sie schreibt (fiʿl). */
+const UEBUNG_ROLLE_VERB = String.fromCodePoint(0x0641, 0x0650, 0x0639, 0x0652, 0x0644);
+/* Die Rollen „muḍāf" und „muḍāf ilayh", wie js/irab.js sie schreibt. Mitten in
+   einer Kette (masjidu rasūli llāhi) steht dort „muḍāf ilayh (muḍāf)": dasselbe
+   Wort ist zweites Glied UND erstes Glied, und jede Stelle der Iḍāfa gilt dort
+   mit. Am 27.10.2026 ist kein solches Wort einzeln markiert (nur die ganze Kette,
+   an idafa-verkettung-01) — das hier fängt das erste ab. */
+const UEBUNG_ROLLE_MUDAF = String.fromCodePoint(0x0645, 0x064F, 0x0636, 0x064E, 0x0627, 0x0641);
+const UEBUNG_ROLLE_ILAYH = UEBUNG_ROLLE_MUDAF + ' ' + String.fromCodePoint(0x0625, 0x0650, 0x0644, 0x064E, 0x064A, 0x0652, 0x0647);
+function uebungKettenmitte(w){
+  const r = String((w && w.rolle) || '');
+  return r.startsWith(UEBUNG_ROLLE_ILAYH) && r.includes('(' + UEBUNG_ROLLE_MUDAF + ')');
+}
+
+function uebungNenntJedesWort(r, z, von, bis){
+  for (let i = von; i <= bis; i++) if (!uebungNameNennt(r, uebungHervorWorte(z, i, i, 2))) return false;
+  return true;
+}
+
+/* Alle Regeln, die an der hervorgehobenen Stelle mit der richtigen gelten —
+   sie dürfen dort keine falsche Antwort sein. */
+function uebungMitWahr(rule, z, von, bis){
+  const id = rule.id, mit = new Set();
+  const dazu = liste => (liste || []).forEach(x => mit.add(x));
+  UEBUNG_ZUSAMMEN.forEach(g => { if (g.includes(id)) dazu(g); });
+  dazu(UEBUNG_DAZU[id]);
+  if (bis > von) dazu(UEBUNG_DAZU_MEHRWORTIG[id]);
+  if (!z.slice(von, bis + 1).some(w => w && w.rolle === UEBUNG_ROLLE_VERB)) dazu(UEBUNG_DAZU_AM_NOMEN[id]);
+  if (z.slice(von, bis + 1).some(uebungKettenmitte)) dazu(UEBUNG_IDAFA_STELLEN);
+  dazu(UEBUNG_OBERBEGRIFF[id]);
+  Object.keys(UEBUNG_OBERBEGRIFF).forEach(o => { if (UEBUNG_OBERBEGRIFF[o].includes(id)) mit.add(o); });
+  Object.keys(UEBUNG_OBERBEGRIFF_WORT).forEach(o => { if (UEBUNG_OBERBEGRIFF_WORT[o].includes(id)) mit.add(o); });
+  const worte = uebungHervorWorte(z, von, bis, 2);
+  (UEBUNG_OBERBEGRIFF_WORT[id] || []).forEach(s => {
+    const r = GRAMMAR_RULES.find(x => x.id === s);
+    if (r && uebungNameNennt(r, worte)) mit.add(s);
+  });
+  if (bis > von) GRAMMAR_RULES.forEach(r => { if (uebungNenntJedesWort(r, z, von, bis)) mit.add(r.id); });
+  mit.delete(id);
+  return mit;
+}
+
 /* Ablenker fuer Modus 10: Regeln aus demselben Thema. Faellt das Thema aus
    (eine Regel, die in keinem Muster steht), wird auf die Farbgruppe
    ausgewichen - die buendelt inhaltlich Verwandtes. */
@@ -2509,8 +2711,10 @@ function uebungKeineRegel(r){
    ihren Namen ist nicht zu entscheiden, welche gemeint ist.
    Die Ursache liegt in der Benennung in grammar-data.js, nicht in der Auswahl
    hier; geaendert werden die Namen aber NICHT (sie stehen so an vielen
-   Stellen). Stattdessen gilt ein Ablenker mit demselben Namensstamm - dem Teil
-   vor der Klammer - als letzte Wahl. */
+   Stellen). Stattdessen galt ein Ablenker mit demselben Namensstamm - dem Teil
+   vor der Klammer - als letzte Wahl. ⛔ Seit 27.10.2026 kommt er NIE mehr
+   (Begruendung in uebungAblenker unten und beim Block „JE FRAGE NUR EINE
+   RICHTIGE ANTWORT"). */
 const uebungNamensstamm = r => String(r.name || '').split('(')[0].trim();
 
 function uebungAblenker(rule, anzahl, verboten, bevorzugt){
@@ -2538,7 +2742,15 @@ function uebungAblenker(rule, anzahl, verboten, bevorzugt){
   const nah        = kandidaten.filter(r=>uebungNamensstamm(r) === stamm);
   const passend    = kandidaten.filter(r=>!nah.includes(r) && imThema(r));
   const rest       = kandidaten.filter(r=>!nah.includes(r) && !passend.includes(r));
-  const reihe = shuffle(passend).concat(shuffle(rest)).concat(shuffle(nah));
+  /* ⛔ 27.10.2026, zwei Änderungen (Begründung beim Block „JE FRAGE NUR EINE
+     RICHTIGE ANTWORT" oben):
+     · Gleicher Namensstamm (`nah`) kommt NIE mehr — bis dahin letzte Wahl. Am
+       30.07. standen so drei hadhā-Regeln zur Wahl, die alle am selben Wort gelten.
+     · Aus anderen Themen (`rest`) nur noch Regeln, deren Name das Wort nennt
+       (der Verrat-Fall unten). Eine beliebige Regel aus einem anderen Thema
+       kann am Wort ebenso gelten — al-ṭullābu ist zugleich Sonnenbuchstabe,
+       marfūʿ und bestimmt —, und das prüft niemand. */
+  const reihe = shuffle(passend).concat(typeof bevorzugt === 'function' ? shuffle(rest.filter(bevorzugt)) : []);
   /* ⛐ Bevorzugte zuerst — aber NICHT gefiltert: wer nur sie zuliesse, saehe
      bei einem seltenen Wort gar keine Ablenker mehr und verloere die Aufgabe,
      obwohl der Aufrufer sie danach ohnehin selbst prueft. */
