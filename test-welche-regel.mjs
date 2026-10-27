@@ -68,8 +68,9 @@ const SCHRIFT_SICHTBAR = [...AUS_DEM_FOTO, 'madd-tabii-01'];
    (Elias, Eingang 25.10.2026; js/uebung.js, uebungMitWahr) wird es nicht mehr
    gefragt: an jedem Wort mit al gelten „al tilgt das Tanwīn", „bestimmt/
    unbestimmt" und „al = die Gesamtheit" mit, und mehr falsche Antworten hat das
-   Thema nicht. Die Regel bleibt markiert und in der Regelsammlung; ob sie mit
-   falschen Antworten aus anderen Themen zurückkommt, ist seine Frage (Warteseite). */
+   Thema nicht. Die Regel bleibt markiert und in der Regelsammlung. Auf die Frage,
+   ob sie mit falschen Antworten aus anderen Themen zurückkommen soll, Elias am
+   27.10.2026: „Nein, die weggefallenen Fragen in „Welche Regel?“ sollen wegbleiben.“ */
 const BLEIBT = ['mina-al-01'];
 /* Ein Name, der schon sagt, dass es keine Regel ist. */
 const NAME_KEINE_REGEL = /Überblick|Merkhilfe|so heißen|so heissen/;

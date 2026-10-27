@@ -18,6 +18,14 @@
  * Name das hervorgehobene Wort nennt. ⚠️ Welche Regeln zusammen gelten, ist
  * MEINE Lesart der Regeltexte, nicht seine Entscheidung.
  *
+ * Fragen, für die das Thema keine zwei sicher falschen Antworten hat, entstehen
+ * dadurch nicht mehr (586 statt 762). Auf die Frage, ob sie mit falschen
+ * Antworten aus anderen Themen zurückkommen sollen, Elias am 27.10.2026:
+ *
+ *   „Nein, die weggefallenen Fragen in „Welche Regel?“ sollen wegbleiben.“
+ *
+ * → Prüfung 7 bewacht genau das.
+ *
  * Geprüft wird an der echten Übung, an allen markierten Sätzen, mit dem Lexikon
  * wie in der App: auch Fachbegriffe, Kalender und die Buchvokabeln
  * (data/vokabeln-*.js, nur gelesen, nie ins Repo). Ohne die Bücher hält die
@@ -363,7 +371,8 @@ function laufe(quelle, still, referenz){
   const gleich = aufgaben.flatMap(x => x.falsche.filter(w => stammVon(w) === stammVon(x.a.loesung)).map(w => x.a.loesung + ' + ' + w));
   pruefe('stamm', 'in allen Aufbauten (am 30.07. standen so drei hādhā-Regeln zur Wahl)', gleich.length === 0, gleich.length + '× ' + kurz(gleich));
 
-  log('\n7. Aus einem anderen Thema nur, was das hervorgehobene Wort beim Namen nennt');
+  log('\n7. Aus einem anderen Thema nur, was das hervorgehobene Wort beim Namen nennt' +
+    ' (Elias, 27.10.2026: „Nein, die weggefallenen Fragen in „Welche Regel?“ sollen wegbleiben.“)');
   const fremd = [];
   for (const x of aufgaben){
     const thema = themaVon(x.a.loesung), richtig = REGEL.get(x.a.loesung);
