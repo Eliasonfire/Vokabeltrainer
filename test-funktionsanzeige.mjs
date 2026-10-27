@@ -62,6 +62,8 @@ const AW      = u(0x623, 0x64E, 0x648, 0x652);                          /* aw   
 const AMMA    = u(0x623, 0x64E, 0x645, 0x651, 0x64E, 0x627);            /* ammā    „was … betrifft"                */
 const ALLA    = u(0x623, 0x64E, 0x644, 0x651, 0x64E, 0x627);            /* allā    „dass nicht"                    */
 const ALYAWM  = u(0x627, 0x644, 0x652, 0x64A, 0x64E, 0x648, 0x652, 0x645, 0x64F);   /* al-yawmu „heute"            */
+const ALYAWMA = u(0x627, 0x644, 0x652, 0x64A, 0x64E, 0x648, 0x652, 0x645, 0x64E);   /* al-yawma „heute" (Fatḥa)    */
+const ALAAN   = u(0x627, 0x644, 0x652, 0x622, 0x646, 0x64E);            /* al-āna   „jetzt" — wirklich mabnī        */
 const AYY     = u(0x623, 0x64E, 0x64A, 0x651, 0x64C);                   /* ayy     „welcher" (mit Tanwin)          */
 const HUMA    = u(0x647, 0x64F, 0x645, 0x64E, 0x627);                   /* humā    „sie beide"                     */
 const ANTUM   = u(0x623, 0x64E, 0x646, 0x652, 0x62A, 0x64F, 0x645, 0x652);          /* antum   „ihr"               */
@@ -125,7 +127,13 @@ function pruefe(code){
   sag(genau({ ar: AHL, type: 'noun' }, ['Nomen']), 'K3', 'ahl („Leute") zeigt nur „Nomen"');
 
   /* B — was bleiben muss */
-  sag(hat({ ar: ALYAWM, type: 'adjective' }, UNV), 'B1', '„heute" (als Adjektiv geführt, ohne Tanwin) behält „die Endung ändert sich nie"');
+  /* B1 prüfte bis zum 27.10.2026 an „heute" — das war eine falsche Lehre (B4). Jetzt al-āna. */
+  sag(hat({ ar: ALAAN, type: 'adjective' }, UNV), 'B1', '„jetzt" (al-āna, als Adjektiv geführt, ohne Tanwin) behält „die Endung ändert sich nie"');
+  /* B4 — Elias, 27.10.2026 (Eingang unterwegs): „Das stimmt für al-yawm nicht: Es ist muʿrab."
+     Als „heute" im Akkusativ mit Fatḥa, als „der Tag" (Subjekt) mit Ḍamma. Beide Formen, beide Wortarten. */
+  for (const [ar, type] of [[ALYAWM, 'adjective'], [ALYAWM, 'noun'], [ALYAWMA, 'noun']])
+    sag(!hat({ ar, type }, UNV) && hat({ ar, type }, 'als „heute“ im Akkusativ') && hat({ ar, type }, 'als „der Tag“ (Subjekt)'),
+      'B4', '„heute" (' + type + ') zeigt nicht „die Endung ändert sich nie", sondern seine zwei Zeilen (ẓarf zamān, muʿrab)');
   sag(hat({ ar: AYY, type: 'particle' }, 'Fragewort') && hat({ ar: AYY, type: 'particle' }, UNV), 'B2', '„welcher" (Partikel mit Tanwin) behält „Fragewort" und „die Endung ändert sich nie"');
   sag(hat({ ar: HADHA, type: 'particle' }, 'Hinweiswort') && hat({ ar: HADHA, type: 'particle' }, UNV), 'B3', 'hādhā zeigt „Hinweiswort" und „die Endung ändert sich nie"');
   sag(hat({ ar: INDA, type: 'particle' }, 'Zeit- oder Ortsangabe') && hat({ ar: INDA, type: 'particle' }, 'Genitiv'), 'B3', 'ʿinda zeigt die Ortsangabe und die Wirkung');
@@ -217,10 +225,12 @@ else console.log('✅ Probekarten: K1 bis K3, B, D, P, V — alles wie zugesiche
     if (!alle.length) console.log('   (keine Buchkarten geladen — nur die Koran-Gruppe gemessen)');
     else {
       pruefeKarten(alle, 'Buchkarten aus ' + n + ' Büchern', false);
-      /* Was bleiben muss, am echten Bestand: „heute" aus Madina 1 behält seine Zeile. */
+      /* Am echten Bestand: „heute" aus Madina 1 sagt seit 27.10.2026 nicht mehr „die Endung ändert
+         sich nie" (Elias: „Das stimmt für al-yawm nicht: Es ist muʿrab."), sondern seine zwei Zeilen. */
       const heute = alle.filter(x => String(x.ar).normalize('NFC') === ALYAWM);
-      if (heute.length && !heute.every(x => w.zeilen(x).some(t => t.includes(UNV)))){ rot = 1; console.log('❌ „heute" hat seine Zeile „die Endung ändert sich nie" verloren.'); }
-      else if (heute.length) console.log('✅ „heute" (' + heute.length + ' Karte) behält „die Endung ändert sich nie"');
+      const richtig = x => { const z = w.zeilen(x); return !z.some(t => t.includes(UNV)) && z.some(t => t.includes('als „heute“ im Akkusativ')); };
+      if (heute.length && !heute.every(richtig)){ rot = 1; console.log('❌ „heute" zeigt wieder „die Endung ändert sich nie" oder nicht seine Zeile „als „heute“ im Akkusativ".'); }
+      else if (heute.length) console.log('✅ „heute" (' + heute.length + ' Karte) zeigt seine zwei Zeilen statt „die Endung ändert sich nie"');
     }
   } else console.log('   (data/ fehlt auf diesem Rechner — die Buchkarten sind NICHT gemessen, nur die Koran-Gruppe)');
 }
@@ -232,8 +242,10 @@ const STOER = [
   { name: 'K3: Tanwin zählt nicht mehr', alt: "const beugbar = (w.type === 'noun' || w.type === 'adjective') && /[\\u064C\\u064D]/.test(wort);", neu: 'const beugbar = false;', erwartet: 'K3' },
   { name: 'K3 zu breit: jedes Nomen und Adjektiv', alt: "const beugbar = (w.type === 'noun' || w.type === 'adjective') && /[\\u064C\\u064D]/.test(wort);", neu: "const beugbar = (w.type === 'noun' || w.type === 'adjective');", erwartet: 'B1' },
   { name: 'K3 trifft auch Partikeln', alt: "const beugbar = (w.type === 'noun' || w.type === 'adjective') && /[\\u064C\\u064D]/.test(wort);", neu: 'const beugbar = /[\\u064C\\u064D]/.test(wort);', erwartet: 'B2' },
-  { name: 'Karte fragt wieder die Satz-Regel', alt: 'const karteUnveraenderlich = drin(INDEKLINABEL) || drin(PERSONALPRONOMEN);', neu: 'const karteUnveraenderlich = istIndeklinabel(wort);', erwartet: 'K3' },
-  { name: 'P1: Pronomen-Regel fehlt auf der Karte', alt: 'drin(INDEKLINABEL) || drin(PERSONALPRONOMEN);', neu: 'drin(INDEKLINABEL);', erwartet: 'P1' },
+  { name: 'Karte fragt wieder die Satz-Regel', alt: 'const karteUnveraenderlich = !istAlYawm && (drin(INDEKLINABEL) || drin(PERSONALPRONOMEN));', neu: 'const karteUnveraenderlich = istIndeklinabel(wort);', erwartet: 'K3' },
+  { name: 'P1: Pronomen-Regel fehlt auf der Karte', alt: 'drin(INDEKLINABEL) || drin(PERSONALPRONOMEN));', neu: 'drin(INDEKLINABEL));', erwartet: 'P1' },
+  { name: 'B4: „heute" bekommt wieder „die Endung ändert sich nie"', alt: 'const karteUnveraenderlich = !istAlYawm && (', neu: 'const karteUnveraenderlich = (', erwartet: 'B4' },
+  { name: 'B4: „heute" ohne seine zwei Zeilen', alt: '  if (istAlYawm){', neu: '  if (false){', erwartet: 'B4' },
   { name: 'P2: Pronomen-Regel fehlt im Satz, wo nur die Form zählt', alt: 'return INDEKLINABEL.includes(roh) || PERSONALPRONOMEN.includes(roh);', neu: 'return INDEKLINABEL.includes(roh);', erwartet: 'P2' },
   { name: 'B3: die Ortsangaben-Liste hängt nicht mehr an der Karte', alt: '  if (drin(ZURUF))            nenn(', neu: '  if (false)            nenn(', erwartet: 'B3' },
   { name: 'D1: aw, ammā, allā fehlen in der Liste', alt: "'\\u0623\\u0648', '\\u0623\\u0645\\u0627', '\\u0623\\u0644\\u0627',", neu: '', erwartet: 'D1' },

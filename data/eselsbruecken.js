@@ -882,4 +882,17 @@ const SCHREIBWEISEN = {
     ar: 'لِمَنْ',
     grund: 'Taschkīl-Frage, übergeben 16.09.2026 („ja"); Buch S. 43 لِمَنْ',
   },
+
+  /* al-yawm „heute" (Madina 1, Kapitel 9, Karte 48402): mit Fatḥa am Ende statt Ḍamma.
+   * Elias, Eingang unterwegs vom 27.10.2026, 02:40 (Arabisches hier in Umschrift):
+   * „In der Bedeutung „heute“ steht es als Zeitadverb (ẓarf zamān) im Akkusativ: al-yawma
+   * mit Fatha (wie im Beispielsatz al-mudarrisu hunā l-yawma). Als „der Tag“ (Subjekt) wäre
+   * es al-yawmu mit Damma." Auftrag: „Grammatik-Hinweis der Karte korrigieren und
+   * Standardform für „heute“ auf al-yawma setzen." Dazu sein Lehrer, Folge 30, 9:28 (Regel
+   * zarf-al-yawma-heute-01): mit Fatḥa heißt es „heute". Der Beispielsatz der Karte schreibt
+   * schon al-yawma. Das Arabische über Codepunkte, nicht von Hand getippt. */
+  '48402': {
+    ar: String.fromCodePoint(0x627, 0x644, 0x652, 0x64A, 0x64E, 0x648, 0x652, 0x645, 0x64E),
+    grund: 'Elias 27.10.2026 (Eingang unterwegs): „Standardform für „heute“ auf al-yawma setzen" — Satz der Karte und sein Lehrer (Folge 30, 9:28) mit Fatḥa',
+  },
 };

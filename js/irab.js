@@ -890,6 +890,24 @@ function funktionenVon(w){
   /* (K1) — siehe oben. */
   if (w.type === 'verb') return [WORTART.verb];
 
+  /* ⭐ al-yawm IST NICHT مَبْنِيّ (27.10.2026). Elias, Eingang unterwegs (Arabisches hier in
+     Umschrift): „Die Karte sagt „mabnī – die Endung ändert sich nie“. Das stimmt für al-yawm
+     nicht: Es ist muʿrab. In der Bedeutung „heute“ steht es als Zeitadverb (ẓarf zamān) im
+     Akkusativ: al-yawma mit Fatha … Als „der Tag“ (Subjekt) wäre es al-yawmu mit Damma."
+     Seine Karte sagt jetzt genau das, in zwei Zeilen statt der mabnī-Zeile.
+     ⚠️ In INDEKLINABEL bleibt al-yawm stehen — die Liste trägt auch die Satzanalyse, und
+     dort ist es eine eigene Frage an ihn (To-Do, Eingang 27.10.2026). Die Codepunkte stehen
+     IN der Funktion: Prüfstände schneiden sie allein aus dem Quelltext.
+     Bewacht von test-funktionsanzeige.mjs (B4). */
+  const istAlYawm = wort.replace(/[ً-ْٰ]/g, '') === String.fromCodePoint(0x627, 0x644, 0x64A, 0x648, 0x645);
+  if (istAlYawm){
+    const ALYAWM = String.fromCodePoint(0x627, 0x644, 0x652, 0x64A, 0x64E, 0x648, 0x652, 0x645);
+    nenn(String.fromCodePoint(0x638, 0x64E, 0x631, 0x652, 0x641, 0x20, 0x632, 0x64E, 0x645, 0x64E, 0x627, 0x646)
+      + ' — als „heute“ im Akkusativ, mit Fatḥa: ' + ALYAWM + String.fromCodePoint(0x64E));
+    nenn(String.fromCodePoint(0x645, 0x64F, 0x639, 0x652, 0x631, 0x64E, 0x628)
+      + ' — als „der Tag“ (Subjekt) mit Ḍamma: ' + ALYAWM + String.fromCodePoint(0x64F));
+  }
+
   /* 2. Die Sonderrollen. Sie kommen VOR die Wortart, wenn sie genauer sind:
      „Genitivpräposition“ sagt mehr als „Partikel“. */
   if (drin(HURUF_JARR) && !istFragewortMan) nenn('حَرْف جَرّ — Genitivpräposition');
@@ -921,7 +939,7 @@ function funktionenVon(w){
   /* ⚠️ Seit dem 13.10.2026 ueber die Form der Karte selbst (K2): beide Listen
      mit drin(), also ohne abgetrennte Vorsilbe. Die Regel „ein
      Personalpronomen ist immer unveraenderlich" bleibt dadurch erhalten. */
-  const karteUnveraenderlich = drin(INDEKLINABEL) || drin(PERSONALPRONOMEN);
+  const karteUnveraenderlich = !istAlYawm && (drin(INDEKLINABEL) || drin(PERSONALPRONOMEN));
   if (karteUnveraenderlich) nenn('مَبْنِيّ — die Endung ändert sich nie');
 
   /* 5. مَمْنُوع مِنَ الصَّرْف: unbestimmt und trotzdem ohne Tanwin.
