@@ -9762,3 +9762,13 @@ Elias, Eingang unterwegs vom 25.10.2026 (Vault-Notiz „2026-10-25 Vokabeltraine
 - **In der App gemessen** (Vorschau, Frischeprobe Cache v726 und `uebungMitWahr` vorhanden): 231 „Welche Regel?"-Aufgaben in diesem Browser, 0 mit einer mitgeltenden falschen Antwort; bintu bietet possessiv-ist-idafa, idafa-verkettung, zarf-als-mudaf neben der richtigen.
 - **Pflegeplan:** Kommentar in `werkzeuge/pflegeplan.mjs` (neue Paare melden sich über den Test in Wartung 1b.6).
 - **Prüfer:** `validate.js` 0 (36 Prüfungen), `pruefe-pflegeplan` 0, `alle-pruefer.mjs` 0 (197 Prüfer, 5 rot wie bisher, NEU ROT leer). Ausgeliefert 01:55:41, `pruefe-ausgeliefert` 0, Oberflächenlauf v726: 0 Seitenfehler, 0 Konsolenfehler, Stempel geschrieben.
+
+## 2026-10-27 02:24 – Seine Antworten in den Quelltext: Box 2 für Mehrzahlkarten, weggefallene Fragen bleiben weg — **v727 ausgeliefert** (`4c7db4d`)
+
+Elias, 27.10.2026, auf meine Frage im Chat *„Die Mehrzahlkarte kommt erst, wenn die Einzahl in Box 2 liegt. Passt das?"*: *„ja passt"*. Dazu sein Satz vom selben Abend: *„Nein, die weggefallenen Fragen in „Welche Regel?“ sollen wegbleiben.“*
+
+- **js/kern.js:** der Kommentar über `pluralBereit()` nennt die Grenze Box 2 jetzt SEINE Entscheidung (vorher „MEINE Lesart" aus seinem Satz vom 25.09.2026). Dass auch „Kenne ich schon" reicht, bleibt meine Lesart; seine Antwort galt der Box.
+- **js/uebung.js:** sein Satz „wegbleiben" am Kommentar in `uebungAblenker()` zu den falschen Antworten aus anderen Themen.
+- **test-plural-platz.mjs:** sein Satz im Kopf und am Fall „Einzahl in Box 2 → bereit"; neuer Störtest „erst ab Box 3" wird rot (C1). Jetzt 15 Störtests, alle rot, echte Datei grün. Zahl in `werkzeuge/pflegeplan.mjs` nachgezogen.
+- Nur Kommentare und Prüfer, das Verhalten der App ändert sich nicht.
+- **Prüfer:** `validate.js` 0 (36 Prüfungen), `pruefe-pflegeplan` 0, `alle-pruefer.mjs` 0 (197 Prüfer, 5 rot wie bisher, NEU ROT leer). Ausgeliefert 02:24:30 (3 Dateien neu), `pruefe-ausgeliefert` 0, `pruefe-erreichbarkeit` 0, Oberflächenlauf v727: 47 Prüfungen, 0 Fehler, 5 Hinweise, 0 Seiten- und Konsolenfehler, Stempel geschrieben.
