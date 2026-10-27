@@ -253,7 +253,20 @@ function laufe(quelle, still){
   /* Elias, 18:52:49: „du kannst sowohl arabisch als auch deutsch, am besten
      sogar auf arabisch und dann in klammern auf deutsch die übersetzung)" */
   log('\n2c. Jeder arabische Begriff in einer Tipp-Frage hat seine deutsche Klammer dahinter');
+  /* ⭐ EINE AUSNAHME, VON IHM SELBST (27.10.2026, Eingang unterwegs): sein neuer Text für die
+     Genitiv-Frage der Übung 4 stellt das Deutsche vor das Arabische, das Arabische hier in
+     Umschrift: „Tippe alle Wörter an, die durch eine Präposition (ḥarfu jarrin) im Genitiv
+     stehen." Davor stand „die dadurch …", und er: „Das „dadurch“ bezieht sich auf nichts
+     Sichtbares in der Frage und ist verwirrend." Genau dieser eine Text ist ausgenommen; jede
+     andere Frage folgt weiter seinem Satz von 18:52:49. */
+  const SEIN_TEXT_27_10 = 'Tippe alle Wörter an, die durch eine Präposition ('
+    + String.fromCodePoint(0x62D, 0x64E, 0x631, 0x652, 0x641, 0x64F, 0x20, 0x62C, 0x64E, 0x631, 0x64D, 0x651)
+    + ') im Genitiv stehen.';
+  pruefe('die Genitiv-Frage der Übung 4 hat seinen Text vom 27.10.2026, keine Frage sagt „dadurch"',
+    fragen.some(([, f]) => f === SEIN_TEXT_27_10) && !fragen.some(([, f]) => /dadurch/.test(f)),
+    fragen.filter(([, f]) => /dadurch|durch eine Präposition/.test(f)).map(([id, f]) => id + ': ' + f).join(' · ') || 'nicht gefunden');
   const ohneKlammer = fragen.filter(([, f]) => {
+    if (f === SEIN_TEXT_27_10) return false;
     const laeufe = [...f.matchAll(/[؀-ۿ]+(?:\s+[؀-ۿ]+)*/g)];
     return laeufe.some(m => !/^\s*\([A-Za-zÄÖÜäöüß][^)]*\)/.test(f.slice(m.index + m[0].length)));
   });
@@ -545,6 +558,8 @@ const STOERUNGEN = [
     q => q.replace("'Tippe alle حُرُوفُ جَرٍّ (Präpositionen) an.'", "'Tippe alle حُرُوفُ جَرٍّ an.'")],
   ['die deutsche Klammer steht wieder VOR dem Arabischen',
     q => q.replace("'Tippe alle مَجْرُورٌ (Wörter im Genitiv) an.'", "'Tippe alle Wörter im Genitiv (مَجْرُورٌ) an.'")],
+  ['die Genitiv-Frage der Übung 4 sagt wieder „dadurch" (gegen seinen Text vom 27.10.2026)',
+    q => q.replace("'Tippe alle Wörter an, die durch eine Präposition ('", "'Tippe alle Wörter an, die dadurch eine Präposition ('")],
   ['ein Übungsname steht wieder ohne Endung',
     q => q.replace("name:'حَرْفُ جَرٍّ + مَجْرُورٌ — Präposition'", "name:'حَرْف جَرّ + مَجْرُور — Präposition'")]
 ];

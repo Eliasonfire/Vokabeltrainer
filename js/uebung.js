@@ -1505,7 +1505,14 @@ const UEBUNGEN = [
         /* Deutsch mit dazu, aus demselben Grund wie beim مُبْتَدَأ: die Frage
            stand hier nur auf Arabisch. */
         uebungSammel(partikel, 'Tippe alle حُرُوفُ جَرٍّ (Präpositionen) an.'),
-        uebungSammel(nomen, 'Tippe alle Wörter an, die dadurch مَجْرُورٌ (im Genitiv) sind.')
+        /* ⭐ Elias, 27.10.2026 (Eingang unterwegs): „Das „dadurch“ bezieht sich auf nichts
+           Sichtbares in der Frage und ist verwirrend." Nicht einfach streichen: „Dann würde die
+           Frage „alle Wörter im Genitiv“ lauten, und in Sätzen mit Idafa (muḍāf ilayh) zählt das
+           Genitiv-Wort sonst als falsch, obwohl es im Genitiv steht." Sein neuer Text, das
+           Arabische (ḥarfu jarrin) über Codepunkte: */
+        uebungSammel(nomen, 'Tippe alle Wörter an, die durch eine Präposition ('
+          + String.fromCodePoint(0x62D, 0x64E, 0x631, 0x652, 0x641, 0x64F, 0x20, 0x62C, 0x64E, 0x631, 0x64D, 0x651)
+          + ') im Genitiv stehen.')
       ].map((a, k) => a && { ...a, reihum, grundArt: k ? 'nomen' : 'partikel' }).filter(Boolean);
     }
   },
