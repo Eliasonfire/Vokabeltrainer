@@ -131,6 +131,9 @@ const GESEHEN = {
      Plural auf -āt am unveränderten Stamm) und 45933 Prophet (MEINE Einschätzung: weit,
      eigene Karte lohnt). */
   '45928': 'wartet', '45933': 'wartet',
+  /* 29.10.2026 (Wartung Mi), eine neue aus Madina 1 Kapitel 15 — ihm in die To-Do gelegt:
+     45934 Woche (MEINE Einschätzung: weit, gebrochener Plural afāʿīl ohne Tanwīn). */
+  '45934': 'wartet',
 };
 
 /* ---------- Zeichen, als Codepunkte (nichts Arabisches getippt) ---------- */
