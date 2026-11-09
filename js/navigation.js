@@ -225,7 +225,9 @@ const OVERLAYS = [
   /* Die Markierkarte im Koran-Leser (20.09.2026, js/quran-markierung.js) —
      dieselbe Ebene, sonst bliebe sie bei der Zurück-Taste über dem Leser
      stehen. */
-  { id: 'tajweedKarte',     zu: 'tajweedKarteSchliessen' }
+  { id: 'tajweedKarte',     zu: 'tajweedKarteSchliessen' },
+  /* Die Übersicht der markierten Stellen (09.11.2026, js/quran-markierung.js). */
+  { id: 'tjUebersicht',     zu: 'tajweedUebersichtSchliessen' }
 ];
 
 /* Welches Overlay liegt gerade oben? Gelesen wird der DOM, nicht eine

@@ -909,4 +909,168 @@ document.addEventListener('DOMContentLoaded', ()=>{
      Markierungen im Text brauchen nichts davon — die Farbe steckt im Text
      selbst und wandert mit ihm. */
   window.addEventListener('resize', ()=>{ if (TJ_OFFEN) tajweedFlaechenBauen(); if (TJ_ZETTEL) tajweedZettelSchliessen(); });
+
+  const ueKnopf = document.getElementById('btnTjUebersicht');
+  if (ueKnopf) ueKnopf.addEventListener('click', tajweedUebersichtOeffnen);
+  const ueZu = document.getElementById('btnCloseTjUebersicht');
+  if (ueZu) ueZu.addEventListener('click', tajweedUebersichtSchliessen);
+  const ueHinter = document.getElementById('tjUebersichtBackdrop');
+  if (ueHinter) ueHinter.addEventListener('click', tajweedUebersichtSchliessen);
+  const ueListe = document.getElementById('tjUebersichtListe');
+  if (ueListe) ueListe.addEventListener('click', e => {
+    const z = e.target.closest('[data-tjsure]');
+    if (z) tajweedUebersichtSprung(Number(z.dataset.tjsure), Number(z.dataset.tjvers));
+  });
 });
+
+/* ---------------------------------------------------------------------
+   ⭐ DIE ÜBERSICHT DER MARKIERTEN STELLEN (09.11.2026)
+   ---------------------------------------------------------------------
+   Am 19.09.2026 wollte er „erst einmal nur markieren" (Kopf, Punkt 3). Am
+   09.11.2026 auf die Frage „Soll ich eine Seite bauen, auf der alle deine
+   markierten Stellen stehen, nach Sure geordnet, damit du sie gezielt üben
+   kannst?": „Ja, Seite bauen".
+
+   ⛔ Es stehen nur die Stellen da, die auch der Leser zeigt (tajweedSichtbar):
+   seine Regel vom 22.09.2026 „nach einem monat kann sie automatisch
+   verschwinden" gilt hier genauso. Ältere bleiben im Speicher, für
+   `node werkzeuge/tajweed-markierungen.mjs`.
+   Geordnet nach Sure, Vers, Wort — die Reihenfolge des Buches. Ein Tipp auf
+   eine Zeile öffnet die Sure und fährt zum Vers (derselbe Weg wie
+   „Weiterlesen", js/quran.js). Der Knopf dazu steht in der Surenliste unter
+   „Weiterlesen" und ist weg, solange nichts markiert ist.
+   Bewacht von werkzeuge/pruefe-tajweed-uebersicht.mjs. */
+function tajweedUebersicht(eintraege, jetzt){
+  const jeWort = new Map();
+  for (const [id, e] of Object.entries(eintraege || {})){
+    if (!tajweedSichtbar(e, jetzt)) continue;
+    const t = id.split(':').map(Number);
+    if (t.length !== 4 || t.some(n => !Number.isInteger(n) || n < 0)) continue;
+    const k = t.slice(0, 3).join(':');
+    if (!jeWort.has(k)) jeWort.set(k, { sure: t[0], vers: t[1], wort: t[2], stellen: [] });
+    jeWort.get(k).stellen.push({ pos: t[3], farbe: e.farbe, notiz: e.notiz, zeichen: e.zeichen });
+  }
+  const woerter = [...jeWort.values()].sort((a, b) => a.sure - b.sure || a.vers - b.vers || a.wort - b.wort);
+  const suren = [];
+  for (const w of woerter){
+    w.stellen.sort((a, b) => a.pos - b.pos);
+    let s = suren[suren.length - 1];
+    if (!s || s.sure !== w.sure){ s = { sure: w.sure, woerter: [] }; suren.push(s); }
+    s.woerter.push(w);
+  }
+  return suren;
+}
+
+function tajweedUebersichtZahl(){
+  /* Frisch aus dem Speicher: die Surenliste kann vor dem Laden des Moduls oder nach einem
+     Geräteabgleich gezeichnet werden. */
+  return tajweedUebersicht(tajweedLaden(), Date.now()).reduce((a, s) => a + s.woerter.length, 0);
+}
+
+/* Der Knopf in der Surenliste: gerufen aus renderWeiterlesen() in js/quran.js. */
+function tajweedUebersichtKnopf(){
+  const knopf = document.getElementById('btnTjUebersicht');
+  if (!knopf) return;
+  const n = tajweedUebersichtZahl();
+  knopf.classList.toggle('hidden', !n);
+  const zahl = document.getElementById('tjUebersichtZahl');
+  if (zahl) zahl.textContent = n === 1 ? '1 Wort' : n + ' Wörter';
+}
+
+/* Das Wort, so wie es im Leser steht (quranWorte + quranRaute, js/quran.js). */
+function tajweedUebersichtWort(text, sure, vers, wort){
+  try {
+    const v = text && text[sure] && text[sure][vers - 1];
+    const w = v && quranWorte(v[0])[wort - 1];
+    return w ? quranRaute(w).wort : '';
+  } catch (e){
+    /* Grund: '' ist hier kein Messwert, sondern „Wort nicht zu haben" — der Aufrufer zeigt
+       dann die markierten Buchstaben allein (Feld `zeichen`), sichtbar anders als ein Wort. */
+    return '';
+  }
+}
+
+/* ⚠️ Das Fenster geht SOFORT auf. Gemessen im Pane (09.11.2026): ist der Korantext
+   (2,3 MB) noch nicht geladen, stand das Fenster erst nach über einer Sekunde da. Bis
+   dahin zeigt jede Zeile die markierten Buchstaben allein, danach das ganze Wort. */
+async function tajweedUebersichtOeffnen(){
+  TAJWEED = tajweedLaden();
+  const suren = tajweedUebersicht(TAJWEED, Date.now());
+  const schon = (typeof QURAN_TEXT !== 'undefined') ? QURAN_TEXT : null;
+  tajweedUebersichtZeichnen(suren, schon);
+  document.getElementById('tjUebersichtBackdrop').classList.remove('hidden');
+  document.getElementById('tjUebersicht').classList.remove('hidden');
+  if (typeof overlayAuf === 'function') overlayAuf('tjUebersicht');
+  if (schon || !suren.length) return;
+  let text = null;
+  try { text = await ladeQuranText(); } catch (e){ text = null; }
+  if (text && !document.getElementById('tjUebersicht').classList.contains('hidden')) tajweedUebersichtZeichnen(suren, text);
+}
+
+function tajweedUebersichtZeichnen(suren, text){
+  const liste = document.getElementById('tjUebersichtListe');
+  liste.textContent = '';
+  if (!suren.length){
+    const p = document.createElement('p');
+    p.className = 'tj-ue-leer';
+    p.textContent = 'Keine markierten Stellen. Markieren geht im Koranleser über „Markieren".';
+    liste.appendChild(p);
+  }
+  for (const s of suren){
+    const kopf = document.createElement('div');
+    kopf.className = 'tj-ue-sure';
+    kopf.textContent = s.sure + '. ' + (typeof sureName === 'function' ? sureName(s.sure) : 'Sure ' + s.sure);
+    liste.appendChild(kopf);
+    for (const w of s.woerter){
+      const zeile = document.createElement('button');
+      zeile.type = 'button';
+      zeile.className = 'tj-ue-zeile';
+      zeile.dataset.tjsure = s.sure;
+      zeile.dataset.tjvers = w.vers;
+      const oben = document.createElement('span');
+      oben.className = 'tj-ue-oben';
+      const wo = document.createElement('span');
+      wo.className = 'tj-ue-vers';
+      wo.textContent = 'Vers ' + w.vers;
+      const ar = document.createElement('span');
+      ar.className = 'tj-ue-wort';
+      ar.lang = 'ar'; ar.dir = 'rtl';
+      const wortText = tajweedUebersichtWort(text, s.sure, w.vers, w.wort);
+      if (wortText){
+        const cluster = tajweedCluster(wortText);
+        const farbig = w.stellen.map(st => ({ c: tajweedClusterAn(cluster, st.pos), farbe: st.farbe }))
+          .filter(x => x.c).map(x => ({ c: tajweedLamAlifFlaeche(cluster, x.c), farbe: x.farbe }));
+        tajweedWortFaerben(ar, wortText, farbig);
+      } else ar.textContent = w.stellen.map(st => st.zeichen).join(' ');
+      oben.append(wo, ar);
+      zeile.appendChild(oben);
+      w.stellen.filter(st => st.notiz).forEach(st => {
+        const n = document.createElement('span');
+        n.className = 'tj-ue-notiz ' + (TJ_FARBKLASSE[st.farbe] || '');
+        n.textContent = st.notiz;
+        zeile.appendChild(n);
+      });
+      liste.appendChild(zeile);
+    }
+  }
+}
+
+function tajweedUebersichtSchliessen(){
+  if (typeof overlayZuUeberHistorie === 'function' && overlayZuUeberHistorie('tjUebersicht')) return;
+  document.getElementById('tjUebersichtBackdrop').classList.add('hidden');
+  document.getElementById('tjUebersicht').classList.add('hidden');
+}
+
+/* Zur Stelle: erst zu (sonst läge die Übersicht über dem Leser), dann wie „Weiterlesen". */
+async function tajweedUebersichtSprung(sure, vers){
+  document.getElementById('tjUebersichtBackdrop').classList.add('hidden');
+  document.getElementById('tjUebersicht').classList.add('hidden');
+  if ((history.state || {}).overlay === 'tjUebersicht') history.replaceState(Object.assign({}, history.state, { overlay: null }), '');
+  await openSurah(sure);
+  for (let versuch = 0; versuch < 40; versuch++){
+    const ziel = document.querySelector(`#verseList .verse-item[data-versnr="${vers}"]`);
+    if (ziel){ hebeVersHervor(ziel); return; }
+    await new Promise(r => requestAnimationFrame(r));
+  }
+  if (typeof toast === 'function') toast(`Vers ${vers} ließ sich nicht anspringen.`);
+}

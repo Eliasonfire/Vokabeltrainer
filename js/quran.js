@@ -1298,6 +1298,10 @@ function renderSurahList(filter){
      sie nicht gehoert. */
   if (q) document.getElementById('weiterlesen').classList.add('hidden');
   else renderWeiterlesen();
+  /* Der Knopf „Markierte Stellen" (js/quran-markierung.js, 09.11.2026) — bei einer Suche weg wie Weiterlesen. */
+  const tjKnopf = document.getElementById('btnTjUebersicht');
+  if (q){ if (tjKnopf) tjKnopf.classList.add('hidden'); }
+  else if (typeof tajweedUebersichtKnopf === 'function') tajweedUebersichtKnopf();
   renderFavListe(!!q);
   document.getElementById('surahList').innerHTML =
     list.map(surahZeile).join('') || '<div class="empty-state">Keine Sure gefunden.</div>';

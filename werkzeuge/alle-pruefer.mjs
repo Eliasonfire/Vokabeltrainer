@@ -190,6 +190,8 @@ const PRUEFER = [
   ['werkzeuge/pruefe-namen-allahs.mjs', []],
   ['werkzeuge/pruefe-lehrerblatt.mjs', []],
   ['werkzeuge/pruefe-geschichten.mjs', []],
+  /* 09.11.2026: die Übersicht der markierten Koranstellen (Elias: „Ja, Seite bauen"). */
+  ['werkzeuge/pruefe-tajweed-uebersicht.mjs', []],
   ['werkzeuge/namen-allahs-bauen.mjs', ['--pruefen']],
   /* ⭐ Neu am 11.09.2026 abends. Elias: „wenn eine neue funktion da ist … das
      geguckt wird wie wird sie weiterhin gepflegt … du sollst dich dann darum

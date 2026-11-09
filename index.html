@@ -4200,6 +4200,23 @@ button:disabled{cursor:default;}
   animation:popIn var(--dur-3) var(--ease-spring);
 }
 .ap-header{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
+/* Übersicht der markierten Stellen (09.11.2026, js/quran-markierung.js): breiter als die
+   Ayah-Liste, weil Wort und Notiz nebeneinander stehen. Wort in der Schrift des Lesers. */
+.ayah-popover.tj-ue{width:min(420px,92vw);}
+.tj-ue-liste{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:var(--sp-2);}
+.tj-ue-sure{font-weight:700;font-size:var(--fs-sm);color:var(--text-dim);margin-top:var(--sp-2);}
+.tj-ue-zeile{display:flex;flex-direction:column;gap:var(--sp-1);width:100%;text-align:left;padding:var(--sp-2) var(--sp-3);
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);color:var(--text);cursor:pointer;font:inherit;}
+.tj-ue-zeile:hover{border-color:var(--border-strong);}
+.tj-ue-oben{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
+.tj-ue-vers{font-size:var(--fs-sm);color:var(--text-dim);font-variant-numeric:tabular-nums;}
+.tj-ue-wort{font-family:var(--quran-font);font-size:1.7rem;line-height:1.9;color:#fff;}
+.tj-ue-notiz{font-size:var(--fs-sm);white-space:pre-wrap;border-left:3px solid var(--border-strong);padding-left:var(--sp-2);}
+.tj-ue-notiz.tj-rot{border-color:var(--tj-rot);}
+.tj-ue-notiz.tj-orange{border-color:var(--tj-orange);}
+.tj-ue-notiz.tj-blau{border-color:var(--tj-blau);}
+.tj-ue-notiz.tj-lila{border-color:var(--tj-lila);}
+.tj-ue-leer{color:var(--text-dim);font-size:var(--fs-sm);}
 .ap-title{font-weight:700;font-size:var(--fs-lg);}
 /* ⚠️ Diese Liste lief zwischenzeitlich von RECHTS nach links (`direction:rtl`),
    weil Elias „genau andersherum" gewünscht hatte. Nachdem er es gesehen hat,
@@ -6590,6 +6607,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <span class="wl-text"><span class="wl-label">Weiterlesen</span><span class="wl-stelle" id="weiterlesenStelle"></span></span>
         <svg class="ic wl-pfeil"><use href="#ic-right"/></svg>
       </button>
+      <!-- ⭐ Markierte Stellen (09.11.2026). Elias auf die Frage nach einer Seite mit allen
+           markierten Koranstellen, nach Sure geordnet: „Ja, Seite bauen". Weg, solange nichts
+           markiert ist. Gefüllt von js/quran-markierung.js (tajweedUebersicht…). -->
+      <button class="weiterlesen hidden" id="btnTjUebersicht" aria-haspopup="dialog">
+        <svg class="ic"><use href="#ic-note"/></svg>
+        <span class="wl-text"><span class="wl-label">Markierte Stellen</span><span class="wl-stelle" id="tjUebersichtZahl"></span></span>
+        <svg class="ic wl-pfeil"><use href="#ic-right"/></svg>
+      </button>
       <div class="surah-fav hidden" id="surahFavBlock">
         <div class="surah-fav-kopf">Favoriten</div>
         <div class="word-list" id="surahFavList"></div>
@@ -7586,6 +7611,16 @@ Teil 3</span>
     <button class="icon-btn" id="btnCloseAyah" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
   </div>
   <div class="ap-grid" id="ayahGrid"></div>
+</div>
+<!-- ⭐ Übersicht der markierten Stellen (09.11.2026, js/quran-markierung.js). Dieselbe
+     Ebene wie die Ayah-Liste; die Zurück-Taste schließt sie (OVERLAYS in js/navigation.js). -->
+<div class="qfp-backdrop hidden" id="tjUebersichtBackdrop"></div>
+<div class="ayah-popover tj-ue hidden" id="tjUebersicht" role="dialog" aria-label="Markierte Stellen">
+  <div class="ap-header">
+    <div class="ap-title">Markierte Stellen</div>
+    <button class="icon-btn" id="btnCloseTjUebersicht" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+  </div>
+  <div class="tj-ue-liste" id="tjUebersichtListe"></div>
 </div>
 <!-- ⛔ HIER STAND DER KORAN-HÄUFIGKEITS-AUFSTELLER — entfernt am 22.09.2026.
      Sein Auslöser war das Abzeichen „wie oft im Quran" auf der Karteikarte,

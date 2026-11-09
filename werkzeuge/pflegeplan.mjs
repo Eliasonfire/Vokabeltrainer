@@ -1287,6 +1287,11 @@ export const PFLEGEPLAN = [
        data/auswendig.json; vt_suraGelesen wertet die App selbst aus (Ringe). */
     eingaben: { routine: W, schritt: '1c.1b', beleg: 'node werkzeuge/tajweed-markierungen.mjs', werkzeug: 'werkzeuge/tajweed-markierungen.mjs',
       wie: 'seine Tajweed-Markierungen (vt_tajweed) wandern aus dem Abgleich in data/tajweed-archiv.json, das nur wächst — auch ausgeblendete bleiben dort' },
+    /* 09.11.2026: die Übersicht der markierten Stellen (Knopf „Markierte Stellen" in der
+       Surenliste, Fenster tjUebersicht; js/quran-markierung.js, tajweedUebersicht…). Elias:
+       „Ja, Seite bauen". Kein neuer Inhalt und keine neue Eingabe: sie LIEST vt_tajweed, das
+       schon über 1c.1b verarbeitet wird, und blendet nach derselben Monatsregel aus wie der
+       Leser. Veralten kann nichts. Bewacht von werkzeuge/pruefe-tajweed-uebersicht.mjs. */
     /* 19.10.2026 (v687): das Hamza im Lam-Alif wie bei quran.com. Elias: „ich
        möchte, dass diese Hamza im lam alif nicht so darsteht wie sie aktuell in
        der app ist sondern so wie bei quran.com. das soll bei jedem hamza in der
