@@ -12,6 +12,11 @@
  *       wörtlich in einem Buchsatz DERSELBEN Lektion (keine erzeugte Form)
  *   G3  es gibt mindestens eine Geschichte mit Lücke (sonst ist die Funktion leer)
  *   G4  die Lücke verdeckt JEDES Vorkommen des Wortes im Satz (mb1-68-2 hat es zweimal)
+ *   G5  (09.11.2026, Bayna Yadayk 1 dazu — Elias: „ja") eine Lücke ohne Markierung ist ein
+ *       Wort, das als Nomen, Adjektiv oder Verb eine Karte ist (nie ein Fürwort oder Partikel)
+ *
+ * G1 heißt seitdem: jeder Satz stammt aus DERSELBEN Buchquelle wie seine Geschichte
+ * (Madina 1 `mb1-…` oder Bayna Yadayk 1 `werk: 'bayna-yadayk-1'`) und trägt eine Seite.
  *
  * Aufruf: node werkzeuge/pruefe-geschichten.mjs              Exit 0 grün, 1 rot
  *         node werkzeuge/pruefe-geschichten.mjs --stoertest  jede Prüfung muss rot werden können
@@ -44,7 +49,7 @@ function block(quelle){
 
 function baueKontext(daten, ersatz = {}){
   const c = {
-    LEHRBUCH_SAETZE: daten.LEHRBUCH_SAETZE, SENTENCE_TAGS: daten.SENTENCE_TAGS,
+    LEHRBUCH_SAETZE: daten.LEHRBUCH_SAETZE, SENTENCE_TAGS: daten.SENTENCE_TAGS, VOCAB_DATA: daten.VOCAB_DATA,
     GRAMMAR_RULES: daten.GRAMMAR_RULES, SATZ_THEMA: 'alle', SATZ_REGELFILTER: null,
     LUECKE: { aktiv: false, wort: '', geloest: false },
     escapeHtml: s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -53,34 +58,44 @@ function baueKontext(daten, ersatz = {}){
   const teile = ['ohneTaschkil', 'ohnePunkt', 'wortKern', 'findeZielwort', 'gleichesWortLose', 'mitLuecke', 'satzZufall']
     .map(n => ersatz[n] || schneide(SAETZE_JS, n));
   vm.runInContext('const SATZ_ZUFALL = new Map();\n' + teile.join('\n') + '\n' + (ersatz.block || block(SAETZE_JS))
-    + '\nthis.F={geschichten,geschichteSaetze,geschichteWahl,findeZielwort,mitLuecke,ohneTaschkil,istMb1Buchsatz};', c);
+    + '\nthis.F={geschichten,geschichteSaetze,geschichteWahl,findeZielwort,mitLuecke,ohneTaschkil,geschichteLuecke,geschichteQuelleVon,wortKern};', c);
   return c;
 }
 
 function laden(){
   const { LEHRBUCH_SAETZE } = (new Function(lies('lehrbuch-saetze.js') + ';return {LEHRBUCH_SAETZE};'))();
   const { GRAMMAR_RULES, SENTENCE_TAGS } = (new Function(lies('grammar-data.js') + ';return {GRAMMAR_RULES, SENTENCE_TAGS};'))();
-  return { LEHRBUCH_SAETZE: LEHRBUCH_SAETZE.map(s => ({ ...s })), GRAMMAR_RULES, SENTENCE_TAGS };
+  /* Nur seine eigenen Karten (vocab-data.js) — die Buchabzüge in data/ liegen nicht überall vor.
+     Ohne istBekannt gelten hier alle als freigeschaltet. */
+  const { VOCAB_DATA } = (new Function(lies('vocab-data.js') + ';return {VOCAB_DATA};'))();
+  return { LEHRBUCH_SAETZE: LEHRBUCH_SAETZE.map(s => ({ ...s })), GRAMMAR_RULES, SENTENCE_TAGS, VOCAB_DATA };
 }
 
 function pruefe(daten, ersatz){
-  const c = baueKontext(daten, ersatz), F = c.F, fehler = { G1: [], G2: [], G3: [], G4: [] };
+  const c = baueKontext(daten, ersatz), F = c.F, fehler = { G1: [], G2: [], G3: [], G4: [], G5: [] };
   const gs = F.geschichten();
+  /* G5 unabhängig vom Code: welche Wortkerne sind als Nomen/Adjektiv/Verb eine Karte? */
+  const inhalt = new Set();
+  (daten.VOCAB_DATA || []).forEach(v => { if (['noun', 'adjective', 'verb'].includes(v.type)) [v.ar, v.sg].filter(Boolean).forEach(f => inhalt.add(F.wortKern(f))); });
   let mitLueckeZahl = 0;
   for (const g of gs){
     const liste = F.geschichteSaetze(g.id);
+    const quelle = liste.length ? F.geschichteQuelleVon(liste[0]) : null;
     let vorher = -1;
     for (const s of liste){
-      if (!F.istMb1Buchsatz(s) || !s.seite) fehler.G1.push(`${g.id}: ${s.id} ohne Buchseite oder nicht aus Madina 1`);
+      if (!F.geschichteQuelleVon(s) || F.geschichteQuelleVon(s) !== quelle || !s.seite) fehler.G1.push(`${g.id}: ${s.id} ohne Buchseite oder aus einer anderen Quelle`);
+      if (!s.werk && !/^mb1-/.test(s.id) || s.werk && s.werk !== 'bayna-yadayk-1') fehler.G1.push(`${g.id}: ${s.id} ist weder Madina 1 noch Bayna Yadayk 1`);
       if (Number(s.seite) < vorher) fehler.G1.push(`${g.id}: ${s.id} steht vor S. ${vorher}`);
       vorher = Number(s.seite);
     }
     const text = liste.map(s => s.sentAr).join(' ');
     c.SATZ_THEMA = g.id;
     for (const s of liste){
-      const ziel = F.findeZielwort(s);
+      const ziel = F.geschichteLuecke(s);
       if (!ziel) continue;
       mitLueckeZahl++;
+      if (!F.findeZielwort(s) && !inhalt.has(F.wortKern(ziel))) fehler.G5.push(`${s.id}: Lücke „${ziel}" ist keine Nomen-/Adjektiv-/Verbkarte`);
+      if (!s.sentAr.includes(ziel)) fehler.G5.push(`${s.id}: Lücke „${ziel}" steht so nicht im Satz`);
       const wahl = F.geschichteWahl(s, ziel, g.id);
       if (!wahl.includes(ziel)) fehler.G2.push(`${s.id}: Lösung fehlt in der Auswahl`);
       if (new Set(wahl.map(F.ohneTaschkil)).size !== wahl.length) fehler.G2.push(`${s.id}: doppelte Knöpfe`);
@@ -100,8 +115,10 @@ if (process.argv.includes('--stoertest')){
   const faelle = {
     G1: () => { const d = laden(); const s = d.LEHRBUCH_SAETZE.find(x => /^mb1-/.test(x.id) && x.kapitel === 13); delete s.seite; return pruefe(d); },
     G2: () => pruefe(laden(), { findeZielwort: 'function findeZielwort(w){ return "كَلِمَةٌ" + String(w.id).length; }' }),
-    G3: () => { const d = laden(); d.LEHRBUCH_SAETZE = d.LEHRBUCH_SAETZE.filter(x => !/^mb1-/.test(x.id)); return pruefe(d); },
-    G4: () => pruefe(laden(), { mitLuecke: 'function mitLuecke(t){ const v=t.indexOf(LUECKE.wort); return t.slice(0,v)+`<span class="satz-luecke">${LUECKE.wort}</span>`+t.slice(v+LUECKE.wort.length); }' })
+    G3: () => { const d = laden(); d.LEHRBUCH_SAETZE = d.LEHRBUCH_SAETZE.filter(x => !/^mb1-/.test(x.id) && x.werk !== 'bayna-yadayk-1'); return pruefe(d); },
+    G4: () => pruefe(laden(), { mitLuecke: 'function mitLuecke(t){ const v=t.indexOf(LUECKE.wort); return t.slice(0,v)+`<span class="satz-luecke">${LUECKE.wort}</span>`+t.slice(v+LUECKE.wort.length); }' }),
+    /* G5: ohne den Filter auf Nomen/Adjektiv/Verb darf jedes Kartenwort die Lücke sein */
+    G5: () => pruefe(laden(), { block: block(SAETZE_JS).replace("if (!['noun', 'adjective', 'verb'].includes(v.type)) return;", '') })
   };
   let gut = 0;
   for (const [k, f] of Object.entries(faelle)){
@@ -112,8 +129,8 @@ if (process.argv.includes('--stoertest')){
   const echt = pruefe(laden());
   const echtRot = Object.values(echt.fehler).flat().length;
   console.log(`  ${echtRot ? 'XX  ' : 'ok  '} echte Dateien: ${echtRot ? echtRot + ' Befunde' : 'grün'}`);
-  console.log(gut === 4 && !echtRot ? '✅ Störtest: 4 von 4 rot, echte Dateien grün.' : '❌ Störtest unvollständig.');
-  process.exit(gut === 4 && !echtRot ? 0 : 1);
+  console.log(gut === 5 && !echtRot ? '✅ Störtest: 5 von 5 rot, echte Dateien grün.' : '❌ Störtest unvollständig.');
+  process.exit(gut === 5 && !echtRot ? 0 : 1);
 }
 
 const { fehler, gs, mitLueckeZahl } = pruefe(laden());

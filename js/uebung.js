@@ -2493,7 +2493,7 @@ const UEBUNGEN = [
       geschichten().forEach(g => {
         const liste = geschichteSaetze(g.id);
         liste.forEach((s, k) => {
-          const ziel = findeZielwort(s);
+          const ziel = geschichteLuecke(s);
           if (!ziel) return;
           const zeilen = analysiereSatz(s.sentAr);
           const idx = zeilen.findIndex(t => gleichesWortLose(t.wort, ziel));
@@ -2507,7 +2507,8 @@ const UEBUNGEN = [
             satz: s, zeilen, wortIdx: idx, verdeckt: true, ohneSuffix,
             loesung: ziel,
             optionen: geschichteWahl(s, ziel, g.id).map(t => ({ wert: t, text: t })),
-            aufloesung: `Im Buch steht ${ziel}` + (grund ? ` — im Satz: ${grund}.` : '.'),
+            /* grund ist der Name der Regel (Markierung) oder „Bedeutung“ der Karte (geschichteLuecke). */
+            aufloesung: `Im Buch steht ${ziel}` + (grund ? (grund.startsWith('„') ? ` — ${grund}.` : ` — im Satz: ${grund}.`) : '.'),
             bisher: liste.slice(0, k).map(x => x.sentAr),
             geschichte: g.id
           });

@@ -132,30 +132,71 @@ let SATZ_REGELFILTER = null;
    werkzeuge/pruefe-geschichten.mjs. */
 const GESCHICHTE_PRAEFIX = 'geschichte-';
 const GESCHICHTE_MIN = 3;
-function istMb1Buchsatz(s){
-  return !!s && !s.werk && /^mb1-/.test(String(s.id)) && s.kapitel != null && !!s.sentAr;
+/* ⭐ ZWEI BÜCHER (09.11.2026). Elias, auf die Frage, ob auch die Sätze aus Bayna Yadayk 1
+   Geschichten werden sollen: „ja". Madina 1 behält seine alten Kennungen (`geschichte-4`),
+   Bayna Yadayk 1 bekommt `geschichte-by1-4`. Jede Quelle ist SEIN Buch, Satz für Satz mit Seite. */
+const GESCHICHTE_QUELLEN = [
+  { kurz: '',     book: 'madina-1',       name: k => 'Lektion ' + k,
+    ist: s => !s.werk && /^mb1-/.test(String(s.id)) },
+  { kurz: 'by1-', book: 'bayna-yadayk-1', name: k => 'Bayna Yadayk 1 · Kapitel ' + k,
+    ist: s => s.werk === 'bayna-yadayk-1' }
+];
+function geschichteQuelleVon(s){
+  if (!s || s.kapitel == null || !s.sentAr) return null;
+  return GESCHICHTE_QUELLEN.find(q => q.ist(s)) || null;
 }
 function geschichteOrdnung(s){
   const m = String(s.id).match(/-(\d+)$/);
   return Number(s.seite || 0) * 1000 + (m ? Number(m[1]) : 0);
 }
+/* ⭐ DIE LÜCKE (09.11.2026). Zuerst die markierte Stelle (findeZielwort). Hat der Satz
+   keine — in Bayna Yadayk 1 tragen nur 5 von 53 Sätzen eine —, dann das längste Wort,
+   das als Nomen, Adjektiv oder Verb eine seiner freigeschalteten Karten ist (istBekannt).
+   Die Lücke ist immer ein Wort, so wie es im Buch steht; nichts wird erzeugt. */
+let GESCHICHTE_KARTEN = null;
+function geschichteKarten(){
+  if (GESCHICHTE_KARTEN) return GESCHICHTE_KARTEN;
+  const m = new Map();
+  if (typeof VOCAB_DATA !== 'undefined')
+    VOCAB_DATA.forEach(v => {
+      if (!['noun', 'adjective', 'verb'].includes(v.type)) return;
+      if (typeof istBekannt === 'function' && !istBekannt(v)) return;
+      [v.ar, v.sg].filter(Boolean).forEach(f => { const k = wortKern(f); if (k.length >= 3 && !m.has(k)) m.set(k, v); });
+    });
+  return (GESCHICHTE_KARTEN = m);
+}
+function geschichteKarte(wort){ return geschichteKarten().get(wortKern(wort)) || null; }
+function geschichteLuecke(s){
+  const z = findeZielwort(s);
+  if (z) return z;
+  const kand = String(s.sentAr || '').split(/\s+/).map(ohnePunkt).filter(w => geschichteKarte(w));
+  if (!kand.length) return null;
+  return kand.reduce((a, b) => (wortKern(b).length > wortKern(a).length ? b : a));
+}
 function geschichten(){
   if (typeof LEHRBUCH_SAETZE === 'undefined') return [];
-  const zahl = {};
-  LEHRBUCH_SAETZE.forEach(s => { if (istMb1Buchsatz(s)) zahl[s.kapitel] = (zahl[s.kapitel] || 0) + 1; });
-  return Object.keys(zahl).map(Number)
-    .filter(k => zahl[k] >= GESCHICHTE_MIN)
-    .filter(k => typeof istBekannt !== 'function' || istBekannt({ book:'madina-1', chapter:k }))
-    /* Mindestens zwei Sätze mit Lücke, sonst gibt es nur einen Knopf zur Wahl
-       (gemessen: Lektion 14 hat 3 Sätze, aber nur in mb1-83-1 ein Zielwort). */
-    .filter(k => LEHRBUCH_SAETZE.filter(s => istMb1Buchsatz(s) && Number(s.kapitel) === k && findeZielwort(s)).length >= 2)
-    .sort((a, b) => a - b)
-    .map(k => ({ id: GESCHICHTE_PRAEFIX + k, kapitel: k, name: 'Lektion ' + k, n: zahl[k] }));
+  GESCHICHTE_KARTEN = null;   /* freigeschaltete Kapitel können sich seit dem letzten Bau geändert haben */
+  const raus = [];
+  GESCHICHTE_QUELLEN.forEach(q => {
+    const zahl = {};
+    LEHRBUCH_SAETZE.forEach(s => { if (geschichteQuelleVon(s) === q) zahl[s.kapitel] = (zahl[s.kapitel] || 0) + 1; });
+    Object.keys(zahl).map(Number)
+      .filter(k => zahl[k] >= GESCHICHTE_MIN)
+      .filter(k => typeof istBekannt !== 'function' || istBekannt({ book: q.book, chapter: k }))
+      /* Mindestens zwei Sätze mit Lücke, sonst gibt es nur einen Knopf zur Wahl
+         (gemessen: Lektion 14 hat 3 Sätze, aber nur in mb1-83-1 ein Zielwort). */
+      .filter(k => LEHRBUCH_SAETZE.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k && geschichteLuecke(s)).length >= 2)
+      .sort((a, b) => a - b)
+      .forEach(k => raus.push({ id: GESCHICHTE_PRAEFIX + q.kurz + k, kapitel: k, book: q.book, name: q.name(k), n: zahl[k] }));
+  });
+  return raus;
 }
 function geschichteSaetze(themaId){
   if (typeof LEHRBUCH_SAETZE === 'undefined') return [];
-  const k = Number(String(themaId).slice(GESCHICHTE_PRAEFIX.length));
-  return LEHRBUCH_SAETZE.filter(s => istMb1Buchsatz(s) && Number(s.kapitel) === k)
+  const rest = String(themaId).slice(GESCHICHTE_PRAEFIX.length);
+  const q = GESCHICHTE_QUELLEN.find(x => x.kurz && rest.startsWith(x.kurz)) || GESCHICHTE_QUELLEN[0];
+  const k = Number(rest.slice(q.kurz.length));
+  return LEHRBUCH_SAETZE.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k)
     .sort((a, b) => geschichteOrdnung(a) - geschichteOrdnung(b));
 }
 /* Die vier Knöpfe: das gesuchte Wort und bis zu drei andere Zielwörter
@@ -167,7 +208,7 @@ function geschichteWahl(w, ziel, geschichteId){
   const andere = [];
   geschichteSaetze(geschichteId).forEach(s => {
     if (s === w) return;
-    const z = findeZielwort(s);
+    const z = geschichteLuecke(s);
     if (!z || gesehen.has(ohneTaschkil(z))) return;
     gesehen.add(ohneTaschkil(z));
     andere.push(z);
@@ -180,7 +221,9 @@ function geschichteWahl(w, ziel, geschichteId){
 function geschichteGrund(w, ziel){
   const tags = (typeof SENTENCE_TAGS !== 'undefined' && SENTENCE_TAGS[w.id]) || [];
   const t = tags.find(x => x.matchText === ziel);
-  if (!t || typeof GRAMMAR_RULES === 'undefined') return '';
+  /* Lücke aus einer Karte (geschichteLuecke): ihre Bedeutung, wie sie auf der Karte steht. */
+  if (!t){ const v = geschichteKarte(ziel); return v && v.de ? `„${v.de}“` : ''; }
+  if (typeof GRAMMAR_RULES === 'undefined') return '';
   const r = GRAMMAR_RULES.find(x => x.id === t.ruleId);
   return r ? r.name : '';
 }
