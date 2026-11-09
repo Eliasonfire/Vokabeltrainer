@@ -139,8 +139,19 @@ const GESCHICHTE_QUELLEN = [
   { kurz: '',     book: 'madina-1',       name: k => 'Lektion ' + k,
     ist: s => !s.werk && /^mb1-/.test(String(s.id)) },
   { kurz: 'by1-', book: 'bayna-yadayk-1', name: k => 'Bayna Yadayk 1 · Kapitel ' + k,
-    ist: s => s.werk === 'bayna-yadayk-1' }
+    ist: s => s.werk === 'bayna-yadayk-1' },
+  /* ⭐ DER LEKTIONSTEXT (09.11.2026, Elias: „ja" zu echten Lesetexten aus dem Buch).
+     lesetexte-data.js, Satz für Satz von den gedruckten Seiten. Gibt es ihn zu einer Lektion,
+     ERSETZT er die Madina-1-Geschichte derselben Lektion (`ersetzt`) — der Text ist das Buch,
+     die mb1-Sätze sind nur eine Auswahl daraus (meine Entscheidung, nicht seine). */
+  { kurz: 'lt-',  book: 'madina-1',       name: k => 'Lektion ' + k + ' · Lesetext', ersetzt: '',
+    ist: s => s.werk === 'madina-1-lesetext' }
 ];
+/* Alle Sätze, aus denen Geschichten werden: die Buchsätze und die Lektionstexte. */
+function geschichteVorrat(){
+  return (typeof LEHRBUCH_SAETZE !== 'undefined' ? LEHRBUCH_SAETZE : [])
+    .concat(typeof LESETEXT_SAETZE !== 'undefined' ? LESETEXT_SAETZE : []);
+}
 function geschichteQuelleVon(s){
   if (!s || s.kapitel == null || !s.sentAr) return null;
   return GESCHICHTE_QUELLEN.find(q => q.ist(s)) || null;
@@ -174,29 +185,33 @@ function geschichteLuecke(s){
   return kand.reduce((a, b) => (wortKern(b).length > wortKern(a).length ? b : a));
 }
 function geschichten(){
-  if (typeof LEHRBUCH_SAETZE === 'undefined') return [];
+  const vorrat = geschichteVorrat();
+  if (!vorrat.length) return [];
   GESCHICHTE_KARTEN = null;   /* freigeschaltete Kapitel können sich seit dem letzten Bau geändert haben */
   const raus = [];
   GESCHICHTE_QUELLEN.forEach(q => {
     const zahl = {};
-    LEHRBUCH_SAETZE.forEach(s => { if (geschichteQuelleVon(s) === q) zahl[s.kapitel] = (zahl[s.kapitel] || 0) + 1; });
+    vorrat.forEach(s => { if (geschichteQuelleVon(s) === q) zahl[s.kapitel] = (zahl[s.kapitel] || 0) + 1; });
     Object.keys(zahl).map(Number)
       .filter(k => zahl[k] >= GESCHICHTE_MIN)
       .filter(k => typeof istBekannt !== 'function' || istBekannt({ book: q.book, chapter: k }))
       /* Mindestens zwei Sätze mit Lücke, sonst gibt es nur einen Knopf zur Wahl
          (gemessen: Lektion 14 hat 3 Sätze, aber nur in mb1-83-1 ein Zielwort). */
-      .filter(k => LEHRBUCH_SAETZE.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k && geschichteLuecke(s)).length >= 2)
+      .filter(k => vorrat.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k && geschichteLuecke(s)).length >= 2)
       .sort((a, b) => a - b)
-      .forEach(k => raus.push({ id: GESCHICHTE_PRAEFIX + q.kurz + k, kapitel: k, book: q.book, name: q.name(k), n: zahl[k] }));
+      .forEach(k => raus.push({ id: GESCHICHTE_PRAEFIX + q.kurz + k, kapitel: k, book: q.book, name: q.name(k), n: zahl[k], quelle: q }));
   });
-  return raus;
+  /* Ein Lektionstext ersetzt die Auswahl-Geschichte seiner Lektion (Quelle mit `ersetzt`). */
+  const weg = new Set(raus.filter(g => g.quelle.ersetzt != null)
+    .map(g => GESCHICHTE_PRAEFIX + g.quelle.ersetzt + g.kapitel));
+  return raus.filter(g => !weg.has(g.id)).map(({ quelle, ...g }) => g);
 }
 function geschichteSaetze(themaId){
-  if (typeof LEHRBUCH_SAETZE === 'undefined') return [];
+  const vorrat = geschichteVorrat();
   const rest = String(themaId).slice(GESCHICHTE_PRAEFIX.length);
   const q = GESCHICHTE_QUELLEN.find(x => x.kurz && rest.startsWith(x.kurz)) || GESCHICHTE_QUELLEN[0];
   const k = Number(rest.slice(q.kurz.length));
-  return LEHRBUCH_SAETZE.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k)
+  return vorrat.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k)
     .sort((a, b) => geschichteOrdnung(a) - geschichteOrdnung(b));
 }
 /* Die vier Knöpfe: das gesuchte Wort und bis zu drei andere Zielwörter

@@ -1452,9 +1452,11 @@ export const PFLEGEPLAN = [
     /* 09.11.2026, Elias am 08.11.: „ich finde geschichten mit lücken ganz interessant", dann
        „Im Satzmodus (A)". Teil von js/saetze.js, kein eigener Bildschirm. */
     funktion: 'Geschichten mit Lücken (Satzmodus, Übung 21)',
-    dateien: [],
+    /* 09.11.2026: dazu die Lektionstexte aus Madina 1 (Elias: „ja" zu echten Lesetexten). */
+    dateien: ['lesetexte-data.js'],
     bildschirme: [],
-    neuerInhalt: { nein: 'Die Geschichten sind die mb1-Sätze aus lehrbuch-saetze.js je Lektion; ein neu freigeschaltetes Kapitel ist ohne Zutun dabei, sobald dort Buchsätze stehen. Kommen neue Buchsätze dazu, gehören sie ohnehin nach lehrbuch-saetze.js (mit Seite).' },
+    neuerInhalt: { sitzung: 'Die Geschichten sind die mb1- und Bayna-Yadayk-Sätze aus lehrbuch-saetze.js je Lektion; ein neu freigeschaltetes Kapitel ist ohne Zutun dabei. Die Lektionstexte in lesetexte-data.js (Madina 1, Stand: Lektion 1–2) werden in einer Sitzung Seite für Seite vom Buchbild abgeschrieben, nicht automatisch — das PDF hat keine arabische Textebene. Der Rest bis Lektion 15 steht als offener Punkt in der To-Do.',
+      werkzeug: 'werkzeuge/pruefe-geschichten.mjs' },
     eingaben: { nein: 'Er tippt Auswahlknöpfe oder ein Wort; gespeichert wird nur die gewählte Geschichte in SETTINGS.satzThema, das schon gepflegt wird.' },
     veralten: { nein: 'Ob jede Geschichte aus Buchsätzen mit Seite besteht, jede Auswahl nur Wörter derselben Lektion zeigt und die Lücke jedes Vorkommen verdeckt, misst werkzeuge/pruefe-geschichten.mjs im Sammellauf.' },
   },
