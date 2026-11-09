@@ -159,7 +159,11 @@ function fallB(q){
   w.antworte(N[1]);                                       /* Teil 1 geschafft */
   const s = w.lauf('satzTeilStand()');
   const auswahl = Object.keys(w.lauf('satzTeilAuswahl(uebungenAufbauen())'));
-  const nurTeil2 = auswahl.length === N[2] && auswahl.every(id => t[2].includes(id));
+  /* Teil 2 plus Übung 21 (Geschichte, `ausserhalbTeile`): sie steht in JEDEM Teil von
+     „Gemischt" (Elias, 09.11.2026: „in gemischt rein"), aber in keinem Teil selbst. */
+  const draussen = UEBUNGEN.filter(u => u.ausserhalbTeile).map(u => u.id);
+  const nurTeil2 = auswahl.length === N[2] + draussen.length && auswahl.every(id => t[2].includes(id) || draussen.includes(id))
+    && draussen.every(id => auswahl.includes(id));
   /* eine laufende „Gemischt"-Liste, gebaut für Teil 1, eben die letzte Aufgabe beantwortet */
   w.lauf(`UEB = { modus: 'gemischt', teil: 1, idx: ${N[1] - 1}, liste: satzTeile()[1].map(id => ({ modus: { id } })).concat(satzTeile()[1].map(id => ({ modus: { id } }))) }`);
   w.lauf('uebungWeiter()');
@@ -303,6 +307,23 @@ else {
   const ohneZiehen = echt.replace('raus.push(uebungZiehen(koerbe[i], imDurchgang));', 'raus.push(koerbe[i].pop());');
   const r3 = gemischt(ohneZiehen, { a: ['s1', 's2'], b: ['s3', 's2'] });
   pruefe('STÖRTEST — ohne uebungZiehen käme derselbe Satz zweimal', ohneZiehen !== echt && r3[0] === r3[1], r3.join(' '));
+
+  /* 7b: Übung 21 (Geschichte, `reihenfolge`) in „Gemischt" (Elias, 09.11.2026: „in gemischt
+     rein"): ihre Lücken kommen der Reihe nach, das Mischen (hier: umdrehen) greift nicht. */
+  const geschichte = quelle => {
+    const G = { id: 'g', reihenfolge: true };
+    const k = { UEBUNGEN: [G], shuffle: x => x, uebungMischen: (m, l) => [l[1], l[2], l[0]], Set };
+    vm.createContext(k);
+    vm.runInContext(quelle, k);
+    return vm.runInContext('uebungGemischteListe', k)({ g: ['l1', 'l2', 'l3'].map(s => ({ modus: G, satz: { sentAr: s } })) }).map(x => x.satz.sentAr).join(' ');
+  };
+  const r4 = geschichte(echt);
+  pruefe('die Lücken einer Geschichte kommen in „Gemischt" der Reihe nach', r4 === 'l1 l2 l3', r4);
+  const ohneReihe = echt.replace('m.reihenfolge ?', 'false ?');
+  const r5 = geschichte(ohneReihe);
+  pruefe('STÖRTEST — ohne die Ausnahme für `reihenfolge` würde gemischt', ohneReihe !== echt && r5 !== 'l1 l2 l3', r5);
+  const sta = schneide(ueb, 'satzTeilAuswahl') || '';
+  pruefe('„Gemischt" nimmt die Übungen mit `ausserhalbTeile` in jedem Teil mit', /UEBUNGEN\.filter\(m => m\.ausserhalbTeile\)/.test(sta), '');
 }
 
 /* 8: eine RUHENDE Übung (`ruht:true`, 19.10.2026). Elias, mit Bild von Übung 1: „die

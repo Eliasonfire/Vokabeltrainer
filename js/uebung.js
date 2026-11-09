@@ -2476,9 +2476,10 @@ const UEBUNGEN = [
      Die Knöpfe: das fehlende Wort und bis zu drei andere Zielwörter derselben Lektion, so wie
      sie im Buch stehen — keine erzeugte Form.
      ⛔ `reihenfolge`: nicht mischen (uebungStarten), sonst ist es keine Geschichte mehr.
-     ⛔ `ausserhalbTeile`: steht in keinem Tagesteil und nicht in „Gemischt" (satzTeile) — MEINE
-     Entscheidung, damit keine andere Übung den Teil wechselt; außerdem braucht sie ihren Text
-     davor. Bewacht von werkzeuge/pruefe-geschichten.mjs. */
+     ⛔ `ausserhalbTeile`: wird in keinen Tagesteil verteilt (satzTeile) — MEINE Entscheidung,
+     damit keine andere Übung den Teil wechselt. In „Gemischt" steht sie aber in JEDEM Teil
+     (satzTeilAuswahl) — Elias, 09.11.2026: „in gemischt rein". Dort der Reihe nach, nicht
+     gemischt (uebungGemischteListe). Bewacht von werkzeuge/pruefe-geschichten.mjs. */
   {
     id:'geschichte', nr:21, name:'Geschichte — eine Lektion der Reihe nach, Lücke füllen', art:'geschichte',
     hinweis:'Die Sätze darüber hast du schon gelesen. Welches Wort fehlt in diesem Satz?',
@@ -3047,7 +3048,7 @@ function renderUebungsLeiste(){
      sucht, sucht es vor der Liste, nicht dahinter. */
   /* v606: Gemischt zeigt den heutigen Teil (satzTeile()) — seit v618 den,
      der gerade dran ist (nach „geschafft" der andere, satzTeilStand()). */
-  const teilHeute = satzTeilStand().jetzt, imTeil = new Set(satzTeile()[teilHeute]);
+  const teilHeute = satzTeilStand().jetzt, imTeil = new Set([...satzTeile()[teilHeute], ...UEBUNGEN.filter(m => m.ausserhalbTeile).map(m => m.id)]);
   const gesamt = UEBUNGEN.filter(m => imTeil.has(m.id)).reduce((s,m)=>s + uebungAnzahl(alle[m.id]), 0);
   html = '<div class="gruppe">Ohne Auswahl</div>'
        + `<button class="zeile${UEB.modus===UEB_GEMISCHT?' aktiv':''}${gesamt?'':' leer'}" type="button"`
@@ -3314,7 +3315,9 @@ function uebungGemischteListe(nachModus){
      sahen bei jedem Start gleich aus. Genau die sieht Elias zuerst. */
   /* ⭐ uebungZiehen() nimmt vom ENDE eines Korbs. Aufgaben ohne Satz (Übung 17, kurze Zeilen)
      wandern deshalb an den ANFANG: in der gemischten Runde kommen erst die Sätze dran. */
-  let koerbe = shuffle(UEBUNGEN.map(m => uebungMischen(m, nachModus[m.id] || [])
+  /* ⛔ `reihenfolge` (Übung 21, Geschichte): nicht mischen, sondern umgedreht in den Korb —
+     uebungZiehen() nimmt vom ENDE, so kommen die Lücken einer Lektion der Reihe nach. */
+  let koerbe = shuffle(UEBUNGEN.map(m => (m.reihenfolge ? (nachModus[m.id] || []).slice().reverse() : uebungMischen(m, nachModus[m.id] || []))
                                            .sort((x, y) => (y.ohneSatz ? 1 : 0) - (x.ohneSatz ? 1 : 0)))
                                .filter(k => k.length));
   const raus = [];
@@ -4103,7 +4106,8 @@ function satzTeile(){
   const zeit = {}, quelle = {};
   /* ⛔ Übung 21 (Geschichte, `ausserhalbTeile`, 09.11.2026) wird NICHT verteilt: sie kam nach
      allen anderen dazu und soll keine davon in den anderen Teil schieben (MEINE Entscheidung).
-     Sie steht in keinem Teil und deshalb auch nicht in „Gemischt". */
+     Sie steht in keinem Teil; „Gemischt" nimmt sie trotzdem in jedem Teil mit (satzTeilAuswahl,
+     Elias 09.11.2026: „in gemischt rein"). */
   const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile);
   for (const m of UEBUNGEN_T){
     const g = (typeof uebZeitGemessen === 'function') ? uebZeitGemessen(m.id) : null;
@@ -4239,7 +4243,10 @@ function satzTeilHeute(speichern){
 function satzTageszielHeute(){ return satzTeilStand().ziel; }
 /** Nur die Übungen des Teils, der gerade dran ist — für „Gemischt". */
 function satzTeilAuswahl(alle){
-  const nur = new Set(satzTeile()[satzTeilStand().jetzt]);
+  /* ⭐ Übung 21 (Geschichte, `ausserhalbTeile`) gehört in JEDEN Teil von „Gemischt" —
+     Elias, 09.11.2026, auf meine Frage, ob sie draußen bleiben soll: „in gemischt rein".
+     Verteilt (satzTeile) wird sie weiter nicht, damit keine andere Übung den Teil wechselt. */
+  const nur = new Set([...satzTeile()[satzTeilStand().jetzt], ...UEBUNGEN.filter(m => m.ausserhalbTeile).map(m => m.id)]);
   const raus = {};
   for (const [id, l] of Object.entries(alle || {})) if (nur.has(id)) raus[id] = l;
   return raus;
