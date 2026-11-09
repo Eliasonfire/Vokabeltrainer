@@ -129,7 +129,11 @@ function pruefe(daten, ersatz){
 
 if (process.argv.includes('--stoertest')){
   const faelle = {
-    G1: () => { const d = laden(); const s = d.LEHRBUCH_SAETZE.find(x => /^mb1-/.test(x.id) && x.kapitel === 13); delete s.seite; return pruefe(d); },
+    /* G1: dem ersten Satz der ersten Geschichte die Seite nehmen (welche Lektion das ist, hängt
+       davon ab, welche Lesetexte es gibt — fest „mb1, Kapitel 13" blieb grün, sobald Lektion 13
+       als Lesetext kam). */
+    G1: () => { const d = laden(); const F = baueKontext(d).F; const id = F.geschichteSaetze(F.geschichten()[0].id)[0].id;
+      delete d.LEHRBUCH_SAETZE.concat(d.LESETEXT_SAETZE).find(x => x.id === id).seite; return pruefe(d); },
     G2: () => pruefe(laden(), { findeZielwort: 'function findeZielwort(w){ return "كَلِمَةٌ" + String(w.id).length; }' }),
     G3: () => { const d = laden(); d.LEHRBUCH_SAETZE = d.LEHRBUCH_SAETZE.filter(x => !/^mb1-/.test(x.id) && x.werk !== 'bayna-yadayk-1'); d.LESETEXT_SAETZE = []; return pruefe(d); },
     G4: () => pruefe(laden(), { mitLuecke: 'function mitLuecke(t){ const v=t.indexOf(LUECKE.wort); return t.slice(0,v)+`<span class="satz-luecke">${LUECKE.wort}</span>`+t.slice(v+LUECKE.wort.length); }' }),
