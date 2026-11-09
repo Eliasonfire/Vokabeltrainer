@@ -151,9 +151,13 @@ const GEPRUEFT = {
   'ismul-isara-dhalika-01': 'ismul-isara-hadha-01 ismul-isara-haulai-01 ismul-isara-tilka-01 ismul-isara-ulaika-01',
   'ismul-isara-ulaika-01': 'isara-genus-kongruenz-01 ismul-isara-dhalika-01 ismul-isara-hadha-01 ismul-isara-tilka-01',
   'istifham-men-01': 'harf-jarr-min-ila-01 mamnu-min-as-sarf-01 min-ayna-01 mina-al-01 zarf-mansub-01',
-  'jam-muannath-salim-01': 'jam-mudhakkar-salim-01 jam-taksir-01',
-  'jam-mudhakkar-salim-01': 'jam-muannath-salim-01 jam-taksir-01',
-  'jam-taksir-01': 'jam-muannath-salim-01 jam-mudhakkar-salim-01',
+  /* 08.11.2026, neue Regel jam-ghayr-aqil-01: an mujtahiduuna, tabiibaatun und tullaabun
+     (Personen) gilt sie nicht; an hadhihi kutubun jadiidatun gelten die beiden gesunden
+     Plurale nicht. jam-taksir-01 dort gilt mit (kutub) und steht in js/uebung.js. */
+  'jam-ghayr-aqil-01': 'jam-muannath-salim-01 jam-mudhakkar-salim-01',
+  'jam-muannath-salim-01': 'jam-ghayr-aqil-01 jam-mudhakkar-salim-01 jam-taksir-01',
+  'jam-mudhakkar-salim-01': 'jam-ghayr-aqil-01 jam-muannath-salim-01 jam-taksir-01',
+  'jam-taksir-01': 'jam-ghayr-aqil-01 jam-muannath-salim-01 jam-mudhakkar-salim-01',
   'jumla-ismiya-filiya-01': 'badal-01 mubtada-khabar-01 mubtada-khabar-genus-01 satz-vs-wortgruppe-01',
   'kaf-der-entfernung-01': 'ismul-isara-hadha-01 ismul-isara-haulai-01',
   'koerperteile-genus-01': 'eigennamen-fem-ohne-tanwin-01 fem-bildung-01 ta-marbuta-fem-01 ta-marbuta-grenzen-01',
@@ -195,6 +199,28 @@ const GEPRUEFT = {
   'zuruf-makan-01': 'inda-ort-und-zeit-01 zarf-al-yawma-heute-01 zarf-maa-inda-01',
   'zuruf-makan-weitere-01': 'inda-ort-und-zeit-01 zarf-al-yawma-heute-01 zarf-maa-inda-01 zuruf-makan-01'
 };
+/* 09.11.2026, nach den drei Regeln aus dem Madina-Schlüssel (jumla-laysa-01, zarf-lada-01,
+   mubtada-khabar-shibh-jumla-01): 38 neue Paare einzeln am Wort gelesen. Diese hier gelten
+   dort NICHT zusammen (kein laysa / kein ladā im Satz, ein Adjektiv-khabar ist keine
+   šibh al-ǧumla, al-yawma und die drei Ortsadverbien nennen ladā nicht). Die übrigen stehen
+   in js/uebung.js UEBUNG_ZUSAMMEN (zwei Zeilen vom 09.11.2026). */
+const GEPRUEFT_0911 = {
+  'badal-01': 'jumla-laysa-01 mubtada-khabar-genus-01 mubtada-khabar-shibh-jumla-01',
+  'jumla-ismiya-filiya-01': 'jumla-laysa-01 mubtada-khabar-shibh-jumla-01',
+  'mubtada-khabar-01': 'badal-01 jumla-laysa-01',
+  'mubtada-khabar-genus-01': 'jumla-laysa-01 mubtada-khabar-shibh-jumla-01',
+  'mubtada-khabar-shibh-jumla-01': 'badal-01 jumla-ismiya-filiya-01 jumla-laysa-01 mubtada-khabar-genus-01 wortstellung-fokus-01',
+  'satz-vs-wortgruppe-01': 'badal-01 jumla-laysa-01',
+  'wortstellung-fokus-01': 'badal-01 jumla-laysa-01 mubtada-khabar-shibh-jumla-01',
+  'zarf-01': 'zarf-lada-01',
+  'zarf-lada-01': 'zarf-al-yawma-heute-01 zuruf-makan-01',
+  'zarf-maa-inda-01': 'zarf-lada-01',
+  'zarf-makan-rollenname-01': 'zarf-lada-01',
+  'zarf-mansub-01': 'zarf-lada-01',
+  'zuruf-makan-01': 'zarf-lada-01',
+  'zuruf-makan-weitere-01': 'zarf-lada-01'
+};
+for (const [a, bs] of Object.entries(GEPRUEFT_0911)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
 const GEPRUEFT_PAARE = new Set(Object.entries(GEPRUEFT).flatMap(([a, bs]) => bs.split(' ').map(b => a + ' → ' + b)));
 
 function schneideFunktion(text, name){

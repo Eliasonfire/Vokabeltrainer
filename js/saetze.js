@@ -112,6 +112,79 @@ let SATZ_THEMA = 'alle';
    „es gibt nur drei Sätze". [[ausfall_ist_unsichtbar_gebaut]] */
 let SATZ_REGELFILTER = null;
 
+/* ---------- Geschichten mit Lücken (09.11.2026) ----------
+   Elias am 08.11.2026: „ich finde geschichten mit lücken ganz interessant",
+   „man könnte das in den satzmodus integrieren oder diese geschichten", dann
+   auf die Wahl: „Im Satzmodus (A)". Vorbild ist Arabily: der Text wächst Satz
+   für Satz, jeder Satz kommt mit einer Lücke.
+   ⛔ Am 09.11.2026, nachdem sie zuerst im Lesemodus stand: „ich möchte die
+   geschichten im übungsmodus und nicht im lesemodus". Die Übung selbst ist
+   Übung 21 in js/uebung.js; hier stehen nur die Bausteine.
+
+   ⛔ Goal-Prompt E.1: keine erfundenen Sätze. Eine Geschichte ist deshalb eine
+   Lektion aus SEINEM Madina-1-Exemplar (lehrbuch-saetze.js, `mb1-…`, je Satz
+   mit Buchseite), in der Reihenfolge des Buches — nicht gemischt. Nur
+   freigeschaltete Kapitel (istBekannt), damit gilt „nur Gelerntes" von selbst.
+   Ab 3 Sätzen je Lektion ist es eine Geschichte (MEINE Grenze: mit einem oder
+   zwei Sätzen wächst kein Text).
+   Die Auswahlknöpfe der Lücke nehmen nur Wörter, die im Buch WIRKLICH so
+   stehen (Zielwörter derselben Lektion) — keine erzeugte Form. Bewacht von
+   werkzeuge/pruefe-geschichten.mjs. */
+const GESCHICHTE_PRAEFIX = 'geschichte-';
+const GESCHICHTE_MIN = 3;
+function istMb1Buchsatz(s){
+  return !!s && !s.werk && /^mb1-/.test(String(s.id)) && s.kapitel != null && !!s.sentAr;
+}
+function geschichteOrdnung(s){
+  const m = String(s.id).match(/-(\d+)$/);
+  return Number(s.seite || 0) * 1000 + (m ? Number(m[1]) : 0);
+}
+function geschichten(){
+  if (typeof LEHRBUCH_SAETZE === 'undefined') return [];
+  const zahl = {};
+  LEHRBUCH_SAETZE.forEach(s => { if (istMb1Buchsatz(s)) zahl[s.kapitel] = (zahl[s.kapitel] || 0) + 1; });
+  return Object.keys(zahl).map(Number)
+    .filter(k => zahl[k] >= GESCHICHTE_MIN)
+    .filter(k => typeof istBekannt !== 'function' || istBekannt({ book:'madina-1', chapter:k }))
+    /* Mindestens zwei Sätze mit Lücke, sonst gibt es nur einen Knopf zur Wahl
+       (gemessen: Lektion 14 hat 3 Sätze, aber nur in mb1-83-1 ein Zielwort). */
+    .filter(k => LEHRBUCH_SAETZE.filter(s => istMb1Buchsatz(s) && Number(s.kapitel) === k && findeZielwort(s)).length >= 2)
+    .sort((a, b) => a - b)
+    .map(k => ({ id: GESCHICHTE_PRAEFIX + k, kapitel: k, name: 'Lektion ' + k, n: zahl[k] }));
+}
+function geschichteSaetze(themaId){
+  if (typeof LEHRBUCH_SAETZE === 'undefined') return [];
+  const k = Number(String(themaId).slice(GESCHICHTE_PRAEFIX.length));
+  return LEHRBUCH_SAETZE.filter(s => istMb1Buchsatz(s) && Number(s.kapitel) === k)
+    .sort((a, b) => geschichteOrdnung(a) - geschichteOrdnung(b));
+}
+/* Die vier Knöpfe: das gesuchte Wort und bis zu drei andere Zielwörter
+   derselben Lektion, ohne Vokalzeichen verschieden. Gemischt mit einem festen
+   Wert je Satz, damit die Lösung nicht immer an derselben Stelle steht und
+   beim Neuzeichnen nicht springt. */
+function geschichteWahl(w, ziel, geschichteId){
+  const gesehen = new Set([ohneTaschkil(ziel)]);
+  const andere = [];
+  geschichteSaetze(geschichteId).forEach(s => {
+    if (s === w) return;
+    const z = findeZielwort(s);
+    if (!z || gesehen.has(ohneTaschkil(z))) return;
+    gesehen.add(ohneTaschkil(z));
+    andere.push(z);
+  });
+  const wahl = [ziel].concat(andere.slice(0, 3));
+  const ab = Math.floor(satzZufall(w) * wahl.length);
+  return wahl.slice(ab).concat(wahl.slice(0, ab));
+}
+/* Begründung aus der Markierung des Satzes, nicht frei formuliert. */
+function geschichteGrund(w, ziel){
+  const tags = (typeof SENTENCE_TAGS !== 'undefined' && SENTENCE_TAGS[w.id]) || [];
+  const t = tags.find(x => x.matchText === ziel);
+  if (!t || typeof GRAMMAR_RULES === 'undefined') return '';
+  const r = GRAMMAR_RULES.find(x => x.id === t.ruleId);
+  return r ? r.name : '';
+}
+
 function satzListe(themaId){
   if (!SATZ_REGELFILTER) return saetzeZumThema(themaId);
   const ids = SATZ_REGELFILTER.ids;
@@ -422,7 +495,7 @@ document.getElementById('themenBlatt').addEventListener('click', (e)=>{
 /* ⛔ 25.09.2026: 'bayna-yadayk-2' fehlte — seine zwei Sätze by2-231-1/-2
    standen als „Madina Buch 1, S. 231" da. Dazu die Musterlösung seines Lehrers
    (Folge 19, regelsammlung-data.js), aus der mf19-13-1 stammt. */
-const HERKUNFT_WERK = { 'madina-schluessel-3': 'Madina-Schlüssel 3', 'bayna-yadayk-1': 'Bayna Yadayk 1',
+const HERKUNFT_WERK = { 'madina-schluessel-2': 'Madina-Schlüssel 2', 'madina-schluessel-3': 'Madina-Schlüssel 3', 'bayna-yadayk-1': 'Bayna Yadayk 1',
   'bayna-yadayk-2': 'Bayna Yadayk 2', 'musterloesung-f19': 'Musterlösung (Folge 19)' };
 function herkunft(w){
   if (w.seite) return `${HERKUNFT_WERK[w.werk] || 'Madina Buch 1'}, S. ${w.seite}`;
@@ -458,9 +531,12 @@ function mitLuecke(text){
      erscheint erst, wenn der andere verschwindet.
      [[kennzeichen_mit_zwei_ursachen]] · [[bild_ohne_fehlermeldung_falsch]] */
   const klasse = LUECKE.geloest ? 'satz-luecke auf' : 'satz-luecke';
-  return escapeHtml(text.slice(0, von))
-       + `<span class="${klasse}">${escapeHtml(LUECKE.wort)}</span>`
-       + escapeHtml(text.slice(von + LUECKE.wort.length));
+  /* ⛔ JEDES Vorkommen wird zur Lücke (09.11.2026), nicht nur das erste.
+     Gemessen an mb1-68-2 «أَهُمْ مُجْتَهِدُونَ؟ نَعَمْ، هُمْ مُجْتَهِدُونَ.»: die
+     Lücke saß im ersten Wort, das zweite stand offen da — die Lösung im selben
+     Satz. */
+  return text.split(LUECKE.wort).map(escapeHtml)
+       .join(`<span class="${klasse}">${escapeHtml(LUECKE.wort)}</span>`);
 }
 
 /* Sitzt eine Fundstelle an einer Wortgrenze, oder mitten in einem Wort?
@@ -979,9 +1055,17 @@ function renderIrab(){
   const liste  = document.getElementById('sentIrabList');
   const w = SENT.list[SENT.idx];
   if (!w){ kasten.classList.add('hidden'); return; }
+  liste.innerHTML = irabZeilenHtml(w.sentAr);
+  kasten.classList.remove('hidden');
+}
+
+/* Die Zeilen der Zerlegung als HTML — seit 09.11.2026 eine eigene Funktion, weil das
+   Lehrerblatt (js/lehrerblatt.js, Aufgabe 11 und 18) dieselbe Zerlegung zeigt. Zwei
+   Fassungen derselben Anzeige würden auseinanderlaufen. */
+function irabZeilenHtml(satz){
   if (typeof setzeLexikon === 'function') setzeLexikon(VOCAB_DATA);
-  const zeilen = analysiereSatz(w.sentAr);
-  liste.innerHTML = zeilen.map(t=>{
+  const zeilen = analysiereSatz(satz);
+  return zeilen.map(t=>{
     /* Warum am Wort keine Endung zu sehen ist, obwohl der Fall feststeht:
        das Possessiv-Yāʾ, die fuenf Nomen, ein اِسْم مَقْصُور, ein Name auf Alif.
        Ohne diesen Zusatz sucht man an اسْمِي nach einer Damma, die es nach der
@@ -1000,7 +1084,6 @@ function renderIrab(){
       <span class="irab-rolle">${escapeHtml(typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle)}<br>${kasus}</span>
     </div>`;
   }).join('');
-  kasten.classList.remove('hidden');
 }
 
 document.getElementById('btnSentIrab').addEventListener('click', ()=>{

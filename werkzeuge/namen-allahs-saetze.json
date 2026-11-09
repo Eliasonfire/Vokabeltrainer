@@ -1,0 +1,39 @@
+{
+  "_": [
+    "Beispielsätze der Namen Allahs (A9 des vollen Programms, 08.11.2026). Schlüssel = nr aus namen-allahs-liste.json.",
+    "Nur Stellen, die Elias auswendig kann: aus seinen Duas (data/duas.json, Nummer in dua) — wörtlich aus `texte`, geprüft von pruefe-namen-allahs.mjs (N6). `w` = an welcher Stelle (ab 1) der Name im Zitat steht.",
+    "Die Karte zeigt den Satz wie den Koransatz bei „Koran häufigste“ (Feld koranSatz): auf der Lernkarte und in der Wortkarte, NICHT im Satzmodus und nicht in den Satzübungen. Ob Dua-Sätze auch dorthin sollen, ist seine Frage."
+  ],
+  "saetze": {
+    "1":  { "dua": 1,  "ar": "لاَ إِلَهَ إِلاَّ اللَّهُ", "w": 4, "de": "Es gibt keinen Gott außer Allah." },
+    "5":  { "dua": 14, "ar": "لَا إِلَهَ إِلاَّ أَنْتَ", "w": 2, "de": "Es gibt keinen Gott außer Dir." },
+    "86": { "dua": 14, "ar": "اللَّهُمَّ أَنْتَ رَبِّي", "w": 3, "de": "O Allah, Du bist mein Herr." },
+    "43": { "dua": 6,  "ar": "اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي", "w": 3, "de": "O Allah, Du bist der Verzeihende, Du liebst das Verzeihen, so verzeih mir." },
+    "90": { "dua": 9,  "ar": "وَاشْفِ أَنْتَ الشَّافِي", "w": 3, "de": "Und heile, Du bist der Heilende." },
+    "35": { "dua": 16, "ar": "وَهُوَ السَّمِيعُ الْعَلِيمُ", "w": 2, "de": "Und Er ist der Allhörende, der Allwissende." },
+    "44": { "dua": 16, "ar": "وَهُوَ السَّمِيعُ الْعَلِيمُ", "w": 3, "de": "Und Er ist der Allhörende, der Allwissende." },
+    "23": { "dua": 2,  "ar": "إِنَّكَ حَمِيدٌ مَجِيدٌ", "w": 2, "de": "Du bist lobenswert und ruhmreich." },
+    "65": { "dua": 2,  "ar": "إِنَّكَ حَمِيدٌ مَجِيدٌ", "w": 3, "de": "Du bist lobenswert und ruhmreich." },
+    "70": { "dua": 3,  "ar": "سُبْحَانَ الْمَلِكِ الْقُدُّوسِ", "w": 2, "de": "Gepriesen sei der König, der Heilige." },
+    "52": { "dua": 3,  "ar": "سُبْحَانَ الْمَلِكِ الْقُدُّوسِ", "w": 3, "de": "Gepriesen sei der König, der Heilige." },
+    "72": { "dua": 6,  "ar": "وَٱغْفِرْ لَنَا وَٱرْحَمْنَآۚ أَنتَ مَوْلَىٰنَا", "w": 5, "de": "Und vergib uns und erbarme Dich unser, Du bist unser Schutzherr." },
+    "34": { "dua": 13, "ar": "اللَّهُمَّ أَنْتَ السَّلاَمُ", "w": 3, "de": "O Allah, Du bist der Friede." },
+
+    "2":  { "surah": "Al-Ikhlas", "ayah": "112:1", "ar": "قُلۡ هُوَ ٱللَّهُ أَحَدٌ", "w": 4, "de": "Sag: Er ist Allah, Einer." },
+    "39": { "surah": "Al-Ikhlas", "ayah": "112:2", "ar": "ٱللَّهُ ٱلصَّمَدُ", "w": 2, "de": "Allah, der Überlegene (auf den alle angewiesen sind)." },
+    "53": { "surah": "Al-Mulk", "ayah": "67:1", "ar": "وَهُوَ عَلَىٰ كُلِّ شَيۡءٖ قَدِيرٌ", "w": 5, "de": "Und Er hat zu allem die Macht." },
+    "41": { "surah": "Al-Mulk", "ayah": "67:2", "ar": "وَهُوَ ٱلۡعَزِيزُ ٱلۡغَفُورُ", "w": 2, "de": "Und Er ist der Allmächtige und Allvergebende." },
+    "47": { "surah": "Al-Mulk", "ayah": "67:2", "ar": "وَهُوَ ٱلۡعَزِيزُ ٱلۡغَفُورُ", "w": 3, "de": "Und Er ist der Allmächtige und Allvergebende." },
+    "59": { "surah": "Al-Mulk", "ayah": "67:14", "ar": "وَهُوَ ٱللَّطِيفُ ٱلۡخَبِيرُ", "w": 2, "de": "Und Er ist der Feinfühlige und Allkundige." },
+    "26": { "surah": "Al-Mulk", "ayah": "67:14", "ar": "وَهُوَ ٱللَّطِيفُ ٱلۡخَبِيرُ", "w": 3, "de": "Und Er ist der Feinfühlige und Allkundige." },
+    "12": { "surah": "Al-Mulk", "ayah": "67:19", "ar": "إِنَّهُۥ بِكُلِّ شَيۡءِۭ بَصِيرٌ", "w": 4, "de": "Gewiss, Er sieht alles wohl." },
+    "13": { "surah": "An-Nasr", "ayah": "110:3", "ar": "إِنَّهُۥ كَانَ تَوَّابَۢا", "w": 3, "de": "Gewiss, Er nimmt die Reue immer wieder an." },
+    "30": { "surah": "Al-Fatihah", "ayah": "1:3", "ar": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ", "w": 1, "de": "Dem Allerbarmer, dem Barmherzigen." },
+    "31": { "surah": "Al-Fatihah", "ayah": "1:3", "ar": "ٱلرَّحۡمَٰنِ ٱلرَّحِيمِ", "w": 2, "de": "Dem Allerbarmer, dem Barmherzigen." },
+    "24": { "surah": "Al-Baqarah", "ayah": "2:255", "ar": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلۡحَيُّ ٱلۡقَيُّومُ", "w": 6, "de": "Allah, es gibt keinen Gott außer Ihm, dem Lebendigen und Beständigen." },
+    "25": { "surah": "Al-Baqarah", "ayah": "2:255", "ar": "ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلۡحَيُّ ٱلۡقَيُّومُ", "w": 7, "de": "Allah, es gibt keinen Gott außer Ihm, dem Lebendigen und Beständigen." },
+    "45": { "surah": "Al-Baqarah", "ayah": "2:255", "ar": "وَهُوَ ٱلۡعَلِيُّ ٱلۡعَظِيمُ", "w": 2, "de": "Und Er ist der Erhabene, der Allgewaltige." },
+    "42": { "surah": "Al-Baqarah", "ayah": "2:255", "ar": "وَهُوَ ٱلۡعَلِيُّ ٱلۡعَظِيمُ", "w": 3, "de": "Und Er ist der Erhabene, der Allgewaltige." }
+  },
+  "ohneSatz": "Die übrigen 71 Namen stehen weder in seinen auswendigen Duas noch in seinem auswendigen Koranbereich (Suren 1, 67, 93–95, 97, 99, 102, 103, 105–114 und 2:255; gemessen 08.11.2026). Falschtreffer, die NICHT als Satz taugen, weil das Wort dort nicht Allah meint: al-Ḥaqq 103:3 (die Wahrheit), al-Mubīn 67:26/67:29 (Warner bzw. Irrtum), al-Kabīr 67:9/67:12 (Irrtum bzw. Lohn), al-Waliyy 109:6 (wa-liya). Ob für sie ein Vers außerhalb seines Bereichs genommen wird wie bei „Koran häufigste“, ist seine Frage."
+}

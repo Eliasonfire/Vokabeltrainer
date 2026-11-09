@@ -170,7 +170,7 @@ function fehltDerGanzeOrdner(versucht){
      lädt immer. Mit ihr in der Liste gälte der Ordner als vorhanden, auch wenn jedes
      Buch daraus fehlt. Der Name steht als Text, weil Prüfstände nur diese Funktion
      aus dem Quelltext schneiden (KORAN_BUCH weiter unten). */
-  const ausOrdner = versucht.filter(s => s !== 'koran-haeufig');
+  const ausOrdner = versucht.filter(s => s !== 'koran-haeufig' && s !== 'namen-allahs');
   if (!ausOrdner.length) return false;
   return ausOrdner.every(s => BUCH_FEHLT.has(s));
 }
@@ -250,11 +250,55 @@ function koranStueck(buch, kap){
   const plaetze = koranListe().filter(e => Number(e.kap) === Number(kap)).map(e => Number(e.rang));
   return plaetze.length ? Math.min(...plaetze) + '–' + Math.max(...plaetze) : '';
 }
-/* Alle Bücher, die die App anbietet: das Verzeichnis aus data/ plus die Gruppe. */
+/* ---------- „Namen Allahs" — eine zweite Gruppe nach demselben Muster (08.11.2026) ----------
+
+   Elias am 08.11.2026: „ich möchte auch als neue vokabeln die namen allahs lernen. ich brauche
+   authentische namen von allah. insgesamt sollten es 99 sein glaube ich. ich brauche vor allem namen
+   die ich in duas gut verwenden kann". Auf meine Frage, was mit Namen sei, die er schon als Wort-Karte
+   hat: „Trotzdem Namenskarte". Darum wird hier NICHTS gegen seine Buchkarten abgeglichen (anders als
+   koranKartenEinordnen()): ar-Raḥīm steht als eigene Karte neben „barmherzig".
+
+   Wie „Koran häufigste" ein BUCH außerhalb von BUECHER, mit eigenen Karten aus namen-allahs-data.js
+   (erzeugt von werkzeuge/namen-allahs-bauen.mjs, Liste und Belege in werkzeuge/namen-allahs-liste.json).
+   Die Stücke 1–10 sind die Lernreihenfolge: Stück 1 = die Namen aus seinen auswendigen Duas. */
+const NAMEN_BUCH = 'namen-allahs';
+function namenListe(){
+  return (typeof NAMEN_ALLAHS !== 'undefined' && Array.isArray(NAMEN_ALLAHS)) ? NAMEN_ALLAHS : [];
+}
+function namenBuchInfo(){
+  const l = namenListe();
+  if (!l.length) return null;
+  return { slug: NAMEN_BUCH, vokabeln: l.length,
+           kapitel: l.reduce((m, e) => Math.max(m, Number(e.kap) || 0), 0),
+           datei: 'namen-allahs-data.js' };
+}
+/* Die Karten der Gruppe. Umschrift und Beleg stehen in `note` — die Lernkarte zeigt sie dort; kommt
+   der Name in einer seiner auswendigen Duas vor, steht deren Titel dabei. */
+function namenKarten(){
+  return namenListe().map(e => {
+    const teile = [e.um, e.beleg];
+    if (e.duas && e.duas.length) teile.push('In deiner Dua: ' + e.duas.map(t => '„' + t + '“').join(', '));
+    const k = { id: e.id, ar: e.ar, de: e.de, type: 'noun', chapter: e.kap, book: NAMEN_BUCH,
+             namenRang: e.rang, note: teile.join(' · ') };
+    /* Der Beispielsatz geht als koranSatz an die Karte, wie bei „Koran häufigste“ (nicht als sentAr:
+       Satzmodus und Satzübungen sollen keine Dua zerlegen). Aus einer Dua trägt er `quelle`,
+       dann zeigen Lern- und Wortkarte den Dua-Titel statt Sure und Vers. */
+    if (e.satz) k.koranSatz = e.satz.dua
+      ? { ar: e.satz.ar, de: e.satz.de, w: e.satz.w, quelle: 'Dua „' + e.satz.duaTitel + '“' }
+      : { surah: e.satz.surah, ayah: e.satz.ayah, ar: e.satz.ar, de: e.satz.de, w: e.satz.w };
+    return k;
+  });
+}
+
+/* Alle Bücher, die die App anbietet: das Verzeichnis aus data/ plus die zwei Gruppen. */
 function alleBuecher(){
   const liste = (typeof BUECHER !== 'undefined' && Array.isArray(BUECHER)) ? BUECHER.slice() : [];
   const koran = koranBuchInfo();
   if (koran && !liste.some(b => b.slug === KORAN_BUCH)) liste.push(koran);
+  /* Mit typeof und dem Namen als Text: Prüfstände schneiden nur diese Funktion aus dem Quelltext
+     (test-koran-haeufig.mjs, pruefe-vokabelpaket.mjs) und kennen die Gruppe nicht. */
+  const namen = typeof namenBuchInfo === 'function' ? namenBuchInfo() : null;
+  if (namen && !liste.some(b => b.slug === 'namen-allahs')) liste.push(namen);
   return liste;
 }
 
@@ -285,6 +329,7 @@ function ladeBuchDatei(slug){
     if (!info) return fehler(new Error(`Unbekanntes Buch: ${slug}`));
     /* „Koran häufigste" liegt nicht in data/ — die Liste hat index.html schon geladen. */
     if (slug === KORAN_BUCH) return fertig(koranKarten());
+    if (slug === 'namen-allahs' && typeof namenKarten === 'function') return fertig(namenKarten());
     const ausPaket = typeof PAKET_SLUGS !== 'undefined' && PAKET_SLUGS.has(slug);
     const vorhanden = (window.VOKABELN && window.VOKABELN[slug]) || null;
     if (vorhanden && !ausPaket) return fertig(vorhanden);
@@ -851,7 +896,8 @@ const BUCH_TITEL = {
   'bayna-yadayk-3': 'Bayna Yadayk 3', 'bayna-yadayk-4': 'Bayna Yadayk 4',
   'quran': 'Quran',
   /* Sein Name für die Gruppe (11.10.2026): „kürze den namen auf Koran häufigste". */
-  'koran-haeufig': 'Koran häufigste'
+  'koran-haeufig': 'Koran häufigste',
+  'namen-allahs': 'Namen Allahs'
 };
 function buchTitel(slug){ return BUCH_TITEL[slug] || slug; }
 
@@ -868,7 +914,8 @@ const BUCH_KURZ = {
   'bayna-yadayk-1': 'BY1', 'bayna-yadayk-2': 'BY2',
   'bayna-yadayk-3': 'BY3', 'bayna-yadayk-4': 'BY4',
   'quran': 'Quran',
-  'koran-haeufig': 'Koran'
+  'koran-haeufig': 'Koran',
+  'namen-allahs': 'Namen'
 };
 function buchKurz(slug){ return BUCH_KURZ[slug] || buchTitel(slug); }
 
@@ -925,6 +972,7 @@ function kapitelDesBuchs(slug){
      Der Name steht als Text, weil Prüfstände nur diese Funktion aus dem Quelltext
      schneiden (pruefe-vokabeln-seite.mjs wurde sonst rot: „KORAN_BUCH is not defined"). */
   if (s === 'koran-haeufig') return info ? Array.from({length: info.kapitel}, (_,i)=>i+1) : [];
+  if (s === 'namen-allahs') return info ? Array.from({length: info.kapitel}, (_,i)=>i+1) : [];
   /* `einzelnGeladen`: ein einzeln freigeschaltetes Wort aus einem nicht gewählten Buch
      (einzelneAusAnderenBuechern()) sagt nichts darüber, welche Kapitel das Buch hat. */
   const vorhanden = [...new Set(VOCAB_DATA.filter(w=>w.book===s && typeof w.chapter==='number' && !w.einzelnGeladen)

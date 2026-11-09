@@ -1041,6 +1041,180 @@
       "urteil": "schon-regel",
       "grund": "Konjugieren: huma, hunna, anta, antuma, antum, anti, antuma, antunna, ana, nahnu - wir haben nur vierzehn. Dann die naechsten Verben (amara befehlen, ghasala waschen, raja'a zurueckkehren, kasara zerbrechen, hamala tragen). Die vierzehn Formen stehen im Bestand.",
       "quelle": "verb-madi-endungen-01"
+    },
+    "f31-045": {
+      "urteil": "schon-regel",
+      "quelle": "jam-salim-taksir-01",
+      "grund": "Einstieg in Kapitel 16: Wiederholung der beiden Pluralarten (regelmaessig maennlich/weiblich, unregelmaessig mit vielen Mustern) und taalibun jadidun / taalibatun jadidatun. Steht im Bestand; die neue Regel des Kapitels folgt ab f31-245."
+    },
+    "f31-245": {
+      "urteil": "schon-regel",
+      "grund": "Der Lehrer trennt Personen (mit Verstand) von Dingen ohne Verstand: haadhaa taalibun jadidun -> haaulaai t-tullaabu l-juddudu, dann haadhaa kitaabun jadidun als Beispiel fuer Dinge. Einfuehrung der neuen Regel. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 2:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-445": {
+      "urteil": "schon-regel",
+      "grund": "Die Regel woertlich: Plural von Dingen bzw. allem ohne Verstand wird behandelt wie weiblich Singular - haadhihi kutubun jadidatun statt haaulaai kutubun juddudun. Den Plural von haadhaa und vom Adjektiv nutzt man nur bei Personen. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 4:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-615": {
+      "urteil": "schon-regel",
+      "grund": "Kapiteltext: haadhihi l-aqlaamu, hiya lii, hiya jamilatun - hiya (sie, Singular) fuer die Stifte, weil sie keinen Verstand haben. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 6:15",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-745": {
+      "urteil": "schon-regel",
+      "grund": "Fortsetzung: wa haadhihi l-kutubu l-jadidatu (Adjektiv weiblich Singular), ayna dafaatirukum? hiya hunaa - dafaatir als Plural von daftar, Pronomen hiya. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 7:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-1015": {
+      "urteil": "schon-regel",
+      "grund": "Nachfrage eines Schuelers: Hunde im Plural bekommen haadhihi, nur Menschen bekommen haaulaai; Hund im Singular bleibt maennlich. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 10:15",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-1145": {
+      "urteil": "schon-regel",
+      "grund": "Uebung: duruus hat keinen Verstand und ist Plural, also haadhihi; mudarrisuun und akhawaat (Personen) bekommen haaulaai. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 11:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-1315": {
+      "urteil": "schon-regel",
+      "grund": "Uebung: al-aqlaam -> haadhihi, kitaab -> haadhaa, sayyaaraat -> haadhihi; der Plural der Hinweiswoerter kommt nur bei Menschen. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 13:15",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-1515": {
+      "urteil": "schon-regel",
+      "grund": "Uebung mit dhaalika / tilka / ulaaika: an-nujuum (Plural ohne Verstand) bekommt tilka, banaat (Personen) ulaaika. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 15:15",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-1745": {
+      "urteil": "schon-regel",
+      "grund": "Uebung dhaalika / tilka / ulaaika (masjid, sayyaara, mudarrisa), dann die Zusammenfassung des Kapitels. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 17:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-1915": {
+      "urteil": "schon-regel",
+      "grund": "Zusammenfassung: bei Gegenstaenden nutzt man im Plural die weibliche Singularform (haadhihi buyuut, tilka sayyaaraat); Kapitel 17 ist nur ein Uebungskapitel zu Kapitel 16. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 19:15",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-2045": {
+      "urteil": "schon-regel",
+      "grund": "Uebungsliste des Buchs: haadhaa najmun -> haadhihi nujuumun, darsun -> duruusun, qalamun -> aqlaamun, baabun -> abwaabun, kalbun -> kilaabun usw., alles mit haadhihi. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 20:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-2215": {
+      "urteil": "schon-regel",
+      "grund": "dhaalika najmun -> tilka nujuumun; die Fachwoerter aaqil und ghayru aaqil; Hausaufgabe: je zwei Saetze mit und ohne Verstand im Plural. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 22:15",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-2345": {
+      "urteil": "schon-regel",
+      "grund": "Nachfrage: mit Verstand sind Menschen, dazu Engel und Dschinn; ohne Verstand Gegenstaende (und Tiere, siehe f31-1015). Danach Ausblick und Motivation. Lehrer und Schluessel einig: belegt, noch nicht in der App (keine Regel zu aqil / ghayr aqil in grammar-data.js, gesucht 08.11.2026).",
+      "quelle": "Schluessel 1, Lektion 16-17 (S. 58-60), Vault 04 - Wissen/Schluessel-Regeln.md: der Plural von irrationalen Substantiven (ghayr aqil) wird wie ein weiblicher Singular behandelt; Folge 31 @ 23:45",
+      "regel": "jam-ghayr-aqil-01",
+      "eingebaut": "2026-11-08"
+    },
+    "f31-2515": {
+      "urteil": "weg",
+      "grund": "Schluss der Stunde: bis Kapitel 23 ist es nicht mehr weit, Motivation, wer live kommt, bleibt dabei. Keine Regel."
+    },
+    "f32-115": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01",
+      "grund": "Hausaufgabe aus Kapitel 16: je zwei Saetze mit und ohne Verstand (hadhihi sayyaaratun sariiatun, hadaaiq, hadhaa mudarrisun jadiidun). Reine Anwendung der Regel aus Folge 31."
+    },
+    "f32-615": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01 · harf-jarr-li-01",
+      "grund": "abwaabu l-masjidi maftuuhatun: die Tueren sind ohne Verstand, darum weiblich Einzahl; dann li-l-mudiiri wegen des Harf Jarr. Beides steht schon als Regel."
+    },
+    "f32-945": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01 · mubtada-khabar-01",
+      "grund": "hadhihi d-duruusu sahlatun: Mehrzahl ohne Verstand mit weiblich Einzahl; dazu die Nachfrage, warum sahlatun unbestimmt bleibt - es ist die Aussage (Khabar), kein Adjektiv. Beides im Bestand."
+    },
+    "f32-1815": {
+      "urteil": "schon-regel",
+      "quelle": "idafa-01 · mamnu-min-as-sarf-plural-01 · jam-ghayr-aqil-01",
+      "grund": "makaatibu t-tullaabi als Mudaf (Schreibtische der Studenten), das Muster makaatib ohne Tanwin, und fanaadiqu kabiiratun. Alles schon Regel."
+    },
+    "f32-2015": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01",
+      "grund": "Buchuebung S. 93: Einzahl in Mehrzahl umwandeln (hadhaa qalamun jadiidun -> hadhihi aqlaamun jadiidatun, an-nujuumu jamiilatun). Anwendung der Regel."
+    },
+    "f32-2245": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01",
+      "grund": "tilka buyuutun jamiilatun, tilka l-jibaalu baiidatun: wird behandelt wie weiblich Singular. Wiederholung der Regel aus Folge 31."
+    },
+    "f32-2415": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01 · mamnu-min-as-sarf-plural-01",
+      "grund": "hadhihi l-makaatibu maksuuratun, hadhihi saaaatun rakhiisatun, tilka t-taaairaatu kabiiratun. Anwendung; makaatib ohne Tanwin steht schon als Regel."
+    },
+    "f32-2715": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01 · ismul-isara-ulaika-01",
+      "grund": "dhaalika r-rajulu taajirun kabiirun -> ulaaika r-rijaalu tujjaarun kibaarun: Personen behalten den Plural. Der Lehrer betont, dass das Buch zwei Personen-Saetze unter die Gegenstaende gemischt hat."
+    },
+    "f32-2845": {
+      "urteil": "schon-regel",
+      "quelle": "mubtada-khabar-genus-01 · jam-ghayr-aqil-01",
+      "grund": "Uebung: zum gegebenen Mubtada den passenden Khabar setzen und ihm angleichen (al-baytu kabiirun, al-buyuutu kabiiratun). Angleichung und Sachplural stehen schon als Regel."
+    },
+    "f32-3115": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01",
+      "grund": "as-sayyaaraatu jadiidatun, al-fanaadiqu kabiiratun; al-mindiilu nadhiifun als Einzahl ohne Besonderheit."
+    },
+    "f32-3245": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01 · jam-mudhakkar-salim-01",
+      "grund": "at-tullaabu mujtahiduuna: Personen mit Verstand, darum der Plural (gesunder maennlicher Plural); al-qumsaanu (Hemden) dagegen weiblich Einzahl."
+    },
+    "f32-3415": {
+      "urteil": "schon-regel",
+      "quelle": "jam-ghayr-aqil-01 · jam-taksir-01",
+      "grund": "al-qumsaanu kabiiratun, dann Uebung 4: Plurale bilden (abwaab, buyuut, nujuum, aqlaam, humur). Gebrochener Plural und Sachplural stehen im Bestand."
+    },
+    "f32-3545": {
+      "urteil": "schon-regel",
+      "quelle": "jam-muannath-salim-01 · jam-taksir-01",
+      "grund": "Plurale bilden: nahr -> anhaar, kalb -> kilaab, taaairatun -> taaairaatun. Der Lehrer: wo Ta marbuta steht, wird sie gegen Alif-Ta getauscht (gesunder weiblicher Plural). Steht als jam-muannath-salim-01. Nebenbei: himaar hat zwei Plurale (humur und hamiir) - Wortschatz, keine neue Grammatikregel."
+    },
+    "f32-3715": {
+      "urteil": "schon-regel",
+      "quelle": "jam-taksir-01",
+      "grund": "Weitere Plurale (duruus, bihaar, kutub, qumsaan, dajaajaat, huquul, jibaal) und die neuen Vokabeln des Kapitels (sharika, rakhiis, qamiis, mudiir). Kein neuer Lehrsatz."
+    },
+    "f32-3845": {
+      "urteil": "weg",
+      "grund": "Vokabelliste und Schluss: Aufgabe 1 bleibt als Hausaufgabe, Kapitel 17 ist beendet, der Lehrer ist bis zum 12. auf Umrah (Projektarbeit oder aufgenommene Videos), Kapitel 18 handelt von den Zahlen. Keine Regel."
     }
   }
 }

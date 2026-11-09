@@ -143,9 +143,12 @@ function lauf(quelle){
        Satzbau dazugekommen und wird als letzte verteilt (satzTeile()) — sie
        landet ohne den Satzbau im anderen Teil, und das ist richtig so. Gemeint
        sind hier die Übungen, die es vor dem Satzbau schon gab. */
-    const gewechselt = UEBUNGEN.filter(m => m !== U && !m.teilRang && ohne[1].includes(m.id) !== mit[1].includes(m.id)).map(m => m.nr);
-    ok('1 seine zwei Teile bleiben, wie sie waren — die neue kommt nur dazu', gewechselt.length === 0
-      && [1, 2].filter(t => mit[t].includes('satz-bauen')).length === 1);
+    /* Seit 09.11.2026 drei Teile (Elias: „… in 3 teilen"): verglichen wird der Teil über ALLE Teile. */
+    const ks = tt => Array.from({ length: tt.anzahl || 2 }, (_, i) => i + 1);
+    const tv = (tt, id) => ks(tt).find(k => (tt[k] || []).includes(id)) || 0;
+    const gewechselt = UEBUNGEN.filter(m => m !== U && !m.teilRang && tv(ohne, m.id) !== tv(mit, m.id)).map(m => m.nr);
+    ok('1 die Teile bleiben, wie sie waren — die neue kommt nur dazu', gewechselt.length === 0
+      && ks(mit).filter(t => mit[t].includes('satz-bauen')).length === 1);
   }
 
   // ---- 2: die Aufgaben aus seiner Auswahl
@@ -288,7 +291,7 @@ const STOERUNGEN = [
   ['die Zeitschätzung kennt die Art nicht', 'schreiben: 60, bauen: 12 }', 'schreiben: 60 }', '1 die Zeitschätzung'],
   /* Seine zwei Teile bleiben, wie sie waren (gemessen an seinem Stand am
      04.10.2026): die neue Übung kommt zu den bisherigen dazu, keine wechselt. */
-  ['die neue Übung würfelt seine zwei Teile neu', 'schreiben: 60, bauen: 12 }', 'schreiben: 60, bauen: 30 }', '1 seine zwei Teile']
+  ['die neue Übung würfelt seine Teile neu', 'schreiben: 60, bauen: 12 }', 'schreiben: 60, bauen: 30 }', '1 die Teile bleiben']
 ];
 let taub = 0;
 for (const [name, alt, neu, soll] of STOERUNGEN){

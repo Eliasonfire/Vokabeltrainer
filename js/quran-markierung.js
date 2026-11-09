@@ -360,6 +360,26 @@ function tajweedWortFaerben(el, text, farbig){
   el.appendChild(teile);
 }
 
+/* ⛔⛔ EIN ALIF IM LĀM-ALIF WIRD MIT SEINEM LĀM GEFÄRBT (08.11.2026).
+   Elias, mit zwei Bildern von 93:4 (das Hamza-Alif in وَلَلۡأٓخِرَةُ, rot, Notiz „Nur 2
+   Harakat"): „hier wird das alif nicht markiert, das muss gefixt werden".
+   Lām + Alif ist in der Schrift EIN Zeichen (Ligatur). Chromium färbt dieses eine Zeichen
+   in der Farbe seines ersten Buchstabens, also des Lām — ein <span> nur um das Alif bleibt
+   weiß. Nachgestellt am 08.11.2026 mit „Uthmanic Hafs", 80 px: nur Alif im Span = weiß,
+   Lām und Alif im Span = rot.
+   MEINE Lösung, nicht seine Vorgabe: der Span beginnt dann beim Lām, die ganze Ligatur wird
+   farbig. Die Ligatur aufzubrechen, um nur das Alif zu färben, würde das Schriftbild ändern —
+   und das soll wie bei quran.com aussehen (Elias, 19.10.2026). Gespeichert bleibt die
+   Stelle des ALIF; nur das Zeichnen nimmt das Lām mit. Bewacht von test-quran-lamalif-farbe.mjs. */
+const TJ_ALIFE = /^[اآأإٱ]/;
+function tajweedLamAlifFlaeche(cluster, c){
+  if (!c || !TJ_ALIFE.test(c.text)) return c;
+  const k = cluster.indexOf(c);
+  const vor = k > 0 ? cluster[k - 1] : null;
+  if (!vor || vor.text[0] !== 'ل' || vor.i + vor.len !== c.i) return c;
+  return { i: vor.i, len: vor.len + c.len, text: vor.text + c.text };
+}
+
 /* Baut alle Markierungen der offenen Sure neu auf.
 
    ⛔ Aufzurufen nach JEDEM Neuaufbau der Verse: die Farbe steckt in den
@@ -405,7 +425,7 @@ function tajweedZeichnen(){
       for (const st of stellen){
         const c = tajweedClusterAn(cluster, st.pos);
         /* Position passt nicht mehr zum Text: still übergehen */
-        if (c) farbig.push({ c, farbe: st.farbe });
+        if (c) farbig.push({ c: tajweedLamAlifFlaeche(cluster, c), farbe: st.farbe });
       }
       tajweedWortFaerben(span, text, farbig);
     });

@@ -396,7 +396,8 @@ if (!gebaut){
    trotzdem gruen. Genau so ist Uebung 10 am 22.09.2026 durchgerutscht: eine
    fehlende Datei im Lader, ein stiller catch, 0 Aufgaben, alles gruen.
    Eine leere Liste ist keine Messung. [[leere_liste_ist_keine_messung]] */
-const leer = UEBUNGEN.filter(m => jeUebung.get(m.id) === 0);
+/* Übung 21 (Geschichte) baut nur über ohneSatz() — bewacht von werkzeuge/pruefe-geschichten.mjs. */
+const leer = UEBUNGEN.filter(m => jeUebung.get(m.id) === 0 && !m.ausserhalbTeile);
 if (leer.length){
   leer.forEach(m => console.error('  WERKZEUGFEHLER: Uebung ' + m.nr + ' (' + m.id
     + ') baut 0 Aufgaben — sie wird nicht geprueft.'

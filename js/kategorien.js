@@ -728,7 +728,7 @@ function baueWortKarte(w){
        koranwörter von den häufigsten gibt es keinen beispielsatz, da kannst du ruhig aus dem koran
        die nehmen vorallem wenn ich sie bereits kenne". */
     t.push(`<div class="wk-abschnitt">
-      <div class="wk-marke"><span>Beispielsatz</span><span class="wk-quelle">aus dem Koran, ${escapeHtml(w.koranSatz.surah + ' ' + w.koranSatz.ayah)}</span></div>
+      <div class="wk-marke"><span>Beispielsatz</span><span class="wk-quelle">${w.koranSatz.quelle ? 'aus deiner ' + escapeHtml(w.koranSatz.quelle) : 'aus dem Koran, ' + escapeHtml(w.koranSatz.surah + ' ' + w.koranSatz.ayah)}</span></div>
       <div class="ar" lang="ar" dir="rtl">${koranSatzHtml(w.koranSatz)}</div>
       <div class="de">${escapeHtml(w.koranSatz.de || '')}</div>
     </div>`);

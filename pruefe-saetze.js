@@ -208,7 +208,15 @@ const quellen = [
   { name: 'Beispielsaetze aus data/beispielsaetze.js (verfasst, fuer Buchvokabeln)',
     saetze: Object.entries(BEISPIELSAETZE)
                   .filter(([, s]) => s && s.sentAr && !istMetasprache(s.sentAr))
-                  .map(([id, s]) => ({ id, ar: s.sentAr, de: s.sentDe })) }
+                  .map(([id, s]) => ({ id, ar: s.sentAr, de: s.sentDe })) },
+  /* ⭐ 08.11.2026: die Hoersaetze (hoersaetze-data.js), Elias: „der Hörmodus soll jetzt auch
+     kleinere einfache sätze machen die vorallem im alltag gebrauchbar sind". Verfasst, also
+     gilt dieselbe Bedingung wie oben: richtig muessen sie sein. Liegt im Repo, nicht in data/. */
+  { name: 'Hoersaetze aus hoersaetze-data.js (verfasst, fuer den Hoermodus)',
+    saetze: (() => { try {
+      return (new Function(fs.readFileSync(P + 'hoersaetze-data.js', 'utf8') + ';return HOER_SAETZE;'))()
+        .map(s => ({ id: 'hs:' + s.k, ar: s.ar, de: s.de }));
+    } catch (e) { console.log('  hoersaetze-data.js nicht lesbar: ' + e.message); return []; } })() }
 ];
 
 /* ---------- Satzlaenge (Elias' Punkt 16 vom 04.08.2026) ----------
@@ -408,7 +416,8 @@ let lexikonSchwer = 0;
   const alleSaetze = [];
   quellen.forEach((q, qi) => q.saetze.forEach(s => {
     const id = String(s.id);
-    const heimat = (qi < 2 || immerIds.has(id) || id.startsWith('satz-lang-')) ? null : (buchVon.get(id) || 'verwaist');
+    /* hs: = Hoersatz (hoersaetze-data.js) — haengt an keiner Karte, sondern an seinem Hoervorrat. */
+    const heimat = (qi < 2 || immerIds.has(id) || id.startsWith('satz-lang-') || id.startsWith('hs:')) ? null : (buchVon.get(id) || 'verwaist');
     alleSaetze.push(Object.assign({}, s, { heimat }));
   }));
   const lexikonFuer = buecher => {
@@ -832,6 +841,10 @@ let lexikonSchwer = 0;
     const TAFALU     = z(0x062A,0x064E,0x0641,0x0652,0x0639,0x064E,0x0644,0x064F);
     const ANA        = z(0x0623,0x064E,0x0646,0x064E,0x0627);
     const TALIBUN    = z(0x0637,0x064E,0x0627,0x0644,0x0650,0x0628,0x064C);
+    const LAYSA      = z(0x0644,0x064E,0x064A,0x0652,0x0633,0x064E);
+    const ALBAYTU    = z(0x0627,0x0644,0x0652,0x0628,0x064E,0x064A,0x0652,0x062A,0x064F);
+    const BIJADIDIN  = z(0x0628,0x0650,0x062C,0x064E,0x062F,0x0650,0x064A,0x062F,0x064D);
+    const JADIDAN    = z(0x062C,0x064E,0x062F,0x0650,0x064A,0x062F,0x064B,0x0627);
     const s = (...w) => w.join(' ') + '.';
     const rollen = r => r.map(t => t.rolle);
     const EICH_TEIL = [
@@ -856,7 +869,16 @@ let lexikonSchwer = 0;
         'Gegenprobe: nach einem Komma ist wahid kein نَعْت (Aufzaehlung)'],
       ['madha tafalu? ana talibun', () => { const r = rollen(analysiereSatz(MADHA + ' ' + TAFALU + '؟ ' + s(ANA, TALIBUN)));
           return r[1] === 'فِعْل' && r[2] === 'مُبْتَدَأ (unveränderlich)' && r[3] === 'خَبَر'; },
-        'nach einem Verb am Satzende beginnt ein neuer Satz: talibun ist خَبَر, nicht فَاعِل']
+        'nach einem Verb am Satzende beginnt ein neuer Satz: talibun ist خَبَر, nicht فَاعِل'],
+      /* laysa (09.11.2026, Regel jumla-laysa-01, Madina-Schlüssel 2, L2, S. 7 mit Fußnote).
+         Störtest 09.11.2026: mit der irab.js ohne istLaysa() sind beide rot. */
+      ['laysa l-baytu bi-jadidin', () => { const t = analysiereSatz(s(LAYSA, ALBAYTU, BIJADIDIN));
+          return t[0].rolle === 'لَيْسَ (مَبْنِيّ)' && t[1].rolle === 'اِسْمُ لَيْسَ' && t[1].stimmt === true
+              && /^خَبَرُ لَيْسَ/.test(t[2].rolle) && t[2].stimmt === true; },
+        'laysa: al-baytu ist اِسْمُ لَيْسَ (raf), bi-jadidin ist خَبَرُ لَيْسَ (majrur durch bi)'],
+      ['laysa l-baytu jadidan', () => { const t = analysiereSatz(s(LAYSA, ALBAYTU, JADIDAN));
+          return t[2].rolle === 'خَبَرُ لَيْسَ' && t[2].erwartet === 'nasb' && t[2].stimmt === true; },
+        'laysa ohne bi: das خَبَرُ لَيْسَ ist mansub (Fußnote im Schlüssel)']
     ];
     eiche(EICH_TEIL.map(([n, , warum]) => [n, true, warum]),
           n => EICH_TEIL.find(e => e[0] === n)[1](),

@@ -405,10 +405,13 @@ function messen(app){
       if (!z) continue;
       try { const a = U.baue(z, s) || []; if (a.length){ liste.push(...a); mitAufgabe.push(s); } } catch (e){ /* B/F melden baue()-Fehler */ }
     }
-    const imTeil = teile ? [1, 2].filter(t => (teile[t] || []).includes(U.id)) : [];
+    const imTeil = teile ? Array.from({ length: teile.anzahl || 2 }, (_, i) => i + 1).filter(t => (teile[t] || []).includes(U.id)) : []; /* seit 09.11.2026 drei Teile */
     /* Eine ruhende Übung (`ruht:true`, seit 19.10.2026 Übung 1 — Elias: „die satzübung können
        wir erstmal einstellen …") steht in KEINEM Teil; gebaut und gezählt wird sie hier weiter. */
     const sollTeile = U.ruht ? 0 : 1;
+    /* Übung 21 (Geschichte, `ausserhalbTeile`, 09.11.2026) steht bewusst in keinem Teil und baut
+       ihre Aufgaben ohne baue() (ohneSatz); sie bewacht werkzeuge/pruefe-geschichten.mjs. */
+    if (U.ausserhalbTeile){ if (teile && imTeil.length) ergebnis.verstoesse.push(`${U.id}: steht in einem Teil, soll in keinem`); continue; }
     if (teile && imTeil.length !== sollTeile) ergebnis.verstoesse.push(`${U.id}: steht in ${imTeil.length} Teilen statt in ${sollTeile ? 'genau einem' : 'keinem (sie ruht)'} (satzTeile)`);
     if (!liste.length){ ergebnis.pflichtLuecken.push(`${U.nr} ${U.id}: keine Aufgabe in seiner Auswahl`); continue; }
     /* J: kommen die Wörter der neuesten Kapitel in DIESER Übung an? Gezählt wird

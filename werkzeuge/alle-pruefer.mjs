@@ -183,6 +183,14 @@ const PRUEFER = [
      vocab-data.js gegen den Zufall und legt Aehnlichkeit, Bedeutungsschutz
      und die Fuenf per Stoertest still. [[stoertest_muss_wirkung_nachweisen]] */
   ['werkzeuge/pruefe-hoerablenker.mjs', []],
+  /* ⭐ 08.11.2026: die Hörsätze (hoersaetze-data.js). Elias: „Nur bekannte Wörter" — der Prüfer
+     verlangt, dass jedes Wort eines Satzes in dessen Wortliste steht, sonst käme es ungeprüft
+     an der Grenze in js/hoeren.js vorbei. */
+  ['werkzeuge/pruefe-hoersaetze.mjs', []],
+  ['werkzeuge/pruefe-namen-allahs.mjs', []],
+  ['werkzeuge/pruefe-lehrerblatt.mjs', []],
+  ['werkzeuge/pruefe-geschichten.mjs', []],
+  ['werkzeuge/namen-allahs-bauen.mjs', ['--pruefen']],
   /* ⭐ Neu am 11.09.2026 abends. Elias: „wenn eine neue funktion da ist … das
      geguckt wird wie wird sie weiterhin gepflegt … du sollst dich dann darum
      kümmern". Jede Datei und jeder Bildschirm der App braucht einen Eintrag in
@@ -810,6 +818,9 @@ const PRUEFER = [
      vergrößert: markiert fehlt kein Pixel, das Wort bleibt verbunden, auch auf der Karte.
      Störtest mit `--mark <alte quran-markierung.js> --index <alte index.html>` (v713). */
   ['test-quran-sin-markierung.mjs', []],
+  /* 08.11.2026, Elias zu 93:4: „hier wird das alif nicht markiert, das muss gefixt werden" —
+     ein markiertes Alif im Lām-Alif färbt die ganze Ligatur. */
+  ['test-quran-lamalif-farbe.mjs', []],
   ['test-koransatz-karte.mjs', []],
   ['werkzeuge/koran-satzverse-suchen.mjs', ['--bereich']],
   /* ⭐ Neu am 16.09.2026. Elias zu „„Plural" steht an einer Zahl, wo keiner

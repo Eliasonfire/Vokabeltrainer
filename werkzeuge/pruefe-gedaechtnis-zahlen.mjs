@@ -141,9 +141,10 @@ pruefe('K3: DECKEL_ANTEIL_BOX1', '1 / 3',
 const ktx = {}; vm.createContext(ktx);
 vm.runInContext(fs.readFileSync(REPO + '/vocab-data.js', 'utf8') + '\nthis.R=VOCAB_DATA;', ktx);
 const v = ktx.R;
-pruefe('r3: 171 Lernwoerter', 171, v.length);
+/* 09.11.2026 (v733): 171 → 172 und 29 → 30, Karte madina1-l3-maftuh (Adjektiv). */
+pruefe('r3: 172 Lernwoerter', 172, v.length);
 pruefe('r3: 116 Nomen', 116, v.filter(w => w.type === 'noun').length);
-pruefe('r3: 29 Adjektive', 29, v.filter(w => w.type === 'adjective').length);
+pruefe('r3: 30 Adjektive', 30, v.filter(w => w.type === 'adjective').length);
 pruefe('r3: 15 Partikeln', 15, v.filter(w => w.type === 'particle').length);
 
 /* Uebungsarten und Hinweise (a2)
@@ -172,8 +173,9 @@ const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
 /* 13.10.2026 (v677): dazu Übung 18 „Mehrzahl einsetzen" (mit Hinweis; Übersetzen ist
    seitdem 19, der Satzbau 20 — also 19 → 20 Übungsarten und 17 → 18 mit Hinweis).
    Elias: „ich meinte auch andere wörter wie mann hat ja auch mehrzahl". */
-pruefe('a2: 20 Uebungsarten', 20, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 18 mit Hinweis', 18, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 09.11.2026 (v735): 20 → 21 und 18 → 19, Übung 21 „Geschichte" mit Hinweis. */
+pruefe('a2: 21 Uebungsarten', 21, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 19 mit Hinweis', 19, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');

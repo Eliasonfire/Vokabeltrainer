@@ -742,7 +742,7 @@ function renderCard(){
     sentBox.classList.remove('hidden');
     document.getElementById('cardSentenceAr').innerHTML = koranSatzHtml(w.koranSatz);
     document.getElementById('cardSentenceDe').textContent = w.koranSatz.de || '';
-    if (satzRef){ satzRef.textContent = `${w.koranSatz.surah} ${w.koranSatz.ayah}`; satzRef.classList.remove('hidden'); }
+    if (satzRef){ satzRef.textContent = w.koranSatz.quelle || `${w.koranSatz.surah} ${w.koranSatz.ayah}`; satzRef.classList.remove('hidden'); }
     kartenSatzDeVerwischen();
   } else sentBox.classList.add('hidden');
 

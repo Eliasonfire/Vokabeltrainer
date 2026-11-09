@@ -1147,6 +1147,11 @@ function endetAufDammaOhneVerbform(w){
   return !/^[أنيت]/.test(kern);      // أ ن ي ت — Gegenwart
 }
 
+/* لَيْسَ / لَيْسَتْ, auch mit وَ/فَ davor (Regel jumla-laysa-01, Schlüssel 2, L2, S. 7). */
+function istLaysa(rein){
+  return /^[وف]?ليست?$/.test(ohneVokale(rein));
+}
+
 const giltAlsVerb = w => {
   if (traegtTanwin(w)) return false;
   /* ⛔⛔ EIN PERSONALPRONOMEN IST NIE EIN VERB (06.09.2026).
@@ -1574,6 +1579,7 @@ function analysiereSatz(satz){
      ⚠️ Nur Zustand — gelesen wird er in den zwei Zweigen „neuer Satzteil"
      weiter unten. Eichung und Störtest: pruefe-saetze.js (EICH_TEIL). */
   let khabarDa = false, shibhVorher = false, nachRelativ = false;
+  let nachLaysa = null;   /* 'ism' | 'khabar' — siehe istLaysa() */
   const shibhFertig = () => {
     if (nachRelativ){ nachRelativ = false; return; }
     if (ersteRolleVergeben) khabarDa = true; else shibhVorher = true;
@@ -1588,6 +1594,7 @@ function analysiereSatz(satz){
     vorherJarr = false; vorherMudaf = false; nachVerb = false; nachNida = false;
     taeterOffen = false; imVerbalsatz = false;
     khabarDa = false; shibhVorher = false; nachRelativ = false;
+    nachLaysa = null;
   };
 
   woerter.forEach((wort, i)=>{
@@ -1658,7 +1665,42 @@ function analysiereSatz(satz){
       }
       rolle = 'حَرْف جَرّ';
       vorherJarr = true; vorherMudaf = false;
+      /* Das خَبَر von لَيْسَ mit بِـ ist das مَجْرُور dahinter (siehe istLaysa). */
+      if (nachLaysa === 'khabar') nachLaysa = null;
       out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      return;
+    } else if (istLaysa(rein)){
+      /* ⭐ لَيْسَ „IST NICHT" (09.11.2026). Elias' Regel jumla-laysa-01, Quelle
+         der deutsche Madina-Schlüssel Band 2, Lektion 2, S. 7: laysa steht in
+         einem Nominalsatz; das مُبْتَدَأ heißt dann اِسْمُ لَيْسَ (marfūʿ), das
+         خَبَر heißt خَبَرُ لَيْسَ — mit بِـ davor ist es majrūr (لَيْسَ الْبَيْتُ
+         بِجَدِيدٍ), ohne بِـ manṣūb (Fußnote dort: لَيْسَ الْبَيْتُ جَدِيدًا).
+         Vorher hing die Zerlegung an der Buchauswahl: ohne madina-2 galt لَيْسَ
+         als مُبْتَدَأ (مُضَاف) und الْبَيْتُ als مُضَاف إِلَيْه, mit madina-2 als
+         فِعْل und فَاعِل (gefunden vom LEXIKON-VERGLEICH in pruefe-saetze.js am
+         Satz sk2-7-1). Hier keine Fachbezeichnung für laysa selbst — die nennt
+         die Stelle im Schlüssel nicht. */
+      rolle = 'لَيْسَ (مَبْنِيّ)';
+      nachLaysa = 'ism';
+      ersteRolleVergeben = true; imVerbalsatz = false; nachVerb = false;
+      vorherJarr = false; vorherMudaf = false;
+      letzterKasus = null; letzteBestimmtheit = null;
+      out.push({ wort, rein, rolle, erwartet:null, gelesen, stimmt:null });
+      return;
+    } else if (nachLaysa && !vorherJarr && !istIndeklinabel(wort)){
+      if (nachLaysa === 'ism'){
+        rolle = 'اِسْمُ لَيْسَ'; erwartet = 'raf'; nachLaysa = 'khabar';
+      } else {
+        /* Mit angeschriebenem بِـ (بِجَدِيدٍ) majrūr, sonst manṣūb (Schlüssel 2, S. 7). */
+        const mitBi = /^بِ/.test(wort) && ohneVokale(rein).length > 2;
+        rolle = mitBi ? 'خَبَرُ لَيْسَ (mit بِـ)' : 'خَبَرُ لَيْسَ';
+        erwartet = mitBi ? 'jarr' : 'nasb'; nachLaysa = null; khabarDa = true;
+      }
+      if (gelesen && gelesen.kasus){ letzterKasus = gelesen.kasus; }
+      letzteBestimmtheit = istBestimmt(wort);
+      out.push({ wort, rein, rolle, erwartet, gelesen,
+                 stimmt: erwartet && gelesen && gelesen.kasus ? gelesen.kasus === erwartet : null });
+      if (satzende){ neuerSatz(); }
       return;
     } else if (!nachNida && !kannNurNameSein() && !istFragePronomen(wort) && giltAlsVerb(wort)){
       /* ⛔ !istFragePronomen (04.10.2026): أَ + Personalpronomen ist nie ein Verb.

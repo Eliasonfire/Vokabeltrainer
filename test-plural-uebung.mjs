@@ -139,7 +139,10 @@ function pruefe(app, zahlen){
   const warum = hole('UEBUNG_WARUM') || {}, regeln = hole('GRAMMAR_RULES') || [];
   ok('2 „Warum?" führt zu einer vorhandenen Regel', !!warum.plural && regeln.some(r => r.id === warum.plural), String(warum.plural));
   const teile = (hole('satzTeile') || (() => ({})))();
-  ok('3 in genau einem der zwei Teile', [1, 2].filter(t => (teile[t] || []).includes('plural')).length === 1);
+  /* Seit 09.11.2026 drei Teile (Elias: „… in 3 teilen") — gezählt wird über alle. */
+  const ks = tt => Array.from({ length: (tt && tt.anzahl) || 2 }, (_, i) => i + 1);
+  const tv = (tt, id) => ks(tt).find(k => ((tt || {})[k] || []).includes(id)) || 0;
+  ok('3 in genau einem der Teile', ks(teile).filter(t => (teile[t] || []).includes('plural')).length === 1);
   /* Seine zwei Teile bleiben, wie sie waren — die neue kommt nur dazu. Verglichen
      wird die Aufteilung OHNE die Übung mit der MIT ihr (ohne Messungen, wie auf
      seinem Stand am 04.10.2026: die Schätzung entscheidet). Dafür ist `teilRang`
@@ -149,8 +152,11 @@ function pruefe(app, zahlen){
     liste.splice(stelle, 1);
     let ohneSie = null;
     try { ohneSie = hole('satzTeile')(); } finally { liste.splice(stelle, 0, U); }
-    const gewechselt = liste.filter(m => m !== U && (ohneSie[1] || []).includes(m.id) !== (teile[1] || []).includes(m.id)).map(m => m.id);
-    ok('3 seine zwei Teile bleiben, wie sie waren — die neue kommt nur dazu', gewechselt.length === 0, 'gewechselt: ' + gewechselt.join(', '));
+    /* Übungen mit größerem teilRang kamen NACH dieser dazu und werden nach ihr verteilt —
+       dass sie ohne diese woanders landen, ist richtig (wie in test-satz-bauen.mjs). */
+    const spaeter = m => (m.teilRang || 0) > (U.teilRang || 0);
+    const gewechselt = liste.filter(m => m !== U && !spaeter(m) && tv(ohneSie, m.id) !== tv(teile, m.id)).map(m => m.id);
+    ok('3 die Teile bleiben, wie sie waren — die neue kommt nur dazu', gewechselt.length === 0, 'gewechselt: ' + gewechselt.join(', '));
   }
 
   const uebungVokabel = hole('uebungVokabel');
@@ -220,7 +226,7 @@ const echt = pruefe(app, zahlen);
 console.log(`Übung 16 „Welcher Plural?": ${zahlen.aufgaben ?? 0} Aufgaben in ${zahlen.saetze ?? 0} von ${app.pool.length} Sätzen seiner Auswahl`
   + (zahlen.je ? ` — regelmäßig männlich ${zahlen.je.m}, regelmäßig weiblich ${zahlen.je.f}, gebrochen ${zahlen.je.g}` : ''));
 if (zahlen.zahlKarten != null) console.log(`Zahlwörter: ${zahlen.zahlKarten} Karten mit pl-Feld, ${zahlen.zahlInSaetzen} davon in seinen Sätzen — keine wird gefragt`);
-if (zahlen.teile) console.log(`Teile: 1 =${(zahlen.teile[1] || []).length} Übungen, 2 = ${(zahlen.teile[2] || []).length} Übungen; „plural" steht in Teil ${[1, 2].find(t => (zahlen.teile[t] || []).includes('plural')) || '?'}`);
+if (zahlen.teile) console.log(`Teile: 1 =${(zahlen.teile[1] || []).length} Übungen, 2 = ${(zahlen.teile[2] || []).length} Übungen, 3 = ${(zahlen.teile[3] || []).length} Übungen; „plural" steht in Teil ${[1, 2, 3].find(t => (zahlen.teile[t] || []).includes('plural')) || '?'}`);
 for (const r of echt) console.log('  ✘ ' + r);
 
 /* Störtests: jede Zusicherung muss rot werden können. */

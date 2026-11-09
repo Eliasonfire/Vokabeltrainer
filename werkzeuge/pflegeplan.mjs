@@ -1417,6 +1417,48 @@ export const PFLEGEPLAN = [
     veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht (der Qurantext ist seit 19.10.2026 der von quran.com; korantext-bauen.mjs --pruefen zeigt, ob quran.com je etwas ändert). quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs), quran-verszeichen.js aus dem Qurantext (verszeichen-bauen.mjs) — beide nur neu zu erzeugen, wenn sich ihre Quelle ändert; neue Wurzeln brächte nur ein neues Lehrwerk.' },
   },
   {
+    /* ⭐ 08.11.2026 — ALLTAGSSÄTZE IM HÖRMODUS. Elias: „der Hörmodus soll jetzt auch kleinere
+       einfache sätze machen die vorallem im alltag gebrauchbar sind", „Nur bekannte Wörter",
+       „jedes zweiter mal sätze", „primär alltagssätze … aber auch allgemeine sätze sind okay".
+       Die Auswahl steht in js/hoeren.js (Block HOERSAETZE), die Sätze in hoersaetze-data.js. */
+    funktion: 'Hörsätze',
+    dateien: ['hoersaetze-data.js'],
+    bildschirme: [],
+    neuerInhalt: { sitzung: 'Neue Sätze schreibe ich auf sein Wort in einer Sitzung, aus den Wörtern, die er schon gesehen hat. Ohne neue Sätze wächst der Vorrat trotzdem: ein Satz wird von selbst frei, sobald er alle seine Wörter gesehen hat.',
+      werkzeug: 'werkzeuge/pruefe-hoersaetze.mjs' },
+    eingaben: { nein: 'Er wählt nur Antworten; ein Satz hat keine Karte, keinen „Kenne ich schon"-Knopf und keine Quote je Wort.' },
+    veralten: { nein: 'Ein richtiger Satz bleibt richtig. Dass jedes Wort des Satzes in seiner Wortliste steht, misst pruefe-hoersaetze.mjs im Sammellauf, die Fallendungen pruefe-saetze.js (eigene Quelle).' },
+  },
+  {
+    funktion: 'Namen Allahs',
+    dateien: ['namen-allahs-data.js'],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Abgeschlossene Liste: 99 Namen nach Ibn ʿUthaymīn (Elias, 08.11.2026: „insgesamt sollten es 99 sein"). Aus der bekannten Liste kommt nur dazu, was selbst im Koran oder in einem sicheren Hadith steht — ein einmaliger Schritt in einer Sitzung, kein laufender Zufluss. Erzeugt von werkzeuge/namen-allahs-bauen.mjs.' },
+    eingaben: { nein: 'Er lernt die Karten wie jede andere; Box und Bewertung trägt der allgemeine Lernstand, nichts Eigenes dieser Gruppe.' },
+    veralten: { nein: 'Ein Name und sein Beleg veralten nicht. Dass jeder Koran-Name in seinem Vers mit denselben Vokalen steht und jede genannte Dua ihn enthält, misst werkzeuge/pruefe-namen-allahs.mjs; dass die Datendatei zur Liste passt, namen-allahs-bauen.mjs --pruefen — beide im Sammellauf.' },
+  },
+  {
+    /* 09.11.2026, Elias zum Blatt seines Lehrers: „beides und fehlende wörter ergänzen falls
+       vorhanden" (beides = Regeln und die Aufgaben als Übung). */
+    funktion: 'Lehrerblatt',
+    dateien: ['lehrerblatt-data.js', 'js/lehrerblatt.js'],
+    bildschirme: ['screen-lehrerblatt'],
+    neuerInhalt: { sitzung: 'Ein neues Blatt seines Lehrers bringt er selbst (zuletzt über Telegram); eingetragen wird es in einer Sitzung, die Fragen im Wortlaut des Blatts. Kein laufender Zufluss.',
+      werkzeug: 'werkzeuge/pruefe-lehrerblatt.mjs' },
+    eingaben: { nein: 'Er tippt nur „Lösung zeigen" und Regelknöpfe; nichts wird gespeichert.' },
+    veralten: { nein: 'Die Musterlösungen hängen an seinen Karten und Regeln: dass jede verlinkte Regel noch existiert, jedes Wort im Bestand steht und jeder Satz kasusrein bleibt, misst werkzeuge/pruefe-lehrerblatt.mjs im Sammellauf.' },
+  },
+  {
+    /* 09.11.2026, Elias am 08.11.: „ich finde geschichten mit lücken ganz interessant", dann
+       „Im Satzmodus (A)". Teil von js/saetze.js, kein eigener Bildschirm. */
+    funktion: 'Geschichten mit Lücken (Satzmodus, Übung 21)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { nein: 'Die Geschichten sind die mb1-Sätze aus lehrbuch-saetze.js je Lektion; ein neu freigeschaltetes Kapitel ist ohne Zutun dabei, sobald dort Buchsätze stehen. Kommen neue Buchsätze dazu, gehören sie ohnehin nach lehrbuch-saetze.js (mit Seite).' },
+    eingaben: { nein: 'Er tippt Auswahlknöpfe oder ein Wort; gespeichert wird nur die gewählte Geschichte in SETTINGS.satzThema, das schon gepflegt wird.' },
+    veralten: { nein: 'Ob jede Geschichte aus Buchsätzen mit Seite besteht, jede Auswahl nur Wörter derselben Lektion zeigt und die Lücke jedes Vorkommen verdeckt, misst werkzeuge/pruefe-geschichten.mjs im Sammellauf.' },
+  },
+  {
     funktion: 'Hörverstehen',
     dateien: ['js/hoeren.js'],
     bildschirme: ['screen-hoeren'],

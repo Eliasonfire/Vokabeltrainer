@@ -813,7 +813,205 @@ const BUCH_ESELSBRUECKEN = {
 
   "kal-dhulhijja": "Der Monat der Pilgerfahrt (Ḥajj): Am 9. ist der Tag von ʿArafa, am 10. ʿĪd al-Aḍḥā, das Opferfest.",
 
-  "46070": "Jede deiner Monatskarten trägt dieses Wort im Deutsch: „Ramadan (9. Monat)\". Den Fastenmonat nennt man شَهْرُ رَمَضَانَ — „der Monat Ramadan\"."
+  "46070": "Jede deiner Monatskarten trägt dieses Wort im Deutsch: „Ramadan (9. Monat)\". Den Fastenmonat nennt man شَهْرُ رَمَضَانَ — „der Monat Ramadan\".",
+
+  "na-01": "⭐ Du sagst den Namen jeden Tag: Bismillāh, al-ḥamdu lillāh, in šāʾa llāh, Allāhu akbar. In jeder dieser Wendungen steckt Allāh.",
+
+  "na-05": "⭐ Steckt im Glaubensbekenntnis: lā ilāha illā llāh — „es gibt keinen Gott außer Allah“. ilāh heißt „Gott, der angebetet wird“; Allāh ist Sein Eigenname.",
+
+  "na-86": "⭐ In jeder Rakʿa: al-ḥamdu lillāhi rabbi l-ʿālamīn (1:2) — „Lob sei Allah, dem Herrn der Welten“.",
+
+  "na-43": "⭐ Deine Dua „Auslöschende Vergebung“: إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ — „Du bist der Verzeihende, Du liebst das Verzeihen“.",
+
+  "na-90": "⭐ Deine Heilungs-Dua: وَاشْفِ أَنْتَ الشَّافِي — „und heile, Du bist der Heilende“.",
+
+  "na-35": "⭐ Nach dem Rukūʿ sagst du: samiʿa llāhu li-man ḥamidah — „Allah hört den, der Ihn lobt“. samiʿa = er hörte; as-Samīʿ = der Allhörende.",
+
+  "na-44": "⭐ Steht direkt neben as-Samīʿ in deiner Abend-Dua: وَهُوَ السَّمِيعُ الْعَلِيمُ.",
+
+  "na-23": "⭐ Wurzel ḥ-m-d wie in al-ḥamdu lillāh — und im Namen Muḥammad, „der viel Gelobte“.",
+
+  "na-65": "⭐ Kommt in jedem Gebet direkt nach al-Ḥamīd: إِنَّكَ حَمِيدٌ مَجِيدٌ — das Ende der Segenswünsche auf den Propheten ﷺ.",
+
+  "na-70": "⭐ In an-Nās (114:2), die du kannst: maliki n-nās — „dem König der Menschen“.",
+
+  "na-52": "⭐ Nach dem Witr: سُبْحَانَ الْمَلِكِ الْقُدُّوسِ — „gepriesen sei der König, der Heilige“.",
+
+  "na-30": "⭐ Dein eigener Name: ʿAbd ar-Raḥmān (Abdurahman) heißt „Diener des Allerbarmers“.",
+
+  "na-31": "⭐ Steht in der Basmala gleich nach ar-Raḥmān: bismi llāhi r-raḥmāni r-raḥīm (1:1).",
+
+  "na-47": "⭐ Nach jedem Gebet sagst du astaġfiru llāh — „ich bitte Allah um Vergebung“. Dieselbe Wurzel ġ-f-r: al-Ġafūr vergibt.",
+
+  "na-13": "⭐ tawba = Reue, Umkehr. „tawba machen“ kennst du — at-Tawwāb nimmt sie immer wieder an.",
+
+  "na-46": "⭐ Wie al-Ġafūr, aber Muster faʿʿāl mit Schadda: „der immer wieder vergibt“ — so wie at-Tawwāb immer wieder die Reue annimmt.",
+
+  "na-29": "⭐ raʾfa ist die zarteste Form der Barmherzigkeit — noch sanfter als raḥma.",
+
+  "na-78": "⭐ wudd heißt Liebe, Zuneigung — al-Wadūd ist der Liebevolle, der liebt und geliebt wird.",
+
+  "na-58": "⭐ Karīm ist ein bekannter Vorname: „der Großzügige, Edle“.",
+
+  "na-85": "⭐ ḥayāʾ = Schamgefühl. Der Prophet ﷺ sagte: Euer Herr ist ḥayiyy — Er schämt sich, die Hände leer zurückzuschicken, die Ihn bitten (Abū Dāwūd 1488).",
+
+  "na-98": "⭐ Wurzel m-n-n wie mann (Gabe, Wohltat): al-Mannān beschenkt reich, ohne dass man es verdient hat.",
+
+  "na-64": "⭐ ǧawāb = Antwort — dieselbe Wurzel ǧ-w-b: al-Muǧīb antwortet auf deine Dua und erhört sie.",
+
+  "na-54": "⭐ qarīb = nah — ein Alltagswort: qarīb min … heißt „nah bei …“.",
+
+  "na-81": "⭐ hiba = Geschenk. al-Wahhāb schenkt immer wieder, ohne etwas dafür zu wollen.",
+
+  "na-32": "⭐ rizq = Versorgung, Lebensunterhalt — ar-Razzāq gibt sie, immer wieder (Muster faʿʿāl).",
+
+  "na-97": "⭐ aʿṭā = er gab. Hadith: wa-llāhu l-muʿṭī wa-anā l-qāsim — „Allah gibt, und ich verteile“ (al-Buḫārī 71).",
+
+  "na-24": "⭐ Im Thronvers (2:255), den du kannst: al-ḥayyu l-qayyūm.",
+
+  "na-25": "⭐ Im Thronvers (2:255) direkt nach al-Ḥayy: al-ḥayyu l-qayyūm.",
+
+  "na-79": "⭐ tawakkul = Vertrauen auf Allah. In deiner Dua beim Verlassen des Hauses: tawakkaltu ʿalā llāh.",
+
+  "na-80": "⭐ walī = Schutzfreund, Vertrauter — awliyāʾ Allāh sind die „Freunde Allahs“.",
+
+  "na-74": "⭐ naṣr = Hilfe, Sieg — an-Naṣr (110:1), die du kannst: iḏā ǧāʾa naṣru llāh.",
+
+  "na-72": "⭐ Ende von al-Baqara, in deiner Dua: أَنتَ مَوْلَىٰنَا — „Du bist unser Schutzherr“.",
+
+  "na-59": "⭐ In al-Mulk (67:14), die du kannst: wa-huwa l-laṭīfu l-ḫabīr.",
+
+  "na-17": "⭐ ḥifẓ = Auswendiglernen und Bewahren. Ein Ḥāfiẓ bewahrt den Koran, al-Ḥafīẓ bewahrt alles.",
+
+  "na-15": "⭐ Wer den Koran auswendig kann, heißt Ḥāfiẓ — dasselbe Wort: der Bewahrende.",
+
+  "na-16": "⭐ ḥasbiya llāh — „Allah genügt mir“: ḥasb heißt genug. al-Ḥasīb genügt und rechnet ab.",
+
+  "na-87": "⭐ rafīq heißt Begleiter, Weggefährte — und sanft. Hadith: Allah ist rafīq und liebt die Sanftheit (Muslim 2593).",
+
+  "na-11": "⭐ birr = Güte, gutes Tun — birr al-wālidayn, die Güte zu den Eltern.",
+
+  "na-82": "⭐ ǧamīl = schön, ein Alltagswort. Hadith: Allah ist schön und liebt die Schönheit (Muslim 91).",
+
+  "na-83": "⭐ ǧūd = Freigebigkeit. Hadith: Allah ist ǧawād und liebt die Freigebigkeit (at-Tirmiḏī 2799).",
+
+  "na-96": "⭐ iḥsān: „dass du Allah anbetest, als ob du Ihn siehst“ (Ḥadīṯ Ǧibrīl). Dieselbe Wurzel ḥ-s-n.",
+
+  "na-94": "⭐ muqaddima = Einleitung, das Vordere. al-Muqaddim stellt voran, wen Er will.",
+
+  "na-95": "⭐ āḫir = letzter. al-Muʾaḫḫir stellt zurück — Paar: anta l-muqaddimu wa-anta l-muʾaḫḫir.",
+
+  "na-41": "⭐ In al-Mulk (67:2), die du kannst: wa-huwa l-ʿazīzu l-ġafūr.",
+
+  "na-21": "⭐ ḥikma = Weisheit. ḥakīm heißt weise — und im Alltag auch der Arzt.",
+
+  "na-22": "⭐ ḥilm = Nachsicht, Selbstbeherrschung — al-Ḥalīm straft nicht sofort.",
+
+  "na-42": "⭐ Im Rukūʿ: subḥāna rabbiya l-ʿaẓīm — „gepriesen sei mein Herr, der Gewaltige“.",
+
+  "na-45": "⭐ Im Thronvers (2:255) vor al-ʿAẓīm: wa-huwa l-ʿaliyyu l-ʿaẓīm.",
+
+  "na-03": "⭐ Im Sujūd sagst du: subḥāna rabbiya l-aʿlā — „gepriesen sei mein Herr, der Höchste“.",
+
+  "na-04": "⭐ Steigerung von karīm (großzügig): akram ist der Großzügigste — wie akbar von kabīr.",
+
+  "na-57": "⭐ Allāhu akbar — akbar ist die Steigerung von kabīr.",
+
+  "na-02": "⭐ Al-Ikhlāṣ (112:1), die du kannst: qul huwa llāhu aḥad.",
+
+  "na-75": "⭐ wāḥid = eins — die erste Zahl, die du gelernt hast.",
+
+  "na-39": "⭐ Al-Ikhlāṣ (112:2): allāhu ṣ-ṣamad.",
+
+  "na-99": "⭐ Das Witr-Gebet, das du nachts betest — witr heißt ungerade. Hadith: Allah ist witr und liebt das Ungerade (al-Buḫārī 6410).",
+
+  "na-06": "⭐ awwal = erster — ein Alltagswort: al-yawm al-awwal, der erste Tag.",
+
+  "na-07": "⭐ āḫir = letzter — wie al-āḫira, das Jenseits, das zuletzt kommt.",
+
+  "na-08": "⭐ ẓuhr = Mittag, wenn alles sichtbar ist; ẓahara = erscheinen. Über aẓ-Ẓāhir ist nichts.",
+
+  "na-09": "⭐ baṭn = Bauch, das Innere — al-Bāṭin: Ihm ist nichts verborgen.",
+
+  "na-19": "⭐ ḥaqq = Wahrheit, Recht. „ḥaqq“ sagt man auch für „stimmt, richtig“.",
+
+  "na-20": "⭐ bayān = Klarheit — al-Mubīn ist der Offenkundige, der alles klar macht.",
+
+  "na-27": "⭐ In deiner Abend-Dua: ḫalaqtanī — „Du hast mich erschaffen“. Wurzel ḫ-l-q.",
+
+  "na-10": "⭐ bariyya = die Geschöpfe: al-Bāriʾ bringt sie hervor.",
+
+  "na-67": "⭐ ṣūra = Bild, Gestalt — al-Muṣawwir gibt jedem Geschöpf seine Gestalt.",
+
+  "na-28": "⭐ Wie al-Ḫāliq, aber Muster faʿʿāl mit Schadda: „der immer wieder erschafft“ — wie al-Ġaffār zu al-Ġafūr.",
+
+  "na-34": "⭐ Nach dem Gebet sagst du: اللَّهُمَّ أَنْتَ السَّلاَمُ — „O Allah, Du bist der Friede“.",
+
+  "na-60": "⭐ amn = Sicherheit, īmān = Glaube — al-Muʾmin gibt Sicherheit.",
+
+  "na-73": "⭐ al-Muhaymin wacht über alles und bezeugt es — ein seltenes Wort, fast nur für Allah gebraucht.",
+
+  "na-14": "⭐ ǧabīra heißt Schiene, ǧabara = einen Bruch richten. al-Ǧabbār bringt das Gebrochene wieder zurecht.",
+
+  "na-62": "⭐ Wurzel k-b-r wie Allāhu akbar: al-Mutakabbir — Ihm allein steht Größe zu.",
+
+  "na-88": "⭐ subḥāna llāh — „gepriesen sei Allah“: Wurzel s-b-ḥ. as-Subbūḥ ist frei von jedem Makel.",
+
+  "na-12": "⭐ In al-Mulk (67:19), die du kannst: innahū bi-kulli šayʾin baṣīr.",
+
+  "na-26": "⭐ In al-Mulk (67:14): wa-huwa l-laṭīfu l-ḫabīr.",
+
+  "na-40": "⭐ Wie al-ʿAlīm, aber Muster fāʿil: ʿālim heißt Wissender, im Alltag der Gelehrte.",
+
+  "na-38": "⭐ ašhadu an lā ilāha illā llāh — im Glaubensbekenntnis steckt š-h-d. aš-Šahīd ist Zeuge über alles.",
+
+  "na-33": "⭐ murāqaba = Beobachtung: ar-Raqīb beobachtet alles, nichts entgeht Ihm.",
+
+  "na-66": "⭐ muḥīṭ heißt Ozean — er umgibt das Land. al-Muḥīṭ umfasst alles.",
+
+  "na-77": "⭐ Im Thronvers (2:255): wasiʿa kursiyyuhu s-samāwāti wa-l-arḍ — „Sein Schemel umfasst Himmel und Erde“.",
+
+  "na-48": "⭐ ġaniyy = reich, Gegenteil von faqīr (arm). In deiner Ehegatten-Dua sagst du: … min ḫayrin faqīr. Er ist der Reiche.",
+
+  "na-36": "⭐ šukr = Dank — šukran! aš-Šākir dankt schon für das kleinste Gute.",
+
+  "na-37": "⭐ Muster faʿūl heißt „sehr viel“: aš-Šakūr belohnt Kleines mit sehr viel — wie al-Ġafūr sehr viel vergibt.",
+
+  "na-50": "⭐ qudra = Macht, Fähigkeit. qādir ʿalā heißt „fähig zu“.",
+
+  "na-53": "⭐ In al-Mulk (67:1): wa-huwa ʿalā kulli šayʾin qadīr.",
+
+  "na-68": "⭐ Drei aus q-d-r: al-Qādir, al-Qadīr, al-Muqtadir — der dritte ist der längste und heißt „voller Macht“.",
+
+  "na-55": "⭐ quwwa = Kraft. In deiner Dua beim Verlassen des Hauses: lā ḥawla wa-lā quwwata illā bi-llāh.",
+
+  "na-63": "⭐ matīn heißt fest, solide — ein Seil ist matīn, wenn es nicht reißt.",
+
+  "na-51": "⭐ al-Qāhira (Kairo) heißt „die Siegreiche“ — dieselbe Wurzel q-h-r.",
+
+  "na-56": "⭐ Wie al-Qāhir, aber Muster faʿʿāl: der ALLES bezwingt.",
+
+  "na-49": "⭐ Sure al-Fātiḥa heißt „die Öffnende“ — Wurzel f-t-ḥ. al-Fattāḥ öffnet die Türen.",
+
+  "na-84": "⭐ ḥakam ist der Schiedsrichter — beim Fußball sagt man auf Arabisch ḥakam.",
+
+  "na-89": "⭐ Deine Abend-Dua 1 heißt Sayyid al-Istiġfār — „der Herr der Vergebungsbitten“. sayyid = Herr.",
+
+  "na-18": "⭐ ḥafiyy = zugewandt, voller Fürsorge — einer, der sich um dich kümmert und nachfragt.",
+
+  "na-61": "⭐ In taʿālā hörst du ihn: Allāhu taʿālā — „Allah, der Erhabene“. al-Mutaʿāl ist erhaben über alles.",
+
+  "na-69": "⭐ qūt = Nahrung, Lebensmittel — al-Muqīt gibt jedem seine Nahrung.",
+
+  "na-71": "⭐ Wie al-Malik (König) aus deiner Witr-Dua, aber mit langem ī: malīk, der Herrscher.",
+
+  "na-76": "⭐ mīrāṯ = Erbschaft — al-Wāriṯ bleibt, wenn alles vergangen ist, und erbt alles.",
+
+  "na-91": "⭐ In deinem Tashahud: الطَّيِّبَاتُ لِلَّهِ — „die guten Worte gehören Allah“.",
+
+  "na-92": "⭐ qabaḍa = greifen, festhalten; qabḍa ist die Faust. al-Qābiḍ hält zurück.",
+
+  "na-93": "⭐ basaṭa = ausbreiten; bisāṭ ist der Teppich, der ausgebreitet wird. al-Bāsiṭ gibt reichlich.",
 };
 
 /* ---------- Korrigierte Schreibweisen ----------

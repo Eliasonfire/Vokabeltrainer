@@ -1960,52 +1960,52 @@ const ESELSBRUECKEN_ALT = {
      16 von 16. Die Beispiele sind seine eigenen Woerter, keine fremden.
      [[eselsbruecken_an_bekanntes_anknuepfen]] [[regeln_selbst_auswerten]] */
   '45772#pl': [   /* مُدَرِّسٌ → مُدَرِّسُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an مُدَرِّسٌ hängt sich nur ـُونَ — مُدَرِّسُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel بَارِدٌ → بَارِدُونَ und جَالِسٌ → جَالِسُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an مُدَرِّسٌ hängt sich nur ـُونَ — مُدَرِّسُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel بَارِدٌ → بَارِدُونَ und جَالِسٌ → جَالِسُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45787#pl': [   /* بَارِدٌ → بَارِدُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an بَارِدٌ hängt sich nur ـُونَ — بَارِدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel جَالِسٌ → جَالِسُونَ und وَاقِفٌ → وَاقِفُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an بَارِدٌ hängt sich nur ـُونَ — بَارِدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel جَالِسٌ → جَالِسُونَ und وَاقِفٌ → وَاقِفُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45789#pl': [   /* جَالِسٌ → جَالِسُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an جَالِسٌ hängt sich nur ـُونَ — جَالِسُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel وَاقِفٌ → وَاقِفُونَ und قَرِيبٌ → قَرِيبُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an جَالِسٌ hängt sich nur ـُونَ — جَالِسُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel وَاقِفٌ → وَاقِفُونَ und قَرِيبٌ → قَرِيبُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45790#pl': [   /* وَاقِفٌ → وَاقِفُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an وَاقِفٌ hängt sich nur ـُونَ — وَاقِفُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel قَرِيبٌ → قَرِيبُونَ und بَعِيدٌ → بَعِيدُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an وَاقِفٌ hängt sich nur ـُونَ — وَاقِفُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel قَرِيبٌ → قَرِيبُونَ und بَعِيدٌ → بَعِيدُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45793#pl': [   /* قَرِيبٌ → قَرِيبُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an قَرِيبٌ hängt sich nur ـُونَ — قَرِيبُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel بَعِيدٌ → بَعِيدُونَ und نَظِيفٌ → نَظِيفُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an قَرِيبٌ hängt sich nur ـُونَ — قَرِيبُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel بَعِيدٌ → بَعِيدُونَ und نَظِيفٌ → نَظِيفُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45794#pl': [   /* بَعِيدٌ → بَعِيدُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an بَعِيدٌ hängt sich nur ـُونَ — بَعِيدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel نَظِيفٌ → نَظِيفُونَ und وَسِخٌ → وَسِخُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an بَعِيدٌ hängt sich nur ـُونَ — بَعِيدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel نَظِيفٌ → نَظِيفُونَ und وَسِخٌ → وَسِخُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45795#pl': [   /* نَظِيفٌ → نَظِيفُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an نَظِيفٌ hängt sich nur ـُونَ — نَظِيفُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel وَسِخٌ → وَسِخُونَ und جَمِيلٌ → جَمِيلُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an نَظِيفٌ hängt sich nur ـُونَ — نَظِيفُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel وَسِخٌ → وَسِخُونَ und جَمِيلٌ → جَمِيلُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45796#pl': [   /* وَسِخٌ → وَسِخُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an وَسِخٌ hängt sich nur ـُونَ — وَسِخُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel جَمِيلٌ → جَمِيلُونَ und حُلْوٌ → حُلْوُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an وَسِخٌ hängt sich nur ـُونَ — وَسِخُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel جَمِيلٌ → جَمِيلُونَ und حُلْوٌ → حُلْوُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45805#pl': [   /* جَمِيلٌ → جَمِيلُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an جَمِيلٌ hängt sich nur ـُونَ — جَمِيلُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel حُلْوٌ → حُلْوُونَ und مُدِيرٌ → مُدِيرُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an جَمِيلٌ hängt sich nur ـُونَ — جَمِيلُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel حُلْوٌ → حُلْوُونَ und مُدِيرٌ → مُدِيرُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45806#pl': [   /* حُلْوٌ → حُلْوُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an حُلْوٌ hängt sich nur ـُونَ — حُلْوُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُدِيرٌ → مُدِيرُونَ und مُغْلَقٌ → مُغْلَقُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an حُلْوٌ hängt sich nur ـُونَ — حُلْوُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel مُدِيرٌ → مُدِيرُونَ und مُغْلَقٌ → مُغْلَقُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45820#pl': [   /* مُدِيرٌ → مُدِيرُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an مُدِيرٌ hängt sich nur ـُونَ — مُدِيرُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُغْلَقٌ → مُغْلَقُونَ und فَلَّاحٌ → فَلَّاحُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an مُدِيرٌ hängt sich nur ـُونَ — مُدِيرُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel مُغْلَقٌ → مُغْلَقُونَ und فَلَّاحٌ → فَلَّاحُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45837#pl': [   /* مُغْلَقٌ → مُغْلَقُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an مُغْلَقٌ hängt sich nur ـُونَ — مُغْلَقُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel فَلَّاحٌ → فَلَّاحُونَ und مُؤَذِّنٌ → مُؤَذِّنُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an مُغْلَقٌ hängt sich nur ـُونَ — مُغْلَقُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel فَلَّاحٌ → فَلَّاحُونَ und مُؤَذِّنٌ → مُؤَذِّنُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45845#pl': [   /* فَلَّاحٌ → فَلَّاحُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an فَلَّاحٌ hängt sich nur ـُونَ — فَلَّاحُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُؤَذِّنٌ → مُؤَذِّنُونَ und مُجْتَهِدٌ → مُجْتَهِدُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an فَلَّاحٌ hängt sich nur ـُونَ — فَلَّاحُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel مُؤَذِّنٌ → مُؤَذِّنُونَ und مُجْتَهِدٌ → مُجْتَهِدُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45866#pl': [   /* مُؤَذِّنٌ → مُؤَذِّنُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an مُؤَذِّنٌ hängt sich nur ـُونَ — مُؤَذِّنُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُجْتَهِدٌ → مُجْتَهِدُونَ und مَشْهُورٌ → مَشْهُورُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an مُؤَذِّنٌ hängt sich nur ـُونَ — مُؤَذِّنُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel مُجْتَهِدٌ → مُجْتَهِدُونَ und مَشْهُورٌ → مَشْهُورُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45881#pl': [   /* مُجْتَهِدٌ → مُجْتَهِدُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an مُجْتَهِدٌ hängt sich nur ـُونَ — مُجْتَهِدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مَشْهُورٌ → مَشْهُورُونَ und مُدَرِّسٌ → مُدَرِّسُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an مُجْتَهِدٌ hängt sich nur ـُونَ — مُجْتَهِدُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel مَشْهُورٌ → مَشْهُورُونَ und مُدَرِّسٌ → مُدَرِّسُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
   '45882#pl': [   /* مَشْهُورٌ → مَشْهُورُونَ */
-    '⭐ Dieser Plural ist kein neues Wort: an مَشْهُورٌ hängt sich nur ـُونَ — مَشْهُورُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 16 deiner Wörter machen das genau so, zum Beispiel مُدَرِّسٌ → مُدَرِّسُونَ und بَارِدٌ → بَارِدُونَ. Wer den Singular kann, kann diesen Plural.'
+    '⭐ Dieser Plural ist kein neues Wort: an مَشْهُورٌ hängt sich nur ـُونَ — مَشْهُورُونَ. Umgestellt wird nichts, nur das Tanwin des Singulars fällt weg. ⚠️ 17 deiner Wörter machen das genau so, zum Beispiel مُدَرِّسٌ → مُدَرِّسُونَ und بَارِدٌ → بَارِدُونَ. Wer den Singular kann, kann diesen Plural.'
   ],
 
   /* ===== Pluralkarten: die Endung ـَات =====
@@ -3573,5 +3573,505 @@ const ESELSBRUECKEN_ALT = {
   '46070': [
     'In Sūrat al-Qadr, die du auswendig kannst: خَيْرٌ مِّنْ أَلْفِ شَهْرٍ (97:3) — die Nacht der Bestimmung ist „besser als tausend Monate".',
     'Dieselbe Wurzel ش ه ر wie مَشْهُورٌ (berühmt), das du aus Madina 1 hast. Zusammen klingen sie wie ein Reim: شَهْرٌ مَشْهُورٌ, „ein berühmter Monat".'
+  ],
+
+  'na-01': [
+    'In deinem Tashahud: لاَ إِلَهَ إِلاَّ اللَّهُ — „es gibt keinen Gott außer Allah“.',
+    'Al-Ikhlāṣ, die du auswendig kannst, beginnt damit: qul huwa llāhu aḥad (112:1) — „Sag: Er ist Allah, ein Einziger“.'
+  ],
+
+  'na-05': [
+    'In deiner Abend-Dua: لَا إِلَهَ إِلاَّ أَنْتَ — „es gibt keinen Gott außer Dir“.',
+    'Im Thronvers (2:255), den du kannst: allāhu lā ilāha illā huwa — „Allah, es gibt keinen Gott außer Ihm“.'
+  ],
+
+  'na-86': [
+    'In deiner Abend-Dua: اللَّهُمَّ أَنْتَ رَبِّي — „O Allah, Du bist mein Herr“. rabbī = mein Herr.',
+    'In deiner Heilungs-Dua: اللَّهُمَّ رَبَّ النَّاسِ — „O Allah, Herr der Menschen“.'
+  ],
+
+  'na-43': [
+    'ʿafw heißt: die Schuld wird ausgelöscht, als wäre sie nie da gewesen — mehr als nur vergeben. Daher der Name deiner Dua.',
+    'Dieselbe Wurzel ʿ-f-w steht am Ende derselben Dua: fa-ʿfu ʿannī — „so verzeih mir“.'
+  ],
+
+  'na-90': [
+    'Wurzel š-f-y wie šifāʾ (Heilung) — gleich danach in derselben Dua: لاَ شِفَاءَ إِلاَّ شِفَاؤُكَ — „keine Heilung außer Deiner Heilung“.',
+    'Muster fāʿil — „der es tut“: aš-Šāfī ist „der Heilende“, so wie al-Ḫāliq „der Erschaffende“ ist.'
+  ],
+
+  'na-35': [
+    'In deiner Abend-Dua (dreimal): وَهُوَ السَّمِيعُ الْعَلِيمُ — „und Er ist der Allhörende, der Allwissende“.',
+    'Muster faʿīl wie ar-Raḥīm und al-ʿAlīm: dieselbe Form, je ein anderer Wortstamm.'
+  ],
+
+  'na-44': [
+    'Wurzel ʿ-l-m wie ʿilm (Wissen) und ʿālim (Gelehrter) — ṭalab al-ʿilm, das Suchen nach Wissen.',
+    'In al-Mulk (67:13), die du kannst: innahū ʿalīmun bi-ḏāti ṣ-ṣudūr — „Er weiß, was in den Herzen ist“.'
+  ],
+
+  'na-23': [
+    'Am Ende der Segenswünsche in jedem Gebet: إِنَّكَ حَمِيدٌ مَجِيدٌ — „Du bist lobenswert und ruhmreich“.',
+    'samiʿa llāhu li-man ḥamidah — ḥamida heißt „er lobte“: dieselbe Wurzel.'
+  ],
+
+  'na-65': [
+    'Wurzel m-ǧ-d: maǧd heißt Ruhm, Ehre. Bekannte Vornamen daraus: Māǧid und Maǧdī.',
+    'Muster faʿīl wie al-Ḥamīd davor — die beiden reimen sich: ḥamīdun maǧīd.'
+  ],
+
+  'na-70': [
+    'Nach dem Witr: سُبْحَانَ الْمَلِكِ الْقُدُّوسِ — „gepriesen sei der König, der Heilige“.',
+    'Wurzel m-l-k wie mulk (Herrschaft): tabāraka llaḏī bi-yadihi l-mulk (67:1). ⚠️ Nicht verwechseln mit malak (Engel) — malik hat ein i.'
+  ],
+
+  'na-52': [
+    'Wurzel q-d-s wie in al-Quds (Jerusalem, „das Heilige“) und Bayt al-Maqdis.',
+    'Im Rukūʿ sagte der Prophet ﷺ: subbūḥun quddūsun rabbu l-malāʾikati wa-r-rūḥ (Muslim 487) — das Ende davon kennst du aus derselben Witr-Dua.'
+  ],
+
+  'na-30': [
+    'In jeder Rakʿa: bismi llāhi r-raḥmāni r-raḥīm (1:1) — ar-Raḥmān steht vor ar-Raḥīm.',
+    'Wurzel r-ḥ-m wie raḥma (Barmherzigkeit) und raḥim (Mutterleib): Barmherzigkeit wie die einer Mutter, nur unendlich größer.'
+  ],
+
+  'na-31': [
+    'Muster faʿīl wie as-Samīʿ und al-ʿAlīm: dieselbe Form, Wurzel r-ḥ-m.',
+    'ar-Raḥmān: Barmherzigkeit, die alle umfasst. ar-Raḥīm: die Barmherzigkeit, die Er den Gläubigen schenkt — so erklären es viele Gelehrte.'
+  ],
+
+  'na-47': [
+    'In al-Mulk (67:2), die du kannst: wa-huwa l-ʿazīzu l-ġafūr.',
+    'Muster faʿūl heißt „sehr viel“: ġafūr vergibt sehr viel, so wie šakūr sehr dankbar ist.'
+  ],
+
+  'na-13': [
+    'An-Naṣr (110:3), die du kannst: innahū kāna tawwābā.',
+    'Muster faʿʿāl mit Schadda heißt „immer wieder“: tawwāb wie ġaffār und razzāq.'
+  ],
+
+  'na-46': [
+    'astaġfiru llāh nach dem Gebet: dieselbe Wurzel ġ-f-r.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Ġaffār — al-Ġaffār heißt „der immer wieder vergibt“.'
+  ],
+
+  'na-29': [
+    'Muster faʿūl wie al-Ġafūr und al-Wadūd — ar-Raʾūf heißt „der Mitleidvolle, Gütige“.',
+    'Erkennbar an der Hamza in der Mitte: ra-ʾūf.'
+  ],
+
+  'na-78': [
+    'Muster faʿūl wie al-Ġafūr: „sehr viel“ Liebe.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Wadūd — al-Wadūd heißt „der Liebevolle“.'
+  ],
+
+  'na-58': [
+    'Ramaḍān karīm — der Gruß im Ramadan: „ein großzügiger Ramadan“.',
+    'Die Steigerung davon ist al-Akram, der Großzügigste — wie kabīr zu akbar.'
+  ],
+
+  'na-85': [
+    'Darum hebst du bei der Dua die Hände: Er schickt sie nicht leer zurück.',
+    'Nicht verwechseln mit al-Ḥayy (der Lebendige): ḥayiyy hat zwei y.'
+  ],
+
+  'na-98': [
+    'Muster faʿʿāl mit Schadda wie al-Wahhāb: „immer wieder“.',
+    'Ein Mann bat mit „anta l-mannān“, und der Prophet ﷺ sagte, er habe mit dem größten Namen Allahs gebeten (Abū Dāwūd 1495).'
+  ],
+
+  'na-64': [
+    'Nah und erhörend gehören zusammen: al-Qarīb und al-Muǧīb.',
+    'Muster mufʿil wie al-Muʿṭī und al-Muḥsin.'
+  ],
+
+  'na-54': [
+    'Nah und erhörend gehören zusammen: al-Qarīb und al-Muǧīb.',
+    'Gegenteil baʿīd (fern); Muster faʿīl wie kabīr.'
+  ],
+
+  'na-81': [
+    'Muster faʿʿāl mit Schadda heißt „immer wieder“, wie al-Ġaffār.',
+    'Der Name Wahb kommt aus derselben Wurzel w-h-b: „Gabe“.'
+  ],
+
+  'na-32': [
+    'Ein ʿAbd-Name daraus: ʿAbd ar-Razzāq — ar-Razzāq heißt „der Versorger“.',
+    'In deiner Vermögens-Dua bittest du: akṯir mālahu — der dahinter gibt, ist ar-Razzāq.'
+  ],
+
+  'na-97': [
+    'Nach dem Gebet: lā māniʿa li-mā aʿṭayt — „niemand hält zurück, was Du gibst“.',
+    'Muster mufʿil wie al-Muǧīb und al-Muḥsin.'
+  ],
+
+  'na-24': [
+    'Wurzel ḥ-y-y wie ḥayāt (Leben). In deiner Aufsteh-Dua: aḥyānā — „der uns lebendig gemacht hat“.',
+    'Nicht verwechseln mit al-Ḥayiyy (der Schamhafte): al-Ḥayy hat ein y mit Schadda.'
+  ],
+
+  'na-25': [
+    'Wurzel q-w-m wie qāma (aufstehen) und qiyām im Gebet: Er steht über allem und hält alles aufrecht.',
+    'Die bekannte Dua: yā ḥayyu yā qayyūm, bi-raḥmatika astaġīṯ — „o Lebendiger, o Beständiger, bei Deiner Barmherzigkeit suche ich Hilfe“.'
+  ],
+
+  'na-79': [
+    'wakīl heißt im Alltag Bevollmächtigter: dem man seine Sache übergibt.',
+    'Muster faʿīl wie al-Ḥafīẓ — al-Wakīl heißt „der Sachwalter, dem man sich anvertraut“.'
+  ],
+
+  'na-80': [
+    'Wurzel w-l-y wie al-Mawlā in deiner Dua: anta mawlānā.',
+    '⚠️ In al-Kāfirūn (109:6) steht wa-liya dīn — das heißt „und mir“, nicht dieser Name.'
+  ],
+
+  'na-74': [
+    'Paar mit al-Mawlā aus deiner Dua: der Schutzherr und der Helfer.',
+    'Ein Vorname daraus: Nāṣir, „der Helfer“.'
+  ],
+
+  'na-72': [
+    'Wurzel w-l-y wie al-Waliyy, der Schutzfreund.',
+    'Muster mafʿal: ma-w-lā — mit Alif am Ende.'
+  ],
+
+  'na-59': [
+    'laṭīf heißt im Alltag „nett, sanft, fein“: Er ist sanft und sieht das Feinste.',
+    'Muster faʿīl wie al-Ḫabīr, der direkt danach kommt.'
+  ],
+
+  'na-17': [
+    'Muster faʿīl: „sehr“ bewahrend — stärker als al-Ḥāfiẓ.',
+    'Im Thronvers (2:255): wa-lā yaʾūduhū ḥifẓuhumā — „ihre Bewahrung fällt Ihm nicht schwer“.'
+  ],
+
+  'na-15': [
+    'Muster fāʿil wie aš-Šāfī: „der es tut“. Neben al-Ḥafīẓ: fāʿil (tut es) gegen faʿīl (tut es sehr).',
+    'Im Thronvers (2:255): ḥifẓuhumā — dieselbe Wurzel ḥ-f-ẓ.'
+  ],
+
+  'na-16': [
+    'Wurzel ḥ-s-b wie ḥisāb (Abrechnung): yawm al-ḥisāb, der Tag der Abrechnung.',
+    'Muster faʿīl wie al-Ḥafīẓ — al-Ḥasīb heißt „der Abrechnende, der genügt“.'
+  ],
+
+  'na-87': [
+    'Die letzten Worte des Propheten ﷺ: allāhumma r-rafīq al-aʿlā.',
+    'rifq = Sanftheit: ar-Rafīq handelt nicht hart.'
+  ],
+
+  'na-11': [
+    'Ein frommer, gütiger Mensch heißt barr; al-Barr ist der Gütige über allen.',
+    'Nicht verwechseln mit barr = Festland (dasselbe Schriftbild): der Name heißt Güte.'
+  ],
+
+  'na-82': [
+    'Vornamen daraus: Ǧamīl und Ǧamīla — al-Ǧamīl heißt „der Schöne“.',
+    'Muster faʿīl wie kabīr und ǧadīd — al-Ǧamīl heißt „der Schöne“.'
+  ],
+
+  'na-83': [
+    'ǧawād heißt auch ein edles, schnelles Pferd — eines, das viel gibt.',
+    'Gehört zu al-Karīm und al-Wahhāb: alle drei geben gern.'
+  ],
+
+  'na-96': [
+    'ḥasan = gut, schön; al-Muḥsin tut Gutes.',
+    'Muster mufʿil wie al-Muʿṭī — al-Muḥsin heißt „der Gutes Tuende“.'
+  ],
+
+  'na-94': [
+    'Paar mit al-Muʾaḫḫir: anta l-muqaddimu wa-anta l-muʾaḫḫir (al-Buḫārī 6398).',
+    'Wurzel q-d-m wie qadam (Fuß, der Schritt nach vorn).'
+  ],
+
+  'na-95': [
+    'Wurzel ʾ-ḫ-r wie al-Āḫir und al-āḫira (das Jenseits).',
+    'Muster mufaʿʿil mit Schadda wie al-Muqaddim und al-Muṣawwir.'
+  ],
+
+  'na-41': [
+    'ʿizza = Macht, Ehre. ʿazīz heißt im Alltag auch „lieb, teuer“: ʿazīzī = mein Lieber.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-ʿAzīz — al-ʿAzīz heißt „der Allmächtige, Unbesiegbare“.'
+  ],
+
+  'na-21': [
+    'Wurzel ḥ-k-m wie al-Ḥakam (der Richter) und ḥukm (Urteil).',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Ḥakīm — al-Ḥakīm heißt „der Allweise“.'
+  ],
+
+  'na-22': [
+    'Muster faʿīl wie al-Ḥakīm — nur ein Buchstabe anders: ḥa-k-īm, ḥa-l-īm.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Ḥalīm — al-Ḥalīm heißt „der Nachsichtige, der nicht sofort straft“.'
+  ],
+
+  'na-42': [
+    'Letztes Wort des Thronverses (2:255): wa-huwa l-ʿaliyyu l-ʿaẓīm.',
+    'Muster faʿīl wie al-Kabīr: beide heißen groß, ʿaẓīm meint großartig, gewaltig.'
+  ],
+
+  'na-45': [
+    'Wurzel ʿ-l-w wie al-Aʿlā im Sujūd und ʿalā (auf, über).',
+    'Der Vorname ʿAlī: derselbe Wortstamm — al-ʿAliyy heißt „der Erhabene“.'
+  ],
+
+  'na-03': [
+    'Gegenstück im Rukūʿ: subḥāna rabbiya l-ʿaẓīm. Gebückt der Gewaltige, mit der Stirn am Boden der Höchste.',
+    'Muster afʿal ist eine Steigerung: aʿlā „am höchsten“, wie akbar „am größten“. Wurzel ʿ-l-w wie al-ʿAliyy.'
+  ],
+
+  'na-04': [
+    'Nach dem Gebet sagst du: yā ḏā l-ǧalāli wa-l-ikrām — ikrām aus derselben Wurzel k-r-m.',
+    'Muster afʿal = Steigerung, wie al-Aʿlā — al-Akram heißt „der Edelmütigste, Freigebigste“.'
+  ],
+
+  'na-57': [
+    'kabīr = groß, aus deinem Buch: al-baytu kabīr.',
+    '⚠️ In al-Mulk steht kabīr zweimal (67:9, 67:12), dort für Irrtum und Lohn — nicht als Name.'
+  ],
+
+  'na-02': [
+    'Bilāl rief unter der Folter immer wieder: aḥad, aḥad — „Einer, Einer“.',
+    'Wurzel w-ḥ-d wie wāḥid (eins) und tawḥīd.'
+  ],
+
+  'na-75': [
+    'tawḥīd, die Einheit Allahs: dieselbe Wurzel w-ḥ-d.',
+    'Neben al-Aḥad: wāḥid heißt „eins“, aḥad „einzigartig“.'
+  ],
+
+  'na-39': [
+    'An aṣ-Ṣamad wenden sich alle mit ihren Bedürfnissen, und Er braucht niemanden.',
+    'Ein ʿAbd-Name daraus: ʿAbd aṣ-Ṣamad — aṣ-Ṣamad heißt „der Unabhängige, an den sich alle wenden“.'
+  ],
+
+  'na-99': [
+    'Nach dem Witr sagst du subḥāna l-maliki l-quddūs: der Name gehört zum Gebet.',
+    'Ungerade heißt nicht teilbar, so wie Er Einer ist.'
+  ],
+
+  'na-06': [
+    'Er ist der Erste, vor Ihm war nichts. Gegenstück: al-Āḫir.',
+    'In der Schlaf-Dua (Muslim 2713): anta l-awwalu fa-laysa qablaka šayʾ — „Du bist der Erste, vor Dir ist nichts“.'
+  ],
+
+  'na-07': [
+    'Paar mit al-Awwal: der Erste und der Letzte.',
+    'Wurzel ʾ-ḫ-r wie al-Muʾaḫḫir — al-Āḫir heißt „der Letzte (nach Ihm ist nichts)“.'
+  ],
+
+  'na-08': [
+    'Paar mit al-Bāṭin: der Offenbare und der Verborgene.',
+    'Muster fāʿil wie aš-Šāfī — aẓ-Ẓāhir heißt „der Offenbare, über dem nichts ist“.'
+  ],
+
+  'na-09': [
+    'Paar mit aẓ-Ẓāhir: außen und innen — al-Bāṭin heißt „der Verborgene, dem nichts verborgen ist“.',
+    'Muster fāʿil wie aẓ-Ẓāhir — al-Bāṭin heißt „der Verborgene, dem nichts verborgen ist“.'
+  ],
+
+  'na-19': [
+    '⚠️ In al-ʿAṣr (103:3) steht bi-l-ḥaqq — dort heißt es „die Wahrheit“, nicht der Name.',
+    'Wurzel ḥ-q-q wie ḥaqīqa (Wirklichkeit) — al-Ḥaqq heißt „der Wahre, die Wahrheit“.'
+  ],
+
+  'na-20': [
+    '⚠️ In al-Mulk steht mubīn zweimal (67:26, 67:29), dort für den Warner und den Irrtum — nicht als Name.',
+    'Muster mufʿil wie al-Muǧīb; Wurzel b-y-n wie bayna (zwischen).'
+  ],
+
+  'na-27': [
+    'ḫalq = Schöpfung; Muster fāʿil heißt „der es tut“.',
+    'In al-Mulk (67:2): allaḏī ḫalaqa l-mawta wa-l-ḥayāh — „der den Tod und das Leben erschaffen hat“.'
+  ],
+
+  'na-10': [
+    'barīʾ heißt frei, unschuldig: Er bringt die Schöpfung frei von Fehlern hervor.',
+    'Muster fāʿil wie al-Ḫāliq: beide erschaffen.'
+  ],
+
+  'na-67': [
+    'taṣwīr heißt Fotografieren: dieselbe Wurzel ṣ-w-r.',
+    'Muster mufaʿʿil mit Schadda wie al-Muqaddim.'
+  ],
+
+  'na-28': [
+    'Wurzel ḫ-l-q wie ḫalaqtanī in deiner Abend-Dua.',
+    'ḫuluq (Charakter) kommt aus derselben Wurzel.'
+  ],
+
+  'na-34': [
+    'Beim Tashahud lehrte der Prophet ﷺ: Allah ist as-Salām (al-Buḫārī 831) — darum sagt man nicht „Friede auf Allah“.',
+    '⚠️ In al-Qadr (97:5) steht salāmun hiya — dort heißt es „Frieden“, nicht der Name.'
+  ],
+
+  'na-60': [
+    'Ein Gläubiger heißt auch muʾmin: dasselbe Wort, bei Allah heißt es „der Sicherheit gibt“.',
+    'Wurzel ʾ-m-n wie amāna (anvertrautes Gut) und āmīn.'
+  ],
+
+  'na-73': [
+    'Ungewöhnliches Muster: mu-hay-min — das y in der Mitte macht ihn erkennbar.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Muhaymin — al-Muhaymin heißt „der Wächter über alles“.'
+  ],
+
+  'na-14': [
+    'Zwischen den Niederwerfungen bittet man: wa-ǧburnī — „und richte mich auf“ (at-Tirmiḏī 284).',
+    'Muster faʿʿāl mit Schadda wie al-Qahhār.'
+  ],
+
+  'na-62': [
+    'Bei Menschen ist takabbur Hochmut und verboten; nur Allah ist mutakabbir zu Recht.',
+    'Muster mutafaʿʿil: mu-ta-kab-bir — al-Mutakabbir heißt „der Stolze, dem allein Größe zusteht“.'
+  ],
+
+  'na-88': [
+    'Im Rukūʿ und Sujūd sagte der Prophet ﷺ: subbūḥun quddūsun rabbu l-malāʾikati wa-r-rūḥ (Muslim 487).',
+    'Das Ende davon kennst du aus deiner Witr-Dua: رَبِّ الْمَلاَئِكَةِ وَالرُّوحِ.'
+  ],
+
+  'na-12': [
+    'baṣar = Sehvermögen. Muster faʿīl wie as-Samīʿ — die beiden stehen oft zusammen.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Baṣīr — al-Baṣīr heißt „der Allsehende“.'
+  ],
+
+  'na-26': [
+    'ḫabar = Nachricht — das Wort kennst du aus der Grammatik: mubtadaʾ und ḫabar. al-Ḫabīr kennt jede Nachricht.',
+    'Muster faʿīl wie al-Laṭīf davor — al-Ḫabīr heißt „der Kundige, der alles genau weiß“.'
+  ],
+
+  'na-40': [
+    'Er weiß das Verborgene und das Sichtbare.',
+    'Wurzel ʿ-l-m wie ʿilm in deiner Wissens-Dua: zidnī ʿilmā.'
+  ],
+
+  'na-38': [
+    'šahīd heißt auch Märtyrer: Zeuge mit seinem Leben.',
+    'Muster faʿīl wie al-Baṣīr — aš-Šahīd heißt „der Zeuge“.'
+  ],
+
+  'na-33': [
+    'Eselsbrücke: raqaba heißt auch Hals — wer beobachtet, reckt den Hals. Dieselbe Wurzel r-q-b.',
+    'Muster faʿīl wie aš-Šahīd: beide sehen alles.'
+  ],
+
+  'na-66': [
+    'Im Thronvers (2:255): wa-lā yuḥīṭūna bi-šayʾin min ʿilmih — „sie umfassen nichts von Seinem Wissen“.',
+    'Wurzel ḥ-w-ṭ wie ḥāʾiṭ (Mauer, die umgibt).'
+  ],
+
+  'na-77': [
+    'wāsiʿ heißt weit, geräumig — ein Alltagswort: baytun wāsiʿ.',
+    'Muster fāʿil wie al-ʿĀlim — al-Wāsiʿ heißt „der Weite, Allumfassende“.'
+  ],
+
+  'na-48': [
+    'ġinā = Reichtum: Er braucht niemanden — al-Ġaniyy heißt „der Reiche, der nichts braucht“.',
+    'Muster faʿīl wie al-Qawiyy — al-Ġaniyy heißt „der Reiche, der nichts braucht“.'
+  ],
+
+  'na-36': [
+    'In deiner Dua nach dem Salām: wa-šukrik — „und Dir zu danken“.',
+    'Muster fāʿil; daneben aš-Šakūr, der überaus Dankbare.'
+  ],
+
+  'na-37': [
+    'šukran: dieselbe Wurzel š-k-r — aš-Šakūr heißt „der überaus Dankbare, der reich belohnt“.',
+    'Nach dem Salām bittest du: aʿinnī ʿalā ḏikrika wa-šukrik.'
+  ],
+
+  'na-50': [
+    'Muster fāʿil; stärker sind al-Qadīr (faʿīl) und al-Muqtadir.',
+    'Laylat al-Qadr (97:1) hat dieselbe Wurzel q-d-r; qadr heißt dort Bestimmung.'
+  ],
+
+  'na-53': [
+    'Dieselbe Wurzel q-d-r wie al-Qādir und al-Muqtadir.',
+    'Muster faʿīl wie al-ʿAlīm — al-Qadīr heißt „der Allmächtige, der alles vermag“.'
+  ],
+
+  'na-68': [
+    'Muster muftaʿil mit eingeschobenem t: muq-ta-dir.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Muqtadir — al-Muqtadir heißt „der alles vermag, voller Macht“.'
+  ],
+
+  'na-55': [
+    'qawiyy heißt stark, ein Alltagswort — al-Qawiyy heißt „der Starke“.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Qawiyy — al-Qawiyy heißt „der Starke“.'
+  ],
+
+  'na-63': [
+    'Muster faʿīl wie al-Qawiyy: stark und fest gehören zusammen.',
+    'Ein ʿAbd-Name daraus: ʿAbd al-Matīn — al-Matīn heißt „der Feste, Unerschütterliche“.'
+  ],
+
+  'na-51': [
+    'qahr = Bezwingen. Muster fāʿil; stärker ist al-Qahhār.',
+    'Muster fāʿil wie al-Qādir — al-Qāhir heißt „der Bezwinger“.'
+  ],
+
+  'na-56': [
+    'Kairo heißt al-Qāhira: Wurzel q-h-r — al-Qahhār heißt „der Allbezwinger“.',
+    'faʿʿāl mit Schadda wie al-Ǧabbār — al-Qahhār heißt „der Allbezwinger“.'
+  ],
+
+  'na-49': [
+    'miftāḥ = Schlüssel: dieselbe Wurzel — al-Fattāḥ heißt „der Öffnende, der gerecht entscheidet“.',
+    'Muster faʿʿāl: öffnet immer wieder — und entscheidet gerecht zwischen den Menschen.'
+  ],
+
+  'na-84': [
+    'Wurzel ḥ-k-m wie al-Ḥakīm und ḥukm (Urteil).',
+    'Hadith: Allah ist al-Ḥakam, und Ihm gehört das Urteil (Abū Dāwūd 4955).'
+  ],
+
+  'na-89': [
+    'Hadith: as-sayyidu llāh — „der Herr ist Allah“ (Abū Dāwūd 4806).',
+    'sayyida = Dame, Frau — dieselbe Wurzel — as-Sayyid heißt „der Herr und Gebieter“.'
+  ],
+
+  'na-18': [
+    'Nicht verwechseln mit al-Ḥafīẓ: ḥafiyy hat kein ẓ am Ende.',
+    'Muster faʿīl wie al-Ġaniyy — al-Ḥafiyy heißt „der Zugewandte, Wohlwollende“.'
+  ],
+
+  'na-61': [
+    'Wurzel ʿ-l-w wie al-ʿAliyy und al-Aʿlā — al-Mutaʿāl heißt „der Hocherhabene“.',
+    'Muster mutafāʿil: mu-ta-ʿā-l — ohne ī am Ende.'
+  ],
+
+  'na-69': [
+    'Muster mufʿil wie al-Muǧīb — al-Muqīt heißt „der Erhalter, der jedem seine Nahrung gibt“.',
+    'Neben ar-Razzāq: ar-Razzāq versorgt, al-Muqīt erhält.'
+  ],
+
+  'na-71': [
+    'Drei aus m-l-k: al-Malik, al-Malīk und mulk (Herrschaft).',
+    'Wurzel m-l-k wie in al-Mulk (67:1): tabāraka llaḏī bi-yadihi l-mulk.'
+  ],
+
+  'na-76': [
+    'Hadith: Die Gelehrten sind die Erben der Propheten (warāṯat al-anbiyāʾ) — dieselbe Wurzel w-r-ṯ.',
+    'Muster fāʿil wie al-Wāsiʿ — al-Wāriṯ heißt „der Erbe (dem am Ende alles bleibt)“.'
+  ],
+
+  'na-91': [
+    'Hadith: Allah ist ṭayyib und nimmt nur Gutes an (Muslim 1015).',
+    'ṭayyib heißt gut — das Alltagswort für „okay, gut“.'
+  ],
+
+  'na-92': [
+    'Paar mit al-Bāsiṭ: Er hält zurück und gibt reichlich (Abū Dāwūd 3451).',
+    'In al-Mulk (67:19): wa-yaqbiḍna — die Vögel ziehen ihre Flügel ein: dieselbe Wurzel.'
+  ],
+
+  'na-93': [
+    'Paar mit al-Qābiḍ: der Zurückhaltende und der reichlich Gebende.',
+    'basīṭ heißt einfach — dieselbe Wurzel b-s-ṭ.'
+  ],
+
+  'madina1-l3-maftuh': [
+    'In deiner Sure an-Naṣr (110:1): idhā jāʾa naṣru llāhi wa-l-fatḥ — al-fatḥ ist dieselbe Wurzel ف ت ح: die „Öffnung“ von Mekka. Was geöffnet wurde, ist مَفْتُوحٌ.',
+    'Muster maf-ʿūl bildet das, womit etwas gemacht WURDE: fataḥa „er öffnete“ → maftūḥ „geöffnet, offen“, so wie kataba „er schrieb“ → maktūb „geschrieben“.'
   ],
 };

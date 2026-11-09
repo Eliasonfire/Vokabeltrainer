@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* pruefe-satz-teile.mjs — der Satzmodus in zwei Teilen (v606, 25.09.2026)
+/* pruefe-satz-teile.mjs — der Satzmodus in drei Teilen (v606, 25.09.2026)
  * ==========================================================================
  * Elias, wörtlich: „also tag 1 satz teil 1, tag 2 hören, tag 3 satz teil 2 und
  * dann wieder hören. es muss aber klappen, dass es nicht random ist weil sonst
@@ -73,9 +73,16 @@ UEB_ZEILEN.forEach((z, i) => {
     if (r) u.teilRang = Number(r[1]);
     if (/^ {4}ruht:true,/.test(folge)) u.ruht = true;
   }
+  /* `ausserhalbTeile` (Übung 21, 09.11.2026) steht weiter unten im Eintrag — bis zum nächsten
+     Eintrag suchen. Ohne das Feld teilte dieser Prüfer die Geschichte mit ein, die App nicht. */
+  for (const folge of UEB_ZEILEN.slice(i + 1, i + 12)){
+    if (/^ {4}id:'/.test(folge)) break;
+    if (/^ {4}ausserhalbTeile:true,/.test(folge)) u.ausserhalbTeile = true;
+  }
   UEBUNGEN.push(u);
 });
-const AKTIV = UEBUNGEN.filter(u => !u.ruht), RUHEND = UEBUNGEN.filter(u => u.ruht);
+const AKTIV = UEBUNGEN.filter(u => !u.ruht && !u.ausserhalbTeile), RUHEND = UEBUNGEN.filter(u => u.ruht);
+if (!UEBUNGEN.some(u => u.ausserhalbTeile)) { console.log('X  kein Eintrag mit ausserhalbTeile gefunden — Übung 21 wird mitverteilt'); process.exitCode = 1; }
 const mSchaetzung = ueb.match(/const UEB_ZEIT_SCHAETZUNG = (\{[^}]+\});/);
 const NAMEN = ['satzTeile', 'satzTag', 'satzTagSpeichern', 'satzTeilZustand', 'satzTeilStand', 'satzTeilHeute',
                'satzTageszielHeute', 'satzTeilAuswahl', 'uebungWeiter'];
@@ -109,26 +116,33 @@ function kontext(quelltext, uebungen){
   return k;
 }
 
-console.log('pruefe-satz-teile.mjs — Satzmodus in zwei Teilen (' + UEBUNGEN.length + ' Übungen)\n');
+console.log('pruefe-satz-teile.mjs — Satzmodus in drei Teilen (' + UEBUNGEN.length + ' Übungen)\n');
 
 /* 1 + 2: Aufteilung */
 const c = kontext(code, UEBUNGEN);
 const t = c.lauf('satzTeile()');
-const alle = t[1].concat(t[2]);
+/* ⭐ Seit 09.11.2026 DREI Teile. Elias: „ich fände es gut, wenn wir den satzmodus den ich fast
+   täglich mache in 3 teilen. weil so wie es jetzt ist hab ich das gefühl es ist mir etwas zu
+   viel pro tag deswegen". Die Zahl kommt aus satzTeile().anzahl und muss 3 sein. */
+const KS = Array.from({ length: t.anzahl || 0 }, (_, i) => i + 1);
+const nurTeile = tt => Object.fromEntries(KS.map(k => [k, tt[k]]));
+const spanne = tt => Math.max(...KS.map(k => tt.summe[k])) - Math.min(...KS.map(k => tt.summe[k]));
+pruefe('drei Teile (sein Satz vom 09.11.2026)', t.anzahl === 3, t.anzahl);
+const alle = KS.flatMap(k => t[k]);
 pruefe('jede Übung in genau einem Teil' + (RUHEND.length ? ` — die ruhende (Übung ${RUHEND.map(u => u.nr).join(', ')}) in keinem` : ''),
   alle.length === AKTIV.length && new Set(alle).size === AKTIV.length
-  && AKTIV.every(u => alle.includes(u.id)) && RUHEND.every(u => !alle.includes(u.id)), JSON.stringify({ 1: t[1], 2: t[2] }));
+  && AKTIV.every(u => alle.includes(u.id)) && RUHEND.every(u => !alle.includes(u.id)), JSON.stringify(nurTeile(t)));
 const groesste = Math.max(...Object.values(t.zeit));
-pruefe(`gleich lang: Teil 1 ${Math.round(t.summe[1])} s, Teil 2 ${Math.round(t.summe[2])} s je Runde (Unterschied höchstens eine Übung, ${Math.round(groesste)} s)`,
-  Math.abs(t.summe[1] - t.summe[2]) <= groesste, Math.abs(t.summe[1] - t.summe[2]));
-console.log('     Teil 1 (' + t[1].length + '): ' + t[1].join(', '));
-console.log('     Teil 2 (' + t[2].length + '): ' + t[2].join(', '));
+pruefe(`gleich lang: ${KS.map(k => `Teil ${k} ${Math.round(t.summe[k])} s`).join(', ')} je Runde (Unterschied höchstens eine Übung, ${Math.round(groesste)} s)`,
+  spanne(t) <= groesste, spanne(t));
+for (const k of KS) console.log(`     Teil ${k} (${t[k].length}): ${t[k].join(', ')}`);
 const neu = kontext(code, UEBUNGEN.concat([{ id: 'neue-uebung', nr: 99, art: 'wahl' }]));
 const tn = neu.lauf('satzTeile()');
 pruefe('eine neue Übung kommt in einen Teil, und die Teile bleiben gleich lang',
-  tn[1].concat(tn[2]).includes('neue-uebung') && Math.abs(tn.summe[1] - tn.summe[2]) <= Math.max(...Object.values(tn.zeit)),
+  KS.some(k => tn[k].includes('neue-uebung')) && spanne(tn) <= Math.max(...Object.values(tn.zeit)),
   JSON.stringify(tn.summe));
-const N = { 1: t[1].length, 2: t[2].length };
+const N = Object.fromEntries(KS.map(k => [k, t[k].length]));
+function teilVon(tt, id){ for (let k = 1; k <= (tt.anzahl || 0); k++) if ((tt[k] || []).includes(id)) return k; return 0; }
 
 /* 3: die Fälle a–f, jeder mit Störtest. Jede Funktion baut ihre eigene Welt
    aus dem übergebenen Quelltext und sagt { ok, ist }. */
@@ -151,19 +165,21 @@ function fallB(q){
   w.lauf('uebungWeiter()');
   const naechste = w.lauf('UEB.liste[UEB.idx]'), teilDanach = w.lauf('UEB.teil'), idx = w.lauf('UEB.idx');
   const umgebaut = !!naechste && t[2].includes(naechste.modus.id) && teilDanach === 2 && idx === N[1];
-  w.antworte(N[2]);                                       /* auch Teil 2 geschafft → reihum wieder Teil 1 */
+  w.antworte(N[2]);                                       /* auch Teil 2 geschafft → Teil 3 */
   const s2 = w.lauf('satzTeilStand()');
-  return { ok: s.geschafft && s.jetzt === 2 && s.stand === 0 && s.groesse === N[2] && nurTeil2 && umgebaut && s2.jetzt === 1 && s2.fertig === 2,
-    ist: JSON.stringify({ jetzt: s.jetzt, geschafft: s.geschafft, auswahl: auswahl.length, nurTeil2, naechste: naechste && naechste.modus.id, teilDanach, idx, danach: [s2.jetzt, s2.fertig] }) };
+  w.antworte(N[3]);                                       /* alle drei geschafft → reihum wieder Teil 1 */
+  const s3 = w.lauf('satzTeilStand()');
+  return { ok: s.geschafft && s.jetzt === 2 && s.stand === 0 && s.groesse === N[2] && nurTeil2 && umgebaut && s2.jetzt === 3 && s2.fertig === 2 && s3.jetzt === 1 && s3.fertig === 3,
+    ist: JSON.stringify({ jetzt: s.jetzt, geschafft: s.geschafft, auswahl: auswahl.length, nurTeil2, naechste: naechste && naechste.modus.id, teilDanach, idx, danach: [s2.jetzt, s2.fertig, s3.jetzt, s3.fertig] }) };
 }
 function fallC(q){
   const w = kontext(q, UEBUNGEN), folge = [];
   w.heute = '2026-09-26'; folge.push(w.lauf('satzTeilHeute(false)')); w.antworte(N[1] + N[2]);   /* beide Teile */
   w.heute = '2026-09-27'; folge.push(w.lauf('satzTeilHeute(false)'));                            /* Hören-Tag */
   w.heute = '2026-09-28'; folge.push(w.lauf('satzTeilHeute(false)')); w.antworte(N[2]);
-  w.heute = '2026-09-30'; folge.push(w.lauf('satzTeilHeute(false)')); w.antworte(N[1]);
+  w.heute = '2026-09-30'; folge.push(w.lauf('satzTeilHeute(false)')); w.antworte(N[3]);
   w.heute = '2026-10-02'; folge.push(w.lauf('satzTeilHeute(false)'));
-  return { ok: JSON.stringify(folge) === '[1,2,2,1,2]', ist: JSON.stringify(folge) + ' (soll [1,2,2,1,2])' };
+  return { ok: JSON.stringify(folge) === '[1,2,2,3,1]', ist: JSON.stringify(folge) + ' (soll [1,2,2,3,1])' };
 }
 function fallD(q){
   const w = kontext(q, UEBUNGEN), folge = [];
@@ -179,12 +195,12 @@ function fallE(q){
   const fall = (st, satzTag, tag) => { const w = kontext(q, UEBUNGEN); w.SETTINGS = { satzTeil: st }; if (satzTag) w.speicher.vt_satzTag = satzTag; w.heute = tag; return w; };
   r.push(fall({ teil: 1, tag: '2026-09-25' }, { tag: '2026-09-25', gesamt: N[1] + 1, richtig: 0 }, '2026-09-26').lauf('satzTeilHeute(false)'));  /* geschafft → 2 */
   r.push(fall({ teil: 1, tag: '2026-09-25' }, { tag: '2026-09-25', gesamt: 3, richtig: 0 }, '2026-09-26').lauf('satzTeilHeute(false)'));         /* halb → wartet: 1 */
-  r.push(fall({ teil: 2, tag: '2026-09-25' }, null, '2026-09-26').lauf('satzTeilHeute(false)'));                                                   /* unbekannt → alte Regel: 1 */
+  r.push(fall({ teil: 2, tag: '2026-09-25' }, null, '2026-09-26').lauf('satzTeilHeute(false)'));                                                   /* unbekannt → alte Regel: der nächste, 3 */
   r.push(fall({ teil: 2, tag: '2026-09-26' }, null, '2026-09-26').lauf('satzTeilHeute(false)'));                                                   /* heute angefangen: 2 */
   const w = fall({ teil: 1, tag: '2026-09-25' }, null, '2026-09-26'); w.antworte(1);
   const neuFormat = JSON.stringify(w.SETTINGS.satzTeil);
-  return { ok: JSON.stringify(r) === '[2,1,1,2]' && neuFormat === '{"teil":2,"erledigt":null}',
-    ist: JSON.stringify(r) + ' ' + neuFormat + ' (soll [2,1,1,2] und {"teil":2,"erledigt":null})' };
+  return { ok: JSON.stringify(r) === '[2,1,3,2]' && neuFormat === '{"teil":2,"erledigt":null}',
+    ist: JSON.stringify(r) + ' ' + neuFormat + ' (soll [2,1,3,2] und {"teil":2,"erledigt":null})' };
 }
 function fallF(q){
   const w = kontext(q, UEBUNGEN);
@@ -204,7 +220,7 @@ const FAELLE = [
   ['(b) nach „geschafft" zieht Gemischt den anderen Teil — auch die laufende Liste, danach reihum', fallB,
     'uebungWeiter() baut die Liste nicht um', q => ersetze(q, 'if (jetzt !== UEB.teil){', 'if (false){')],
   ['(c) der nächste Satz-Tag geht andersherum, auch nach Weitermachen', fallC,
-    'kein Wechsel am nächsten Tag', q => ersetze(q, 'if (erledigt && erledigt < heute){ teil = teil === 1 ? 2 : 1; erledigt = null; }', 'if (erledigt && erledigt < heute){ erledigt = null; }')],
+    'kein Wechsel am nächsten Tag', q => ersetze(q, 'if (erledigt && erledigt < heute){ teil = teil % anzahl + 1; erledigt = null; }', 'if (erledigt && erledigt < heute){ erledigt = null; }')],
   ['(d) ein nicht geschaffter Teil wartet, über mehrere Tage', fallD,
     'jeder Tag mit Sätzen gilt als erledigt', q => ersetze(q, 'const erledigt = s.geschafft ? (s.erledigt || todayStr(0)) : null;', 'const erledigt = todayStr(0);')],
   ['(e) das alte Format { teil, tag } wird übernommen', fallE,
@@ -246,23 +262,23 @@ pruefe('die Einstellung ist eine Anzeige, kein Schalter', !/id="satzZielSelect"|
   && !/id:'satz'/.test(nurCode(einst)) && /function zeigeSatzZielAutomatisch/.test(einst) && /zeigeSatzZielAutomatisch\(\)/.test(schneide(einst, 'renderSettings') || ''), '');
 
 /* Störtest der Aufteilung (seit v606) */
-const ohneAusgleich = code.replace('const t = summe[1] < summe[2] ? 1 : summe[2] < summe[1] ? 2 : (teil[1].length <= teil[2].length ? 1 : 2);', 'const t = 1;');
+const ohneAusgleich = code.replace('.sort((a, b) => (summe[a] - summe[b]) || (teil[a].length - teil[b].length) || (a - b))[0];', '[0];');
 const s1 = kontext(ohneAusgleich, UEBUNGEN).lauf('satzTeile()');
-pruefe('STÖRTEST — ohne Ausgleich wären die Teile ungleich', ohneAusgleich !== code && Math.abs(s1.summe[1] - s1.summe[2]) > Math.max(...Object.values(s1.zeit)), JSON.stringify(s1.summe));
+pruefe('STÖRTEST — ohne Ausgleich wären die Teile ungleich', ohneAusgleich !== code && spanne(s1) > Math.max(...Object.values(s1.zeit)), JSON.stringify(s1.summe));
 
 /* 6: verwandte Übungen nie im selben Teil (27.09.2026). Elias: „am besten wenn
    beide übungen nicht am sleben tag statt finden. generell sollte ein tag
    nicht mit einer übung überfüllt sein sondern gut durchmischt" — vorher
    lagen Übung 10 und 12 durch die Schätzung immer zusammen in Teil 1. */
 const PAARE = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen']];
-const getrennt = tt => PAARE.every(([a, b]) => (tt[1].includes(a) && tt[2].includes(b)) || (tt[2].includes(a) && tt[1].includes(b)));
-pruefe('verwandte Übungen in verschiedenen Teilen — mit der Schätzung', getrennt(t), JSON.stringify({ 1: t[1], 2: t[2] }));
+const getrennt = tt => PAARE.every(([a, b]) => { const ta = teilVon(tt, a), tb = teilVon(tt, b); return ta && tb && ta !== tb; });
+pruefe('verwandte Übungen in verschiedenen Teilen — mit der Schätzung', getrennt(t), JSON.stringify(nurTeile(t)));
 const gm = kontext(code, UEBUNGEN);
 gm.QUOTE_TAGE = { '2026-09-20': { zn_genus: 12, zs_genus: 480, 'zn_fem-form': 12, 'zs_fem-form': 480 } };
 const tg = gm.lauf('satzTeile()');
 pruefe('… und wenn die zwei gemessen gleich lang sind (je 40 s)', getrennt(tg)
-  && Math.abs(tg.summe[1] - tg.summe[2]) <= Math.max(...Object.values(tg.zeit)), JSON.stringify({ 1: tg[1], 2: tg[2], summe: tg.summe }));
-const ohnePaare = code.replace('const wo = pa.some(x => teil[t].includes(x)) && !pa.some(x => teil[anders].includes(x)) ? anders : t;', 'const wo = t;');
+  && spanne(tg) <= Math.max(...Object.values(tg.zeit)), JSON.stringify({ ...nurTeile(tg), summe: tg.summe }));
+const ohnePaare = code.replace('const frei = nummern.filter(k => !pa.some(x => teil[k].includes(x)));', 'const frei = nummern;');
 pruefe('STÖRTEST — ohne die Paare stünden 10 und 12 wieder zusammen', ohnePaare !== code && !getrennt(kontext(ohnePaare, UEBUNGEN).lauf('satzTeile()')), '');
 
 /* 7: kein Satz zweimal in einem Durchgang von „Gemischt" (27.09.2026) —
@@ -297,7 +313,6 @@ else {
    an JEDER Übung: ruht sie allein, steht sie in keinem Teil, und jede andere bleibt in ihrem.
    Dazu die Auswahl-Liste und die Übungsstatistik, beide an den echten Funktionen. */
 console.log('\n8. Eine ruhende Übung steht in keinem Teil und verschiebt keine andere');
-const teilVon = (tt, id) => tt[1].includes(id) ? 1 : tt[2].includes(id) ? 2 : 0;
 const ohneRuhe = liste => liste.map(u => { const v = { ...u }; delete v.ruht; return v; });
 const wanderer = (quelltext, liste) => {
   const vorher = kontext(quelltext, ohneRuhe(liste)).lauf('satzTeile()');
@@ -376,5 +391,5 @@ const alleinRuht = id => ohneRuhe(UEBUNGEN).map(u => (u.id === id ? { ...u, ruht
   }
 }
 
-console.log('\n' + (fehler ? `X  ${fehler} Befund(e)` : '✅ Satzmodus in zwei Teilen: alles richtig'));
+console.log('\n' + (fehler ? `X  ${fehler} Befund(e)` : '✅ Satzmodus in drei Teilen: alles richtig'));
 process.exit(fehler ? 1 : 0);

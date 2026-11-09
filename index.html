@@ -2495,6 +2495,10 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .luecke-antwort{margin-top:var(--sp-3);font-size:var(--fs-md);min-height:2.6rem;}
 .luecke-antwort.richtig{color:var(--green);}
 .luecke-antwort.falsch{color:var(--red-bright);}
+/* Geschichte (Übung 21, 09.11.2026): die schon gelesenen Sätze der Lektion über dem jetzigen. */
+.geschichte-bisher{font-family:var(--font-ar, inherit);font-size:var(--fs-md);line-height:1.9;color:var(--text-dim);
+  text-align:right;margin:var(--sp-2) 0 var(--sp-3);padding-bottom:var(--sp-3);border-bottom:1px dashed var(--border);
+  max-height:12rem;overflow-y:auto;overflow-wrap:anywhere;}
 .luecke-antwort .luecke-wort{font-family:var(--font-ar);font-size:calc(var(--fs-md) * var(--ar-faktor));}
 /* Die Lücke im Satz selbst: gleiche Höhe wie der Text, damit die Zeile nicht
    springt, sobald das Wort erscheint. */
@@ -2536,6 +2540,40 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .irab-kasus[data-k="jarr"]{color:var(--gram-idafa);}
 .irab-kasus[data-k="nasb"]{color:var(--gram-nasab);}
 .irab-hinweis{color:var(--text-dim);font-size:var(--fs-sm);margin-top:var(--sp-3);line-height:1.5;}
+
+/* Übungsblatt seines Lehrers (09.11.2026, js/lehrerblatt.js). Eine Aufgabe je Karte,
+   die Lösung hinter einem Knopf — erst selbst überlegen, dann nachsehen. */
+.lb-einstieg{
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;
+  margin-bottom:var(--sp-4);padding:var(--sp-3) var(--sp-4);text-align:left;
+  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-2);
+  color:var(--text);font:inherit;cursor:pointer;
+}
+.lb-einstieg-titel{font-weight:700;}
+.lb-einstieg-sub{color:var(--text-dim);font-size:var(--fs-sm);}
+.lb-kopf{color:var(--text-dim);font-size:var(--fs-sm);margin-bottom:var(--sp-4);line-height:1.5;}
+.lb-teil{margin:var(--sp-5) 0 var(--sp-2);font-weight:700;color:var(--text-dim);font-size:var(--fs-sm);}
+.lb-aufgabe{background:var(--surface-2);border-radius:var(--r-2);padding:var(--sp-4);margin-bottom:var(--sp-3);}
+.lb-titel{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-3);margin-bottom:var(--sp-2);}
+.lb-titel-de{font-weight:700;}
+.lb-ar{font-family:var(--font-ar);font-size:1.3rem;line-height:1.9;}
+.lb-frage{margin-top:var(--sp-3);line-height:1.5;}
+.lb-items{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);margin:var(--sp-2) 0;justify-content:flex-end;}
+.lb-knopf{
+  margin-top:var(--sp-2);padding:var(--sp-2) var(--sp-3);border-radius:var(--r-2);
+  background:transparent;border:1px solid var(--border-strong);color:var(--text);font:inherit;font-size:var(--fs-sm);cursor:pointer;
+}
+.lb-loesung{margin-top:var(--sp-3);padding-top:var(--sp-3);border-top:1px solid var(--surface-3);}
+.lb-zeile{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-3);padding:var(--sp-1) 0;}
+.lb-q{color:var(--text-dim);font-size:var(--fs-sm);}
+.lb-de{display:block;color:var(--text-dim);font-size:var(--fs-sm);text-align:right;}
+.lb-regel{
+  display:inline-block;margin:var(--sp-2) var(--sp-2) 0 0;padding:2px var(--sp-2);border-radius:var(--r-2);
+  background:transparent;border:1px solid var(--border);color:var(--text);font:inherit;font-size:var(--fs-sm);cursor:pointer;
+}
+.lb-herkunft{color:var(--text-faint);font-size:.78em;margin-top:var(--sp-2);}
+.lb-hinweis{color:var(--text-dim);font-size:var(--fs-sm);margin-top:var(--sp-3);line-height:1.5;font-style:italic;}
+.lb-satz{margin-top:var(--sp-3);}
 
 /* Themenreiter über der Satzkarte. Waagerecht rollbar statt umbrechend: neun
    Themen in zwei Zeilen würden die Satzkarte nach unten drücken, und die soll
@@ -6225,6 +6263,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
              gibt" — später erweitert auf alle vier. -->
         <div class="progress-track ueb-balken"><div class="progress-fill" id="uebBalken"></div></div>
         <div class="ueb-frage" id="uebFrage"></div>
+        <div class="geschichte-bisher hidden" id="uebGeschichteBisher" lang="ar" dir="rtl"></div>
         <div class="ueb-satz" id="uebSatz" lang="ar" dir="rtl"></div>
         <div class="ueb-de" id="uebDe"></div>
         <!-- ⭐⭐ Das Eingabefeld der Übersetzungsübung (22.09.2026). Elias:
@@ -6791,7 +6830,23 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
         <input type="search" id="regelnSuche" placeholder="Regel suchen — Deutsch, Arabisch, mudaf …"
                autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-label="Regeln durchsuchen">
       </div>
+      <!-- Das Übungsblatt seines Lehrers (09.11.2026). Elias, 08.11.2026: „beides und
+           fehlende wörter ergänzen falls vorhanden" — beides = Regeln UND die Aufgaben
+           als Übung. Hier und nicht als Kachel auf dem Start: der Start ist seine
+           Seite, und das Blatt gehört zu den Regeln. -->
+      <button class="lb-einstieg" data-nav="lehrerblatt" id="btnLehrerblatt">
+        <span class="lb-einstieg-titel">Übungsblatt deines Lehrers</span>
+        <span class="lb-einstieg-sub">Lektion 1–17 · 18 Aufgaben mit Lösung</span>
+      </button>
       <div id="regelnInhalt"></div>
+    </section>
+
+    <section class="screen" id="screen-lehrerblatt" data-screen="lehrerblatt">
+      <div class="screen-header">
+        <button class="icon-btn" data-back aria-label="Zurück"><svg class="ic"><use href="#ic-left"/></svg></button>
+        <h2>Übungsblatt</h2>
+      </div>
+      <div id="lehrerblattInhalt"></div>
     </section>
 
     <section class="screen" id="screen-wurzeln" data-screen="wurzeln">
@@ -7112,11 +7167,12 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <div class="setting-row">
         <div>
           <div class="setting-title">Satzaufgaben pro Tag</div>
-          <div class="setting-sub">Automatisch: ein Satz-Tag ist ein Teil, jede Übung darin einmal. Danach kommt von selbst der andere Teil, am nächsten Satz-Tag andersherum. Was nicht geschafft ist, bleibt dran.</div>
+          <div class="setting-sub">Automatisch: ein Satz-Tag ist ein Teil, jede Übung darin einmal. Danach kommt von selbst der nächste Teil (drei Teile, reihum). Was nicht geschafft ist, bleibt dran.</div>
         </div>
         <div class="sitzung-wahl">
           <span id="satzZielAnzeige" class="setting-title satz-ziel-anzeige">Teil 1
-Teil 2</span>
+Teil 2
+Teil 3</span>
         </div>
       </div>
 
@@ -7667,11 +7723,18 @@ Teil 2</span>
 <script src="grammar-data.js"></script>
 <script src="regelsammlung-data.js"></script>
 <script src="wortfelder-data.js"></script>
+<!-- Alltagssätze für den Hörmodus (08.11.2026), jede zweite Hörfrage. Jeder Satz nennt seine
+     Wörter; js/hoeren.js nimmt ihn nur, wenn alle im Hörvorrat liegen. -->
+<script src="hoersaetze-data.js"></script>
 <script src="lehrbuch-saetze.js"></script>
 <script src="quran-frequency-data.js"></script>
 <!-- Die Gruppe „Koran häufigste" (11.10.2026): 255 Karten, erzeugt aus
      werkzeuge/koran-haeufig-liste.txt. Vor js/buecher.js, das sie als Buch anbietet. -->
 <script src="koran-haeufig-data.js"></script>
+<!-- Die Gruppe „Namen Allahs" (08.11.2026): 99 Karten, erzeugt von werkzeuge/namen-allahs-bauen.mjs. -->
+<script src="namen-allahs-data.js"></script>
+<!-- Das Übungsblatt seines Lehrers (09.11.2026): 18 Aufgaben, Madina 1 bis Lektion 17. -->
+<script src="lehrerblatt-data.js"></script>
 
 <!-- App-Logik, thematisch getrennt (E.7). Die Reihenfolge ist bindend:
      kern.js legt Speicher und Lernfortschritt an, darstellung.js und
@@ -7692,6 +7755,8 @@ Teil 2</span>
 <script src="js/kategorien.js"></script>
 <script src="js/regeln.js"></script>
 <script src="js/saetze.js"></script>
+<!-- Nach saetze.js: das Lehrerblatt zeigt die Zerlegung mit irabZeilenHtml(). -->
+<script src="js/lehrerblatt.js"></script>
 <!-- ⛔ VOR js/uebung.js: der Übungseintrag „Übersetzen" ruft uebersetzungPruefen()
      auf. Die Reihenfolge ist hier zwar unkritisch (der Aufruf passiert erst beim
      Prüfen, nicht beim Laden), aber sie sagt dem nächsten Leser, wer wovon abhängt. -->

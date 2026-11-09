@@ -768,8 +768,7 @@ function zeigeSatzZielAutomatisch(){
   if (!el || typeof satzTeile !== 'function') return;
   const t = satzTeile();
   /* zwei Zeilen — .satz-ziel-anzeige in index.html hält den Umbruch (pre) */
-  el.textContent = `Teil 1: ${t[1].length}
-Teil 2: ${t[2].length}`;
+  el.textContent = Array.from({ length: t.anzahl || 2 }, (_, i) => `Teil ${i + 1}: ${t[i + 1].length}`).join('\n');
 }
 zeigeSatzZielAutomatisch();
 

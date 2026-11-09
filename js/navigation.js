@@ -91,6 +91,7 @@ function zeigeBildschirm(name){
   if (name==='hoeren') openHoeren();
   if (name==='wurzeln') oeffneWurzeln();
   if (name==='regeln' && typeof renderRegeln === 'function') renderRegeln();
+  if (name==='lehrerblatt' && typeof zeichneLehrerblatt === 'function') zeichneLehrerblatt();
   /* Die Suche vom Start (11.09.2026 abends, js/kategorien.js): beim Öffnen und
      beim Zurückkommen neu zeichnen — der Begriff steht noch im Feld, und eine
      Regel kann inzwischen bearbeitet oder weggeworfen sein. */

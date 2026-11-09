@@ -133,10 +133,15 @@ function pruefe(quelle){
     const stelle = UEBUNGEN.indexOf(U);
     UEBUNGEN.splice(stelle, 1);
     let ohne = null; try { ohne = hole('satzTeile')(); } finally { UEBUNGEN.splice(stelle, 0, U); }
-    const gewechselt = UEBUNGEN.filter(m => m !== U && ohne[1].includes(m.id) !== mit[1].includes(m.id)).map(m => m.nr);
-    if (gewechselt.length) f.push('1t: seine zwei Teile bleiben nicht — den Teil wechseln die Übungen ' + gewechselt.join(', '));
-    if ([1, 2].filter(t => mit[t].includes('verb-einsetzen')).length !== 1) f.push('1t: die neue steht nicht in genau einem Teil');
-    if ([1, 2].some(t => mit[t].includes('verb-einsetzen') && mit[t].includes('pronomen'))) f.push('1v: im selben Teil wie Übung 14 (dieselben Sätze)');
+    /* Seit 09.11.2026 drei Teile (Elias: „… in 3 teilen"): verglichen wird über ALLE Teile;
+       eine Übung mit größerem teilRang kam später dazu und darf ohne diese woanders landen. */
+    const ks = tt => Array.from({ length: tt.anzahl || 2 }, (_, i) => i + 1);
+    const tv = (tt, id) => ks(tt).find(k => (tt[k] || []).includes(id)) || 0;
+    const spaeter = m => (m.teilRang || 0) > (U.teilRang || 0);
+    const gewechselt = UEBUNGEN.filter(m => m !== U && !spaeter(m) && tv(ohne, m.id) !== tv(mit, m.id)).map(m => m.nr);
+    if (gewechselt.length) f.push('1t: die Teile bleiben nicht — den Teil wechseln die Übungen ' + gewechselt.join(', '));
+    if (ks(mit).filter(t => mit[t].includes('verb-einsetzen')).length !== 1) f.push('1t: die neue steht nicht in genau einem Teil');
+    if (ks(mit).some(t => mit[t].includes('verb-einsetzen') && mit[t].includes('pronomen'))) f.push('1v: im selben Teil wie Übung 14 (dieselben Sätze)');
   }
 
   /* 2 — keine selbst konjugierte Form */

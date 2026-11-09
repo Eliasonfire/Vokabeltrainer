@@ -592,6 +592,61 @@ function waehleAblenker(ziel, pool, anzahl){
 }
 /* ===== AEHNLICHE ABLENKER — Ende ===== */
 
+/* ===== HOERSAETZE (08.11.2026) =====
+
+   Elias: „der Hörmodus soll jetzt auch kleinere einfache sätze machen die vorallem im alltag
+   gebrauchbar sind". Auf meine Rueckfragen: „Nur bekannte Wörter" und „ich finde es sollte jedes
+   zweiter mal sätze sein". Und dazu: „ich würde gerne primär alltagssätze haben … aber auch
+   allgemeine sätze sind okay damit ich einfach mein hörverständnis verbessere".
+
+   ⛔ JEDE ZWEITE FRAGE: Wort, Satz, Wort, Satz … — gezaehlt in HOER_ZUG, nur im Arbeitsspeicher.
+   Gibt es (noch) zu wenige Saetze fuer alle Antworten, kommt an der Stelle ein Wort; eine Frage
+   mit weniger als fuenf Antworten waere leichter als die anderen.
+   ⛔ NUR BEKANNTE WOERTER: ein Satz kommt nur, wenn JEDE Kennung in seinem `w` im Hoervorrat
+   liegt (hoerbareVokabeln(): gesehen, nicht Box 7, nicht ganz hinten, Kapitelauswahl). Dieselbe
+   Grenze gilt fuer die Ablenker. Dass `w` vollstaendig ist, prueft werkzeuge/pruefe-hoersaetze.mjs.
+   ⚠️ MEINE Lesart: der Geh-Modus wechselt genauso ab, denn er ist Teil des Hoermodus.
+   ⚠️ Ein Satz hat keine Karteikarte: er zaehlt fuers Tagesziel und die Tagesquote, aber nicht
+   in der Quote je Wort, und „Kenne ich schon" gibt es fuer ihn nicht. */
+let HOER_ZUG = 0;
+let HOER_LETZTER_SATZ = '';
+const HOER_SATZ_KARTE = new Map();
+function hoerSatzKarte(s){
+  if (!HOER_SATZ_KARTE.has(s.k))
+    HOER_SATZ_KARTE.set(s.k, { id: 'hs:' + s.k, ar: s.ar, de: s.de, satz: true, w: s.w.map(String) });
+  return HOER_SATZ_KARTE.get(s.k);
+}
+function hoerSatzVorrat(pool){
+  if (typeof HOER_SAETZE === 'undefined' || !Array.isArray(HOER_SAETZE)) return [];
+  const da = new Set(pool.map(w => String(w.id)));
+  return HOER_SAETZE
+    .filter(s => s && s.k && s.ar && s.de && Array.isArray(s.w) && s.w.length && s.w.every(id => da.has(String(id))))
+    .map(hoerSatzKarte);
+}
+/* Ist an dieser Stelle ein Satz dran? Zaehlt den Zug weiter — einmal je neuer Frage aufrufen. */
+function hoerSatzDran(){ HOER_ZUG++; return HOER_ZUG % 2 === 0; }
+function hoerSatzWahl(saetze){
+  const ohneLetzten = saetze.filter(s => s.id !== HOER_LETZTER_SATZ);
+  const s = shuffle(ohneLetzten.length ? ohneLetzten : saetze)[0];
+  HOER_LETZTER_SATZ = s.id;
+  return s;
+}
+/* Ablenker: zuerst Saetze, die moeglichst viele Woerter mit dem gefragten teilen („Wo ist die
+   Toilette?" neben „Wo ist das Badezimmer?") — sonst waere die Antwort per Ausschluss zu finden,
+   wie bei den Woertern vor dem 11.09.2026. Gleichstand wird gewuerfelt. */
+function waehleSatzAblenker(ziel, vorrat, anzahl){
+  const meine = new Set(ziel.w);
+  const geteilt = s => s.w.filter(id => meine.has(id)).length;
+  const kand = shuffle(vorrat.filter(s => s.id !== ziel.id && s.de !== ziel.de));
+  kand.sort((a, b) => geteilt(b) - geteilt(a));
+  return kand.slice(0, anzahl);
+}
+/* Liegt eine Antwort (Wort oder Satz) noch ganz im Vorrat? */
+function hoerImVorrat(o, da){
+  if (!o) return false;
+  return o.satz ? o.w.every(id => da.has(String(id))) : da.has(String(o.id));
+}
+
 function naechsteHoerfrage(){
   const pool = hoerbareVokabeln();
   const leer = document.getElementById('hoerLeer');
@@ -620,14 +675,20 @@ function naechsteHoerfrage(){
      dem ganzen Pool nehmen, verloere der Modus die besten Ablenker und
      schrumpfte womoeglich unter die noetigen Antworten. */
   const fragbar = pool.filter(w => !(typeof kennErSchon === 'function' && kennErSchon(w)));
-  HOER.wort = shuffle(fragbar.length ? fragbar : pool)[0];
-  HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, HOER_ANTWORTEN - 1)]);
+  const saetze = hoerSatzDran() ? hoerSatzVorrat(pool) : [];
+  if (saetze.length >= HOER_ANTWORTEN){
+    HOER.wort = hoerSatzWahl(saetze);
+    HOER.optionen = shuffle([HOER.wort, ...waehleSatzAblenker(HOER.wort, saetze, HOER_ANTWORTEN - 1)]);
+  } else {
+    HOER.wort = shuffle(fragbar.length ? fragbar : pool)[0];
+    HOER.optionen = shuffle([HOER.wort, ...waehleAblenker(HOER.wort, pool, HOER_ANTWORTEN - 1)]);
+  }
   HOER.beantwortet = false;
   HOER.fertig = false;
   HOER.sperreBis = 0;
 
   hoerStandSchreiben();
-  document.getElementById('hoerHinweis').textContent = 'Was bedeutet das Wort?';
+  document.getElementById('hoerHinweis').textContent = HOER.wort.satz ? 'Was bedeutet der Satz?' : 'Was bedeutet das Wort?';
   document.getElementById('hoerLoesung').classList.add('hidden');
   document.getElementById('hoerOptionen').innerHTML = HOER.optionen.map((w, i)=>
     `<button class="hoer-option" data-hoerwahl="${i}">${escapeHtml(w.de)}</button>`).join('');
@@ -714,7 +775,8 @@ function beantworteHoerfrage(i){
      Begruendung steht bei `merkeQuote()` in js/kern.js. */
   /* ⭐ Q3 (08.09.2026): und je WORT. Der Hoermodus ist neben der Karteikarte
      die zweite Stelle, an der eine Antwort eindeutig EINEM Wort gehoert. */
-  if (typeof merkeQuote === 'function') merkeQuote(richtig, undefined, w && w.id);
+  /* Ein Hoersatz ist keine Vokabel — er zaehlt nur in der Tagesquote, nicht je Wort. */
+  if (typeof merkeQuote === 'function') merkeQuote(richtig, undefined, w && !w.satz ? w.id : undefined);
 
   const ziel = hoerTagesziel();
   const zielJetztErreicht = vorher < ziel && t.gesamt >= ziel;
@@ -827,6 +889,8 @@ function zeichneHoerKenneSchon(){
   const zeile = document.getElementById('hoerKenneSchonZeile');
   const b     = document.getElementById('btnHoerKenneSchon');
   if (!zeile || !b || !HOER.wort) return;
+  /* Fuer einen Hoersatz gibt es kein „Kenne ich schon" — er hat keine Karte, die man ausblenden koennte. */
+  if (HOER.wort.satz){ zeile.classList.add('hidden'); return; }
   const markiert = (typeof kennErSchon === 'function') && kennErSchon(HOER.wort);
   zeile.classList.remove('hidden');
   b.classList.toggle('ist-markiert', markiert);
@@ -863,7 +927,7 @@ function freiRollen(el){
 
 document.getElementById('btnHoerKenneSchon').addEventListener('click', ()=>{
   const w = HOER.wort;
-  if (!w) return;
+  if (!w || w.satz) return;
   const jetztAn = !kennErSchon(w);
   setzeKennErSchon(w.id, jetztAn);
   zeichneHoerKenneSchon();
@@ -1138,8 +1202,11 @@ async function gehSchleife(){
       return;
     }
     const fragbar = pool.filter(w => !(typeof kennErSchon === 'function' && kennErSchon(w)));
-    const w = shuffle(fragbar.length ? fragbar : pool)[0];
-    HOER.wort = w;                      /* damit der Lautsprecherknopf weiterhin dieses Wort spricht */
+    /* Jede zweite Ansage ein Hoersatz, wie beim Antippen (Block HOERSAETZE). Hier braucht es
+       keine fuenf Saetze — es gibt keine Antworten, nur Ansage und Loesung. */
+    const saetze = hoerSatzDran() ? hoerSatzVorrat(pool) : [];
+    const w = saetze.length ? hoerSatzWahl(saetze) : shuffle(fragbar.length ? fragbar : pool)[0];
+    HOER.wort = w;                     /* damit der Lautsprecherknopf weiterhin dieses Wort spricht */
     HOER.beantwortet = false;
 
     /* ⭐ Die Zeitmessung wachhalten — hier wird 20 Minuten lang nichts berührt. */
@@ -1253,7 +1320,7 @@ function hoerFrageFortsetzbar(){
   if (!karte || karte.classList.contains('hidden')) return false;
   if (!document.querySelector('#hoerOptionen [data-hoerwahl]')) return false;
   const da = new Set(hoerbareVokabeln().map(w => String(w.id)));
-  return HOER.optionen.every(w => w && da.has(String(w.id)));
+  return HOER.optionen.every(w => hoerImVorrat(w, da));
 }
 
 function openHoeren(){

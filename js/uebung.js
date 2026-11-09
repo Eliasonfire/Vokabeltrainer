@@ -2466,6 +2466,54 @@ const UEBUNGEN = [
         bausteine
       }];
     }
+  },
+  /* ⭐ GESCHICHTE MIT LÜCKEN (09.11.2026). Elias am 08.11.: „ich finde geschichten mit lücken
+     ganz interessant", „Im Satzmodus (A)"; am 09.11.2026, nachdem ich sie in den Lesemodus
+     gebaut hatte: „ich möchte die geschichten im übungsmodus und nicht im lesemodus".
+     Eine Geschichte = die mb1-Sätze einer Lektion seines Buches in Buchreihenfolge
+     (geschichten(), geschichteSaetze() in js/saetze.js; Goal-Prompt E.1: nichts erfunden).
+     Die schon gelesenen Sätze der Lektion stehen über dem jetzigen (a.bisher), wie bei Arabily.
+     Die Knöpfe: das fehlende Wort und bis zu drei andere Zielwörter derselben Lektion, so wie
+     sie im Buch stehen — keine erzeugte Form.
+     ⛔ `reihenfolge`: nicht mischen (uebungStarten), sonst ist es keine Geschichte mehr.
+     ⛔ `ausserhalbTeile`: steht in keinem Tagesteil und nicht in „Gemischt" (satzTeile) — MEINE
+     Entscheidung, damit keine andere Übung den Teil wechselt; außerdem braucht sie ihren Text
+     davor. Bewacht von werkzeuge/pruefe-geschichten.mjs. */
+  {
+    id:'geschichte', nr:21, name:'Geschichte — eine Lektion der Reihe nach, Lücke füllen', art:'geschichte',
+    hinweis:'Die Sätze darüber hast du schon gelesen. Welches Wort fehlt in diesem Satz?',
+    hinweisVerraet:false,
+    reihenfolge:true,
+    ausserhalbTeile:true,
+    baue(){ return []; },
+    ohneSatz(){
+      if (typeof geschichten !== 'function') return [];
+      const out = [];
+      geschichten().forEach(g => {
+        const liste = geschichteSaetze(g.id);
+        liste.forEach((s, k) => {
+          const ziel = findeZielwort(s);
+          if (!ziel) return;
+          const zeilen = analysiereSatz(s.sentAr);
+          const idx = zeilen.findIndex(t => gleichesWortLose(t.wort, ziel));
+          if (idx < 0) return;
+          /* Steht das Wort zweimal im Satz, wird es überall verdeckt (mb1-68-2). */
+          const ohneSuffix = {};
+          zeilen.forEach((t, i) => { if (i !== idx && gleichesWortLose(t.wort, ziel)) ohneSuffix[i] = '____'; });
+          const grund = geschichteGrund(s, ziel);
+          out.push({
+            frage: `${g.name} · Welches Wort fehlt?`, art: 'wahl',
+            satz: s, zeilen, wortIdx: idx, verdeckt: true, ohneSuffix,
+            loesung: ziel,
+            optionen: geschichteWahl(s, ziel, g.id).map(t => ({ wert: t, text: t })),
+            aufloesung: `Im Buch steht ${ziel}` + (grund ? ` — im Satz: ${grund}.` : '.'),
+            bisher: liste.slice(0, k).map(x => x.sentAr),
+            geschichte: g.id
+          });
+        });
+      });
+      return out;
+    }
   }
 ];
 
@@ -2578,7 +2626,11 @@ const UEBUNG_ZUSAMMEN = [
   ['possessiv-endungen-01', 'possessiv-ya-01', 'asma-khamsa-01'],  // kitābī, abūka, abī
   ['possessiv-endungen-01', 'hu-nach-kasra-01'],                   // fīhi
   ['verb-enthaelt-pronomen-01', 'verb-madi-endungen-01'],          // dhahaba: „er" steckt im Verb
-  ['zarf-makan-rollenname-01', 'zuruf-makan-weitere-01']           // amāma, fawqa
+  ['zarf-makan-rollenname-01', 'zuruf-makan-weitere-01'],          // amāma, fawqa
+  /* 09.11.2026: ladayka (Madina-Schlüssel 3, L2, S. 23 „ein ẓarf … wie ʿinda") — im Zweifel zusammen. */
+  ['zarf-lada-01', 'zarf-01', 'zarf-als-mudaf-01', 'zarf-makan-rollenname-01', 'zuruf-makan-weitere-01',
+   'zarf-mansub-01', 'inda-ort-und-zeit-01', 'zarf-maa-inda-01'],
+  ['mubtada-khabar-shibh-jumla-01', 'mubtada-khabar-01', 'satz-vs-wortgruppe-01']   // fī l-faṣli als khabar
 ];
 const UEBUNG_IDAFA_STELLEN = ['mudaf-01', 'mudaf-ohne-al-01', 'idafa-erkennen-01', 'mudaf-ilayh-01', 'idafa-zweitglied-01'];
 const UEBUNG_ZARF_IMMER = ['zarf-mansub-01', 'zarf-als-mudaf-01', 'zuruf-makan-weitere-01', 'zarf-makan-rollenname-01'];
@@ -2616,6 +2668,7 @@ const UEBUNG_DAZU = {
   'mamnu-min-as-sarf-plural-01': ['marfu-grundfall-01', 'mamnu-min-as-sarf-namen-01', 'jam-taksir-01'],
   'mamnu-min-as-sarf-namen-01':  ['marfu-grundfall-01', 'tanwin-eigennamen-01', 'tanwin-maennername-ta-01', 'mamnu-min-as-sarf-plural-01'],
   'jam-taksir-01':         ['mamnu-min-as-sarf-plural-01'],
+  'jam-ghayr-aqil-01':     ['jam-taksir-01'],   // kutubun (mb1-92-1) ist auch ein gebrochener Plural (08.11.2026)
   'eigennamen-fem-ohne-tanwin-01': ['tanwin-eigennamen-01', 'ta-marbuta-fem-01', 'ta-marbuta-grenzen-01', 'fem-bildung-01'],
   'adjektive-an-ohne-tanwin-01': ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01', 'nakira-marifa-01'],
   'nat-eigenname-01':      ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01', 'tanwin-eigennamen-01', 'mubtada-khabar-01'],
@@ -2932,7 +2985,9 @@ const UEB_GRUPPEN = [
      ist bei dieser Übung die eigentliche Information. */
   ['Schreiben',        'schreiben'],
   /* ⭐ Vierte Gruppe seit dem 04.10.2026 — der Satzbau (Übung 18). */
-  ['Bauen',            'bauen']
+  ['Bauen',            'bauen'],
+  /* ⭐ Fünfte Gruppe seit dem 09.11.2026 — die Geschichte (Übung 21). */
+  ['Geschichte',       'geschichte']
 ];
 
 /* ⛔ Eine Übung mit `ruht:true` (seit 19.10.2026, Übung 1 — Begründung an ihrem Eintrag) steht
@@ -3181,7 +3236,9 @@ function uebungStarten(modusId){
     return;
   }
   if (LUECKE.aktiv) beendeLuecke();
-  UEB = { modus:modusId, liste: gemischt ? liste : uebungMischen(UEBUNGEN.find(x=>x.id===modusId), liste), idx:0, gewaehlt:new Set(),
+  const mod = UEBUNGEN.find(x=>x.id===modusId);
+  /* Übung 21 (Geschichte) bleibt in Buchreihenfolge — Begründung an ihrem Eintrag. */
+  UEB = { modus:modusId, liste: gemischt ? liste : (mod && mod.reihenfolge ? liste.slice() : uebungMischen(mod, liste)), idx:0, gewaehlt:new Set(),
           beantwortet:false, richtig:0, gestellt:0,
           /* v618: für welchen Teil „Gemischt" gebaut ist (uebungWeiter() baut um). */
           teil: gemischt ? satzTeilStand().jetzt : null };
@@ -3489,7 +3546,7 @@ function renderUebung(){
        ihrem Bezugswort. Sichtbar ist der Unterschied nicht, im Umbruch schon. */
     : !ts.geschafft
       ? ` · Teil ${ts.anfang}: ${ts.gesamt} von ${ts.ziel}`
-      : ` · ${ts.fertig >= 2 ? 'beide Teile' : 'Teil ' + ts.anfang} geschafft · Teil ${ts.jetzt}: ${ts.stand} von ${ts.groesse}`;
+      : ` · ${ts.fertig >= (ts.anzahl || 2) ? 'alle Teile' : ts.fertig >= 2 ? ts.fertig + ' Teile' : 'Teil ' + ts.anfang} geschafft · Teil ${ts.jetzt}: ${ts.stand} von ${ts.groesse}`;
   document.getElementById('uebStand').textContent =
     `${UEB.idx+1} / ${UEB.liste.length} · ${UEB.richtig} richtig${zielText}`;
   /* ⭐ Ring und Balken (15.09.2026): der Ring zeigt den TAG, der Balken die
@@ -3504,6 +3561,14 @@ function renderUebung(){
   const baut = uebungArtVon(a) === 'bauen';
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage)
     + (m.deAlsAufgabe ? `<span class="ueb-frage-de">${escapeHtml(a.satz.sentDe || '')}</span>` : '');
+  /* Übung 21 (Geschichte): die schon gelesenen Sätze der Lektion stehen über dem jetzigen. */
+  const bisherFeld = document.getElementById('uebGeschichteBisher');
+  if (bisherFeld){
+    const bisher = Array.isArray(a.bisher) ? a.bisher : [];
+    bisherFeld.innerHTML = bisher.map(s => `<span class="gb-satz">${escapeHtml(s)}</span>`).join(' ');
+    bisherFeld.classList.toggle('hidden', !bisher.length);
+    if (bisher.length) bisherFeld.scrollTop = bisherFeld.scrollHeight;
+  }
   const satzFeld = document.getElementById('uebSatz');
   satzFeld.innerHTML = baut ? uebungBauSatzHtml(a) : uebungSatzHtml(a);
   satzFeld.classList.toggle('bau', baut);
@@ -3757,6 +3822,9 @@ const UEBUNG_WARUM = {
      einzelnen Satz wäre, sagt die Aufgabe nicht. Lieber kein Knopf als die
      falsche Karte. */
   'satz-bauen': null,
+  /* Geschichte (Übung 21, 09.11.2026): `null` — welche Regel hinter der Lücke steht, hängt am
+     einzelnen Satz; die Auflösung nennt sie schon („im Satz: …", aus SENTENCE_TAGS). */
+  'geschichte': null,
   /* Die Plural-Übung (Nr. 16): die Regel mit der Einteilung und der Erkennungsprobe
      des Lehrers aus Folge 25 — von dort führen die drei Einzelregeln weiter. */
   'plural': 'jam-salim-taksir-01',
@@ -4033,7 +4101,11 @@ function satzTeile(){
   const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['plural', 'mehrzahl-einsetzen'], ['pronomen', 'verb-einsetzen']];
   const partner = id => VERWANDT.filter(p => p.includes(id)).flat().filter(x => x !== id);
   const zeit = {}, quelle = {};
-  for (const m of UEBUNGEN){
+  /* ⛔ Übung 21 (Geschichte, `ausserhalbTeile`, 09.11.2026) wird NICHT verteilt: sie kam nach
+     allen anderen dazu und soll keine davon in den anderen Teil schieben (MEINE Entscheidung).
+     Sie steht in keinem Teil und deshalb auch nicht in „Gemischt". */
+  const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile);
+  for (const m of UEBUNGEN_T){
     const g = (typeof uebZeitGemessen === 'function') ? uebZeitGemessen(m.id) : null;
     zeit[m.id] = g !== null ? g : (UEB_ZEIT_SCHAETZUNG[m.art] || 15);
     quelle[m.id] = g !== null ? 'gemessen' : 'geschaetzt';
@@ -4048,15 +4120,26 @@ function satzTeile(){
      Wechsel. Die nächste neue Übung braucht einen GRÖSSEREN Rang als 99,
      wenn auch sie nichts verschieben soll. */
   const rang = m => m.teilRang || m.nr;
-  const reihe = UEBUNGEN.slice().sort((a, b) => (zeit[b.id] - zeit[a.id]) || (rang(a) - rang(b)));
-  const teil = { 1: [], 2: [] }, summe = { 1: 0, 2: 0 };
+  const reihe = UEBUNGEN_T.slice().sort((a, b) => (zeit[b.id] - zeit[a.id]) || (rang(a) - rang(b)));
+  /* ⭐⭐ DREI TEILE STATT ZWEI (09.11.2026). Elias, wörtlich: „ich fände es gut, wenn wir den
+     satzmodus den ich fast täglich mache in 3 teilen. weil so wie es jetzt ist hab ich das
+     gefühl es ist mir etwas zu viel pro tag deswegen". Verteilt wird wie bisher: die längste
+     Übung zuerst, immer in den Teil mit der wenigsten Zeit (bei Gleichstand der mit weniger
+     Übungen, dann der vordere), aber nie in einen Teil, in dem schon ihr Partner (VERWANDT)
+     steht, solange es einen ohne gibt. Die Zahl steht HIER drinnen, weil die Prüfer
+     satzTeile() allein ausschneiden; die anderen Funktionen lesen sie aus `anzahl`. */
+  const ANZAHL = 3;
+  const nummern = Array.from({ length: ANZAHL }, (_, i) => i + 1);
+  const teil = {}, summe = {};
+  for (const k of nummern){ teil[k] = []; summe[k] = 0; }
   for (const m of reihe){
-    const t = summe[1] < summe[2] ? 1 : summe[2] < summe[1] ? 2 : (teil[1].length <= teil[2].length ? 1 : 2);
-    const anders = t === 1 ? 2 : 1, pa = partner(m.id);
-    const wo = pa.some(x => teil[t].includes(x)) && !pa.some(x => teil[anders].includes(x)) ? anders : t;
+    const pa = partner(m.id);
+    const frei = nummern.filter(k => !pa.some(x => teil[k].includes(x)));
+    const wo = (frei.length ? frei : nummern).slice()
+      .sort((a, b) => (summe[a] - summe[b]) || (teil[a].length - teil[b].length) || (a - b))[0];
     teil[wo].push(m.id); summe[wo] += zeit[m.id];
   }
-  teil[1].sort((a, b) => nr(a) - nr(b)); teil[2].sort((a, b) => nr(a) - nr(b));
+  for (const k of nummern) teil[k].sort((a, b) => nr(a) - nr(b));
   /* ⛔ EINE RUHENDE ÜBUNG (`ruht:true`, seit 19.10.2026) wird oben MIT verteilt und erst hier
      herausgenommen. Elias fragte dazu: „guck ob sich bei teil 1 und 2 die sortierung ändert
      dadurch das eines weniger ist" — fiele sie schon vor dem Verteilen weg, wechselten bei
@@ -4064,11 +4147,11 @@ function satzTeile(){
      sie war (MEINE Entscheidung). Kommt sie zurück, steht sie wieder an ihrem alten Platz.
      ⚠️ Hier drinnen, nicht als Liste daneben — die Prüfer schneiden satzTeile() allein aus. */
   const ruht = UEBUNGEN.filter(m => m.ruht).map(m => m.id);
-  for (const k of [1, 2]){
+  for (const k of nummern){
     teil[k] = teil[k].filter(id => !ruht.includes(id));
     summe[k] = teil[k].reduce((s, id) => s + zeit[id], 0);
   }
-  return { 1: teil[1], 2: teil[2], zeit, quelle, summe, ruht };
+  return { ...teil, anzahl: ANZAHL, zeit, quelle, summe, ruht };
 }
 /* ⭐⭐ v618 — DIE TEILE LAUFEN VON SELBST (25.09.2026)
    Elias, wörtlich: „ich stelle mir das so vor das die app automatisch meinen
@@ -4099,7 +4182,8 @@ function satzTeilZustand(){
   const heute = todayStr(0);
   const st = (typeof SETTINGS === 'object' && SETTINGS && SETTINGS.satzTeil) || null;
   let teil = 1, erledigt = null;
-  if (st && (st.teil === 1 || st.teil === 2)){
+  const anzahl = satzTeile().anzahl;
+  if (st && Number.isInteger(st.teil) && st.teil >= 1 && st.teil <= anzahl){
     teil = st.teil;
     if ('erledigt' in st) erledigt = (typeof st.erledigt === 'string' && st.erledigt) ? st.erledigt : null;
     else if (st.tag && st.tag !== heute){
@@ -4113,7 +4197,8 @@ function satzTeilZustand(){
       erledigt = geschafft ? st.tag : null;
     }
   }
-  if (erledigt && erledigt < heute){ teil = teil === 1 ? 2 : 1; erledigt = null; }
+  /* Reihum 1 → 2 → 3 → 1 (seit 09.11.2026 drei Teile). */
+  if (erledigt && erledigt < heute){ teil = teil % anzahl + 1; erledigt = null; }
   return { teil, erledigt, heute };
 }
 /** Der Tag in Teilen: `anfang` = der Teil, mit dem der Tag beginnt (Ring,
@@ -4123,15 +4208,17 @@ function satzTeilZustand(){
 function satzTeilStand(){
   const z = satzTeilZustand();
   const teile = satzTeile();
-  const n = { 1: Math.max(1, teile[1].length), 2: Math.max(1, teile[2].length) };
+  const n = {};
+  for (let k = 1; k <= teile.anzahl; k++) n[k] = Math.max(1, teile[k].length);
+  const naechster = k => k % teile.anzahl + 1;
   const a = z.teil, gesamt = satzTag().gesamt;
   const geschafft = gesamt >= n[a] || (!!z.erledigt && z.erledigt >= z.heute);
   let jetzt = a, stand = gesamt, fertig = 0;
   if (geschafft){
-    jetzt = a === 1 ? 2 : 1; stand = Math.max(0, gesamt - n[a]); fertig = 1;
-    while (stand >= n[jetzt]){ stand -= n[jetzt]; jetzt = jetzt === 1 ? 2 : 1; fertig++; }
+    jetzt = naechster(a); stand = Math.max(0, gesamt - n[a]); fertig = 1;
+    while (stand >= n[jetzt]){ stand -= n[jetzt]; jetzt = naechster(jetzt); fertig++; }
   }
-  return { anfang: a, ziel: n[a], geschafft, jetzt, stand, groesse: n[jetzt], fertig, gesamt, erledigt: z.erledigt };
+  return { anfang: a, ziel: n[a], geschafft, jetzt, stand, groesse: n[jetzt], fertig, gesamt, erledigt: z.erledigt, anzahl: teile.anzahl };
 }
 /** Der Anfangsteil des Tages. Mit `speichern` (nach jeder Satzantwort) wird
  *  der Stand abgelegt — und sobald das Ziel erreicht ist, der Tag als

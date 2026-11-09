@@ -205,6 +205,21 @@ const BUCH_WOERTER = [];
   }
 })();
 
+/* ⭐ DIE GRUPPE „NAMEN ALLAHS" (08.11.2026) — gleiches Muster wie „Koran häufigste".
+   99 Karten in namen-allahs-data.js (erzeugt von werkzeuge/namen-allahs-bauen.mjs),
+   Eselsbruecken unter na-NN. Ohne diesen Block: „Id na-… gehoert zu keiner Vokabel". */
+(function ladeNamen(){
+  const datei = path.join(WURZEL, 'namen-allahs-data.js');
+  if (!fs.existsSync(datei)) return;
+  try {
+    const liste = new Function(fs.readFileSync(datei, 'utf8')
+      + '\nreturn (typeof NAMEN_ALLAHS !== "undefined" && Array.isArray(NAMEN_ALLAHS)) ? NAMEN_ALLAHS : [];')();
+    liste.forEach(e => BUCH_WOERTER.push(Object.assign({}, e, { book: 'namen-allahs', chapter: e.kap })));
+  } catch (e){
+    console.log('  hinw namen-allahs-data.js nicht lesbar (' + e.message + ') — die Gruppe fehlt in der Pruefung.');
+  }
+})();
+
 /* ⛔ SEIN LERNSTAND — einmal geladen, fuer Abschnitt 4 UND 6 (17.09.2026).
    `angabe` ist, was Elias selbst gesagt hat; `gemessen` misst nur, womit
    abgefragt wurde. Abschnitt 6 las die Datei bisher allein, Abschnitt 4 kannte

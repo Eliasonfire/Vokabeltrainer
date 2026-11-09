@@ -318,7 +318,8 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
        (`verb-einsetzen` → verb-madi-endungen-01, die Endungen aus Folge 18). */
     /* 13.10.2026 (v677): 19 → 20, „Mehrzahl einsetzen" ist dazugekommen
        (`mehrzahl-einsetzen` → jam-salim-taksir-01, dieselbe Regel wie bei Übung 16). */
-    modi.length === 20 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    /* 09.11.2026 (v735): 20 → 21, die Geschichte ist dazugekommen (`geschichte` → null). */
+    modi.length === 21 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
   /* ⚠️ 25.09.2026 (v612): 15 → 16, die Endungen-Übung ist dazugekommen
      (`endungen` → possessiv-endungen-01; Aufgaben mit ـِي bringen ihre Karte
      possessiv-ya-01 selbst mit). Elias: „wo ich die richtigen endungen

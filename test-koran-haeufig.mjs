@@ -400,7 +400,7 @@ const DATEN = ctx.__K;
   sag(DATEN.filter(e => e.quran).every(e => JSON.stringify(Object.keys(e.quran)) === JSON.stringify(['surah', 'ayah', 'ar', 'de'])),
       'eine Koranstelle trägt genau Surenname, Sure:Vers, Wortlaut und Deutsch (wie die Bezüge in vocab-data.js)');
   sag(DATEN.every(e => FELD_FOLGE.every(f => !(f in e) || FELDER_JE_TYP[e.type].includes(f))), 'in der Datendatei trägt keine Karte ein Feld, das ihre Wortart nicht hat');
-  sag(/'koran-haeufig': 'Koran häufigste'/.test(BUCH) && /'koran-haeufig': 'Koran'\n/.test(BUCH), 'Titel „Koran häufigste" und Kurzname „Koran" stehen in js/buecher.js');
+  sag(/'koran-haeufig': 'Koran häufigste'/.test(BUCH) && /'koran-haeufig': 'Koran',?\n/.test(BUCH), 'Titel „Koran häufigste" und Kurzname „Koran" stehen in js/buecher.js');
   sag(!lies('data', 'buecher.js').includes('koran-haeufig'), 'die Gruppe steht NICHT in data/buecher.js (das Verzeichnis gehört dem arabicroots-Abzug)');
 }
 
