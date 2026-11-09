@@ -20,6 +20,8 @@
  *   G7  (09.11.2026) Ablenker sind ähnliche, andere Wörter (Elias: „es sollten ähnliche wörter
  *       sein damti es schwierig ist für mich das richtige zu finden"): nicht aus dem Satz selbst,
  *       nicht dasselbe Wort mit/ohne Artikel, und mindestens G7_GRENZE gleichen im Artikel
+ *   G8  (09.11.2026, Dialoge aus Bayna Yadayk 1 — Elias: „Ja, auch Bayna Yadayk") der Sprecher
+ *       vor dem Doppelpunkt ist nie Lücke und nie Knopf
  *
  * G1 heißt seitdem: jeder Satz stammt aus DERSELBEN Buchquelle wie seine Geschichte
  * (Madina 1 `mb1-…` oder Bayna Yadayk 1 `werk: 'bayna-yadayk-1'`) und trägt eine Seite.
@@ -86,7 +88,7 @@ function laden(){
 }
 
 function pruefe(daten, ersatz){
-  const c = baueKontext(daten, ersatz), F = c.F, fehler = { G1: [], G2: [], G3: [], G4: [], G5: [], G6: [], G7: [] };
+  const c = baueKontext(daten, ersatz), F = c.F, fehler = { G1: [], G2: [], G3: [], G4: [], G5: [], G6: [], G7: [], G8: [] };
   let ablenker = 0, artGleich = 0;
   const gs = F.geschichten();
   /* G5 unabhängig vom Code: welche Wortkerne sind als Nomen/Adjektiv/Verb eine Karte? */
@@ -99,7 +101,7 @@ function pruefe(daten, ersatz){
     let vorher = -1;
     for (const s of liste){
       if (!F.geschichteQuelleVon(s) || F.geschichteQuelleVon(s) !== quelle || !s.seite) fehler.G1.push(`${g.id}: ${s.id} ohne Buchseite oder aus einer anderen Quelle`);
-      if (!s.werk && !/^mb1-/.test(s.id) || s.werk && !['bayna-yadayk-1', 'madina-1-lesetext'].includes(s.werk)) fehler.G1.push(`${g.id}: ${s.id} ist weder Madina 1 noch Bayna Yadayk 1`);
+      if (!s.werk && !/^mb1-/.test(s.id) || s.werk && !['bayna-yadayk-1', 'madina-1-lesetext', 'bayna-yadayk-1-lesetext'].includes(s.werk)) fehler.G1.push(`${g.id}: ${s.id} ist weder Madina 1 noch Bayna Yadayk 1`);
       if (Number(s.seite) < vorher) fehler.G1.push(`${g.id}: ${s.id} steht vor S. ${vorher}`);
       vorher = Number(s.seite);
     }
@@ -129,6 +131,15 @@ function pruefe(daten, ersatz){
         if (imSatz.has(nackt(w))) fehler.G7.push(`${s.id}: Ablenker „${w}" steht im Satz selbst`);
         if (kern(w) === kern(ziel)) fehler.G7.push(`${s.id}: Ablenker „${w}" ist dasselbe Wort wie „${ziel}"`);
         ablenker++; if (hatArt(w) === hatArt(ziel)) artGleich++;
+      }
+      /* G8 (09.11.2026, Dialoge aus Bayna Yadayk 1): der Sprecher vor dem Doppelpunkt ist nie
+         die Lücke und nie ein Knopf — jedes Wort der Auswahl steht im GESPROCHENEN Teil eines
+         Satzes der Geschichte. Eigene Abtrennung, nicht geschichteRede(). */
+      if (s.werk === 'bayna-yadayk-1-lesetext'){
+        const rede = x => x.werk === 'bayna-yadayk-1-lesetext' ? x.sentAr.slice(x.sentAr.indexOf(':') + 1) : x.sentAr;
+        if (!rede(s).includes(ziel)) fehler.G8.push(`${s.id}: Lücke „${ziel}" steht nur im Sprecher`);
+        const gesprochen = liste.map(rede).join(' ');
+        for (const w of wahl) if (!gesprochen.includes(w)) fehler.G8.push(`${s.id}: Knopf „${w}" steht nur als Sprecher da`);
       }
     }
   }
@@ -162,6 +173,8 @@ function pruefe(daten, ersatz){
 
 if (process.argv.includes('--stoertest')){
   const faelle = {
+    /* G8: der Sprecher wieder mitgezählt — dann werden „الأُخت" und „الأَب" Knöpfe. */
+    G8: () => pruefe(laden(), { block: block(SAETZE_JS).replace(".replace(/^[^:]{1,30}:\\s*/, '')", '') }),
     /* G1: dem ersten Satz der ersten Geschichte die Seite nehmen (welche Lektion das ist, hängt
        davon ab, welche Lesetexte es gibt — fest „mb1, Kapitel 13" blieb grün, sobald Lektion 13
        als Lesetext kam). */

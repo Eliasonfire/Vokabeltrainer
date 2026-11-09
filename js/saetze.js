@@ -146,7 +146,11 @@ const GESCHICHTE_QUELLEN = [
      Frage, ob beide bleiben sollen: „Beide behalten". (Bis v746 ersetzte der Lesetext sie —
      das war meine Entscheidung und kostete Lektion 13 18 von 33 Lücken.) */
   { kurz: 'lt-',  book: 'madina-1',       name: k => 'Lektion ' + k + ' · Lesetext',
-    ist: s => s.werk === 'madina-1-lesetext' }
+    ist: s => s.werk === 'madina-1-lesetext' },
+  /* ⭐ DIE DIALOGE AUS BAYNA YADAYK 1 (09.11.2026). Elias: „Ja, auch Bayna Yadayk". Ebenfalls
+     lesetexte-data.js (LESETEXTE_BY1), Vokale wie gedruckt; steht neben der by1-Geschichte. */
+  { kurz: 'by1lt-', book: 'bayna-yadayk-1', name: k => 'Bayna Yadayk 1 · Kapitel ' + k + ' · Dialoge',
+    ist: s => s.werk === 'bayna-yadayk-1-lesetext' }
 ];
 /* Alle Sätze, aus denen Geschichten werden: die Buchsätze und die Lektionstexte. */
 function geschichteVorrat(){
@@ -178,10 +182,16 @@ function geschichteKarten(){
   return (GESCHICHTE_KARTEN = m);
 }
 function geschichteKarte(wort){ return geschichteKarten().get(wortKern(wort)) || null; }
+/* Der gesprochene Teil eines Dialogs (Bayna Yadayk 1, „الأُخت: أَهْلاً …"): der Sprecher vor dem
+   Doppelpunkt wird nie die Lücke und nie ein Knopf — sonst fragte die Geschichte, wer spricht. */
+function geschichteRede(s){
+  const t = String((s && s.sentAr) || '');
+  return s && s.werk === 'bayna-yadayk-1-lesetext' ? t.replace(/^[^:]{1,30}:\s*/, '') : t;
+}
 function geschichteLuecke(s){
   const z = findeZielwort(s);
   if (z) return z;
-  const kand = String(s.sentAr || '').split(/\s+/).map(ohnePunkt).filter(w => geschichteKarte(w));
+  const kand = geschichteRede(s).split(/\s+/).map(ohnePunkt).filter(w => geschichteKarte(w));
   if (!kand.length) return null;
   return kand.reduce((a, b) => (wortKern(b).length > wortKern(a).length ? b : a));
 }
@@ -252,7 +262,7 @@ function geschichteWahl(w, ziel, geschichteId){
   };
   const liste = geschichteSaetze(geschichteId);
   liste.forEach(s => { if (s !== w) nimm(geschichteLuecke(s)); });
-  liste.forEach(s => { if (s !== w) String(s.sentAr || '').split(/\s+/).map(ohnePunkt).filter(x => geschichteKarte(x)).forEach(nimm); });
+  liste.forEach(s => { if (s !== w) geschichteRede(s).split(/\s+/).map(ohnePunkt).filter(x => geschichteKarte(x)).forEach(nimm); });
   const andere = kand.map((z, i) => ({ z, p: geschichteAehnlich(ziel, z), i }))
     .sort((a, b) => b.p - a.p || a.i - b.i).map(x => x.z);
   const wahl = [ziel].concat(andere.slice(0, 3));

@@ -1460,7 +1460,7 @@ export const PFLEGEPLAN = [
     /* 09.11.2026: dazu die Lektionstexte aus Madina 1 (Elias: „ja" zu echten Lesetexten). */
     dateien: ['lesetexte-data.js'],
     bildschirme: [],
-    neuerInhalt: { sitzung: 'Die Geschichten sind die mb1- und Bayna-Yadayk-Sätze aus lehrbuch-saetze.js je Lektion; ein neu freigeschaltetes Kapitel ist ohne Zutun dabei. Die Lektionstexte in lesetexte-data.js (Madina 1, Stand: Lektion 1–15, alle freigeschalteten) werden in einer Sitzung Seite für Seite vom Buchbild abgeschrieben, nicht automatisch — das PDF hat keine arabische Textebene. Kommt ein neues Kapitel frei, gehört sein Lektionstext in einer Sitzung dazu.',
+    neuerInhalt: { sitzung: 'Die Geschichten sind die mb1- und Bayna-Yadayk-Sätze aus lehrbuch-saetze.js je Lektion; ein neu freigeschaltetes Kapitel ist ohne Zutun dabei. Die Lektionstexte in lesetexte-data.js (Madina 1, Stand: Lektion 1–15; Bayna Yadayk 1, Stand: die Dialoge der Einheiten 1–4 — jeweils alle freigeschalteten) werden in einer Sitzung Seite für Seite vom Buchbild abgeschrieben, nicht automatisch — das PDF hat keine arabische Textebene. Kommt ein neues Kapitel frei, gehört sein Lektionstext in einer Sitzung dazu.',
       werkzeug: 'werkzeuge/pruefe-geschichten.mjs' },
     eingaben: { nein: 'Er tippt Auswahlknöpfe oder ein Wort; gespeichert wird nur die gewählte Geschichte in SETTINGS.satzThema, das schon gepflegt wird.' },
     veralten: { nein: 'Ob jede Geschichte aus Buchsätzen mit Seite besteht, jede Auswahl nur Wörter derselben Lektion zeigt und die Lücke jedes Vorkommen verdeckt, misst werkzeuge/pruefe-geschichten.mjs im Sammellauf.' },
