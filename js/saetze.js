@@ -141,10 +141,11 @@ const GESCHICHTE_QUELLEN = [
   { kurz: 'by1-', book: 'bayna-yadayk-1', name: k => 'Bayna Yadayk 1 · Kapitel ' + k,
     ist: s => s.werk === 'bayna-yadayk-1' },
   /* ⭐ DER LEKTIONSTEXT (09.11.2026, Elias: „ja" zu echten Lesetexten aus dem Buch).
-     lesetexte-data.js, Satz für Satz von den gedruckten Seiten. Gibt es ihn zu einer Lektion,
-     ERSETZT er die Madina-1-Geschichte derselben Lektion (`ersetzt`) — der Text ist das Buch,
-     die mb1-Sätze sind nur eine Auswahl daraus (meine Entscheidung, nicht seine). */
-  { kurz: 'lt-',  book: 'madina-1',       name: k => 'Lektion ' + k + ' · Lesetext', ersetzt: '',
+     lesetexte-data.js, Satz für Satz von den gedruckten Seiten. Er steht NEBEN der
+     Madina-1-Geschichte derselben Lektion, nicht an ihrer Stelle. Elias, 09.11.2026, auf die
+     Frage, ob beide bleiben sollen: „Beide behalten". (Bis v746 ersetzte der Lesetext sie —
+     das war meine Entscheidung und kostete Lektion 13 18 von 33 Lücken.) */
+  { kurz: 'lt-',  book: 'madina-1',       name: k => 'Lektion ' + k + ' · Lesetext',
     ist: s => s.werk === 'madina-1-lesetext' }
 ];
 /* Alle Sätze, aus denen Geschichten werden: die Buchsätze und die Lektionstexte. */
@@ -197,14 +198,14 @@ function geschichten(){
       .filter(k => typeof istBekannt !== 'function' || istBekannt({ book: q.book, chapter: k }))
       /* Mindestens zwei Sätze mit Lücke, sonst gibt es nur einen Knopf zur Wahl
          (gemessen: Lektion 14 hat 3 Sätze, aber nur in mb1-83-1 ein Zielwort). */
-      .filter(k => vorrat.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k && geschichteLuecke(s)).length >= 2)
+      /* ⭐ 09.11.2026: zwei VERSCHIEDENE Wörter (wortKern). Lektion 15 · Lesetext hatte in der
+         Prüfwelt nur مَدْرَسَةٍ und الْمَدْرَسَةِ — der einzige Ablenker war dieselbe Schule. */
+      .filter(k => new Set(vorrat.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k)
+        .map(geschichteLuecke).filter(Boolean).map(wortKern)).size >= 2)
       .sort((a, b) => a - b)
-      .forEach(k => raus.push({ id: GESCHICHTE_PRAEFIX + q.kurz + k, kapitel: k, book: q.book, name: q.name(k), n: zahl[k], quelle: q }));
+      .forEach(k => raus.push({ id: GESCHICHTE_PRAEFIX + q.kurz + k, kapitel: k, book: q.book, name: q.name(k), n: zahl[k] }));
   });
-  /* Ein Lektionstext ersetzt die Auswahl-Geschichte seiner Lektion (Quelle mit `ersetzt`). */
-  const weg = new Set(raus.filter(g => g.quelle.ersetzt != null)
-    .map(g => GESCHICHTE_PRAEFIX + g.quelle.ersetzt + g.kapitel));
-  return raus.filter(g => !weg.has(g.id)).map(({ quelle, ...g }) => g);
+  return raus;
 }
 function geschichteSaetze(themaId){
   const vorrat = geschichteVorrat();
@@ -214,20 +215,46 @@ function geschichteSaetze(themaId){
   return vorrat.filter(s => geschichteQuelleVon(s) === q && Number(s.kapitel) === k)
     .sort((a, b) => geschichteOrdnung(a) - geschichteOrdnung(b));
 }
-/* Die vier Knöpfe: das gesuchte Wort und bis zu drei andere Zielwörter
-   derselben Lektion, ohne Vokalzeichen verschieden. Gemischt mit einem festen
-   Wert je Satz, damit die Lösung nicht immer an derselben Stelle steht und
-   beim Neuzeichnen nicht springt. */
+/* Die vier Knöpfe: das gesuchte Wort und bis zu drei andere Wörter aus derselben
+   Geschichte, so wie sie im Buch stehen. Gemischt mit einem festen Wert je Satz,
+   damit die Lösung nicht immer an derselben Stelle steht und beim Neuzeichnen nicht springt.
+   ⭐ ÄHNLICHE WÖRTER (09.11.2026). Elias auf die Frage „andere Wörter oder Formen desselben
+   Wortes wie bei Arabily?": „so lassen aber es sollten ähnliche wörter sein damti es
+   schwierig ist für mich das richtige zu finden". Also weiter ANDERE Wörter, aber die
+   ähnlichsten zuerst. In Frage kommen die Lücken der anderen Sätze und jedes Wort der
+   Geschichte, das eine seiner freigeschalteten Karten ist (geschichteKarte) — nichts Erzeugtes.
+   Nicht dabei: Wörter aus dem Satz selbst (die sieht er ja) und dasselbe Wort mit oder ohne
+   Artikel (gleicher wortKern, das wäre eine zweite richtige Antwort).
+   Was „ähnlich" heißt, ist MEINE Rechnung (geschichteAehnlich), nicht seine. */
+function geschichteAehnlich(a, b){
+  const x = ohneTaschkil(ohnePunkt(a)), y = ohneTaschkil(ohnePunkt(b));
+  const kx = wortKern(a), ky = wortKern(b);
+  const endvokal = s => { const m = String(s).match(/[ًٌٍَُِ](?=[^ًٌٍَُِ]*$)/); return m ? m[0] : ''; };
+  let p = 0;
+  if (/^[وف]?ال/.test(x) === /^[وف]?ال/.test(y)) p += 2;   /* beide mit oder beide ohne Artikel */
+  if (/^[وف]/.test(x) === /^[وف]/.test(y)) p += 1;          /* beide mit oder ohne „und" davor */
+  if (kx.slice(-1) === ky.slice(-1)) p += 2;                 /* gleicher letzter Buchstabe (ة, ن, ات …) */
+  if (endvokal(a) === endvokal(b)) p += 1;                   /* gleiche Endung, also gleicher Fall */
+  p -= Math.abs(kx.length - ky.length);                      /* ähnlich lang */
+  const rest = [...ky];
+  for (const ch of kx){ const i = rest.indexOf(ch); if (i >= 0){ p += 1; rest.splice(i, 1); } }   /* gemeinsame Buchstaben */
+  return p;
+}
 function geschichteWahl(w, ziel, geschichteId){
-  const gesehen = new Set([ohneTaschkil(ziel)]);
-  const andere = [];
-  geschichteSaetze(geschichteId).forEach(s => {
-    if (s === w) return;
-    const z = geschichteLuecke(s);
-    if (!z || gesehen.has(ohneTaschkil(z))) return;
-    gesehen.add(ohneTaschkil(z));
-    andere.push(z);
-  });
+  const imSatz = new Set(String(w.sentAr || '').split(/\s+/).map(x => ohneTaschkil(ohnePunkt(x))));
+  const gesehen = new Set([ohneTaschkil(ziel)]), kerne = new Set([wortKern(ziel)]);
+  const kand = [];
+  const nimm = z => {
+    if (!z) return;
+    const t = ohneTaschkil(z), k = wortKern(z);
+    if (gesehen.has(t) || kerne.has(k) || imSatz.has(t)) return;
+    gesehen.add(t); kerne.add(k); kand.push(z);
+  };
+  const liste = geschichteSaetze(geschichteId);
+  liste.forEach(s => { if (s !== w) nimm(geschichteLuecke(s)); });
+  liste.forEach(s => { if (s !== w) String(s.sentAr || '').split(/\s+/).map(ohnePunkt).filter(x => geschichteKarte(x)).forEach(nimm); });
+  const andere = kand.map((z, i) => ({ z, p: geschichteAehnlich(ziel, z), i }))
+    .sort((a, b) => b.p - a.p || a.i - b.i).map(x => x.z);
   const wahl = [ziel].concat(andere.slice(0, 3));
   const ab = Math.floor(satzZufall(w) * wahl.length);
   return wahl.slice(ab).concat(wahl.slice(0, ab));

@@ -15,6 +15,12 @@
  *   G5  (09.11.2026, Bayna Yadayk 1 dazu — Elias: „ja") eine Lücke ohne Markierung ist ein
  *       Wort, das als Nomen, Adjektiv oder Verb eine Karte ist (nie ein Fürwort oder Partikel)
  *
+ *   G6  (09.11.2026) der Lesetext steht NEBEN der mb1-Geschichte seiner Lektion (Elias:
+ *       „Beide behalten"); Lesetext-Einträge eindeutig, mit Seite, in Seitenfolge
+ *   G7  (09.11.2026) Ablenker sind ähnliche, andere Wörter (Elias: „es sollten ähnliche wörter
+ *       sein damti es schwierig ist für mich das richtige zu finden"): nicht aus dem Satz selbst,
+ *       nicht dasselbe Wort mit/ohne Artikel, und mindestens G7_GRENZE gleichen im Artikel
+ *
  * G1 heißt seitdem: jeder Satz stammt aus DERSELBEN Buchquelle wie seine Geschichte
  * (Madina 1 `mb1-…` oder Bayna Yadayk 1 `werk: 'bayna-yadayk-1'`) und trägt eine Seite.
  *
@@ -47,6 +53,11 @@ function block(quelle){
   return quelle.slice(a, b);
 }
 
+/* G7: Anteil der Ablenker, die der Lösung im Artikel gleichen. Gemessen am 09.11.2026
+   (G7_MESSEN=1): nach Ähnlichkeit 658 von 739 = 89 %, in der alten Satzreihenfolge
+   477 von 739 = 65 %. Die Grenze liegt dazwischen — sie ist meine, nicht seine. */
+const G7_GRENZE = 0.8;
+
 function baueKontext(daten, ersatz = {}){
   const c = {
     LEHRBUCH_SAETZE: daten.LEHRBUCH_SAETZE, LESETEXT_SAETZE: daten.LESETEXT_SAETZE, SENTENCE_TAGS: daten.SENTENCE_TAGS, VOCAB_DATA: daten.VOCAB_DATA,
@@ -75,7 +86,8 @@ function laden(){
 }
 
 function pruefe(daten, ersatz){
-  const c = baueKontext(daten, ersatz), F = c.F, fehler = { G1: [], G2: [], G3: [], G4: [], G5: [], G6: [] };
+  const c = baueKontext(daten, ersatz), F = c.F, fehler = { G1: [], G2: [], G3: [], G4: [], G5: [], G6: [], G7: [] };
+  let ablenker = 0, artGleich = 0;
   const gs = F.geschichten();
   /* G5 unabhängig vom Code: welche Wortkerne sind als Nomen/Adjektiv/Verb eine Karte? */
   const inhalt = new Set();
@@ -104,13 +116,31 @@ function pruefe(daten, ersatz){
       if (new Set(wahl.map(F.ohneTaschkil)).size !== wahl.length) fehler.G2.push(`${s.id}: doppelte Knöpfe`);
       if (wahl.length < 2) fehler.G2.push(`${s.id}: nur ${wahl.length} Knopf`);
       for (const w of wahl) if (!text.includes(w)) fehler.G2.push(`${s.id}: „${w}" steht in keinem Satz von ${g.name}`);
+      /* G7 (09.11.2026, Elias: „es sollten ähnliche wörter sein damti es schwierig ist für mich
+         das richtige zu finden"): kein Ablenker steht im Satz selbst, keiner ist dasselbe Wort
+         mit oder ohne Artikel/„und", und Ablenker gleichen der Lösung im Artikel — gezählt über
+         alle Lücken, Grenze unten. Die Kernbildung hier ist eigene, nicht wortKern(). */
+      const nackt = x => F.ohneTaschkil(String(x).replace(/[.،؟!«»:؛]/g, ''));
+      const kern = x => nackt(x).replace(/^[وف]/, '').replace(/^ال/, '');
+      const hatArt = x => /^[وف]?ال/.test(nackt(x));
+      const imSatz = new Set(s.sentAr.split(/\s+/).map(nackt));
+      for (const w of wahl){
+        if (w === ziel) continue;
+        if (imSatz.has(nackt(w))) fehler.G7.push(`${s.id}: Ablenker „${w}" steht im Satz selbst`);
+        if (kern(w) === kern(ziel)) fehler.G7.push(`${s.id}: Ablenker „${w}" ist dasselbe Wort wie „${ziel}"`);
+        ablenker++; if (hatArt(w) === hatArt(ziel)) artGleich++;
+      }
     }
   }
-  /* G6: ein Lektionstext ersetzt die Auswahl-Geschichte derselben Lektion; jeder Eintrag hat
-     eine eindeutige Kennung, eine Seite und kommt in Seitenfolge (Buchreihenfolge). */
+  /* G6: der Lektionstext steht NEBEN der Madina-1-Geschichte derselben Lektion (Elias,
+     09.11.2026: „Beide behalten"). Hat die mb1-Lektion selbst genug Sätze mit Lücke, muss sie
+     auch dann dastehen, wenn es einen Lesetext gibt. Dazu: jeder Eintrag hat eine eindeutige
+     Kennung, eine Seite und kommt in Seitenfolge (Buchreihenfolge). */
   const ids = new Set(gs.map(g => g.id));
   gs.filter(g => g.id.startsWith('geschichte-lt-')).forEach(g => {
-    if (ids.has('geschichte-' + g.kapitel)) fehler.G6.push(`${g.id} und geschichte-${g.kapitel} stehen beide da`);
+    const mb1 = F.geschichteSaetze('geschichte-' + g.kapitel);
+    if (mb1.length >= 3 && mb1.filter(s => F.geschichteLuecke(s)).length >= 2 && !ids.has('geschichte-' + g.kapitel))
+      fehler.G6.push(`${g.id} steht da, geschichte-${g.kapitel} (${mb1.length} Sätze) fehlt`);
   });
   const lt = daten.LESETEXT_SAETZE || [], ltIds = new Set();
   lt.forEach((s, i) => {
@@ -120,6 +150,9 @@ function pruefe(daten, ersatz){
     if (v && v.kapitel === s.kapitel && Number(s.seite) < Number(v.seite)) fehler.G6.push(`${s.id} steht vor S. ${v.seite}`);
   });
   if (!gs.length || !mitLueckeZahl) fehler.G3.push(`Geschichten: ${gs.length}, Sätze mit Lücke: ${mitLueckeZahl}`);
+  const anteil = ablenker ? artGleich / ablenker : 0;
+  if (ablenker && anteil < G7_GRENZE) fehler.G7.push(`nur ${Math.round(anteil * 100)} % der Ablenker gleichen der Lösung im Artikel (Grenze ${G7_GRENZE * 100} %)`);
+  if (process.env.G7_MESSEN) console.log(`  G7-Messung: ${artGleich} von ${ablenker} Ablenkern im Artikel gleich (${Math.round(anteil * 100)} %)`);
   c.LUECKE.aktiv = true; c.LUECKE.wort = 'مُجْتَهِدُونَ';
   const html = F.mitLuecke('أَهُمْ مُجْتَهِدُونَ؟ نَعَمْ، هُمْ مُجْتَهِدُونَ.') || '';
   const offen = html.replace(/<span class="satz-luecke[^"]*">[^<]*<\/span>/g, '');
@@ -139,10 +172,13 @@ if (process.argv.includes('--stoertest')){
     G4: () => pruefe(laden(), { mitLuecke: 'function mitLuecke(t){ const v=t.indexOf(LUECKE.wort); return t.slice(0,v)+`<span class="satz-luecke">${LUECKE.wort}</span>`+t.slice(v+LUECKE.wort.length); }' }),
     /* G5: ohne den Filter auf Nomen/Adjektiv/Verb darf jedes Kartenwort die Lücke sein */
     G5: () => pruefe(laden(), { block: block(SAETZE_JS).replace("if (!['noun', 'adjective', 'verb'].includes(v.type)) return;", '') }),
-    /* G6: ohne `ersetzt` steht neben dem Lesetext die Auswahl-Geschichte derselben Lektion.
-       Damit das sichtbar wird, braucht die Probe eine Lektion mit beidem: Lektion 13 als Lesetext. */
-    G6: () => { const d = laden(); d.LESETEXT_SAETZE = d.LESETEXT_SAETZE.concat(d.LEHRBUCH_SAETZE.filter(x => /^mb1-/.test(x.id) && x.kapitel === 13).map(x => ({ ...x, id: 'lt13-' + x.id, werk: 'madina-1-lesetext' })));
-      return pruefe(d, { block: block(SAETZE_JS).replace("ersetzt: '',", '') }); }
+    /* G6: das alte Verhalten bis v746 zurück — der Lesetext verdrängt die mb1-Geschichte seiner Lektion. */
+    G6: () => pruefe(laden(), { block: block(SAETZE_JS).replace(/\n  return raus;\n\}/,
+      "\n  return raus.filter(g => !(g.id === GESCHICHTE_PRAEFIX + g.kapitel && raus.some(x => x.id === GESCHICHTE_PRAEFIX + 'lt-' + g.kapitel)));\n}") }),
+    /* G7: die Ablenker wieder in Satzreihenfolge statt nach Ähnlichkeit, und ohne die Sperre
+       „steht im Satz selbst / dasselbe Wort". */
+    G7: () => pruefe(laden(), { block: block(SAETZE_JS).replace('b.p - a.p || ', '')
+      .replace('if (gesehen.has(t) || kerne.has(k) || imSatz.has(t)) return;', 'if (gesehen.has(t)) return;') })
   };
   let gut = 0;
   for (const [k, f] of Object.entries(faelle)){
