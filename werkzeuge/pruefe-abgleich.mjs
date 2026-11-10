@@ -207,7 +207,12 @@ const alleJs = fs.readdirSync(path.join(REPO, 'js'))
 const gerufen = [...laden.matchAll(/typeof (\w+) === 'function'/g)].map(m => m[1]);
 const tot = gerufen.filter(n => !alleJs.includes('function ' + n + '('));
 console.log('  ' + gerufen.length + ' Funktionen gerufen: ' + gerufen.join(', '));
-sag(!tot.length, tot.length
+/* ⛔ 10.11.2026: Dieselbe Falle wie beim Abholtakt unten. Findet das Muster
+   ladeStandNeu() nicht, sind null Funktionen gerufen, `tot` ist leer — und die
+   Zeile waere gruen, ohne etwas geprueft zu haben. */
+sag(gerufen.length > 0 && !tot.length, !gerufen.length
+  ? 'ladeStandNeu() nicht gefunden oder ruft keine Zeichenfunktion — nichts geprüft'
+  : tot.length
   ? tot.length + ' davon gibt es NICHT: ' + tot.join(', ')
   : 'Jede gerufene Zeichenfunktion existiert.');
 
@@ -226,15 +231,26 @@ const zahl = (name, muster) => {
   const m = SYNC.match(muster);
   return m ? Number(m[1]) * (m[2] ? Number(m[2]) : 1) : null;
 };
+/* ⛔ 10.11.2026: Hier stand `SYNC_TAKT = …`. Seit dem Umbau auf zwei Takte
+   heisst die Konstante SYNC_TAKT_AKTIV (dazu SYNC_TAKT_RUHE). Das Muster traf
+   nichts, `holen` war null — und `null <= 15000` ist in JavaScript `true`. Der
+   Abholtakt war also gruen, ohne gemessen zu sein. Aufgefallen beim Uebernehmen
+   in die Russisch-Kopie. Gemessen wird der AKTIVE Takt: er traegt „sofort auf
+   dem anderen Geraet", der Ruhetakt laeuft nur, solange niemand etwas tut.
+   Deshalb jetzt: eine nicht gefundene Zahl ist ein Befund, kein Gruen.
+   [[gruener_pruefer_beweist_nur_geprueftes]] */
 const senden  = zahl('senden',  /SYNC_WARTEZEIT = (\d+) \* (\d+)/);
-const holen   = zahl('holen',   /SYNC_TAKT = (\d+) \* (\d+)/);
+const holen   = zahl('holen',   /SYNC_TAKT_AKTIV = (\d+) \* (\d+)/);
 const zurueck = zahl('zurueck', /SICHTBAR_ABSTAND = (\d+) \* (\d+)/);
-console.log('  senden nach einer Aenderung: ' + (senden/1000) + ' s'
-  + ' | laufender Abholtakt: ' + (holen/1000) + ' s'
-  + ' | Sperre beim Zurueckkommen: ' + (zurueck/1000) + ' s');
-sag(senden <= 10000,  'gesendet wird spaetestens nach 10 s');
-sag(holen  <= 15000,  'geholt wird spaetestens alle 15 s, solange die App offen ist');
-sag(zurueck <= 5000,  'beim Zurueckkommen wird fast ohne Sperre geholt');
+const sek = w => w === null ? 'NICHT GEFUNDEN' : (w / 1000) + ' s';
+console.log('  senden nach einer Aenderung: ' + sek(senden)
+  + ' | laufender Abholtakt: ' + sek(holen)
+  + ' | Sperre beim Zurueckkommen: ' + sek(zurueck));
+const frist = (wert, grenze, konstante, text) => sag(wert !== null && wert <= grenze,
+  wert === null ? konstante + ' nicht in js/sync.js gefunden — UNGEMESSEN: ' + text : text);
+frist(senden,  10000, 'SYNC_WARTEZEIT',   'gesendet wird spaetestens nach 10 s');
+frist(holen,   15000, 'SYNC_TAKT_AKTIV',  'geholt wird spaetestens alle 15 s, solange die App offen ist');
+frist(zurueck,  5000, 'SICHTBAR_ABSTAND', 'beim Zurueckkommen wird fast ohne Sperre geholt');
 
 /* Der Sofort-Pfad: beim Weglegen schicken, ohne auf den Takt zu warten. */
 const versteckt = SYNC.slice(SYNC.indexOf(String.fromCharCode(39) + 'visibilitychange'));
