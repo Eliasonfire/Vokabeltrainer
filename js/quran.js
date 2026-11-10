@@ -2397,8 +2397,25 @@ function zeigeVers(nr){
    griff der Nachschlag nie. (Am PC gleicht der Browser das selbst aus, darum
    fiel es im Prüfbrowser nicht auf.) Jetzt hält haltVersOben() den Vers an
    der Kopfleiste, solange der Text darüber noch wächst. */
+/* ⛔ Ein Sprung ist keine Lesebewegung (10.11.2026). Ohne kopfBleibt() hielt
+   pruefeLeseRichtung() den Sprung nach OBEN für Hochrollen und klappte die
+   Kopfleiste auf — gemessen in Al-Baqarah, Sprung von 282 auf 102: Vers oben
+   bei 104 px, Leiste danach bis 221 px, die ersten Zeilen der Ayah lagen
+   darunter. Darum wird der Weg nach dem Sprung auf null gesetzt.
+   Die Leiste nur offen STEHEN zu lassen reichte nicht (gemessen, Sprung auf
+   150): zeigeVers() zieht nur die Höhe von .quran-sticky ab, im offenen
+   Zustand steht darüber noch die Titelzeile, und die deckte den Anfang zu.
+   Darum wird vor dem Sprung eingeklappt — derselbe Zustand wie beim
+   Weiterlesen nach unten; Hochrollen holt die Leiste wie gewohnt zurück. */
+function kopfBleibt(){
+  const kasten = document.getElementById('main');
+  if (kasten) KOPF_STAND = kasten.scrollTop;
+}
+
 function zeigeVersNachAufbau(nr){
+  setzeKopf(true);
   if (!zeigeVers(nr)) return false;
+  kopfBleibt();
   haltVersOben(nr);
   return true;
 }
@@ -2432,6 +2449,7 @@ function haltVersOben(nr){
     if (aus) return;
     if (OFFENE_SURE !== sure){ ende(); return; }
     zeigeVers(nr);
+    kopfBleibt();
   };
   const uhren = [300, 900, 2000].map(ms => setTimeout(nachfassen, ms));
   uhren.push(setTimeout(ende, VERS_HALT_MS));
@@ -2983,18 +3001,22 @@ function schliesseAyahListe(){
    Danach wandert es noch auf 419 px, weil die Verse mit der Schrift hoeher
    werden - das bleibt aber die ganze Zeit im Bild und braucht kein Nachfassen.
    Nur falls es doch ganz herausrutscht, greift der eine Nachschlag unten. */
+/* ⛔ Seit 10.11.2026 an den ANFANG der Ayah, nicht mehr in die Mitte. Elias:
+   „wenn ich beim koranlesen beim vokabeltrainer zu einer ayah springe dann
+   möchte ich ganz am anfang der ayah gelangen". Mit `block:'center'` stand bei
+   einer langen Ayah ihre Mitte im Bild, der Anfang lag oben außerhalb.
+   Jetzt derselbe Weg wie beim Zurückkommen an die Lesestelle:
+   zeigeVersNachAufbau() setzt den Vers unter die Kopfleiste und hält ihn dort,
+   solange der Text darüber noch wächst — bis er selbst den Bildschirm anfasst.
+   Das ersetzt den einen Nachschlag nach 500 ms, der nur griff, wenn der Vers
+   ganz aus dem Bild war. Gilt für alle drei Wege, die hierher führen:
+   Ayah-Liste, Weiterlesen, Tajwid-Übersicht (gezählt 10.11.2026). */
 function hebeVersHervor(el){
-  const mitte = () => el.scrollIntoView({ block:'center', behavior:'instant' });
-  mitte();
+  const nr = Number(el.dataset.versnr);
+  if (!zeigeVersNachAufbau(nr)) el.scrollIntoView({ block:'start', behavior:'instant' });
   el.classList.remove('angesteuert');
   void el.offsetWidth;                       // Animation neu starten
   el.classList.add('angesteuert');
-  /* Ein einziger Nachschlag, und nur wenn der Vers wirklich aus dem Bild ist -
-     sonst risse es den Blick weg, falls inzwischen selbst gerollt wurde. */
-  setTimeout(() => {
-    const r = el.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > window.innerHeight) mitte();
-  }, 500);
 }
 
 /* ---------- Vorherige / naechste Sure am Sura-Ende (Punkt 12) ----------

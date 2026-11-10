@@ -128,8 +128,12 @@ function teilB(d){
     const konst = (d.quran.match(/^const VERS_HALT_MS = [^\n]*$/m) || [])[0];
     const merker = (d.quran.match(/^let VERS_HALT_ENDE = [^\n]*$/m) || [])[0];
     if (!konst || !merker) return ['VERS_HALT_MS oder VERS_HALT_ENDE steht nicht mehr in js/quran.js'];
-    code = 'let OFFENE_SURE = 10;\n' + konst + '\n' + merker + '\n'
-      + ['zeigeVers', 'zeigeVersNachAufbau', 'haltVersOben'].map(n => schneide(d.quran, n, 'js/quran.js')).join('\n');
+    /* Seit 10.11.2026 klappt der Sprung die Kopfleiste ein (setzeKopf) und
+       setzt den Lese-Weg zurück (kopfBleibt, KOPF_STAND). setzeKopf schaltet
+       nur eine CSS-Klasse und ist hier ein Stummel, der mitzählt. */
+    code = 'let OFFENE_SURE = 10;\nlet KOPF_STAND = 0;\nlet KOPF_EIN_AUFRUFE = [];\n'
+      + 'function setzeKopf(ein){ KOPF_EIN_AUFRUFE.push(ein); }\n' + konst + '\n' + merker + '\n'
+      + ['zeigeVers', 'kopfBleibt', 'zeigeVersNachAufbau', 'haltVersOben'].map(n => schneide(d.quran, n, 'js/quran.js')).join('\n');
   } catch (e){ return [e.message]; }
 
   const KOPF = 50;
@@ -171,6 +175,12 @@ function teilB(d){
   const a = neueWelt(true);
   if (a.w.zeigeVersNachAufbau(7) !== true) return ['zeigeVersNachAufbau() springt nicht'];
   if (a.unterKopf() !== 8) f.push('nach dem Sprung steht der Vers ' + a.unterKopf() + ' px unter der Kopfleiste statt 8');
+  /* 1b. Elias 10.11.2026: „ganz am anfang der ayah". Der Sprung darf die
+     Kopfleiste nicht aufklappen lassen — sie deckte sonst den Anfang zu. */
+  if (vm.runInContext('KOPF_EIN_AUFRUFE.join()', a.w) !== 'true')
+    f.push('der Sprung klappt die Kopfleiste nicht ein — offen deckt die Titelzeile den Anfang der Ayah zu');
+  if (vm.runInContext('KOPF_STAND', a.w) !== a.kasten.scrollTop)
+    f.push('nach dem Sprung ist der Lese-Weg nicht zurückgesetzt — ein Sprung nach oben klappt die Leiste wieder auf');
   /* 2. Sein Bild: die Übersetzung wird eingesetzt, der Text darüber wächst. */
   a.lage.zielAbs += 400;
   a.hoeheAendert();
@@ -251,7 +261,9 @@ const STOERTESTS = [
   ['der Halt hört nicht auf, wenn er den Bildschirm anfasst',
     ersetze('quran', 'BERUEHRUNG.forEach(n => document.addEventListener(n, ende, true));', '')],
   ['die Seitentrennung ist außerhalb der Liste wieder ausgeblendet',
-    ersetze('html', '.seiten-ende{ display:flex; }', '.seiten-ende{ display:none; }')]
+    ersetze('html', '.seiten-ende{ display:flex; }', '.seiten-ende{ display:none; }')],
+  ['der Sprung klappt die Kopfleiste nicht mehr ein (Elias 10.11.2026)',
+    ersetze('quran', '  setzeKopf(true);\n  if (!zeigeVers(nr)) return false;', '  if (!zeigeVers(nr)) return false;')]
 ];
 for (const [name, mach] of STOERTESTS){
   const g = mach(echt);
