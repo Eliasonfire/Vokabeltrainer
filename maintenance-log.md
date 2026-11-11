@@ -9890,3 +9890,12 @@ Gemessen am 29.10.2026 und weiter offen:
 - 6× `pl` in Kapitel 14 · 5 Regelkandidaten für ihn · 11 Entscheidungen auf seiner Warteseite · Mehrzahl-Fragen Flughafen und Prophet.
 - Übung 17: Lücke huma-f. Tagesziel steht auf 15, seine Erinnerung war am 11.10. fällig. Box-1-Schlange 538 → 537.
 - Balance 6,8 %.
+
+## 2026-11-11 13:10 – Eselsbrücken ersetzt
+
+Routine „Eselsbrücken", v751. Zwei abgelehnte Texte ersetzt, jeweils die erste Stelle (`mnemo`):
+
+- **45796 وَسِخٌ (schmutzig), mnemo:** ein Bild von der Moscheetür. Die Schuhe bleiben draußen, weil das, was man vom شَارِعٌ an den Sohlen mitbringt, schmutzig ist und nicht auf den Teppich im مَسْجِدٌ soll. Abgelehnt waren der Klang, das Muster فَعِل und die و-Gruppe; das Hemd aus dem Buch und das Wuḍūʾ-Bild stehen weiter.
+- **45823 مَطْبَخٌ (Küche), mnemo:** der Satz aus Madina 1, Seite 21 (`mb1-21-1`), als Frage und Antwort: أَيْنَ آمِنَةُ؟ – هِيَ فِي الْمَطْبَخِ, wobei فِي الْمَطْبَخِ als fester Baustein gelernt wird. Abgelehnt war Ort-مَـ plus Wurzel plus die Verwechslung mit طَبِيبٌ. ⚠️ Für den Bericht: `alt[0]` an diesem Wort ist fast derselbe Gedanke wie der abgelehnte Text (Ort-مَـ, Wurzel ط ب خ, طَبِيبٌ). Er wurde nicht angefasst, weil er nicht abgelehnt ist.
+
+Geprüft: `pruefe-eselsbruecken.js` 0 (der erste Entwurf zu مَطْبَخٌ hatte einen arabischen Lauf mit 5 Wörtern, deshalb in Frage und Antwort geteilt), `vorschlaege-holen.mjs --auftrag` Exit 3, quran/taschkil/duplikate/validate grün, `alle-pruefer.mjs`: kein Prüfer neu rot. Ausgeliefert, `pruefe-ausgeliefert.mjs` 0.

@@ -1,6 +1,6 @@
 {
-  "stempel": 1793152644492,
-  "geholt": "29.10.2026",
+  "stempel": 1794363427923,
+  "geholt": "11.11.2026",
   "woerter": {
     "45760": [
       {
@@ -108,6 +108,11 @@
     ],
     "45796": [
       {
+        "nr": 0,
+        "text": "Gegenpaar zu نَظِيفٌ (sauber). Klanghilfe: „wasich\" — der raue خ-Laut am Ende klingt selbst schon schmutzig. Nur der Klang, aber er sitzt.",
+        "zeit": 1794099628763
+      },
+      {
         "nr": 1,
         "text": "Das Muster fällt aus der Reihe und genau das macht es merkbar: وَسِخ ist NICHT فَعِيل wie نَظِيف, sondern فَعِل — kurz, ohne langen Vokal. Sprich beide hintereinander: na-ẓīf gegen wa-six. Das saubere Wort ist lang und rund, das schmutzige kurz und rau.",
         "zeit": 1792715659625
@@ -162,6 +167,13 @@
         "nr": 2,
         "text": "Die Wurzel غ ر ف heißt schöpfen — mit der hohlen Hand Wasser nehmen. Eine غُرْفَة ist danach benannt: ein Raum ist etwas aus dem Haus Herausgeschöpftes, eine Höhlung. Von derselben Wurzel kommt die Schöpfkelle, مِغْرَفَة. ⚠️ Nicht mit dem ähnlich klingenden عَرَفَ („kennen\") verwechseln: das fängt mit ع an, nicht mit غ.",
         "zeit": 1788919441300
+      }
+    ],
+    "45823": [
+      {
+        "nr": 0,
+        "text": "Ort-مَـ wie مَكْتَبٌ und مَدْرَسَةٌ. Wurzel ط ب خ = kochen. ⚠️ Nicht mit طَبِيبٌ (Arzt, ط ب ب) verwechseln — der Unterschied ist der letzte Buchstabe: خ kocht, ب heilt.",
+        "zeit": 1794363427921
       }
     ],
     "45840": [
