@@ -383,6 +383,20 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
     }
     return kaestchen(z(1)).some(([l]) => l === 'Singular') ? 'die Einzahlkarte bekommt auch ein Kästchen „Singular"' : true;
   });
+  /* Elias, 12.11.2026 (Google Tasks): „Vokabeltrainer bei pluralkarte singular oben links weg machen
+     lassen", im Chat: „da möchte ich wegen pluralkarte das da singular nicht mehr angezeigt wird". */
+  fall('K1 Oben links auf der Mehrzahlkarte steht die Art, aber keine Einzahl; die Einzahlkarte behält ihre Herkunft (Elias, 12.11.2026)', () => {
+    const a = lernen.indexOf('  const art = (w.istPlural && w.sgAr'), b = lernen.indexOf('    : kapitelBeschriftung(w);\n', a);
+    if (a < 0 || b < 0) return 'die Zeile für #cardChapter steht nicht mehr in js/lernen.js';
+    const kopf = lernen.slice(a, b + '    : kapitelBeschriftung(w);\n'.length).replace("document.getElementById('cardChapter').textContent =", 'return');
+    const ctx = { pluralArtText: () => 'unregelmäßig', kapitelBeschriftung: w => 'unregelmäßig · Plural von ' + (w.sgAr || '') + '|Kap. 1' };
+    vm.createContext(ctx);
+    const zeig = vm.runInContext('(function(w){\n' + kopf + '})', ctx);
+    const pl = zeig({ istPlural: true, sgAr: ar('rajulN'), ar: ar('rijaAlN') });
+    if (pl.includes(ar('rajulN'))) return 'die Einzahl steht oben links: ' + pl;
+    if (pl !== 'Plural · unregelmäßig') return 'oben links steht „' + pl + '" statt „Plural · unregelmäßig"';
+    return zeig({ ar: ar('rajulN') }).includes('Kap. 1') ? true : 'die Einzahlkarte verliert ihre Herkunft';
+  });
   fall('L8 „Fem." ist eine Einzahl und bleibt auf der Einzahlkarte, „Fem. Pl." ist eine Mehrzahl und geht', () => {
     const k = kaestchen(R({}, { karten: MIT_FEM })(2));
     if (!k.some(([l, v]) => l === 'Fem.' && v === ar('kabiyrapN'))) return 'das Kästchen „Fem." fehlt: ' + JSON.stringify(k);
@@ -726,6 +740,8 @@ const STOER = [
     kateg: q => ersetze(ersetze(q, "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", '', 'S36a'),
       "  if (w.root)  formen.push(['Wurzel',   w.root]);\n",
       "  if (w.root)  formen.push(['Wurzel',   w.root]);\n  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", 'S36b') },
+  { name: 'S44 oben links steht wieder „Plural von <Einzahl>" (wie bis 12.11.2026)', muss: ['K1'],
+    lernen: q => ersetze(q, "    ? 'Plural' + (art ? ' · ' + art : '')\n", '    ? kapitelBeschriftung(w)\n', 'S44') },
 ];
 console.log('\n=== S  Störtests: ohne die Regel MUSS der zuständige Fall scheitern ===');
 for (const s of STOER){

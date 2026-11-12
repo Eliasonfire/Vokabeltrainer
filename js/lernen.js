@@ -579,7 +579,18 @@ function renderCard(){
   const pop = document.getElementById('gramPopover');
   if (pop) pop.classList.remove('show');
 
-  document.getElementById('cardChapter').textContent = kapitelBeschriftung(w);
+  /* ⛔ Auf der Mehrzahlkarte steht oben links KEINE Einzahl mehr (12.11.2026).
+     Elias in Google Tasks: „Vokabeltrainer bei pluralkarte singular oben links weg
+     machen lassen", dazu im Chat: „da möchte ich wegen pluralkarte das da singular
+     nicht mehr angezeigt wird". Bis dahin stand hier kapitelBeschriftung() mit
+     „… · Plural von <Einzahl>" — die Lösung stand vorne mit auf der Karte.
+     Die Art bleibt („Plural · unregelmäßig"), die Einzahl steht weiter unten im
+     Kästchen „Singular" (sein Satz vom 20.10.2026, Zeile „forms.push" unten).
+     Nur hier: in Wortlisten und Suche bleibt „Plural von …" (kapitelBeschriftung). */
+  const art = (w.istPlural && w.sgAr && typeof pluralArtText === 'function') ? pluralArtText(w.sgAr, w.ar) : '';
+  document.getElementById('cardChapter').textContent = (w.istPlural && w.sgAr)
+    ? 'Plural' + (art ? ' · ' + art : '')
+    : kapitelBeschriftung(w);
 
   /* ⭐ „Laut sagen" — auf etwa der Hälfte der Karten, reihum wechselnd.
      Die Auswahl trifft `waehleLautKarten()` beim Rundenaufbau; hier wird sie
