@@ -960,7 +960,11 @@ const PRUEFER = [
      Ordner prueft er nur lesend, dass data/, data-abzug/ und die Karten
      zusammenpassen und dass data/ nach einem Wechsel auf dem Stand von
      data-ersatz/ ist. */
-  ['werkzeuge/test-ersatz-wechsel.mjs', []]
+  ['werkzeuge/test-ersatz-wechsel.mjs', []],
+  /* 13.11.2026 — das Übungs-Nachschlagewerk (uebungLexikon) führt jede Mehrzahl zur Einzahlkarte, nie
+     zu einer Mehrzahlkarte. Vorher hatte Übung 18 dadurch 0 Aufgaben. Elias: „ja prüfe, vielleicht
+     einen prüfer dafür mcahen aber idk". Rund 10 Sekunden. */
+  ['werkzeuge/pruefe-lexikon-einzahl.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
