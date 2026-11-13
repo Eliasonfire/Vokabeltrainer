@@ -1251,6 +1251,15 @@ function uebMehrzahlTreffer(t, karten){
   if (!m || !m[2]) return null;
   let v = null;
   try { v = uebungVokabel(wort); } catch (e){ v = null; }
+  /* ⛔ 13.11.2026: Seit jede Mehrzahl eine eigene Karte ist (id „…#pl", Feld plVon), findet das
+     Lexikon für رِجَالٌ oft die MEHRZAHLKARTE — sie hat `ar` = die Mehrzahl und kein `pl`. Dann
+     hatte die Übung keine einzige Aufgabe, sobald die Buchvokabeln geladen waren (gemessen im
+     Probe-Browser: 479 Karten → 6 Treffer, 563 Karten → 0; pruefe-aufgaben.mjs schwankte deshalb).
+     Also von der Mehrzahlkarte zurück zu ihrer Einzahlkarte — dort steht die Mehrzahl in `pl`. */
+  if (v && uebMzKern(() => typeof istPluralKarte === 'function' && istPluralKarte(String(v.id)), false)){
+    const sgId = String(v.plVon || String(v.id).slice(0, -'#pl'.length));
+    v = VOCAB_DATA.find(x => x && String(x.id) === sgId) || null;
+  }
   if (!v || !v.pl) return null;
   const eintrag = karten.find(e => e.karte === v || String(e.karte.id) === String(v.id));
   if (!eintrag) return null;

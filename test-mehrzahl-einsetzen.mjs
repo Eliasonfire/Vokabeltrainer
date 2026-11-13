@@ -176,6 +176,14 @@ function pruefe(quelle){
   if (baue(satz(ar('xamosN'))).length) f.push('2z: ein Zahlwort ergibt eine Aufgabe (bei ihm steht in pl die Form beim weiblichen Nomen)');
   if (baue(satz(ar('fulokN') + PUNKT)).length) f.push('2e: eine Form, die auch die Einzahl der Karte ist, ergibt eine Aufgabe');
   if (!baue(satz(ar('Alr~ijAlu'), ar('hunA') + PUNKT)).length) f.push('2: mit Artikel und Kasusendung wird die Mehrzahl nicht erkannt');
+  /* 2p — 13.11.2026: steht die Mehrzahlkarte (id „1#pl", ar = die Mehrzahl) VOR der Einzahlkarte, findet
+     das Lexikon sie zuerst. Vorher hatte die Übung dann keine Aufgabe (im Probe-Browser: 0 statt 27). */
+  { const VDp = hole('VOCAB_DATA');
+    VDp.unshift({ id: '1' + hole('PLURAL_MARKE'), plVon: '1', ar: ar('rijAlN'), de: 'Männer', type: 'noun', istPlural: true, sgAr: ar('rajulN') });
+    app.run('UEBUNG_LEX = null; UEB_WORTGRUPPEN = {};');
+    try { if (baue(satz(ar('>uwla}ika'), ar('rijAlN') + PUNKT)).length !== 1) f.push('2p: steht die Mehrzahlkarte im Wortschatz, wird die Mehrzahl nicht mehr gefragt'); }
+    finally { VDp.shift(); app.run('UEBUNG_LEX = null; UEB_WORTGRUPPEN = {};'); }
+  }
 
   if (A){
     /* 3 — die Lücke */
@@ -273,6 +281,7 @@ else console.log(`✅ Echter Stand: ${echt.zahl} Aufgaben in seiner Auswahl; jed
 
 const STOER = [
   ['Zahlwörter werden gefragt', '(bekannt && !bekannt(w)) || !uebGesehen(w) || istZahlwort(w)) continue;', '(bekannt && !bekannt(w)) || !uebGesehen(w)) continue;', /^2z:/],
+  ['die Mehrzahlkarte verdeckt die Einzahlkarte', "    v = VOCAB_DATA.find(x => x && String(x.id) === sgId) || null;", '', /^2p:/],
   ['eine Form, die auch die Einzahl ist, wird gefragt', 'if (k < 0 || istEinzahl) return null;', 'if (k < 0) return null;', /^2e:/],
   ['die Lücke zeigt das Wort', "luecke[j] = stellen[j].davor + '____' + stellen[j].danach;", 'luecke[j] = z[j].wort;', /^3:|^7:/],
   ['auf dem Knopf steht eine veränderte Form', "text: f.form,", "text: f.form + 'x',", /^4:|^11 /],
