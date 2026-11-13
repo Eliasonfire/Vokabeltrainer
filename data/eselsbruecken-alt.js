@@ -551,8 +551,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* مَطْبَخٌ - Küche */
   '45823': [
-    'Ort-مَـ wie مَدْرَسَةٌ, مَكْتَبٌ und مَسْجِدٌ, die du alle hast: die Wurzel ط ب خ heißt kochen, also ist مَطْبَخ der Ort des Kochens. ⚠️ Nicht mit طَبِيبٌ (Arzt) verwechseln — der hat die Wurzel ط ب ب. Der letzte Buchstabe entscheidet: خ kocht, ب heilt.',
-    'Richte die Küche mit deinen eigenen Vokabeln ein: im مَطْبَخ steht der قِدْر (Kochtopf), daneben liegen مِلْعَقَة (Löffel) und سُكَّر (Zucker). Vier Wörter, ein Raum — und du hast sie alle vier. Räume dir die Küche in Gedanken einmal ein, das hält besser als vier einzelne Karten.'
+    'Du gehst in den مَطْبَخٌ, weil du Hunger hast — und Quraysh, die du auswendig kannst, nennt Den, der satt macht: ٱلَّذِيٓ أَطۡعَمَهُم مِّن جُوعٖ (106:4), „Der ihnen Speise gab nach ihrem Hunger“. Sprich den Vers beim nächsten Gang in die Küche leise mit, dann hängt das Wort an einer Sure, die du schon im Kopf hast.',
+    'Im Ramaḍān ist der مَطْبَخٌ kurz vor dem Maghrib der vollste Raum im Haus: der Tisch fürs Ifṭār wird gedeckt, alle stehen herum und warten auf den Adhān. Häng das Wort an genau dieses Bild — die Küche ist der Raum, in dem der Fastentag endet.'
   ],
 
   /* سَمَاءٌ - Himmel */
@@ -1467,8 +1467,8 @@ const ESELSBRUECKEN_ALT = {
 
   /* أُسْبُوعٌ - Woche */
   '45934': [
-    '⭐ Die Zahl steht in al-Mulk, die du auswendig kannst: الَّذِي خَلَقَ — „Der erschaffen hat“ — سَبْعَ سَمَاوَاتٍ طِبَاقًا — „sieben Himmel in Schichten" (67:3). Dasselbe سَبْع steckt in أُسْبُوع.',
-    '⭐ Die Sieben trägt fast jede Handlung der عُمْرَة und des حَجّ: sieben Runden im طَوَاف, sieben Gänge beim سَعْي, sieben Steinchen beim Werfen. Wer die Riten kennt, hat die Zahl längst im Ohr.'
+    '⭐ Eine Woche ist der Weg von einem يَوْمُ الْجُمُعَةِ zum nächsten: Einmal in der Woche kommen alle in der مَسْجِدٌ zum Freitagsgebet zusammen. Wer jeden Freitag hingeht, zählt seine Zeit schon in Wochen.',
+    'Bau dir eine Zeitleiter aus Wörtern, die du schon hast: سَاعَةٌ (Stunde, Bayna Yadayk 1) → يَوْمٌ (Tag, Kapitel 9) → أُسْبُوعٌ (Woche). Jede Stufe fasst die vorige zusammen — die Woche ist die nächste Sprosse nach dem Tag.'
   ],
 
   /* ══════ Kapitel 16 ══════ */
@@ -3449,8 +3449,8 @@ const ESELSBRUECKEN_ALT = {
      Pluralkarte, vor den geerbten. Elias auf die Liste der acht und ihre Brücken: „ich bin mit deinen
      vorschlägen zufrieden, fang an zu arbeiten". Welche acht: PLURAL_FERN in js/kern.js. Mutter und Mund
      stehen weiter oben bei ihren Pluraltexten vom 09.09.2026 (der neue Text als erster); Spiegel hat keine. */
-  '45779#pl': [   /* weit entfernt: إِمَامٌ → أَئِمَّةٌ */
-    'إِمَامٌ → أَئِمَّةٌ. Dein Aufhänger: al-Aʾimma al-Arbaʿa — „die vier Imame“.'
+  '45779#pl': [
+    'إِمَامٌ → أَئِمَّةٌ. Schau auf die beiden م: in إِمَامٌ stehen sie getrennt, das lange ā dazwischen — der eine Imam steht allein vorn. In أَئِمَّةٌ rücken sie zusammen zu einem مّ mit Schadda: viele Imame, eng in einer Reihe. Vorn stehen dafür jetzt zwei Hamza (أَئِ) — sprich aʾimma.'
   ],
   '45847#pl': [   /* weit entfernt: أَبٌ → آبَاءٌ */
     'أَبٌ → آبَاءٌ. Klingt wie أَبْنَاءٌ (Söhne), أَسْمَاءٌ (Namen) und أَبْوَابٌ (Türen) — nur ist bei آبَاءٌ das a vorn lang.'

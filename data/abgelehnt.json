@@ -1,6 +1,6 @@
 {
-  "stempel": 1794363427923,
-  "geholt": "11.11.2026",
+  "stempel": 1794533452149,
+  "geholt": "13.11.2026",
   "woerter": {
     "45760": [
       {
@@ -174,6 +174,16 @@
         "nr": 0,
         "text": "Ort-مَـ wie مَكْتَبٌ und مَدْرَسَةٌ. Wurzel ط ب خ = kochen. ⚠️ Nicht mit طَبِيبٌ (Arzt, ط ب ب) verwechseln — der Unterschied ist der letzte Buchstabe: خ kocht, ب heilt.",
         "zeit": 1794363427921
+      },
+      {
+        "nr": 1,
+        "text": "Ort-مَـ wie مَدْرَسَةٌ, مَكْتَبٌ und مَسْجِدٌ, die du alle hast: die Wurzel ط ب خ heißt kochen, also ist مَطْبَخ der Ort des Kochens. ⚠️ Nicht mit طَبِيبٌ (Arzt) verwechseln — der hat die Wurzel ط ب ب. Der letzte Buchstabe entscheidet: خ kocht, ب heilt.",
+        "zeit": 1794533427157
+      },
+      {
+        "nr": 2,
+        "text": "Richte die Küche mit deinen eigenen Vokabeln ein: im مَطْبَخ steht der قِدْر (Kochtopf), daneben liegen مِلْعَقَة (Löffel) und سُكَّر (Zucker). Vier Wörter, ein Raum — und du hast sie alle vier. Räume dir die Küche in Gedanken einmal ein, das hält besser als vier einzelne Karten.",
+        "zeit": 1794533433562
       }
     ],
     "45840": [
@@ -365,6 +375,23 @@
         "zeit": 1787282211967
       }
     ],
+    "45934": [
+      {
+        "nr": 0,
+        "text": "⭐ Wurzel س ب ع — dieselbe wie in سَبْعَةٌ (sieben) aus Kapitel 24. Eine Woche ist sieben Tage. Wenn du das einmal siehst, musst du das Wort nie wieder einzeln lernen. Plural أَسَابِيعُ.",
+        "zeit": 1794448395122
+      },
+      {
+        "nr": 1,
+        "text": "⭐ Die Zahl steht in al-Mulk, die du auswendig kannst: الَّذِي خَلَقَ — „Der erschaffen hat“ — سَبْعَ سَمَاوَاتٍ طِبَاقًا — „sieben Himmel in Schichten\" (67:3). Dasselbe سَبْع steckt in أُسْبُوع.",
+        "zeit": 1794448419434
+      },
+      {
+        "nr": 2,
+        "text": "⭐ Die Sieben trägt fast jede Handlung der عُمْرَة und des حَجّ: sieben Runden im طَوَاف, sieben Gänge beim سَعْي, sieben Steinchen beim Werfen. Wer die Riten kennt, hat die Zahl längst im Ohr.",
+        "zeit": 1794448383861
+      }
+    ],
     "45972": [
       {
         "nr": 0,
@@ -455,6 +482,13 @@
         "nr": 0,
         "text": "⚠️ Kein Tanwin am Ende — genau wie bei den Farben أَحْمَرُ, أَزْرَقُ, أَخْضَرُ aus Kapitel 22. Diese Wörter tragen nie ein ـٌ. Bild dazu: Wer غَضْبَانُ ist, wird أَحْمَرُ (rot).",
         "zeit": 1787281859150
+      }
+    ],
+    "45779#pl": [
+      {
+        "nr": 0,
+        "text": "إِمَامٌ → أَئِمَّةٌ. Dein Aufhänger: al-Aʾimma al-Arbaʿa — „die vier Imame“.",
+        "zeit": 1794533356736
       }
     ]
   }
