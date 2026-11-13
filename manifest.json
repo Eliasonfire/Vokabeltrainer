@@ -1,6 +1,6 @@
 {
-  "name": "Vokabeltrainer - Madina Buch 1",
-  "short_name": "Vokabeln",
+  "name": "Vokabeltrainer Arabisch",
+  "short_name": "Arabisch",
   "description": "Leitner-Vokabeltrainer für Arabisch, gekoppelt an Arabic Roots",
   "start_url": "./index.html",
   "scope": "./",
