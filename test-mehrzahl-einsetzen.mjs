@@ -281,7 +281,7 @@ else console.log(`✅ Echter Stand: ${echt.zahl} Aufgaben in seiner Auswahl; jed
 
 const STOER = [
   ['Zahlwörter werden gefragt', '(bekannt && !bekannt(w)) || !uebGesehen(w) || istZahlwort(w)) continue;', '(bekannt && !bekannt(w)) || !uebGesehen(w)) continue;', /^2z:/],
-  ['die Mehrzahlkarte verdeckt die Einzahlkarte', "    v = VOCAB_DATA.find(x => x && String(x.id) === sgId) || null;", '', /^2p:/],
+  ['die Mehrzahlkarte verdeckt die Einzahlkarte', "  const quelle = VOCAB_DATA.filter(zaehlt);", "  const quelle = VOCAB_DATA;", /^2p:/],
   ['eine Form, die auch die Einzahl ist, wird gefragt', 'if (k < 0 || istEinzahl) return null;', 'if (k < 0) return null;', /^2e:/],
   ['die Lücke zeigt das Wort', "luecke[j] = stellen[j].davor + '____' + stellen[j].danach;", 'luecke[j] = z[j].wort;', /^3:|^7:/],
   ['auf dem Knopf steht eine veränderte Form', "text: f.form,", "text: f.form + 'x',", /^4:|^11 /],

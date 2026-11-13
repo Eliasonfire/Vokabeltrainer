@@ -113,10 +113,18 @@ function uebungLexikon(){
       if (k && !UEBUNG_LEX.has(k)) UEBUNG_LEX.set(k, w);
     });
   };
+  /* ⛔ 13.11.2026: MEHRZAHLKARTEN (id „…#pl") KOMMEN NICHT HINEIN. Ihr `ar` ist die Mehrzahl, und
+     weil `ar` zuerst eingetragen wird, verdeckten sie die Einzahlkarte: 213 Formen zeigten auf eine
+     Karte ohne sg/pl/femSg/gender. Alle sieben Leser (Geschlecht, Einzahl klar, Verb danach,
+     Übungen 11, 12, 16, 18) erwarten die Einzahlkarte — Übung 18 hatte dadurch 0 Aufgaben.
+     Die Form fehlt nicht: sie steht als `pl` auf der Einzahlkarte. Bewacht von
+     test-mehrzahl-einsetzen.mjs (2p) und werkzeuge/pruefe-lexikon-einzahl.mjs. */
+  const zaehlt = w => !(w && typeof istPluralKarte === 'function' && uebMzKern(() => istPluralKarte(String(w.id)), false));
+  const quelle = VOCAB_DATA.filter(zaehlt);
   /* `ar` in einem eigenen Durchgang zuerst: ein Wort, das selbst Vokabel ist,
      schlaegt die femSg-Angabe einer anderen Vokabel. */
-  VOCAB_DATA.forEach(w=>eintragen(w.ar, w));
-  VOCAB_DATA.forEach(w=>{ eintragen(w.sg, w); eintragen(w.femSg, w); eintragen(w.pl, w); });
+  quelle.forEach(w=>eintragen(w.ar, w));
+  quelle.forEach(w=>{ eintragen(w.sg, w); eintragen(w.femSg, w); eintragen(w.pl, w); });
   return UEBUNG_LEX;
 }
 function uebungVokabel(wort){
@@ -1251,15 +1259,8 @@ function uebMehrzahlTreffer(t, karten){
   if (!m || !m[2]) return null;
   let v = null;
   try { v = uebungVokabel(wort); } catch (e){ v = null; }
-  /* ⛔ 13.11.2026: Seit jede Mehrzahl eine eigene Karte ist (id „…#pl", Feld plVon), findet das
-     Lexikon für رِجَالٌ oft die MEHRZAHLKARTE — sie hat `ar` = die Mehrzahl und kein `pl`. Dann
-     hatte die Übung keine einzige Aufgabe, sobald die Buchvokabeln geladen waren (gemessen im
-     Probe-Browser: 479 Karten → 6 Treffer, 563 Karten → 0; pruefe-aufgaben.mjs schwankte deshalb).
-     Also von der Mehrzahlkarte zurück zu ihrer Einzahlkarte — dort steht die Mehrzahl in `pl`. */
-  if (v && uebMzKern(() => typeof istPluralKarte === 'function' && istPluralKarte(String(v.id)), false)){
-    const sgId = String(v.plVon || String(v.id).slice(0, -'#pl'.length));
-    v = VOCAB_DATA.find(x => x && String(x.id) === sgId) || null;
-  }
+  /* Mehrzahlkarten stehen seit 13.11.2026 nicht mehr im Lexikon (uebungLexikon oben) — vorher
+     fand es für رِجَالٌ die Mehrzahlkarte ohne `pl`, und diese Übung hatte 0 Aufgaben. */
   if (!v || !v.pl) return null;
   const eintrag = karten.find(e => e.karte === v || String(e.karte.id) === String(v.id));
   if (!eintrag) return null;
