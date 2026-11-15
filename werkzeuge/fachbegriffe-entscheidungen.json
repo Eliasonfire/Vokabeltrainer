@@ -670,6 +670,45 @@
       "entscheidung": "abgelehnt",
       "grund": "Fragewort (ayyu, welcher), das die Regel idafa-ayyu-01 benennt — eine Buchvokabel wie die abgelehnten Hinweiswörter, kein Fachbegriff",
       "am": "2026-10-25"
+    },
+    "شبه جملة": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel (mubtada-khabar-shibh-jumla-01), im Unterricht noch nicht gefallen — kommt wieder, sobald eine Unterrichtsregel ihn nennt.",
+      "regeln": [
+        "mubtada-khabar-shibh-jumla-01"
+      ],
+      "am": "2026-11-15"
+    },
+    "ليس": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel (jumla-laysa-01), im Unterricht noch nicht gefallen; zudem eher Wort als Fachbegriff — kommt wieder, sobald eine Unterrichtsregel ihn nennt.",
+      "regeln": [
+        "jumla-laysa-01"
+      ],
+      "am": "2026-11-15"
+    },
+    "لدى": {
+      "entscheidung": "zurueckgestellt",
+      "grund": "Nur aus einer Buchregel (zarf-lada-01), im Unterricht noch nicht gefallen; zudem eher Wort als Fachbegriff — kommt wieder, sobald eine Unterrichtsregel ihn nennt.",
+      "regeln": [
+        "zarf-lada-01"
+      ],
+      "am": "2026-11-15"
+    },
+    "لله": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwendung (lillāhi, li + Allāh) in al-gesamtheit-01, harf-jarr-bi-01 und mubtada-khabar-shibh-jumla-01, kein Fachbegriff",
+      "am": "2026-11-15"
+    },
+    "جديدة": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (weibliche Form von jadīd, neu) in mutabaqa-genus-01, fem-bildung-01 und jam-ghayr-aqil-01, kein Fachbegriff",
+      "am": "2026-11-15"
+    },
+    "جدد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (Mehrzahl von jadīd, neu) in jam-salim-taksir-01, jam-taksir-01 und jam-ghayr-aqil-01, kein Fachbegriff",
+      "am": "2026-11-15"
     }
   }
 }
