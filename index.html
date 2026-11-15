@@ -2275,6 +2275,21 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .rk-tabelle th,.rk-tabelle td{border:1px solid var(--border);padding:4px 6px;text-align:center;vertical-align:middle;}
 .rk-tabelle thead th{color:var(--text-faint);font-weight:700;}
 .rk-tabelle tbody th{color:var(--text-dim);font-weight:600;white-space:nowrap;text-align:left;}
+/* 15.11.2026: Kapitel im Überblick und Thementafeln (js/uebersicht.js) */
+/* .rk-tabelle td ist von Haus aus arabisch (Schrift und Größe nach seiner Einstellung) — die arabische
+   Zelle erbt das, die deutsche wird ausdrücklich zurückgestellt. */
+.uebs-tabelle th.uebs-ar{font-family:var(--font-ar);font-size:calc(var(--fs-sm) * var(--ar-faktor));line-height:1.9;}
+.uebs-tabelle td.uebs-de,.uebs-tabelle th.uebs-de{font-family:var(--font-ui);font-size:var(--fs-sm);line-height:1.5;}
+.uebs-tabelle td.uebs-ar{white-space:nowrap;}
+.uebs-unter{display:block;white-space:normal;font-family:var(--font-ui);font-size:var(--fs-xs);line-height:1.4;color:var(--text-dim);}
+.uebs-tab-titel{margin-top:12px;}
+/* Die Karte ist eine Spalte (flex): ohne das schrumpft der rollbare Rahmen auf 0 px Höhe — gemessen 15.11.2026. */
+.uebs-rahmen{flex-shrink:0;}
+.uebs-hinweis{margin-top:6px;}
+.uebs-regeln{margin:4px 0 0;padding-inline-start:1.4em;}
+.uebs-regeln li{margin:4px 0;}
+.uebs-buchstaben{margin:8px 0;}
+.uebs-reihe{font-family:var(--font-ar);font-size:var(--fs-xl,1.5rem);line-height:2;word-spacing:.3em;}
 .rk-tabelle td{font-family:var(--font-ar);font-size:calc(var(--fs-sm) * var(--ar-faktor));line-height:1.9;unicode-bidi:isolate;}
 .rk-link{background:none;border:none;padding:0;color:var(--red-soft);font:inherit;font-size:var(--fs-sm);cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px;line-height:1.8;}
 .rk-klein{font-size:var(--fs-xs);color:var(--text-faint);line-height:1.6;}
@@ -7790,6 +7805,8 @@ Teil 3</span>
 <script src="js/lernen.js"></script>
 <script src="js/sprachausgabe.js"></script>
 <script src="js/kategorien.js"></script>
+<script src="uebersichten-data.js"></script>
+<script src="js/uebersicht.js"></script>
 <script src="js/regeln.js"></script>
 <script src="js/saetze.js"></script>
 <!-- Nach saetze.js: das Lehrerblatt zeigt die Zerlegung mit irabZeilenHtml(). -->

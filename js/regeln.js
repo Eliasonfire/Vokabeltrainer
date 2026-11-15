@@ -564,7 +564,10 @@ function renderRegeln(){
      Lehrerzitat darunter sind WEG (24.09.2026). Elias, mit Bild der Seite, die
      beiden Zeilen rot umrandet: „das kannst du weg machen. das brauch ich
      nicht". Die neun Karten bleiben, wo sie waren. */
+  /* 15.11.2026: ganz oben Kapitel im Überblick und Thementafeln (js/uebersicht.js), nur zum Nachschlagen. */
+  const uebersichten = typeof uebersichtenListeHtml === 'function' ? uebersichtenListeHtml() : '';
   box.innerHTML = `
+    ${uebersichten}
     <section class="regeln-abschnitt">
       ${karten || '<div class="pane-hinweis">Alle neun Karten liegen im Papierkorb.</div>'}
     </section>
@@ -816,6 +819,11 @@ function zeichneFormular(id){
 function zeichneRegelKarte(){
   const box = document.getElementById('regelKarte');
   if (!box) return;
+  /* 15.11.2026: „kap-<n>" und „ueb-…" sind Kapitel-Überblick und Thementafel (js/uebersicht.js) —
+     zum Nachschlagen, ohne Notiz, ohne Bearbeiten. */
+  if (RK_MODUS !== 'anlegen' && typeof istUebersicht === 'function' && istUebersicht(RK_ID)){
+    box.innerHTML = zeichneUebersicht(RK_ID); return;
+  }
   if (RK_MODUS === 'anlegen'){ box.innerHTML = zeichneFormular(null); return; }
   const art = regelArt(RK_ID);
   if (!art){ box.innerHTML = rkKopfHtml('') + '<div class="empty-state">Diese Regel gibt es nicht mehr.</div>'; return; }
@@ -901,6 +909,9 @@ function speichereRegelFormular(){
 function schliesseRegelKarte(){
   if (typeof overlayZuUeberHistorie === 'function' && overlayZuUeberHistorie('regelKarte')) return;
   const gespeichert = speichereOffeneRegelEingaben();
+  /* Eine Übersicht ändert nichts — also auch nichts nachziehen (sonst würde eine laufende
+     Satz-Aufgabe neu gezeichnet). */
+  const warUebersicht = typeof istUebersicht === 'function' && istUebersicht(RK_ID);
   const box = document.getElementById('regelKarte');
   const hinter = document.getElementById('regelKarteBackdrop');
   if (box) box.classList.add('hidden');
@@ -908,7 +919,7 @@ function schliesseRegelKarte(){
   RK_ID = null;
   RK_MODUS = 'ansehen';
   if (gespeichert) toast('Gespeichert');
-  regelnNachziehen();
+  if (!warUebersicht) regelnNachziehen();
 }
 
 /* Nach jeder Änderung: die Liste und — falls er gerade dort steht — der

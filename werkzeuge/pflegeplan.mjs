@@ -1520,6 +1520,16 @@ export const PFLEGEPLAN = [
     veralten: { nein: 'Nichts Erzeugtes; wie neue Speicherschlüssel ausgewertet werden, prüft pruefe-kreislaeufe.mjs.' },
   },
   {
+    /* 15.11.2026, Elias: „ich möchte im prinzip die grammatik regeln als übersicht haben bzw die
+       jeweiligen lektionen der kapteln … so wie auch bei der russich app", dann „fang an". */
+    funktion: 'Kapitel im Überblick und Thementafeln (Bereich Regeln)',
+    dateien: ['uebersichten-data.js', 'js/uebersicht.js'],
+    bildschirme: [],
+    neuerInhalt: { sitzung: 'Die Regeln eines Kapitels erscheinen von selbst (gelesen aus grammar-data.js). Kommt ein neues Kapitel dazu oder bekommt Kapitel 11 seine erste Regel, schreibt eine Sitzung den Kapiteltext (worum, Beispiel, achten) in uebersichten-data.js; jedes arabische Wort muss dabei in seinen Regeln oder Buchsätzen belegt sein.', werkzeug: 'werkzeuge/pruefe-uebersichten.mjs' },
+    eingaben: { nein: 'Nur zum Nachschlagen: keine Eingabe, kein Lernstand, nichts wird gespeichert (pruefe-uebersichten.mjs, U4).' },
+    veralten: { nein: 'Die Regel-Listen werden beim Öffnen aus grammar-data.js berechnet; eine gelöschte Regel fällt U2 des Prüfers auf.' },
+  },
+  {
     funktion: 'Grundgerüst der App',
     dateien: ['js/kern.js', 'js/darstellung.js', 'js/navigation.js', 'js/init.js', 'js/sprachausgabe.js'],
     bildschirme: [],

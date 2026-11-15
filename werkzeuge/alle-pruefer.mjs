@@ -964,7 +964,12 @@ const PRUEFER = [
   /* 13.11.2026 — das Übungs-Nachschlagewerk (uebungLexikon) führt jede Mehrzahl zur Einzahlkarte, nie
      zu einer Mehrzahlkarte. Vorher hatte Übung 18 dadurch 0 Aufgaben. Elias: „ja prüfe, vielleicht
      einen prüfer dafür mcahen aber idk". Rund 10 Sekunden. */
-  ['werkzeuge/pruefe-lexikon-einzahl.mjs', []]
+  ['werkzeuge/pruefe-lexikon-einzahl.mjs', []],
+  /* 15.11.2026 — Kapitel im Überblick und Thementafeln: jedes arabische Wort darin steht wörtlich in
+     seinen Regeln oder Buchsätzen, alle Regel-Kennungen gibt es, nichts wird gespeichert. Elias:
+     „ich möchte im prinzip die grammatik regeln als übersicht haben … so wie auch bei der russich
+     app". Unter einer Sekunde. */
+  ['werkzeuge/pruefe-uebersichten.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
