@@ -2403,6 +2403,68 @@ const UEBUNGEN = [
     }
   },
 
+  /* ⭐⭐ MEHRZAHL VON DINGEN (Kapitel 16) — 15.11.2026. Elias: „und lasse eine übung im satzmodus
+     auch dazu kommen bezogen auf plural mit dinge die keinen verstand haben damit da auch die
+     regeln angewandt werden", Quelle der Wörter: „alle vokabeln die ich kenne können benutz
+     werden". Auf den Entwurf (eine Lücke vor der Mehrzahl, Wahl des Hinweisworts, Dinge und
+     Menschen gemischt): „ja bau so".
+     Warum keine Buchsätze: gemessen (15.11.2026, 331 Sätze) passt genau einer.
+     Die Regel: die Mehrzahl von Dingen ohne Verstand wird wie ein weibliches Wort in der Einzahl
+     behandelt (هَذِهِ), die Mehrzahl von Menschen nimmt هَؤُلَاءِ. Ob ein Wort Mensch oder Ding ist,
+     sagen UEB_MENSCH_IDS / UEB_DING_IDS (oben bei uebMenschOderDing, bewacht von
+     werkzeuge/pruefe-mensch-ding.mjs). Ein nicht eingeordnetes Wort kommt nicht dran.
+     ⛔ NICHTS ERFUNDEN: das Nomen ist die Mehrzahl, wie sie auf seiner Karte steht (bekannt und
+     gesehen, uebMehrzahlKarten); die drei Hinweiswörter stehen so in grammar-data.js. Die Zeile
+     ist KEIN Buchsatz: als Herkunft steht „Aus deinen Karten" (herkunft() in js/saetze.js).
+     هَذَا steht als dritte Wahl da: der häufigste Fehler ist, die Mehrzahl wie ihre männliche
+     Einzahl zu behandeln (كِتَابٌ ist männlich, كُتُبٌ nimmt trotzdem هَذِهِ) — MEINE Wahl.
+     Nur im Thema „alle", wie die kurzen Zeilen von Übung 17.
+     `teilRang:102`: wird als LETZTE verteilt, damit keine andere Übung den Teil wechselt. Nie im
+     selben Teil wie Übung 11 (VERWANDT in satzTeile()) — beide fragen nach dem Hinweiswort.
+     Bewacht von test-mehrzahl-dinge.mjs. */
+  {
+    id:'mehrzahl-dinge', nr:19, name:'هَذِهِ كُتُبٌ / هَؤُلَاءِ طُلَّابٌ — Mehrzahl von Dingen', art:'wahl',
+    teilRang:102,
+    optionenRtl: true,
+    falschNochmal: 3,
+    hinweis:'Meint die Mehrzahl Menschen oder Dinge? Dinge und Tiere haben im Sinn von Kapitel 16 keinen Verstand.',
+    hinweisVerraet:false,
+    baue(){ return []; },
+    ohneSatz(){
+      if (typeof SATZ_THEMA !== 'undefined' && SATZ_THEMA !== 'alle') return [];
+      const HW = { ding: 'هَذِهِ', mensch: 'هَؤُلَاءِ', falle: 'هَذَا' };
+      const out = [];
+      for (const e of uebMehrzahlKarten()){
+        const w = e.karte;
+        if (!w || w.type !== 'noun') continue;
+        const art = uebMenschOderDing(w);
+        if (!art) continue;
+        const form = e.formen[0], richtig = HW[art];
+        const deMz = (typeof deMehrzahl === 'function' && deMehrzahl(w)) || (String(w.de) + ' (Mehrzahl)');
+        const warum = art === 'ding'
+          ? `${form} (${deMz}) sind Dinge ohne Verstand. Ihre Mehrzahl wird wie ein weibliches Wort in der Einzahl behandelt: ${HW.ding} ${form}.`
+          : `${form} (${deMz}) sind Menschen. Für sie steht ${HW.mensch}: ${HW.mensch} ${form}.`;
+        out.push({
+          frage: 'Welches Hinweiswort gehört vor diese Mehrzahl?',
+          wortIdx: 0, ohneSuffix: { 0: '____' },
+          loesung: richtig, ohneSatz: true,
+          optionen: [HW.falle, HW.ding, HW.mensch].map(t => ({ wert: t, text: t,
+            falsch: t === HW.falle
+              ? `${HW.falle} steht vor einem männlichen Wort in der Einzahl — ${form} ist eine Mehrzahl.`
+              : t === HW.mensch
+                ? `${HW.mensch} steht nur vor Menschen — ${form} (${deMz}) sind Dinge ohne Verstand.`
+                : `${HW.ding} steht vor der Mehrzahl von Dingen — ${form} (${deMz}) sind Menschen.` })),
+          aufloesung: warum,
+          deKlar: { test: () => true },
+          satz: { id: 'dinge-' + w.id, sentAr: richtig + ' ' + form, sentDe: 'diese ' + deMz, ausKarten: true },
+          zeilen: [{ wort: richtig, rein: richtig }, { wort: form, rein: form }],
+          karte: w.id, art
+        });
+      }
+      return out;
+    }
+  },
+
   /* ⭐⭐ ÜBERSETZEN — Elias' Auftrag vom 22.09.2026, 21:15, im Wortlaut:
 
      „es sollte auch im satzmodus eine übung geben, wo mir ein satz gegeben wird
@@ -2428,7 +2490,7 @@ const UEBUNGEN = [
     /* Seit v612 Nummer 16 (vorher 15): die Endungen-Übung ist eine Auswahl-Übung
        und steht in der Liste vor „Schreiben" — Elias: „ich möchte das die liste
        liniar von 1 bis 15 geht ohne das daraus salat gemacht wird". */
-    id:'uebersetzen', nr:19, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
+    id:'uebersetzen', nr:20, name:'Übersetzen — Arabisch ins Deutsche', art:'schreiben',
     hinweis:'Achte auf die Bestimmtheit (اَلْ oder Tanwīn) und darauf, wer in der إِضَافَة der Besitzer ist.',
     hinweisVerraet:false,
     deVerbergen:true,
@@ -2481,7 +2543,7 @@ const UEBUNGEN = [
      schon. Ein zweites Feld daneben könnte einer davon vergessen.
      Bewacht von test-satz-bauen.mjs. */
   {
-    id:'satz-bauen', nr:20, name:'Satzbau — den Satz selbst bilden', art:'bauen',
+    id:'satz-bauen', nr:21, name:'Satzbau — den Satz selbst bilden', art:'bauen',
     hinweis:'Tippe die Wörter in der Reihenfolge an, in der sie im Satz stehen. Ein Tipp auf ein Wort in deinem Satz nimmt es wieder heraus.',
     hinweisVerraet:false,
     deAlsAufgabe:true,
@@ -2513,7 +2575,7 @@ const UEBUNGEN = [
      (satzTeilAuswahl) — Elias, 09.11.2026: „in gemischt rein". Dort der Reihe nach, nicht
      gemischt (uebungGemischteListe). Bewacht von werkzeuge/pruefe-geschichten.mjs. */
   {
-    id:'geschichte', nr:21, name:'Geschichte — eine Lektion der Reihe nach, Lücke füllen', art:'geschichte',
+    id:'geschichte', nr:22, name:'Geschichte — eine Lektion der Reihe nach, Lücke füllen', art:'geschichte',
     hinweis:'Die Sätze darüber hast du schon gelesen. Welches Wort fehlt in diesem Satz?',
     hinweisVerraet:false,
     reihenfolge:true,
@@ -3020,7 +3082,7 @@ const UEB_GRUPPEN = [
   ['Schreiben',        'schreiben'],
   /* ⭐ Vierte Gruppe seit dem 04.10.2026 — der Satzbau (Übung 18). */
   ['Bauen',            'bauen'],
-  /* ⭐ Fünfte Gruppe seit dem 09.11.2026 — die Geschichte (Übung 21). */
+  /* ⭐ Fünfte Gruppe seit dem 09.11.2026 — die Geschichte (Übung 22). */
   ['Geschichte',       'geschichte']
 ];
 
@@ -3271,7 +3333,7 @@ function uebungStarten(modusId){
   }
   if (LUECKE.aktiv) beendeLuecke();
   const mod = UEBUNGEN.find(x=>x.id===modusId);
-  /* Übung 21 (Geschichte) bleibt in Buchreihenfolge — Begründung an ihrem Eintrag. */
+  /* Übung 22 (Geschichte) bleibt in Buchreihenfolge — Begründung an ihrem Eintrag. */
   UEB = { modus:modusId, liste: gemischt ? liste : (mod && mod.reihenfolge ? liste.slice() : uebungMischen(mod, liste)), idx:0, gewaehlt:new Set(),
           beantwortet:false, richtig:0, gestellt:0,
           /* v618: für welchen Teil „Gemischt" gebaut ist (uebungWeiter() baut um). */
@@ -3348,7 +3410,7 @@ function uebungGemischteListe(nachModus){
      sahen bei jedem Start gleich aus. Genau die sieht Elias zuerst. */
   /* ⭐ uebungZiehen() nimmt vom ENDE eines Korbs. Aufgaben ohne Satz (Übung 17, kurze Zeilen)
      wandern deshalb an den ANFANG: in der gemischten Runde kommen erst die Sätze dran. */
-  /* ⛔ `reihenfolge` (Übung 21, Geschichte): nicht mischen, sondern umgedreht in den Korb —
+  /* ⛔ `reihenfolge` (Übung 22, Geschichte): nicht mischen, sondern umgedreht in den Korb —
      uebungZiehen() nimmt vom ENDE, so kommen die Lücken einer Lektion der Reihe nach. */
   let koerbe = shuffle(UEBUNGEN.map(m => (m.reihenfolge ? (nachModus[m.id] || []).slice().reverse() : uebungMischen(m, nachModus[m.id] || []))
                                            .sort((x, y) => (y.ohneSatz ? 1 : 0) - (x.ohneSatz ? 1 : 0)))
@@ -3597,7 +3659,7 @@ function renderUebung(){
   const baut = uebungArtVon(a) === 'bauen';
   document.getElementById('uebFrage').innerHTML = arabischHervor(a.frage)
     + (m.deAlsAufgabe ? `<span class="ueb-frage-de">${escapeHtml(a.satz.sentDe || '')}</span>` : '');
-  /* Übung 21 (Geschichte): die schon gelesenen Sätze der Lektion stehen über dem jetzigen. */
+  /* Übung 22 (Geschichte): die schon gelesenen Sätze der Lektion stehen über dem jetzigen. */
   const bisherFeld = document.getElementById('uebGeschichteBisher');
   if (bisherFeld){
     const bisher = Array.isArray(a.bisher) ? a.bisher : [];
@@ -3858,7 +3920,7 @@ const UEBUNG_WARUM = {
      einzelnen Satz wäre, sagt die Aufgabe nicht. Lieber kein Knopf als die
      falsche Karte. */
   'satz-bauen': null,
-  /* Geschichte (Übung 21, 09.11.2026): `null` — welche Regel hinter der Lücke steht, hängt am
+  /* Geschichte (Übung 22, 09.11.2026): `null` — welche Regel hinter der Lücke steht, hängt am
      einzelnen Satz; die Auflösung nennt sie schon („im Satz: …", aus SENTENCE_TAGS). */
   'geschichte': null,
   /* Die Plural-Übung (Nr. 16): die Regel mit der Einteilung und der Erkennungsprobe
@@ -3869,7 +3931,10 @@ const UEBUNG_WARUM = {
   'verb-einsetzen': 'verb-madi-endungen-01',
   /* Mehrzahl einsetzen (Nr. 18, 13.10.2026): dieselbe Regel wie bei Übung 16 — die Einteilung der
      Mehrzahl und die Erkennungsprobe seines Lehrers aus Folge 25. */
-  'mehrzahl-einsetzen': 'jam-salim-taksir-01'
+  'mehrzahl-einsetzen': 'jam-salim-taksir-01',
+  /* Mehrzahl von Dingen (Nr. 19, 15.11.2026): die Regel aus Kapitel 16, sein Lehrer in Folge 31 —
+     die Mehrzahl ohne Verstand wird wie ein weibliches Wort in der Einzahl behandelt. */
+  'mehrzahl-dinge': 'jam-ghayr-aqil-01'
 };
 
 /* ⭐⭐ UNSICHTBARE ENDUNG → DIE KARTE, DIE GENAU DAS ERKLÄRT (16.09.2026)
@@ -4136,7 +4201,9 @@ function satzTeile(){
      allgemeinen Regel: Übung 16 zeigt das Wort und fragt nach der Art seiner Mehrzahl, Übung 18
      nimmt an denselben Sätzen das Wort in der Mehrzahl heraus — am selben Tag verriete die eine
      die andere. */
-  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['plural', 'mehrzahl-einsetzen'], ['pronomen', 'verb-einsetzen']];
+  /* ['isara', 'mehrzahl-dinge'] (15.11.2026), MEINE Ergänzung nach derselben Regel: beide fragen
+     nach dem Hinweiswort, Übung 11 an هَذِهِ كُتُبٌ im Buchsatz, Übung 19 an derselben Mehrzahl. */
+  const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['plural', 'mehrzahl-einsetzen'], ['pronomen', 'verb-einsetzen'], ['isara', 'mehrzahl-dinge']];
   const partner = id => VERWANDT.filter(p => p.includes(id)).flat().filter(x => x !== id);
   /* ⭐⭐ SCHÄTZUNG JE ÜBUNG AUS SEINEN ECHTEN ZEITEN (15.11.2026). Elias, Google Tasks: „dass die
      3 Teile des satzmoduses im russisch und arabisch besser verteilt sein soll damit alle
@@ -4156,10 +4223,13 @@ function satzTeile(){
     endungen: 30.7 /* 6 */, 'mubtada-khabar': 30.6 /* 5 */, uebersetzen: 30.4 /* 5 */,
     plural: 30.2 /* 5 */, wortart: 25.4 /* 5 */, isara: 23.2 /* 6 */, 'alle-majrur': 21.5 /* 8 */,
     pronomen: 18.0 /* 5 */, 'jarr-paar': 17.4 /* 5 */, fragewort: 15.5 /* 4 */, haraka: 15.3 /* 6 */,
-    'fem-form': 14.3 /* 7 */, kasus: 12.6 /* 5 */
+    'fem-form': 14.3 /* 7 */, kasus: 12.6 /* 5 */,
+    /* Übung 19 (15.11.2026) hat noch keine Antwort: die Schätzung für eine Wahl-Übung (12). So ist
+       sie die kürzeste, wird als letzte verteilt, und keine andere wechselt den Teil. */
+    'mehrzahl-dinge': 12 /* 0 */
   };
   const zeit = {}, quelle = {};
-  /* ⛔ Übung 21 (Geschichte, `ausserhalbTeile`, 09.11.2026) wird NICHT verteilt: sie kam nach
+  /* ⛔ Übung 22 (Geschichte, `ausserhalbTeile`, 09.11.2026) wird NICHT verteilt: sie kam nach
      allen anderen dazu und soll keine davon in den anderen Teil schieben (MEINE Entscheidung).
      Sie steht in keinem Teil; „Gemischt" nimmt sie trotzdem in jedem Teil mit (satzTeilAuswahl,
      Elias 09.11.2026: „in gemischt rein"). */
@@ -4296,7 +4366,7 @@ function satzTeilHeute(speichern){
 function satzTageszielHeute(){ return satzTeilStand().ziel; }
 /** Nur die Übungen des Teils, der gerade dran ist — für „Gemischt". */
 function satzTeilAuswahl(alle){
-  /* ⭐ Übung 21 (Geschichte, `ausserhalbTeile`) gehört in JEDEN Teil von „Gemischt" —
+  /* ⭐ Übung 22 (Geschichte, `ausserhalbTeile`) gehört in JEDEN Teil von „Gemischt" —
      Elias, 09.11.2026, auf meine Frage, ob sie draußen bleiben soll: „in gemischt rein".
      Verteilt (satzTeile) wird sie weiter nicht, damit keine andere Übung den Teil wechselt. */
   const nur = new Set([...satzTeile()[satzTeilStand().jetzt], ...UEBUNGEN.filter(m => m.ausserhalbTeile).map(m => m.id)]);

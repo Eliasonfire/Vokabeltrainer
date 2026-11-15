@@ -127,7 +127,7 @@ function pruefe(quelle){
   if (!nummern.every((n, i) => n === i + 1)) f.push('1: Nummern nicht linear 1 bis N: ' + nummern.join(','));
   const nrVon = id => (UEBUNGEN.find(u => u.id === id) || {}).nr;
   /* 13.10.2026 (v677): 18/19 → 19/20, seit „Mehrzahl einsetzen" die 18 trägt. */
-  if (nrVon('uebersetzen') !== 19 || nrVon('satz-bauen') !== 20) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 19 und 20)`);
+  if (nrVon('uebersetzen') !== 20 || nrVon('satz-bauen') !== 21) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 20 und 21)`);
   if (hole('UEBUNG_WARUM')['verb-einsetzen'] !== 'verb-madi-endungen-01') f.push('1: „Warum?" zeigt nicht auf verb-madi-endungen-01');
   /* ⛔ Seit 15.11.2026 verteilt satzTeile() nach seinen echten Zeiten (ZEIT_ELIAS) bewusst neu
      (Elias: „damit alle ungefähr gleich zeitaufwändig sind"). Dass die neue Übung nichts
@@ -373,7 +373,7 @@ const STOER = [
   ['Falsches kommt endlos wieder', '(aF.nochmal || 0) < 2', 'true', /^10:/],
   ['die Lösung ist die Form statt der Person', 'loesung: P.id,', 'loesung: formen[P.i],', /^3:/],
   ['teilRang fehlt', 'teilRang:100,', '', /^1t:/],
-  ['Übung 14 und 17 dürfen in denselben Teil', ", ['pronomen', 'verb-einsetzen']];", '];', /^1v:/],
+  ['Übung 14 und 17 dürfen in denselben Teil', ", ['pronomen', 'verb-einsetzen'], ['isara', 'mehrzahl-dinge']];", ", ['isara', 'mehrzahl-dinge']];", /^1v:/],
   /* Paket B (13.10.2026): die kurzen Zeilen für Formen ohne Satz */
   ['kurze Zeilen ohne seinen Schalter', "if (!(typeof SETTINGS === 'object' && SETTINGS && SETTINGS.verbKurzzeilen)) return [];", '', /^11:|^14:/],
   ['eine Zeile bleibt, obwohl ein Satz die Form trägt', "if (mitSatz.has(nr + '|' + person.id)) return;", '', /^12:|^12w:/],

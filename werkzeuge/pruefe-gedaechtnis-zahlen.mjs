@@ -174,8 +174,10 @@ const ueb = fs.readFileSync(REPO + '/js/uebung.js', 'utf8');
    seitdem 19, der Satzbau 20 — also 19 → 20 Übungsarten und 17 → 18 mit Hinweis).
    Elias: „ich meinte auch andere wörter wie mann hat ja auch mehrzahl". */
 /* 09.11.2026 (v735): 20 → 21 und 18 → 19, Übung 21 „Geschichte" mit Hinweis. */
-pruefe('a2: 21 Uebungsarten', 21, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
-pruefe('a2: 19 mit Hinweis', 19, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
+/* 15.11.2026: 21 → 22 und 19 → 20, Übung 19 „Mehrzahl von Dingen" mit Hinweis (Übersetzen 20,
+   Satzbau 21, Geschichte 22). */
+pruefe('a2: 22 Uebungsarten', 22, (ueb.match(/^\s*id\s*:\s*'[^']+',\s*nr\s*:/gm) || []).length);
+pruefe('a2: 20 mit Hinweis', 20, (ueb.match(/^\s*hinweis\s*:/gm) || []).length);
 
 /* Fachbegriffe (Oberflaechenpruefung) */
 const fach = fs.readFileSync(REPO + '/data/fachbegriffe.js', 'utf8');

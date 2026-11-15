@@ -319,7 +319,9 @@ console.log('\n=== 7. Stufe 2 — „so gut wie möglich in die app integriert" 
     /* 13.10.2026 (v677): 19 → 20, „Mehrzahl einsetzen" ist dazugekommen
        (`mehrzahl-einsetzen` → jam-salim-taksir-01, dieselbe Regel wie bei Übung 16). */
     /* 09.11.2026 (v735): 20 → 21, die Geschichte ist dazugekommen (`geschichte` → null). */
-    modi.length === 21 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
+    /* 15.11.2026: 21 → 22, „Mehrzahl von Dingen" ist dazugekommen (`mehrzahl-dinge` →
+       jam-ghayr-aqil-01, die Regel aus Kapitel 16, Folge 31). */
+    modi.length === 22 && !ohne.length && !tot.length, 'Modi: ' + modi.length + ' · ohne: ' + ohne.join(',') + ' · tot: ' + tot.join(','));
   /* ⚠️ 25.09.2026 (v612): 15 → 16, die Endungen-Übung ist dazugekommen
      (`endungen` → possessiv-endungen-01; Aufgaben mit ـِي bringen ihre Karte
      possessiv-ya-01 selbst mit). Elias: „wo ich die richtigen endungen

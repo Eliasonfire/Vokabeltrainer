@@ -969,7 +969,14 @@ const PRUEFER = [
      seinen Regeln oder Buchsätzen, alle Regel-Kennungen gibt es, nichts wird gespeichert. Elias:
      „ich möchte im prinzip die grammatik regeln als übersicht haben … so wie auch bei der russich
      app". Unter einer Sekunde. */
-  ['werkzeuge/pruefe-uebersichten.mjs', []]
+  ['werkzeuge/pruefe-uebersichten.mjs', []],
+  /* 15.11.2026 — Mensch oder Ding: jedes Nomen mit Mehrzahl steht in genau einer der unsichtbaren
+     Listen (js/uebung.js), Engel und Dschinn nie bei den Dingen. Elias: „alles was menschlich ist
+     das kannst du im code irgendwie markieren (ohne das ich es sehe) und einen prüfer machen". */
+  ['werkzeuge/pruefe-mensch-ding.mjs', []],
+  /* 15.11.2026 — Übung 19 „Mehrzahl von Dingen" (Kapitel 16): Ding → هَذِهِ, Mensch → هَؤُلَاءِ,
+     nur eingeordnete Nomen aus seinen Karten. Elias auf den Entwurf: „ja bau so". */
+  ['test-mehrzahl-dinge.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App

@@ -397,7 +397,10 @@ if (!gebaut){
    fehlende Datei im Lader, ein stiller catch, 0 Aufgaben, alles gruen.
    Eine leere Liste ist keine Messung. [[leere_liste_ist_keine_messung]] */
 /* Übung 21 (Geschichte) baut nur über ohneSatz() — bewacht von werkzeuge/pruefe-geschichten.mjs. */
-const leer = UEBUNGEN.filter(m => jeUebung.get(m.id) === 0 && !m.ausserhalbTeile);
+/* Übung 19 (Mehrzahl von Dingen, 15.11.2026) baut nur über ohneSatz() aus GELERNTEN Karten — hier
+   ist keine gelernt. Ihr Hinweis nennt keine Lösung (fragt nur „Menschen oder Dinge?"); bewacht
+   von test-mehrzahl-dinge.mjs, im Zustand „alle Karten bekannt" (153 Aufgaben am 15.11.2026). */
+const leer = UEBUNGEN.filter(m => jeUebung.get(m.id) === 0 && !m.ausserhalbTeile && m.id !== 'mehrzahl-dinge');
 if (leer.length){
   leer.forEach(m => console.error('  WERKZEUGFEHLER: Uebung ' + m.nr + ' (' + m.id
     + ') baut 0 Aufgaben — sie wird nicht geprueft.'

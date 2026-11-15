@@ -441,8 +441,12 @@ console.log('\n9. Mit seinen echten Zeiten liegen die drei Teile höchstens 15 %
     ? code.replace(filterLinie, 'const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile);')
           .replace(ruhLinie, ruhLinie + '\n  for (const k of nummern) teil[k] = teil[k].filter(id => !ruht.includes(id));') : code;
   const tm = (mitverteilt === code || !RUHEND.length) ? null : kontext(mitverteilt, UEBUNGEN).lauf('satzTeile()');
-  pruefe('STÖRTEST — die ruhende mitverteilt und erst danach herausgenommen (bis 15.11.2026) → rot', !RUHEND.length || (!!tm && abstand(tm) > 0.15),
-    tm ? Math.round(abstand(tm) * 100) + ' %' : (RUHEND.length ? 'Ersetzung griff nicht — Quelltext geändert?' : 'keine ruhende Übung'));
+  /* ⚠️ Seit 15.11.2026 (Übung 19 kam dazu) „schlechter als jetzt" statt „über 15 %": mit der neuen
+     Übung lag der alte Weg zufällig bei 14 % (der jetzige bei 6 %) — die feste Grenze hätte einen
+     Störtest rot gemeldet, der seinen Zweck erfüllt. Gemessen wird, dass der alte Weg die Teile
+     weiter auseinanderlegt als der jetzige. */
+  pruefe('STÖRTEST — die ruhende mitverteilt und erst danach herausgenommen (bis 15.11.2026) → weiter auseinander als jetzt', !RUHEND.length || (!!tm && abstand(tm) > abstand(t)),
+    tm ? Math.round(abstand(tm) * 100) + ' % gegen jetzt ' + Math.round(abstand(t) * 100) + ' %' : (RUHEND.length ? 'Ersetzung griff nicht — Quelltext geändert?' : 'keine ruhende Übung'));
   const alt = mitverteilt === code ? code : mitverteilt.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
   const tAlt = (alt === code || alt === mitverteilt) ? null : kontext(alt, UEBUNGEN).lauf('satzTeile()');
   pruefe('STÖRTEST — der alte Stand (Schätzung nach der Art, ruhende mitverteilt) → rot', !!tAlt && abstand(tAlt) > 0.15,

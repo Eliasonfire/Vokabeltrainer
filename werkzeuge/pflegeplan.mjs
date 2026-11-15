@@ -1530,6 +1530,14 @@ export const PFLEGEPLAN = [
     veralten: { nein: 'Die Regel-Listen werden beim Öffnen aus grammar-data.js berechnet; eine gelöschte Regel fällt U2 des Prüfers auf.' },
   },
   {
+    funktion: 'Satzmodus Übung 19 „Mehrzahl von Dingen" und die unsichtbare Einordnung Mensch/Ding (js/uebung.js)',
+    dateien: [],
+    bildschirme: [],
+    neuerInhalt: { sitzung: 'Jede neue Karte mit Mehrzahl muss in UEB_MENSCH_IDS oder UEB_DING_IDS (js/uebung.js) eingetragen werden — Wesen mit Verstand (Menschen, Engel, Dschinn; Elias 15.11.2026) zu den Menschen, alles andere (auch Tiere) zu den Dingen. Bis dahin kommt sie in der Übung nicht dran, und pruefe-mensch-ding.mjs (M1) ist rot. Die Aufgaben selbst entstehen von selbst aus seinen gelernten Karten.', werkzeug: 'werkzeuge/pruefe-mensch-ding.mjs' },
+    eingaben: { nein: 'Seine Antworten laufen über den gewöhnlichen Satzmodus (Quote, Zeiten); nichts Eigenes wird gespeichert.' },
+    veralten: { nein: 'Die Einordnung ist an die Karten-id gebunden; eine gelöschte Karte meldet M2 des Prüfers.' },
+  },
+  {
     funktion: 'Grundgerüst der App',
     dateien: ['js/kern.js', 'js/darstellung.js', 'js/navigation.js', 'js/init.js', 'js/sprachausgabe.js'],
     bildschirme: [],

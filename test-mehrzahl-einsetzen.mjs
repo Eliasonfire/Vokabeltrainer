@@ -164,7 +164,7 @@ function pruefe(quelle){
   const nummern = UEBUNGEN.map(u => u.nr).sort((a, b) => a - b);
   if (!nummern.every((n, i) => n === i + 1)) f.push('1: Nummern nicht linear 1 bis N: ' + nummern.join(','));
   const nrVon = id => (UEBUNGEN.find(u => u.id === id) || {}).nr;
-  if (nrVon('uebersetzen') !== 19 || nrVon('satz-bauen') !== 20) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 19 und 20)`);
+  if (nrVon('uebersetzen') !== 20 || nrVon('satz-bauen') !== 21) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 20 und 21)`);
   if (hole('UEBUNG_WARUM')['mehrzahl-einsetzen'] !== 'jam-salim-taksir-01') f.push('1: „Warum?" zeigt nicht auf jam-salim-taksir-01');
   /* Am Feld selbst geprüft, nicht am Kommentar darüber (der nennt das Paar auch). Heute stehen die zwei auch
      ohne das Paar in verschiedenen Teilen — das Paar hält sie dort, wenn sich die gemessenen Zeiten ändern. */
@@ -309,7 +309,7 @@ const STOER = [
   ['Umlaute werden nicht mehr gefaltet', ".replace(/ä/g, 'a')", '', /^10:/],
   ['teilRang fehlt', 'teilRang:101,', '', /^11t:|^11v:/],
   ['Übung 16 und 18 sind kein Paar mehr', " ['plural', 'mehrzahl-einsetzen'],", '', /^1v:|^11v:/],
-  ['Übersetzen behält die alte Nummer', "id:'uebersetzen', nr:19,", "id:'uebersetzen', nr:18,", /^1:/]
+  ['Übersetzen behält die alte Nummer', "id:'uebersetzen', nr:20,", "id:'uebersetzen', nr:19,", /^1:/]
 ];
 for (const [name, alt, neu, muster] of STOER){
   const n0 = QUELLE.split(alt).length - 1;
