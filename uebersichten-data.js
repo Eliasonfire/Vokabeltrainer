@@ -211,15 +211,8 @@ const UEBERSICHTEN = {
         'Nach أَيُّ steht das Wort im Genitiv: أَيُّ يَوْمٍ هَذَا؟'],
       regeln: ['istifham-uebersicht-01', 'istifham-men-01', 'istifham-ayna-01', 'min-ayna-01', 'istifham-madha-01', 'istifham-liman-01', 'idafa-ayyu-01', 'fragepartikel-alif-01', 'fragepartikel-erforderlich-01'] },
 
-    { id: 'ueb-sonne-mond', titel: 'Sonnen- und Mondbuchstaben', unter: 'ob du das Lam von اَلْ sprichst',
-      sonneMond: true,
-      tabelle: { kopf: ['', 'Lam', 'Beispiel'], zeilen: [
-        ['Mondbuchstabe', 'gesprochen', 'اَلْقَمَرُ'],
-        ['Mondbuchstabe', 'gesprochen', 'اَلْبَيْتُ'],
-        ['Sonnenbuchstabe', 'übersprungen, Schadda', 'اَلشَّمْسُ'],
-        ['Sonnenbuchstabe', 'übersprungen, Schadda', 'اَلرَّجُلُ']] },
-      hinweise: ['Die Namen zeigen die Regel selbst: اَلْقَمَرُ (al-qamar) und اَلشَّمْسُ (asch-schams).'],
-      regeln: ['schams-qamar-01', 'schams-qamar-merkhilfe-01', 'li-al-lil-01'] },
+    /* ⛔ Keine Tafel „Sonnen- und Mondbuchstaben" — Elias, 15.11.2026, zu genau dieser Tafel:
+       „das brauche ich nicht". Die Regeln dazu bleiben im Bereich Regeln. */
 
     { id: 'ueb-mehrzahl', titel: 'Die Mehrzahl', unter: 'regelmäßig, gebrochen, und bei Dingen',
       tabelle: { kopf: ['', 'Einzahl', 'Mehrzahl'], zeilen: [
