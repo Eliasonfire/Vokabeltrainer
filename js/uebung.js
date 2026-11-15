@@ -1229,6 +1229,26 @@ function uebMzKern(aufruf, ersatz){ try { return aufruf(); } catch (e){ return e
 function uebMehrzahlFormen(pl){
   return String(pl || '').normalize('NFC').split(/\s*[\/|]\s*/).map(f => f.trim()).filter(f => f && !/\s/.test(f));
 }
+/* ⭐ MENSCH ODER DING — für die Mehrzahl von Dingen (Kapitel 16), seit 15.11.2026.
+   Elias, wörtlich: „alles was menschlich ist das kannst du im code irgendwie markieren (ohne das ich
+   es sehe) und einen prüfer machen." Die Karten haben dafür kein Feld; diese Listen sind es.
+   Sie werden nirgends angezeigt.
+   - MENSCH: alle Nomen mit Mehrzahl, die einen Menschen meinen.
+   - DING: alle übrigen Nomen mit Mehrzahl. Tiere stehen hier: sie haben im Sinn von Kapitel 16
+     keinen Verstand (seine Worte: „dinge die keinen verstand haben"). Das ist MEINE Zuordnung nach
+     der Buchregel, er hat zu Tieren nichts gesagt.
+   Ein Nomen, das in KEINER Liste steht, gilt als unbekannt und wird von keiner Übung als Ding
+   behandelt. werkzeuge/pruefe-mensch-ding.mjs wird rot, sobald eine Karte mit Mehrzahl in keiner
+   oder in beiden Listen steht — eine neue Karte muss also eingeordnet werden. Adjektive stehen in
+   keiner Liste (sie sind weder Mensch noch Ding). */
+const UEB_MENSCH_IDS = new Set(['45761','45762','45763','45764','45765','45772','45779','45820','45827','45829','45830','45835','45838','45845','45846','45847','45864','45866','45896','36e01b96-9367-4f09-acaf-31a82bdcf061','madina1-l6-ach','madina1-l6-ucht','45899','45900','45901','45902','45904','45905','45909','45910','45913','45917','45918','45919','45920','45924','45933','45951','50312','50387','50174','46913']);
+const UEB_DING_IDS = new Set(['45751','45752','45753','45754','45755','45756','45757','45758','45759','45760','45766','45767','45768','45769','45770','45771','45773','45780','45782','45801','45802','45803','45804','45817','45818','45819','45821','45822','45823','45824','45825','45826','45831','45832','45839','45840','45841','45842','45843','45844','45848','45851','45852','45853','45854','45855','45856','45857','45858','45860','45862','45863','45865','45867','45869','45874','45875','45876','45877','45879','45885','45887','45889','45890','45892','45893','45895','59e30a8a-e400-4380-8adf-89e811852a1d','a540cdfa-cbaf-4d63-8250-b0b664d3b2b9','45906','45908','45912','45914','45916','45921','45922','45923','45925','45928','45934','45935','45936','45937','45939','45940','45941','45942','45943','45948','45949','45950','45952','45953','45954','45955','45966','45967','50338','50173','50176','50179','50180','50184','50187','50189','50190','50191','50193','50194','50195','46070','50339']);
+/* 'mensch' | 'ding' | null (nicht eingeordnet). Eine Mehrzahlkarte (…#pl) gilt wie ihre Einzahl. */
+function uebMenschOderDing(w){
+  if (!w) return null;
+  const id = String(w.plVon || w.id || '').replace(/#pl$/, '');
+  return UEB_MENSCH_IDS.has(id) ? 'mensch' : UEB_DING_IDS.has(id) ? 'ding' : null;
+}
 function uebMehrzahlKarten(){
   if (UEB_WORTGRUPPEN.mehrzahl) return UEB_WORTGRUPPEN.mehrzahl;
   const out = [];
