@@ -2441,9 +2441,12 @@ const UEBUNGEN = [
         if (!art) continue;
         const form = e.formen[0], richtig = HW[art];
         const deMz = (typeof deMehrzahl === 'function' && deMehrzahl(w)) || (String(w.de) + ' (Mehrzahl)');
+        /* ⛔ Kein „X: X Wort" am Ende (bis 15.11.2026, 23:2x): zwei arabische Stücke mit Doppelpunkt
+           dazwischen ordnet der Browser von rechts nach links um, auf dem Handy stand „…حُجَّاجٌ :هَؤُلَاءِ".
+           Das richtige Paar steht ohnehin oben in der Lücke. */
         const warum = art === 'ding'
-          ? `${form} (${deMz}) sind Dinge ohne Verstand. Ihre Mehrzahl wird wie ein weibliches Wort in der Einzahl behandelt: ${HW.ding} ${form}.`
-          : `${form} (${deMz}) sind Menschen. Für sie steht ${HW.mensch}: ${HW.mensch} ${form}.`;
+          ? `${form} (${deMz}) sind Dinge ohne Verstand. Ihre Mehrzahl wird wie ein weibliches Wort in der Einzahl behandelt, also ${HW.ding}.`
+          : `${form} (${deMz}) sind Menschen, also ${HW.mensch}.`;
         out.push({
           frage: 'Welches Hinweiswort gehört vor diese Mehrzahl?',
           wortIdx: 0, ohneSuffix: { 0: '____' },

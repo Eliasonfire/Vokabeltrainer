@@ -599,7 +599,7 @@ function herkunft(w){
   /* Übung 17, kurze Zeilen (13.10.2026): kein Buchsatz — das steht hier, damit es niemand dafür hält. */
   if (w.verbZeile) return 'Formenreihe deines Lehrers — ' + w.verbZeile;
   /* Übung 19, Mehrzahl von Dingen (15.11.2026): Zeile aus seinen Karten, kein Buchsatz. */
-  if (w.ausKarten) return 'Aus deinen Karten — Kapitel 16';
+  if (w.ausKarten) return 'Aus deinen Karten';
   return kapitelBeschriftung(w);
 }
 

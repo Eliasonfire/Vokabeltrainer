@@ -15,7 +15,7 @@
  *       die Lösung ist einer davon.
  *   D3  Nur Nomen, nur eingeordnete; die Form steht so auf der Karte; die Zeile ist Lösung + Form.
  *   D4  Feste Fälle: كُتُبٌ (Buch, 45754) → هَذِهِ, طُلَّابٌ (Student, 45763) → هَؤُلَاءِ.
- *   D5  Über der Zeile steht „Aus deinen Karten — Kapitel 16", nicht eine Buchseite.
+ *   D5  Über der Zeile steht „Aus deinen Karten", nicht eine Buchseite.
  *   D6  In einem anderen Thema als „alle" gibt es keine Aufgabe.
  *   D7  Die drei Hinweiswörter stehen genau so in grammar-data.js (keine Ḥaraka ohne Quelle).
  * Störtest: Buch und Student tauschen die Listen (D4 muss rot werden), dann wird ein Ding aus der
@@ -82,7 +82,7 @@ pruefe('D1 Aufgaben mit Dingen und mit Menschen', echt.ding > 0 && echt.mensch >
 pruefe('D2 Ding → هَذِهِ, Mensch → هَؤُلَاءِ, drei verschiedene Knöpfe', !echt.D2.length, echt.D2.slice(0, 5));
 pruefe('D3 nur eingeordnete Nomen, Form von der Karte, Zeile = Lösung + Form', !echt.D3.length, echt.D3.slice(0, 5));
 pruefe('D4 كُتُبٌ → هَذِهِ, طُلَّابٌ → هَؤُلَاءِ', echt.buch === 'هَذِهِ' && echt.student === 'هَؤُلَاءِ', [echt.buch, echt.student]);
-pruefe('D5 Herkunft „Aus deinen Karten — Kapitel 16"', echt.herkunftText === 'Aus deinen Karten — Kapitel 16', echt.herkunftText);
+pruefe('D5 Herkunft „Aus deinen Karten"', echt.herkunftText === 'Aus deinen Karten', echt.herkunftText);
 pruefe('D6 anderes Thema → keine Aufgabe', echt.imThema === 0, echt.imThema);
 const gd = fs.readFileSync(new URL('./grammar-data.js', import.meta.url), 'utf8').normalize('NFC');
 pruefe('D7 die drei Hinweiswörter stehen in grammar-data.js', echt.woerter.every(w => gd.includes(w.normalize('NFC'))), echt.woerter.filter(w => !gd.includes(w)));
