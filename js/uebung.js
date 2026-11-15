@@ -4079,7 +4079,9 @@ function satzTagSpeichern(t){ try { LS.set('vt_satzTag', t); } catch (e) { /* pr
    gewechselt, bei 20 drei, bei 12 keine — die neue kommt als letzte dran und
    landet im kürzeren Teil (Teil 1, dann 8 und 9 Übungen). Wer hier eine
    „ehrlichere" Zahl einträgt, würfelt seine zwei Teile neu. Ab 10 Antworten
-   gilt ohnehin die Messung. */
+   gilt ohnehin die Messung.
+   ⛔ Seit 15.11.2026 entscheidet diese Tabelle nur noch für eine Übung OHNE eigenen Eintrag:
+   satzTeile() hat je Übung eine Schätzung aus seinen echten Zeiten (ZEIT_ELIAS). */
 const UEB_ZEIT_SCHAETZUNG = { mehrfach: 20, wahl: 12, schreiben: 60, bauen: 12 };
 function satzTeile(){
   /* ⭐ VERWANDTE ÜBUNGEN NIE IM SELBEN TEIL (27.09.2026)
@@ -4114,15 +4116,42 @@ function satzTeile(){
      die andere. */
   const VERWANDT = [['genus', 'fem-form'], ['kasus', 'haraka'], ['jarr-paar', 'alle-majrur'], ['isara', 'pronomen'], ['plural', 'mehrzahl-einsetzen'], ['pronomen', 'verb-einsetzen']];
   const partner = id => VERWANDT.filter(p => p.includes(id)).flat().filter(x => x !== id);
+  /* ⭐⭐ SCHÄTZUNG JE ÜBUNG AUS SEINEN ECHTEN ZEITEN (15.11.2026). Elias, Google Tasks: „dass die
+     3 Teile des satzmoduses im russisch und arabisch besser verteilt sein soll damit alle
+     ungefähr gleich zeitaufwändig sind". Die Messung (uebZeitGemessen, ab 10 Antworten in 28
+     Tagen) griff nie — keine Übung hat mehr als 8 Antworten —, also entschied die grobe
+     Schätzung nach der Art (UEB_ZEIT_SCHAETZUNG), und die lag weit daneben: Welche Regel? ist
+     eine Wahl-Übung (12) und dauert bei ihm 58 s, Verb einsetzen 77 s. Folge mit seinen echten
+     Zeiten: Teil 1 etwa 130 s, Teil 2 etwa 200 s, Teil 3 etwa 290 s. Deshalb hier je Übung sein
+     Mittel aus vt_quoteTage im KV (alle Tage, gelesen 15.11.2026, Sekunden je Aufgabe, in
+     Klammern die Zahl der Antworten — wenige, also eine Annahme, keine Messung).
+     ⚠️ Hier drinnen und nicht als Konstante daneben — die Prüfer schneiden satzTeile() allein aus.
+     Ab 10 eigenen Antworten gilt wie bisher die Messung; eine neue Übung ohne Eintrag nimmt die
+     Schätzung nach ihrer Art. */
+  const ZEIT_ELIAS = {
+    'verb-einsetzen': 76.5 /* 2 */, regel: 57.8 /* 6 */, nat: 54.0 /* 6 */, idafa: 49.6 /* 7 */,
+    'satz-bauen': 46.3 /* 4 */, genus: 40.7 /* 6 */, 'mehrzahl-einsetzen': 37.0 /* 1 */,
+    endungen: 30.7 /* 6 */, 'mubtada-khabar': 30.6 /* 5 */, uebersetzen: 30.4 /* 5 */,
+    plural: 30.2 /* 5 */, wortart: 25.4 /* 5 */, isara: 23.2 /* 6 */, 'alle-majrur': 21.5 /* 8 */,
+    pronomen: 18.0 /* 5 */, 'jarr-paar': 17.4 /* 5 */, fragewort: 15.5 /* 4 */, haraka: 15.3 /* 6 */,
+    'fem-form': 14.3 /* 7 */, kasus: 12.6 /* 5 */
+  };
   const zeit = {}, quelle = {};
   /* ⛔ Übung 21 (Geschichte, `ausserhalbTeile`, 09.11.2026) wird NICHT verteilt: sie kam nach
      allen anderen dazu und soll keine davon in den anderen Teil schieben (MEINE Entscheidung).
      Sie steht in keinem Teil; „Gemischt" nimmt sie trotzdem in jedem Teil mit (satzTeilAuswahl,
      Elias 09.11.2026: „in gemischt rein"). */
-  const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile);
+  /* ⛔ EINE RUHENDE ÜBUNG (`ruht:true`, seit 19.10.2026) wird seit 15.11.2026 VOR dem Verteilen
+     herausgenommen. Bis dahin wurde sie mitverteilt und erst danach entfernt, damit keine andere
+     den Teil wechselt (MEINE Entscheidung vom 19.10., auf seine Frage „guck ob sich bei teil 1
+     und 2 die sortierung ändert dadurch das eines weniger ist"). Mit seinen echten Zeiten fehlten
+     dem Teil, der sie hielt, dann 31 s: 180 / 218 / 218 s, 21 % auseinander. Seine Vorgabe
+     „gleich zeitaufwändig" geht vor meiner Entscheidung — jetzt etwa 201 / 202 / 214 s.
+     Folge: kommt eine ruhende Übung zurück oder ruht eine neue, wird neu verteilt. */
+  const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile && !m.ruht);
   for (const m of UEBUNGEN_T){
     const g = (typeof uebZeitGemessen === 'function') ? uebZeitGemessen(m.id) : null;
-    zeit[m.id] = g !== null ? g : (UEB_ZEIT_SCHAETZUNG[m.art] || 15);
+    zeit[m.id] = g !== null ? g : (ZEIT_ELIAS[m.id] || UEB_ZEIT_SCHAETZUNG[m.art] || 15);
     quelle[m.id] = g !== null ? 'gemessen' : 'geschaetzt';
   }
   const nr = id => (UEBUNGEN.find(m => m.id === id) || {}).nr || 0;
@@ -4155,17 +4184,8 @@ function satzTeile(){
     teil[wo].push(m.id); summe[wo] += zeit[m.id];
   }
   for (const k of nummern) teil[k].sort((a, b) => nr(a) - nr(b));
-  /* ⛔ EINE RUHENDE ÜBUNG (`ruht:true`, seit 19.10.2026) wird oben MIT verteilt und erst hier
-     herausgenommen. Elias fragte dazu: „guck ob sich bei teil 1 und 2 die sortierung ändert
-     dadurch das eines weniger ist" — fiele sie schon vor dem Verteilen weg, wechselten bei
-     seinem Stand fünf andere den Teil. So steht sie in keinem Teil, und jede andere bleibt, wo
-     sie war (MEINE Entscheidung). Kommt sie zurück, steht sie wieder an ihrem alten Platz.
-     ⚠️ Hier drinnen, nicht als Liste daneben — die Prüfer schneiden satzTeile() allein aus. */
+  /* Die ruhenden (oben schon nicht verteilt) — für die Anzeige und die Prüfer. */
   const ruht = UEBUNGEN.filter(m => m.ruht).map(m => m.id);
-  for (const k of nummern){
-    teil[k] = teil[k].filter(id => !ruht.includes(id));
-    summe[k] = teil[k].reduce((s, id) => s + zeit[id], 0);
-  }
   return { ...teil, anzahl: ANZAHL, zeit, quelle, summe, ruht };
 }
 /* ⭐⭐ v618 — DIE TEILE LAUFEN VON SELBST (25.09.2026)

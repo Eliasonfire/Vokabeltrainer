@@ -330,36 +330,35 @@ else {
    satzübung können wir erstmal einstellen weil wir sie meine ich noch nicht offiziell
    besprochen haben und sie für mich noch keinen sinn macht. guck ob sich bei teil 1 und 2 die
    sortierung ändert dadurch das eines weniger ist." Gemessen an seinem Stand (KV 19.10.2026,
-   05:05): fiele Übung 1 schon vor dem Verteilen weg, wechselten fünf andere den Teil. Geprüft
-   an JEDER Übung: ruht sie allein, steht sie in keinem Teil, und jede andere bleibt in ihrem.
+   05:05): fiele Übung 1 schon vor dem Verteilen weg, wechselten fünf andere den Teil. Bis zum
+   15.11.2026 wurde sie deshalb mitverteilt und erst danach herausgenommen (MEINE Entscheidung).
+   ⛔ Seit 15.11.2026 fällt sie VOR dem Verteilen weg: mitverteilt fehlten dem Teil, der sie
+   hielt, mit seinen echten Zeiten 31 s (21 % auseinander) — seine Vorgabe „gleich
+   zeitaufwändig" geht vor (Abschnitt 9). Geprüft an JEDER Übung: ruht sie allein, steht sie in
+   keinem Teil, und die anderen sind so verteilt, als gäbe es sie nicht.
    Dazu die Auswahl-Liste und die Übungsstatistik, beide an den echten Funktionen. */
-console.log('\n8. Eine ruhende Übung steht in keinem Teil und verschiebt keine andere');
+console.log('\n8. Eine ruhende Übung steht in keinem Teil, die anderen sind verteilt, als gäbe es sie nicht');
 const ohneRuhe = liste => liste.map(u => { const v = { ...u }; delete v.ruht; return v; });
 const wanderer = (quelltext, liste) => {
-  const vorher = kontext(quelltext, ohneRuhe(liste)).lauf('satzTeile()');
+  const ohneSie = kontext(quelltext, liste.filter(u => !u.ruht)).lauf('satzTeile()');
   const mit = kontext(quelltext, liste).lauf('satzTeile()');
-  return { gewechselt: liste.filter(u => !u.ruht && teilVon(mit, u.id) !== teilVon(vorher, u.id)).map(u => u.nr + ' ' + u.id),
+  return { anders: liste.filter(u => !u.ruht && teilVon(mit, u.id) !== teilVon(ohneSie, u.id)).map(u => u.nr + ' ' + u.id),
            ruhtDrin: liste.filter(u => u.ruht && teilVon(mit, u.id) !== 0).map(u => u.nr + ' ' + u.id) };
 };
 const alleinRuht = id => ohneRuhe(UEBUNGEN).map(u => (u.id === id ? { ...u, ruht: true } : u));
 {
   const echt = wanderer(code, UEBUNGEN);
-  pruefe(`seine ruhende Übung (${RUHEND.map(u => u.nr + ' ' + u.id).join(', ') || 'keine'}) steht in keinem Teil, keine andere wechselt`,
-    !echt.gewechselt.length && !echt.ruhtDrin.length, JSON.stringify(echt));
-  const jede = UEBUNGEN.map(u => [u, wanderer(code, alleinRuht(u.id))]).filter(([, r]) => r.gewechselt.length || r.ruhtDrin.length);
+  pruefe(`seine ruhende Übung (${RUHEND.map(u => u.nr + ' ' + u.id).join(', ') || 'keine'}) steht in keinem Teil, die anderen wie ohne sie`,
+    !echt.anders.length && !echt.ruhtDrin.length, JSON.stringify(echt));
+  const jede = UEBUNGEN.map(u => [u, wanderer(code, alleinRuht(u.id))]).filter(([, r]) => r.anders.length || r.ruhtDrin.length);
   pruefe(`… und bei JEDER Übung, die allein ruht (${UEBUNGEN.length} Läufe)`, !jede.length,
     jede.map(([u, r]) => u.nr + ': ' + JSON.stringify(r)).join(' · '));
   const probe = alleinRuht(UEBUNGEN[0].id);
-  const vorAus = 'for (const m of reihe){';
-  const kaputt1 = code.split(vorAus).length === 2 ? code.replace(vorAus, 'for (const m of reihe.filter(x => !x.ruht)){') : code;
+  const filterLinie = 'const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile && !m.ruht);';
+  const kaputt1 = code.split(filterLinie).length === 2 ? code.replace(filterLinie, 'const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile);') : code;
   const r1 = kaputt1 === code ? null : wanderer(kaputt1, probe);
-  pruefe(`STÖRTEST — fällt die ruhende Übung VOR dem Verteilen weg, wechseln andere den Teil → rot`,
-    !!r1 && r1.gewechselt.length > 0, r1 ? JSON.stringify(r1) : 'Ersetzung griff nicht — Quelltext geändert?');
-  const ruhLinie = 'const ruht = UEBUNGEN.filter(m => m.ruht).map(m => m.id);';
-  const kaputt2 = code.split(ruhLinie).length === 2 ? code.replace(ruhLinie, 'const ruht = [];') : code;
-  const r2 = kaputt2 === code ? null : wanderer(kaputt2, probe);
-  pruefe('STÖRTEST — ohne das Herausnehmen bliebe die ruhende in ihrem Teil → rot',
-    !!r2 && r2.ruhtDrin.length > 0, r2 ? JSON.stringify(r2) : 'Ersetzung griff nicht — Quelltext geändert?');
+  pruefe('STÖRTEST — wird die ruhende mitverteilt, steht sie in einem Teil → rot',
+    !!r1 && r1.ruhtDrin.length > 0, r1 ? JSON.stringify(r1) : 'Ersetzung griff nicht — Quelltext geändert?');
 
   /* Die Auswahl-Liste: die echte renderUebungsLeiste() mit einem Blatt, in das sie schreibt. */
   const gruppen = (ueb.match(/const UEB_GRUPPEN = \[[\s\S]*?\n\];/) || [''])[0];
@@ -410,6 +409,44 @@ const alleinRuht = id => ohneRuhe(UEBUNGEN).map(u => (u.id === id ? { ...u, ruht
     pruefe('STÖRTEST — ohne den Filter stünde sie in der Statistik → rot', n4 !== null && n4 === UEBUNGEN.length,
       n4 === null ? 'Ersetzung griff nicht — Quelltext geändert?' : n4);
   }
+}
+
+/* 9: GLEICH ZEITAUFWÄNDIG MIT SEINEN ECHTEN ZEITEN (15.11.2026). Elias, Google Tasks: „dass die
+   3 Teile des satzmoduses im russisch und arabisch besser verteilt sein soll damit alle
+   ungefähr gleich zeitaufwändig sind". Die Schätzung nach der Art ergab mit seinen Zeiten etwa
+   130 / 200 / 290 s. Gefordert: die Teile liegen höchstens 15 % auseinander (größter gegen
+   kleinsten), gerechnet mit ZEIT_ELIAS aus satzTeile() — dieser Prüfer kennt keine Messungen,
+   also entscheidet genau diese Schätzung, wie in der App bei unter 10 Antworten. */
+console.log('\n9. Mit seinen echten Zeiten liegen die drei Teile höchstens 15 % auseinander');
+{
+  const zeitElias = t.zeit;
+  const echtSumme = tt => KS.map(k => (tt[k] || []).reduce((s, id) => s + (zeitElias[id] || 0), 0));
+  const abstand = tt => { const v = echtSumme(tt); return (Math.max(...v) - Math.min(...v)) / Math.min(...v); };
+  const hatEintrag = /const ZEIT_ELIAS = \{/.test(code);
+  pruefe('satzTeile() hat ZEIT_ELIAS, und jede verteilte Übung hat darin einen Eintrag',
+    hatEintrag && AKTIV.every(u => new RegExp("['\\s{]" + u.id.replace(/-/g, '\\-') + "'?:\\s*\\d").test(code)), '');
+  pruefe(`höchstens 15 %: ${echtSumme(t).map((s, i) => `Teil ${i + 1} ${Math.round(s)} s`).join(', ')} (${Math.round(abstand(t) * 100)} %)`,
+    abstand(t) <= 0.15, abstand(t));
+  /* Ohne ZEIT_ELIAS (nur die Ruhe-Regel neu) lagen sie am 15.11.2026 zufällig bei 10 % — eine
+     Schätzung, die für Welche Regel? 12 s statt 58 s annimmt, ist trotzdem keine Grundlage.
+     Gemessen wird deshalb, dass satzTeile() die Tabelle LIEST, und dass der alte Stand rot ist. */
+  const nurArt = code.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
+  const ta = nurArt === code ? null : kontext(nurArt, UEBUNGEN).lauf('satzTeile()');
+  const abweichend = ta ? AKTIV.filter(u => ta.zeit[u.id] !== zeitElias[u.id]).length : 0;
+  pruefe('STÖRTEST — leeres ZEIT_ELIAS: die Zeiten sind nicht mehr seine → rot', !!ta && abweichend > 0,
+    ta ? abweichend + ' Übungen mit anderer Zeit, Abstand dann ' + Math.round(abstand(ta) * 100) + ' %' : 'Ersetzung griff nicht — Quelltext geändert?');
+  const filterLinie = 'const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile && !m.ruht);';
+  const ruhLinie = 'const ruht = UEBUNGEN.filter(m => m.ruht).map(m => m.id);';
+  const mitverteilt = code.split(filterLinie).length === 2 && code.split(ruhLinie).length === 2
+    ? code.replace(filterLinie, 'const UEBUNGEN_T = UEBUNGEN.filter(m => !m.ausserhalbTeile);')
+          .replace(ruhLinie, ruhLinie + '\n  for (const k of nummern) teil[k] = teil[k].filter(id => !ruht.includes(id));') : code;
+  const tm = (mitverteilt === code || !RUHEND.length) ? null : kontext(mitverteilt, UEBUNGEN).lauf('satzTeile()');
+  pruefe('STÖRTEST — die ruhende mitverteilt und erst danach herausgenommen (bis 15.11.2026) → rot', !RUHEND.length || (!!tm && abstand(tm) > 0.15),
+    tm ? Math.round(abstand(tm) * 100) + ' %' : (RUHEND.length ? 'Ersetzung griff nicht — Quelltext geändert?' : 'keine ruhende Übung'));
+  const alt = mitverteilt === code ? code : mitverteilt.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
+  const tAlt = (alt === code || alt === mitverteilt) ? null : kontext(alt, UEBUNGEN).lauf('satzTeile()');
+  pruefe('STÖRTEST — der alte Stand (Schätzung nach der Art, ruhende mitverteilt) → rot', !!tAlt && abstand(tAlt) > 0.15,
+    tAlt ? KS.map(k => Math.round(echtSumme(tAlt)[k - 1]) + ' s').join(' / ') + ' = ' + Math.round(abstand(tAlt) * 100) + ' %' : 'Ersetzung griff nicht — Quelltext geändert?');
 }
 
 console.log('\n' + (fehler ? `X  ${fehler} Befund(e)` : '✅ Satzmodus in drei Teilen: alles richtig'));

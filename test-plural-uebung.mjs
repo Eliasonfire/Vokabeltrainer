@@ -147,11 +147,20 @@ function pruefe(app, zahlen){
      wird die Aufteilung OHNE die Übung mit der MIT ihr (ohne Messungen, wie auf
      seinem Stand am 04.10.2026: die Schätzung entscheidet). Dafür ist `teilRang`
      da: nach der Nummer käme sie vor dem Satzbau dran und nähme dessen Platz. */
+  /* ⛔ Seit 15.11.2026 hat satzTeile() je Übung eine Schätzung aus seinen echten Zeiten
+     (ZEIT_ELIAS) und verteilt bewusst neu — Elias: „damit alle ungefähr gleich zeitaufwändig
+     sind". `teilRang` wirkt seither nur noch für eine Übung OHNE eigenen Eintrag; geprüft wird
+     es deshalb mit leerem ZEIT_ELIAS, also so, wie die Schätzung nach der Art entscheidet. */
   {
+    const quelleST = String(hole('satzTeile') || '');
+    const nurArtQ = quelleST.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
+    if (nurArtQ === quelleST) rot.push('3 satzTeile(): ZEIT_ELIAS nicht gefunden — Prüfung angepasst?');
+    const nurArt = vm.runInContext('(' + nurArtQ + ')', app.ctx);
+    const teile = nurArt();
     const liste = hole('UEBUNGEN'), stelle = liste.indexOf(U);
     liste.splice(stelle, 1);
     let ohneSie = null;
-    try { ohneSie = hole('satzTeile')(); } finally { liste.splice(stelle, 0, U); }
+    try { ohneSie = nurArt(); } finally { liste.splice(stelle, 0, U); }
     /* Übungen mit größerem teilRang kamen NACH dieser dazu und werden nach ihr verteilt —
        dass sie ohne diese woanders landen, ist richtig (wie in test-satz-bauen.mjs). */
     const spaeter = m => (m.teilRang || 0) > (U.teilRang || 0);

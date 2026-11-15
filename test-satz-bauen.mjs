@@ -134,11 +134,18 @@ function lauf(quelle){
   /* Ohne Messungen (dieser Lader kennt keine) entscheidet die Schätzung — wie
      auf seinem Stand am 04.10.2026. Die Aufteilung OHNE die neue Übung und die
      MIT ihr dürfen sich nur um die neue unterscheiden. */
+  /* ⛔ Seit 15.11.2026 verteilt satzTeile() nach seinen echten Zeiten (ZEIT_ELIAS) bewusst neu
+     (Elias: „damit alle ungefähr gleich zeitaufwändig sind"). „Die neue kommt nur dazu" gilt nur
+     noch, wo die Schätzung nach der Art entscheidet — geprüft mit leerem ZEIT_ELIAS. */
   {
-    const mit = hole('satzTeile')();
+    const quelleST = String(hole('satzTeile') || '');
+    const nurArtQ = quelleST.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
+    ok('1 satzTeile() hat ZEIT_ELIAS (für den Vergleich nach der Art)', nurArtQ !== quelleST);
+    const nurArt = hole('(' + nurArtQ + ')');
+    const mit = nurArt();
     const stelle = UEBUNGEN.indexOf(U);
     UEBUNGEN.splice(stelle, 1);
-    let ohne = null; try { ohne = hole('satzTeile')(); } finally { UEBUNGEN.splice(stelle, 0, U); }
+    let ohne = null; try { ohne = nurArt(); } finally { UEBUNGEN.splice(stelle, 0, U); }
     /* `!m.teilRang` (04.10.2026, v646): eine Übung mit teilRang ist NACH dem
        Satzbau dazugekommen und wird als letzte verteilt (satzTeile()) — sie
        landet ohne den Satzbau im anderen Teil, und das ist richtig so. Gemeint

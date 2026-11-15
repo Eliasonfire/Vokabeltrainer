@@ -129,10 +129,19 @@ function pruefe(quelle){
   /* 13.10.2026 (v677): 18/19 → 19/20, seit „Mehrzahl einsetzen" die 18 trägt. */
   if (nrVon('uebersetzen') !== 19 || nrVon('satz-bauen') !== 20) f.push(`1: Übersetzen ${nrVon('uebersetzen')}, Satzbau ${nrVon('satz-bauen')} (erwartet 19 und 20)`);
   if (hole('UEBUNG_WARUM')['verb-einsetzen'] !== 'verb-madi-endungen-01') f.push('1: „Warum?" zeigt nicht auf verb-madi-endungen-01');
-  { const mit = hole('satzTeile')();
+  /* ⛔ Seit 15.11.2026 verteilt satzTeile() nach seinen echten Zeiten (ZEIT_ELIAS) bewusst neu
+     (Elias: „damit alle ungefähr gleich zeitaufwändig sind"). Dass die neue Übung nichts
+     verschiebt (teilRang), gilt nur noch, wo die Schätzung nach der Art entscheidet — geprüft
+     mit leerem ZEIT_ELIAS; das Paar (1v) an beiden Aufteilungen. */
+  { const quelleST = String(hole('satzTeile') || '');
+    const nurArtQ = quelleST.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
+    if (nurArtQ === quelleST) f.push('1t: satzTeile(): ZEIT_ELIAS nicht gefunden — Prüfung angepasst?');
+    const nurArt = hole('(' + nurArtQ + ')');
+    const echtT = hole('satzTeile')();
+    const mit = nurArt();
     const stelle = UEBUNGEN.indexOf(U);
     UEBUNGEN.splice(stelle, 1);
-    let ohne = null; try { ohne = hole('satzTeile')(); } finally { UEBUNGEN.splice(stelle, 0, U); }
+    let ohne = null; try { ohne = nurArt(); } finally { UEBUNGEN.splice(stelle, 0, U); }
     /* Seit 09.11.2026 drei Teile (Elias: „… in 3 teilen"): verglichen wird über ALLE Teile;
        eine Übung mit größerem teilRang kam später dazu und darf ohne diese woanders landen. */
     const ks = tt => Array.from({ length: tt.anzahl || 2 }, (_, i) => i + 1);
@@ -140,8 +149,8 @@ function pruefe(quelle){
     const spaeter = m => (m.teilRang || 0) > (U.teilRang || 0);
     const gewechselt = UEBUNGEN.filter(m => m !== U && !spaeter(m) && tv(ohne, m.id) !== tv(mit, m.id)).map(m => m.nr);
     if (gewechselt.length) f.push('1t: die Teile bleiben nicht — den Teil wechseln die Übungen ' + gewechselt.join(', '));
-    if (ks(mit).filter(t => mit[t].includes('verb-einsetzen')).length !== 1) f.push('1t: die neue steht nicht in genau einem Teil');
-    if (ks(mit).some(t => mit[t].includes('verb-einsetzen') && mit[t].includes('pronomen'))) f.push('1v: im selben Teil wie Übung 14 (dieselben Sätze)');
+    if (ks(echtT).filter(t => echtT[t].includes('verb-einsetzen')).length !== 1) f.push('1t: die neue steht nicht in genau einem Teil');
+    if ([echtT, mit].some(tt => ks(tt).some(t => tt[t].includes('verb-einsetzen') && tt[t].includes('pronomen')))) f.push('1v: im selben Teil wie Übung 14 (dieselben Sätze)');
   }
 
   /* 2 — keine selbst konjugierte Form */

@@ -263,13 +263,23 @@ function pruefe(quelle){
       }
     }
     if (zahl < 15) f.push(`11n: nur ${zahl} Aufgaben in seiner Auswahl (Pflicht 5: mindestens 15)`);
-    const alle = E('UEBUNGEN'), mit = E('satzTeile')(), stelle = alle.indexOf(UE);
+    /* ⛔ Seit 15.11.2026 verteilt satzTeile() nach seinen echten Zeiten (ZEIT_ELIAS) bewusst neu
+       (Elias: „damit alle ungefähr gleich zeitaufwändig sind"). Dass die neue Übung nichts
+       verschiebt (teilRang), gilt nur noch, wo die Schätzung nach der Art entscheidet — geprüft
+       mit leerem ZEIT_ELIAS. Gezählt über alle Teile (seit 09.11.2026 drei). */
+    const quelleST = String(E('satzTeile') || '');
+    const nurArtQ = quelleST.replace(/const ZEIT_ELIAS = \{[\s\S]*?\n  \};/, 'const ZEIT_ELIAS = {};');
+    if (nurArtQ === quelleST) f.push('11t: satzTeile(): ZEIT_ELIAS nicht gefunden — Prüfung angepasst?');
+    const nurArt = E('(' + nurArtQ + ')');
+    const ks = tt => Array.from({ length: tt.anzahl || 2 }, (_, i) => i + 1);
+    const tv = (tt, id) => ks(tt).find(k => (tt[k] || []).includes(id)) || 0;
+    const alle = E('UEBUNGEN'), mit = E('satzTeile')(), mitArt = nurArt(), stelle = alle.indexOf(UE);
     alle.splice(stelle, 1);
-    let ohne = null; try { ohne = E('satzTeile')(); } finally { alle.splice(stelle, 0, UE); }
-    const gewechselt = alle.filter(m => m !== UE && ohne[1].includes(m.id) !== mit[1].includes(m.id)).map(m => m.nr);
-    if (gewechselt.length) f.push('11t: seine zwei Teile bleiben nicht — den Teil wechseln die Übungen ' + gewechselt.join(', '));
-    if ([1, 2].filter(t => mit[t].includes('mehrzahl-einsetzen')).length !== 1) f.push('11t: die neue steht nicht in genau einem Teil');
-    if ([1, 2].some(t => mit[t].includes('mehrzahl-einsetzen') && mit[t].includes('plural'))) f.push('11v: im selben Teil wie Übung 16 (dieselben Wörter)');
+    let ohne = null; try { ohne = nurArt(); } finally { alle.splice(stelle, 0, UE); }
+    const gewechselt = alle.filter(m => m !== UE && tv(ohne, m.id) !== tv(mitArt, m.id)).map(m => m.nr);
+    if (gewechselt.length) f.push('11t: die Teile bleiben nicht — den Teil wechseln die Übungen ' + gewechselt.join(', '));
+    if (ks(mit).filter(t => mit[t].includes('mehrzahl-einsetzen')).length !== 1) f.push('11t: die neue steht nicht in genau einem Teil');
+    if ([mit, mitArt].some(tt => ks(tt).some(t => tt[t].includes('mehrzahl-einsetzen') && tt[t].includes('plural')))) f.push('11v: im selben Teil wie Übung 16 (dieselben Wörter)');
   } catch (e){ f.push('11: die Messung an seinem Satzvorrat wirft — ' + e.message); }
   return { f, zahl };
 }
