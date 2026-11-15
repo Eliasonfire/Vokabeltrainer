@@ -17,8 +17,12 @@
  *   M3  Kein Nomen mit regelmäßiger männlicher Mehrzahl (…ُونَ) steht bei den Dingen — die gibt es
  *       nur für Menschen. Fängt einen Mensch, der versehentlich bei den Dingen gelandet ist.
  *   M4  Eine Mehrzahlkarte (…#pl) wird wie ihre Einzahl eingeordnet.
+ *   M5  Kein Engel, kein Dschinn, kein Mensch steht bei den Dingen (Bedeutung der Karte). Elias,
+ *       15.11.2026: „auch engel und Jinn gehören zu den denkenden". Am 15.11.2026 gab es dafür noch
+ *       keine Karte — M5 bewacht die erste, die kommt.
  * Störtest: ein Mensch wird aus der Liste genommen (M1 muss rot werden), der Lehrer wird zu den
- * Dingen gelegt (M3 muss rot werden). Danach stehen die Listen wieder wie vorher.
+ * Dingen gelegt (M3 muss rot werden), und eine Probekarte „Engel" kommt kurz zu den Dingen (M5
+ * muss rot werden). Danach stehen Listen und Karten wieder wie vorher.
  */
 import { oeffneApp } from './browser.mjs';
 
@@ -27,11 +31,16 @@ const MESSUNG = (stoer) => `(() => {
   /* Ausnahmen zu M3: Dinge, deren Karte trotzdem eine Form auf -ūna trägt. 45940 سَنَةٌ „Jahr"
      hat auf der Karte die zweite Mehrzahl سِنُونَ — ein Jahr ist kein Mensch. */
   const M3_AUSNAHME = new Set(['45940']);
-  if (${stoer}) { UEB_MENSCH_IDS.delete(nimmRaus); UEB_MENSCH_IDS.delete(verlege); UEB_DING_IDS.add(verlege); }
+  const DENKEND = /Engel|Dschinn|Djinn|Jinn|Mensch/i;
+  const probe = { id: 'stoer-engel', ar: 'x', pl: 'y', de: 'Engel', type: 'noun' };
+  if (${stoer}) { UEB_MENSCH_IDS.delete(nimmRaus); UEB_MENSCH_IDS.delete(verlege); UEB_DING_IDS.add(verlege);
+    VOCAB_DATA.push(probe); UEB_DING_IDS.add(probe.id); }
   try {
     const nomen = VOCAB_DATA.filter(w => w && w.pl && w.type === 'noun' && !istPluralKarte(String(w.id)) && !istZahlwort(w));
     const ids = new Set(nomen.map(w => String(w.id)));
-    const M1 = [], M2 = [], M3 = [], M4 = [];
+    const M1 = [], M2 = [], M3 = [], M4 = [], M5 = [];
+    for (const w of VOCAB_DATA) if (w && UEB_DING_IDS.has(String(w.id)) && DENKEND.test(String(w.de)))
+      M5.push(w.id + ' „' + w.de + '" — ein Wesen mit Verstand steht bei den Dingen');
     for (const w of nomen) {
       const id = String(w.id), m = UEB_MENSCH_IDS.has(id), d = UEB_DING_IDS.has(id);
       if (m === d) M1.push(id + ' ' + w.ar + ' „' + w.de + '" — ' + (m ? 'in beiden Listen' : 'in keiner Liste'));
@@ -47,9 +56,10 @@ const MESSUNG = (stoer) => `(() => {
       mehrzahlkarten++;
       if (uebMenschOderDing(w) !== uebMenschOderDing(sg)) M4.push(w.id);
     }
-    return { nomen: nomen.length, mensch: UEB_MENSCH_IDS.size, ding: UEB_DING_IDS.size, mehrzahlkarten, M1, M2, M3, M4 };
+    return { nomen: nomen.length, mensch: UEB_MENSCH_IDS.size, ding: UEB_DING_IDS.size, mehrzahlkarten, M1, M2, M3, M4, M5 };
   } finally {
-    if (${stoer}) { UEB_DING_IDS.delete(verlege); UEB_MENSCH_IDS.add(nimmRaus); UEB_MENSCH_IDS.add(verlege); }
+    if (${stoer}) { UEB_DING_IDS.delete(verlege); UEB_MENSCH_IDS.add(nimmRaus); UEB_MENSCH_IDS.add(verlege);
+      UEB_DING_IDS.delete(probe.id); const i = VOCAB_DATA.indexOf(probe); if (i >= 0) VOCAB_DATA.splice(i, 1); }
   }
 })()`;
 
@@ -72,17 +82,18 @@ const zeige = (name, L) => { if (L.length) { console.log(`   ${name}: ${L.length
 console.log(`${echt.nomen} Nomen mit Mehrzahl · ${echt.mensch} Menschen · ${echt.ding} Dinge · ${echt.mehrzahlkarten} Mehrzahlkarten verglichen`);
 let rot = 0;
 if (!echt.nomen || !echt.mehrzahlkarten) { console.log('⛔ Nichts gemessen: keine Nomen mit Mehrzahl geladen.'); rot = 1; }
-if (echt.M1.length || echt.M2.length || echt.M3.length || echt.M4.length) {
+if (echt.M1.length || echt.M2.length || echt.M3.length || echt.M4.length || echt.M5.length) {
   console.log('⛔ Befunde:');
   zeige('M1 nicht genau einmal eingeordnet', echt.M1);
   zeige('M2 id in der Liste, aber kein Nomen mit Mehrzahl', echt.M2);
   zeige('M3 Menschen-Mehrzahl bei den Dingen', echt.M3);
   zeige('M4 Mehrzahlkarte anders als ihre Einzahl', echt.M4);
+  zeige('M5 Engel, Dschinn oder Mensch bei den Dingen', echt.M5);
   rot = 1;
 }
-const stoerRot = stoer.M1.length > 0 && stoer.M3.length > 0;
-console.log(stoerRot ? `Störtest: rot ✓ (M1 ${stoer.M1.length}, M3 ${stoer.M3.length})`
-  : `⛔ Störtest NICHT rot (M1 ${stoer.M1.length}, M3 ${stoer.M3.length}) — die Messung sagt nichts.`);
+const stoerRot = stoer.M1.length > 0 && stoer.M3.length > 0 && stoer.M5.length > 0;
+console.log(stoerRot ? `Störtest: rot ✓ (M1 ${stoer.M1.length}, M3 ${stoer.M3.length}, M5 ${stoer.M5.length})`
+  : `⛔ Störtest NICHT rot (M1 ${stoer.M1.length}, M3 ${stoer.M3.length}, M5 ${stoer.M5.length}) — die Messung sagt nichts.`);
 if (!stoerRot) rot = 1;
 console.log(rot ? 'pruefe-mensch-ding: ROT' : 'pruefe-mensch-ding: grün');
 process.exit(rot);

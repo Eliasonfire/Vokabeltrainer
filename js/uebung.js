@@ -1233,10 +1233,12 @@ function uebMehrzahlFormen(pl){
    Elias, wörtlich: „alles was menschlich ist das kannst du im code irgendwie markieren (ohne das ich
    es sehe) und einen prüfer machen." Die Karten haben dafür kein Feld; diese Listen sind es.
    Sie werden nirgends angezeigt.
-   - MENSCH: alle Nomen mit Mehrzahl, die einen Menschen meinen.
+   - MENSCH: alle Nomen mit Mehrzahl, die ein Wesen mit Verstand meinen. Elias, 15.11.2026:
+     „auch engel und Jinn gehören zu den denkenden". Das sagt auch sein Lehrer (Regel zu Kapitel 16
+     in grammar-data.js: Engel und Dschinn bei 23:23, Tiere nicht bei 10:09). Am 15.11.2026 gab es
+     für Engel und Dschinn noch keine Karte; kommt eine, gehört sie HIERHER (pruefe-mensch-ding M5).
    - DING: alle übrigen Nomen mit Mehrzahl. Tiere stehen hier: sie haben im Sinn von Kapitel 16
-     keinen Verstand (seine Worte: „dinge die keinen verstand haben"). Das ist MEINE Zuordnung nach
-     der Buchregel, er hat zu Tieren nichts gesagt.
+     keinen Verstand (seine Worte: „dinge die keinen verstand haben"; der Lehrer bei 10:09).
    Ein Nomen, das in KEINER Liste steht, gilt als unbekannt und wird von keiner Übung als Ding
    behandelt. werkzeuge/pruefe-mensch-ding.mjs wird rot, sobald eine Karte mit Mehrzahl in keiner
    oder in beiden Listen steht — eine neue Karte muss also eingeordnet werden. Adjektive stehen in
