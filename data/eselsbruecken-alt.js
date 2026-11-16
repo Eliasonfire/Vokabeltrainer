@@ -2872,7 +2872,7 @@ const ESELSBRUECKEN_ALT = {
   '46016': [
     'Dein Satz: السِّتَارَةُ فِي الْغُرْفَةِ — „Der Vorhang ist im Zimmer.“ Zwei weibliche Wörter auf ة, das eine hängt im anderen. Sag den Satz einmal laut, wenn du abends deinen eigenen Vorhang zuziehst.',
     'Zwei Dinge machen ein Zimmer zu: der بَابٌ (Tür) hält Leute draußen, die سِتَارَةٌ hält Blicke draußen. Die Tür kennst du längst — der Vorhang ist ihr leiser Bruder am Fenster.',
-    'Klang-Brücke, keine Verwandtschaft: سِتَارَةٌ klingt wie „Sitar“, das indische Saiteninstrument. Stell dir vor, hinter dem Vorhang spielt jemand Sitar — du ziehst die سِتَارَةٌ auf und siehst ihn sitzen. Erst die Sitar hören, dann den Vorhang aufziehen.'
+    'Abendreihenfolge im Zimmer: erst das سَرِيرٌ (Bett) — das hast du aus Kapitel 1 —, dann zieht jemand die سِتَارَةٌ zu. Beide fangen mit س an, beide stehen im selben Zimmer: Bett, dann Vorhang, und der Tag ist zu.'
   ],
 
   '46017': [
