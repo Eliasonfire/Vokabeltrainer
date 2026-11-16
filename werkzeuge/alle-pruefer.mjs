@@ -976,7 +976,10 @@ const PRUEFER = [
   ['werkzeuge/pruefe-mensch-ding.mjs', []],
   /* 15.11.2026 — Übung 19 „Mehrzahl von Dingen" (Kapitel 16): Ding → هَذِهِ, Mensch → هَؤُلَاءِ,
      nur eingeordnete Nomen aus seinen Karten. Elias auf den Entwurf: „ja bau so". */
-  ['test-mehrzahl-dinge.mjs', []]
+  ['test-mehrzahl-dinge.mjs', []],
+  /* 17.11.2026 — Hörmodus: derselbe Ton ab dem dritten Abspielen langsamer, Zähler je Wort (in der
+     laufenden App, Sprachausgabe abgefangen, Störtest). Elias (Eingang 16.11.): „beim 3. Mal reduziert". */
+  ['werkzeuge/pruefe-hoer-langsam.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App

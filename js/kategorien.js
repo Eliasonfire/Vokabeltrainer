@@ -554,9 +554,10 @@ let WK_WORT = null;
 function wkEselsbruecke(w){
   const t = [];
   const notiz = getNote(w.id);
-  const liste = (typeof vorschlagsListe === 'function') ? vorschlagsListe(w) : [];
+  /* ⛔ Abgelehnte stehen hier nicht (17.11.2026, sichtbareVorschlaege() in js/lernen.js). */
+  const liste = (typeof sichtbareVorschlaege === 'function') ? sichtbareVorschlaege(w).map(s => s.text) : [];
   if (liste.length){
-    const nr = gewaehlterVorschlag(w.id, liste.length);
+    const nr = sichtbarerVorschlagPos(w, sichtbareVorschlaege(w));
     const huelle = notiz ? 'class="wk-abschnitt" data-wkvorschlag'
       : 'class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eigene Eselsbrücke schreiben"';
     t.push(`<div ${huelle}>
@@ -1239,14 +1240,15 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
 
   const blatt = e.target.closest('[data-wkblatt]');
   if (blatt && WK_WORT){
-    const liste = vorschlagsListe(WK_WORT);
-    if (liste.length < 2) return;
-    const jetzt = gewaehlterVorschlag(WK_WORT.id, liste.length);
-    const neu = (jetzt + Number(blatt.dataset.wkblatt) + liste.length) % liste.length;
+    const sicht = sichtbareVorschlaege(WK_WORT);
+    if (sicht.length < 2) return;
+    const jetzt = sichtbarerVorschlagPos(WK_WORT, sicht);
+    const neu = (jetzt + Number(blatt.dataset.wkblatt) + sicht.length) % sicht.length;
     /* Dieselbe Ablage wie im Notizfenster (js/kern.js). Wer hier blaettert,
        aendert damit auch, was auf der Lernkarte steht - genau so ist Elias'
-       Wunsch vom selben Tag gemeint, und es ist weiterhin KEINE Uebernahme. */
-    setzeGewaehltenVorschlag(WK_WORT.id, neu);
+       Wunsch vom selben Tag gemeint, und es ist weiterhin KEINE Uebernahme.
+       Gespeichert wird die Nummer in der VOLLEN Liste (17.11.2026). */
+    setzeGewaehltenVorschlag(WK_WORT.id, sicht[neu].nr);
     const stand = karte.scrollTop;
     karte.innerHTML = baueWortKarte(WK_WORT);
     karte.scrollTop = stand;                 /* sonst springt die Karte bei jedem Blaettern nach oben */

@@ -686,6 +686,7 @@ function naechsteHoerfrage(){
   HOER.beantwortet = false;
   HOER.fertig = false;
   HOER.sperreBis = 0;
+  HOER.zaehlWort = null;   /* neue Frage → der Ton zählt wieder ab 1 (hoerNaechstesTempo) */
 
   hoerStandSchreiben();
   document.getElementById('hoerHinweis').textContent = HOER.wort.satz ? 'Was bedeutet der Satz?' : 'Was bedeutet das Wort?';
@@ -713,6 +714,32 @@ function naechsteHoerfrage(){
   else hoerAbspielen();
 }
 
+/* ---------- Beim dritten Mal langsamer (17.11.2026) ----------
+
+   Elias (Eingang, 16.11.2026): „Im Hörmodus soll derselbe Ton beim dritten
+   Abspielen langsamer wiedergegeben werden, damit er besser zu verstehen ist."
+   · „Beim 1. und 2. Mal normale Geschwindigkeit, beim 3. Mal reduziert" ·
+   „Zähler pro Ton: bei einem neuen Wort/Ton wieder bei 1 anfangen."
+
+   Gezählt wird JEDES Abspielen desselben Worts oder Satzes: das von selbst
+   beim Erscheinen, jedes Tippen auf den Lautsprecher und das Vorsprechen nach
+   der Antwort. Der Zähler hängt am Wort selbst (`zaehlWort`), springt also bei
+   jedem neuen Wort auf 0, und naechsteHoerfrage() setzt ihn zusätzlich zurück
+   (falls zufällig dasselbe Wort noch einmal drankommt).
+
+   ⛔ MEINE Wahl, nicht seine: das Tempo 0,6 (normal ist 0,85) und dass es AB
+   dem dritten Mal langsam bleibt (auch beim vierten, fünften …). Eine
+   Einstellung dafür gibt es noch nicht; sein Satz nannte sie nur als Beispiel.
+   Der Geh-Modus spricht jedes Wort nur einmal und bleibt unberührt.
+   Bewacht von werkzeuge/pruefe-hoer-langsam.mjs. */
+const HOER_LANGSAM_AB = 3;
+const HOER_LANGSAM_TEMPO = 0.6;
+function hoerNaechstesTempo(){
+  if (HOER.zaehlWort !== HOER.wort){ HOER.zaehlWort = HOER.wort; HOER.abgespielt = 0; }
+  HOER.abgespielt = (HOER.abgespielt || 0) + 1;
+  return HOER.abgespielt >= HOER_LANGSAM_AB ? HOER_LANGSAM_TEMPO : undefined;
+}
+
 function hoerAbspielen(){
   if (!HOER.wort) return;
   const knopf = document.getElementById('btnHoerPlay');
@@ -720,7 +747,7 @@ function hoerAbspielen(){
   setTimeout(()=>knopf.classList.remove('spielt'), 600);
   /* Die Vollform mit Endung sprechen, nicht die nackte Schreibweise - so
      hoert Elias das Wort, wie es im Satz klingt. */
-  speakArabic(sprechText(HOER.wort));
+  speakArabic(sprechText(HOER.wort), undefined, hoerNaechstesTempo());
 }
 
 function beantworteHoerfrage(i){
@@ -810,7 +837,7 @@ function beantworteHoerfrage(i){
 
   /* Nach der Antwort noch einmal vorsprechen: jetzt sieht man die Schrift
      dazu, und genau dabei praegt sich der Klang ein. */
-  setTimeout(()=>speakArabic(sprechText(w)), 320);
+  setTimeout(()=>speakArabic(sprechText(w), undefined, hoerNaechstesTempo()), 320);
 }
 
 document.getElementById('hoerOptionen').addEventListener('click', (e)=>{

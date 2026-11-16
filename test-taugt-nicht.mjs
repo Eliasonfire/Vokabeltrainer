@@ -57,8 +57,18 @@ const ALTE_FASSUNG = `function schalteVorschlagWeg(id, nr, text){
   return !!(VORSCHLAG_WEG[id] && VORSCHLAG_WEG[id][schl]);
 }`;
 
+/* Die Fassung des Handlers bis zum 16.11.2026 (Umschalten, Marke, Blättern) — Störtest S3. */
+const ALTER_HANDLER = `{
+  const w = SESSION.words[SESSION.idx];
+  if (!w || !VORSCHLAEGE.length) return;
+  const jetztWeg = schalteVorschlagWeg(w.id, VORSCHLAG_NR, VORSCHLAEGE[VORSCHLAG_NR]);
+  if (jetztWeg && VORSCHLAEGE.length > 1) blaettereVorschlag(1);
+  else zeigeVorschlag();
+}`;
+const SICHTBAR = funktionAus(LERNEN, 'sichtbareVorschlaege') + '\n' + funktionAus(LERNEN, 'sichtbarerVorschlagPos');
+
 /* Baut eine frische Umgebung. `schalter` = Quelltext der Schalter-Funktion (echt oder Störfassung). */
-function umgebung(schalter){
+function umgebung(schalter, handler = HANDLER, sicht = SICHTBAR){
   const ctx = vm.createContext({
     LS: { _d: {}, get(k, f){ return k in this._d ? this._d[k] : f; }, set(k, v){ this._d[k] = JSON.parse(JSON.stringify(v)); } },
     Date, JSON, Object, String, Number, Array, console
@@ -70,11 +80,20 @@ function umgebung(schalter){
   vm.runInContext(schalter, ctx);
   vm.runInContext(`
     globalThis.SESSION = { words: [{ id: 'w1' }], idx: 0 };
-    globalThis.VORSCHLAEGE = []; globalThis.VORSCHLAG_NR = 0;
-    globalThis.geblaettert = []; globalThis.gezeigt = 0;
+    globalThis.VORSCHLAEGE = []; globalThis.VORSCHLAG_NRN = []; globalThis.VORSCHLAG_NR = 0;
+    globalThis.geblaettert = []; globalThis.gezeigt = 0; globalThis.versteckt = false;
+    globalThis.gewaehlt = null; globalThis.karteNeu = 0; globalThis.meldung = '';
+    globalThis.VOLL = [];
     function blaettereVorschlag(n){ geblaettert.push(n); }
     function zeigeVorschlag(){ gezeigt++; }
-    function tippe() ${HANDLER}
+    function setzeGewaehltenVorschlag(id, nr){ gewaehlt = nr; }
+    function gewaehlterVorschlag(id, n){ return (gewaehlt > 0 && gewaehlt < n) ? gewaehlt : 0; }
+    function vorschlagsListe(w){ return VOLL; }
+    function renderNotiz(){ karteNeu++; }
+    function toast(t){ meldung = t; }
+    const document = { getElementById(){ return { classList: { add(k){ if (k === 'hidden') versteckt = true; } } }; } };
+    ${sicht}
+    function tippe() ${handler}
   `, ctx);
   const lauf = code => vm.runInContext(code, ctx);
   return {
@@ -83,10 +102,16 @@ function umgebung(schalter){
     gespeichert(){ return JSON.parse(JSON.stringify(ctx.LS._d.vt_vorschlagWeg || {})); },
     weg(nr, text){ return lauf(`istVorschlagVerworfen('w1', ${nr}, ${JSON.stringify(text)})`); },
     schalte(nr, text){ return lauf(`schalteVorschlagWeg('w1', ${nr}${text === undefined ? '' : ', ' + JSON.stringify(text)})`); },
-    tippe(vorschlaege, nr){
-      lauf(`VORSCHLAEGE = ${JSON.stringify(vorschlaege)}; VORSCHLAG_NR = ${nr}; geblaettert = []; gezeigt = 0;`);
+    /* Öffnet das Fenster wie oeffneNotizEditor(): volle Liste → sichtbare Liste. */
+    sichtbar(voll){ lauf(`VOLL = ${JSON.stringify(voll)}`); return JSON.parse(lauf("JSON.stringify(sichtbareVorschlaege({ id: 'w1' }))")); },
+    tippe(voll, pos){
+      lauf(`VOLL = ${JSON.stringify(voll)};
+        VORSCHLAEGE = sichtbareVorschlaege({ id: 'w1' }).map(x => x.text);
+        VORSCHLAG_NRN = sichtbareVorschlaege({ id: 'w1' }).map(x => x.nr); VORSCHLAG_NR = ${pos};
+        geblaettert = []; gezeigt = 0; versteckt = false; gewaehlt = null; karteNeu = 0; meldung = '';`);
       lauf('tippe()');
-      return { geblaettert: JSON.parse(lauf('JSON.stringify(geblaettert)')), gezeigt: lauf('gezeigt') };
+      return JSON.parse(lauf(`JSON.stringify({ liste: VORSCHLAEGE, nrn: VORSCHLAG_NRN, pos: VORSCHLAG_NR, geblaettert,
+        gezeigt, versteckt, gewaehlt, karteNeu, meldung, sichtbarDanach: sichtbareVorschlaege({ id: 'w1' }).map(x => x.text) })`));
     }
   };
 }
@@ -135,17 +160,25 @@ function faelle(U){
   const g1 = U.schalte(3), g2 = U.schalte(3);
   p('G  ohne Text: erst abgelehnt, dann zurückgenommen', g1 === true && g2 === false, g1 + ' / ' + g2);
 
-  /* H — der ECHTE Klick-Handler: EIN Tippen blättert zum nächsten Vorschlag. */
+  /* V — was angezeigt wird (17.11.2026, Elias: „die alte darf nicht wieder angezeigt werden"). */
+  U.setze({ w1: { 0: { text: ALT, zeit: 1 }, 2: { text: ANDERER, zeit: 2 } } });
+  const v = U.sichtbar([NEU, 'zweiter', ANDERER]);
+  p('V1 ein abgelehnter Text steht nicht in der sichtbaren Liste, mit seiner Nummer der vollen Liste', JSON.stringify(v) === JSON.stringify([{ text: NEU, nr: 0 }, { text: 'zweiter', nr: 1 }]), JSON.stringify(v));
+  U.setze({ w1: { 5: { text: 'zweiter', zeit: 3 } } });
+  p('V2 die Marke wandert mit dem Text: auch unter anderer Nummer abgelehnt → nicht sichtbar', U.sichtbar([NEU, 'zweiter']).length === 1, JSON.stringify(U.sichtbar([NEU, 'zweiter'])));
+
+  /* H — der ECHTE Klick-Handler: EIN Tippen nimmt den Vorschlag SOFORT weg. */
   U.setze({ w1: { 0: { text: ALT, zeit: 1 } } });
   const h = U.tippe([NEU, ANDERER, 'noch einer'], 0);
-  p('H1 ein Tippen bei altem Eintrag: es wird EINMAL weitergeblättert', h.geblaettert.length === 1 && h.geblaettert[0] === 1, JSON.stringify(h));
-  p('H2 … und der neue Text ist abgelehnt', U.weg(0, NEU) === true, U.weg(0, NEU));
-  U.setze({ w1: { 0: { text: NEU, zeit: 7 } } });
-  const h2 = U.tippe([NEU, ANDERER], 0);
-  p('H3 ein Tippen auf „gemerkt ✓" nimmt zurück und blättert NICHT', h2.geblaettert.length === 0 && h2.gezeigt === 1 && U.weg(0, NEU) === false, JSON.stringify(h2));
+  p('H1 ein Tippen: der Vorschlag ist sofort aus dem Fenster, der nächste steht da', JSON.stringify(h.liste) === JSON.stringify([ANDERER, 'noch einer']) && h.pos === 0 && h.gezeigt === 1, JSON.stringify(h));
+  p('H2 … dauerhaft abgelehnt (gespeichert) und nach dem Wiederöffnen nicht mehr sichtbar', U.weg(0, NEU) === true && U.gespeichert().w1 && U.gespeichert().w1[0].text === NEU && h.sichtbarDanach.indexOf(NEU) < 0, JSON.stringify({ g: U.gespeichert(), s: h.sichtbarDanach }));
+  p('H3 … die Wahl zeigt auf den nächsten (Nummer der VOLLEN Liste), die Karte wird neu gezeichnet, Meldung kommt', h.gewaehlt === 1 && h.karteNeu === 1 && /entfernt/.test(h.meldung), JSON.stringify(h));
+  U.setze({ w1: { 0: { text: NEU, zeit: 1 } } });
+  const h2 = U.tippe([NEU, ANDERER, 'dritter'], 1);
+  p('H4 letzter in der Reihe: Wahl springt rundherum auf den ersten sichtbaren', JSON.stringify(h2.liste) === JSON.stringify([ANDERER]) && h2.pos === 0 && h2.gewaehlt === 1 && U.weg(2, 'dritter') === true, JSON.stringify(h2));
   U.setze({});
   const h3 = U.tippe([NEU], 0);
-  p('H4 einziger Vorschlag: abgelehnt, nicht geblättert, Anzeige neu gezeichnet', h3.geblaettert.length === 0 && h3.gezeigt === 1 && U.weg(0, NEU) === true, JSON.stringify(h3));
+  p('H5 einziger Vorschlag: abgelehnt, Kasten verschwindet, nichts mehr sichtbar', h3.liste.length === 0 && h3.versteckt && U.weg(0, NEU) === true && h3.sichtbarDanach.length === 0, JSON.stringify(h3));
   return r;
 }
 
@@ -158,13 +191,19 @@ for (const [name, ok, gemessen] of faelle(umgebung(funktionAus(KERN, 'schalteVor
 
 /* ---------- Störtests: kann dieser Test rot werden? ---------- */
 console.log('\n— Störtests —');
-function stoertest(name, schalter, mussFallen){
-  const rot = faelle(umgebung(schalter)).filter(([, ok]) => !ok).map(([n]) => n.slice(0, 2));
+function stoertest(name, schalter, mussFallen, handler, sicht){
+  const rot = faelle(umgebung(schalter, handler, sicht)).filter(([, ok]) => !ok).map(([n]) => n.slice(0, 2));
   const fehlt = mussFallen.filter(k => !rot.includes(k));
   if (!fehlt.length) console.log(`  ✔ ${name}: fällt durch bei ${rot.join(', ')}`);
   else { schlecht++; console.log(`  ✘ ${name}: sollte bei ${mussFallen.join(', ')} durchfallen, rot war nur: ${rot.join(', ') || 'nichts'}`); }
 }
-stoertest('S1 alte Fassung (Schalten nach Nummer)', ALTE_FASSUNG, ['A1', 'A2', 'H1', 'H2']);
+stoertest('S1 alte Fassung (Schalten nach Nummer)', ALTE_FASSUNG, ['A1', 'A2']);
+stoertest('S3 alter Handler bis 16.11.2026 (Marke statt weg)', funktionAus(KERN, 'schalteVorschlagWeg'), ['H1', 'H3', 'H5'], ALTER_HANDLER);
+{
+  const ohneFilter = SICHTBAR.replace('istVorschlagVerworfen(w.id, nr, text)) return;', 'false) return;');
+  if (ohneFilter === SICHTBAR){ schlecht++; console.log('  ✘ S4: Stelle nicht gefunden — Störtest wirkungslos.'); }
+  else stoertest('S4 sichtbare Liste ohne Filter (abgelehnte bleiben stehen)', funktionAus(KERN, 'schalteVorschlagWeg'), ['V1', 'V2', 'H2', 'H5'], HANDLER, ohneFilter);
+}
 {
   const echt = funktionAus(KERN, 'schalteVorschlagWeg');
   const nurEigeneNummer = echt.replace("(mitText && String(x.text).slice(0, 400) === kurz) || (k === schl && !mitText)", "k === schl");

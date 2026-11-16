@@ -598,7 +598,10 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
         };
         const a = lies(einer), b = lies(viele);
         if (!/einziger/.test(a.marke)) throw new Error('bei einem Vorschlag fehlt „einziger": ' + a.marke);
-        if (/ersetzen/.test(a.knopf)) throw new Error('verspricht Ersatz, den es nicht gibt: ' + a.knopf);
+        /* ⭐ Seit 17.11.2026 heisst der Knopf immer „bitte ersetzen": die Ablehnung
+           nimmt den Vorschlag sofort weg und geht an die Eselsbruecken-Routine,
+           die eine neue schreibt — auch beim einzigen (Elias, Eingang 16.11.2026). */
+        if (!/ersetzen/.test(a.knopf)) throw new Error('bei einem Vorschlag fehlt „ersetzen": ' + a.knopf);
         if (/einziger/.test(b.marke)) throw new Error('bei mehreren steht faelschlich „einziger": ' + b.marke);
         if (!/ersetzen/.test(b.knopf)) throw new Error('bei mehreren fehlt „ersetzen": ' + b.knopf);
         const zahl = VOCAB_DATA.filter(w=>vorschlagsListe(w).length === 1).length;

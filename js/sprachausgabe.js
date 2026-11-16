@@ -189,7 +189,10 @@ function tonFehlertext(code, stimmenZahl){
 /* `probe` = der Knopf „Arabisch testen": sprechen, als wäre Arabisch ohne
    Liste schon bestätigt — genau so, wie die App es nach seinem Ja tut. Der
    Test geht also durch DIESELBEN Wachen (onend, 1400-ms-Uhr) wie jedes Wort. */
-function speakArabic(text, probe){
+/* `tempo` (17.11.2026, optional): Sprechtempo statt der üblichen 0,85 — der
+   Hörmodus spricht ab dem dritten Abspielen desselben Worts langsamer
+   (hoerNaechstesTempo() in js/hoeren.js). */
+function speakArabic(text, probe, tempo){
   if (!('speechSynthesis' in window)){
     toast('Sprachausgabe wird von diesem Browser nicht unterstützt');
     return;
@@ -245,7 +248,7 @@ function speakArabic(text, probe){
   if (gewaehlt) u.voice = gewaehlt;
   /* Bei `ohneListe` bleibt `u.voice` absichtlich leer (die Liste ist ja leer):
      dann reicht Chrome nur `lang` ans Sprachmodul des Geräts weiter. */
-  u.rate = 0.85;
+  u.rate = (typeof tempo === 'number' && tempo > 0) ? tempo : 0.85;
   /* Ohne Liste gibt es keine „andere Stimme", die man wählen könnte — der Weg
      zurück ist der Test, bei dem er „Nein" sagen kann. */
   const KEIN_TON_OHNE_LISTE = 'Kein Ton — die Sprachausgabe des Geräts hat nichts gesprochen. '
