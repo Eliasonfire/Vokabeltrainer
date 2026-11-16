@@ -1210,6 +1210,12 @@ function juzText(s){
    die Sure finden, und ein Vergleich gegen die vokalisierte Fassung faende
    nichts. Faellt das Feld einmal aus, zeigt die App weiter das blanke `ar`. */
 function surenTitel(s){ return s.arTaschkil || s.ar; }
+/* ⭐ Die deutsche Bedeutung des Namens (17.11.2026). Elias (Eingang, 16.11.2026):
+   „bei jeder Sure (114 Suren) neben dem Titel auch die Bedeutung des Titels" ·
+   „Anzeige überall, wo Suren-Titel auftauchen: Suren-Liste und Ansicht innerhalb
+   einer Sure". Feld `de` in surah-data.js, Quelle und Werkzeug:
+   werkzeuge/surennamen-deutsch.mjs. Fehlt das Feld, steht nichts da. */
+function surenBedeutung(s){ return (s && s.de) ? String(s.de) : ''; }
 
 function surahZeile(s){
   /* Wer einzelne Verse abgehakt hat, soll das in der Uebersicht sehen -
@@ -1231,6 +1237,7 @@ function surahZeile(s){
       <div class="sr-num">${s.id}</div>
       <div class="sr-mid">
         <div class="sr-name">${s.name} · ${s.verses} Verse</div>
+        ${surenBedeutung(s) ? `<div class="sr-de">${escapeHtml(surenBedeutung(s))}</div>` : ''}
         <div class="sr-unten">${unten}</div>
       </div>
       <div class="sr-ar">${surenTitel(s)}</div>
@@ -1260,7 +1267,8 @@ function renderSurahList(filter){
      wird der Rollstand wiederhergestellt. Beim Tippen in der Suche steht
      OFFENE_SURE ohnehin auf null, dort waere ein Sprung falsch. */
   const kamAusSure = OFFENE_SURE !== null;
-  const list = SURAH_DATA.filter(s => !q || s.name.toLowerCase().includes(q) || s.ar.includes(q) || String(s.id)===q);
+  const list = SURAH_DATA.filter(s => !q || s.name.toLowerCase().includes(q) || s.ar.includes(q) || String(s.id)===q
+    || surenBedeutung(s).toLowerCase().includes(q));   /* „kuh" findet al-Baqara (17.11.2026) */
   document.getElementById('quranFullTitle').textContent = 'Quran lesen';
   /* ⛔⛔ HIER STAND `quranFullIntro` — und sein Fehlen hat am 15.09.2026 die
      ganze Surenliste stillgelegt. Die Einleitung darüber ist auf Elias' Wunsch
@@ -2618,6 +2626,10 @@ async function openSurah(id, opt){
     `<span class="qt-nr">${id}.</span>` +
     `<span class="qt-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(surah))}</span>` +
     `<span class="qt-um">${escapeHtml(surah.name)}</span>`;
+  /* ⚠️ Die deutsche Bedeutung steht NICHT hier im Kopf (17.11.2026): bei 375 px
+     blieb neben Nummer, arabischem Namen und Umschrift kaum Platz, aus „Die
+     hereinbrechende Katastrophe" wurde „Di…" (Probefoto). Sie steht in der
+     Zeile darunter vor der Verszahl, siehe aktualisiereHifzLeiste(). */
   /* ⛔ Zweite Stelle, die auf das entfallene `quranFullIntro` zeigte — sie
      hätte das Öffnen einer Sure genauso stillgelegt wie die Liste. Siehe den
      Kommentar bei renderSurahList(). */
@@ -2888,11 +2900,16 @@ function aktualisiereHifzLeiste(id, surah){
   leiste.classList.remove('hidden');
   const gesamt = surah ? surah.verses : (VERSE_CACHE[id] || []).length;
   const kann = HIFZ[id] ? gesamt : zaehleVerse(id);
-  document.getElementById('hifzStand').textContent =
+  const stand =
     HIFZ[id] ? `Ganze Sure abgehakt (${gesamt} Verse)`
     : kann === 0 ? `${gesamt} Verse`
     : kann >= gesamt ? `Alle ${gesamt} Verse auswendig`
     : `${kann} von ${gesamt} Versen auswendig`;
+  /* Die deutsche Bedeutung des Surennamens vorn (17.11.2026, surenBedeutung()). */
+  const bedeutung = surenBedeutung(surah || SURAH_DATA.find(s => s.id === id));
+  document.getElementById('hifzStand').innerHTML = bedeutung
+    ? `<span class="hifz-de">${escapeHtml(bedeutung)}</span> · ${escapeHtml(stand)}`
+    : escapeHtml(stand);
   const knopf = document.getElementById('btnHifzVerdecken');
   knopf.classList.toggle('active', HIFZ_VERDECKT);
   knopf.disabled = kann === 0;

@@ -3631,6 +3631,15 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
   font-size:var(--fs-sm);color:var(--text-dim);
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+/* Die deutsche Bedeutung des Surennamens (17.11.2026, surenBedeutung() in js/quran.js):
+   eine eigene Zeile unter Umschrift und Verszahl, kursiv, damit sie nicht wie ein
+   Name aussieht. */
+.surah-row .sr-de{
+  font-size:var(--fs-sm);font-style:italic;color:var(--text-dim);
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.surah-row .sr-de{white-space:normal;}   /* lange Bedeutungen ganz zeigen statt „…" */
+#hifzStand .hifz-de{font-style:italic;color:var(--text);}
 /* ⚠️ Der Juz hatte bis zum 04.08.2026 abends eine eigene Spalte rechts neben
    dem Namen. Begründung damals: die Namenszeile trage bei angefangenen Suren
    schon „12 von 286 auswendig" und würde sonst umbrechen. Elias wollte den Juz
