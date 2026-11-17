@@ -67,10 +67,6 @@ function schneide(quelle, kopf, ende = '\n}') {
   return quelle.slice(i, j + ende.length);
 }
 
-/* Seit 17.11.2026 zeigen Karte, Fenster und Wortkarte nur die nicht abgelehnten
-   Vorschläge (sichtbareVorschlaege() in js/lernen.js) — beide Helfer gehören mit hinein. */
-const SICHT = q => schneide(q, 'function sichtbareVorschlaege(') + '\n' + schneide(q, 'function sichtbarerVorschlagPos(') + '\n';
-
 function element() {
   const k = new Set();
   return {
@@ -100,7 +96,7 @@ function lernkarte(quelle, { notiz = '', liste = [], nr = 0 }) {
     arabischHervorheben: s => String(s),
   };
   vm.createContext(ctx);
-  vm.runInContext(SICHT(quelle) + schneide(quelle, 'function renderNotiz(') + '\nrenderNotiz({ id: "k1" });', ctx);
+  vm.runInContext(schneide(quelle, 'function renderNotiz(') + '\nrenderNotiz({ id: "k1" });', ctx);
   return {
     text: els.cardNoteText.innerHTML, kasten: els.cardNoteBox.classList, punkt: els.cardNoteDot.classList,
     eigene: els.cardNoteEigene.classList, eigeneText: els.cardNoteEigeneText.innerHTML,
@@ -150,7 +146,7 @@ function fenster(quelle, { notiz = '', liste = [], nr = 0 }) {
     istVorschlagVerworfen: () => false, arabischHervorheben: s => String(s),
   };
   vm.createContext(ctx);
-  vm.runInContext('var VORSCHLAEGE = []; var VORSCHLAG_NRN = []; var VORSCHLAG_NR = 0;\n' + SICHT(quelle)
+  vm.runInContext('var VORSCHLAEGE = []; var VORSCHLAG_NR = 0;\n'
     + schneide(quelle, 'function zeigeVorschlag(') + '\n' + schneide(quelle, 'function oeffneNotizEditor(')
     + '\n' + schneide(quelle, 'function uebernimmVorschlag(') + '\noeffneNotizEditor();', ctx);
   return {
@@ -195,7 +191,7 @@ function wortkarte(quelle, { notiz = '', liste = [], nr = 0 }) {
     arabischHervorheben: s => String(s), icon: n => '<i>' + n + '</i>',
   };
   vm.createContext(ctx);
-  return vm.runInContext(SICHT(LERNEN) + schneide(quelle, 'function wkEselsbruecke(') + '\nwkEselsbruecke({ id: "k1" });', ctx);
+  return vm.runInContext(schneide(quelle, 'function wkEselsbruecke(') + '\nwkEselsbruecke({ id: "k1" });', ctx);
 }
 const zahl = (html, was) => html.split(was).length - 1;
 const wBeides = q => { const h = wortkarte(q, { notiz: EIGENE, liste: DREI });
@@ -255,18 +251,18 @@ stoere('Lernkarte: seine eigene verdrängt den Vorschlag wieder aus dem Kasten',
 stoere('Lernkarte: seine eigene verschwindet unter dem Vorschlag', LERNEN, "const darunter = (notiz && gewaehlt) ? notiz : '';", "const darunter = '';", q => !lBeides(q));
 stoere('Lernkarte: seine eigene steht wieder oben', LERNEN, "arabischHervorheben(vorschlag || notiz || 'Eselsbrücke hinzufügen')",
   "arabischHervorheben(notiz || vorschlag || 'Eselsbrücke hinzufügen')", q => !lBeides(q));
-stoere('Fenster: Vorschläge wieder weg, sobald er etwas Eigenes hat', LERNEN, 'VORSCHLAEGE = sicht.map(s => s.text);',
-  'VORSCHLAEGE = getNote(w.id) ? [] : sicht.map(s => s.text);', q => !fBeides(q));
+stoere('Fenster: Vorschläge wieder weg, sobald er etwas Eigenes hat', LERNEN, 'VORSCHLAEGE = vorschlagsListe(w);',
+  'VORSCHLAEGE = getNote(w.id) ? [] : vorschlagsListe(w);', q => !fBeides(q));
 stoere('Fenster: „Übernehmen" überschreibt seinen Text', LERNEN,
   "else if (eigenes.indexOf(vorschlag.trim()) < 0) feld.value = eigenes + '\\n\\n' + vorschlag;", 'else feld.value = vorschlag;', q => !fAnhaengen(q));
 stoere('Wortkarte: Vorschläge nur ohne eigene', KAT,
-  '  if (liste.length){\n    const nr = sichtbarerVorschlagPos(w, sichtbareVorschlaege(w));\n    const huelle',
-  '  if (!notiz && liste.length){\n    const nr = sichtbarerVorschlagPos(w, sichtbareVorschlaege(w));\n    const huelle', q => !wBeides(q));
+  '  if (liste.length){\n    const nr = gewaehlterVorschlag(w.id, liste.length);\n    const huelle',
+  '  if (!notiz && liste.length){\n    const nr = gewaehlterVorschlag(w.id, liste.length);\n    const huelle', q => !wBeides(q));
 stoere('Wortkarte: zwei Knöpfe zum Schreiben', KAT,
   "const huelle = notiz ? 'class=\"wk-abschnitt\" data-wkvorschlag'\n      : ", 'const huelle = ', q => !wEinKnopf(q));
 stoere('Wortkarte: seine eigene steht wieder über dem Vorschlag', KAT,
-  '  if (liste.length){\n    const nr = sichtbarerVorschlagPos(w, sichtbareVorschlaege(w));\n    const huelle',
-  "  if (notiz) t.push('<div>Deine Eselsbrücke ' + notiz + '</div>');\n  if (liste.length){\n    const nr = sichtbarerVorschlagPos(w, sichtbareVorschlaege(w));\n    const huelle", q => !wBeides(q));
+  '  if (liste.length){\n    const nr = gewaehlterVorschlag(w.id, liste.length);\n    const huelle',
+  "  if (notiz) t.push('<div>Deine Eselsbrücke ' + notiz + '</div>');\n  if (liste.length){\n    const nr = gewaehlterVorschlag(w.id, liste.length);\n    const huelle", q => !wBeides(q));
 stoere('Wortkarte: seine eigene verschwindet neben dem Vorschlag', KAT,
   '  if (notiz){\n    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">',
   '  if (notiz && !liste.length){\n    t.push(`<div class="wk-abschnitt wk-tippbar" data-wkmerk role="button" tabindex="0" aria-label="Eselsbrücke ändern">', q => !wBeides(q));

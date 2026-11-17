@@ -1468,8 +1468,7 @@ function renderNotiz(w){
      Vorschlag, zu dem er zuletzt geblaettert hat (js/kern.js). Ohne Blaettern
      ist das Nummer 0 - und die ist `w.mnemo`, das Verhalten aendert sich fuer
      alle unberuehrten Woerter also nicht. */
-  /* ⛔ Nur die NICHT abgelehnten (17.11.2026, siehe sichtbareVorschlaege()). */
-  const sicht = sichtbareVorschlaege(w);
+  const liste = vorschlagsListe(w);
   /* ⭐⭐ Seit dem 11.10.2026 bleibt der Vorschlag AUCH neben seiner eigenen stehen.
      Elias: „wenn ich eine notiz hinzufüge dann will ich das die eselsbrücken nicht
      einfach verschwinden, sie sollen da bleiben auch wenn ich eine notiz mache".
@@ -1477,7 +1476,7 @@ function renderNotiz(w){
      wird nie still übernommen); aufgehoben ist nur das Verdrängen. (Vom 11.10. bis
      zum 12.10.2026 stand dabei seine eigene im Kasten und der Vorschlag als Zeile
      darunter, ohne Knopf — seit dem 12.10. ist es umgekehrt, siehe unten.) */
-  const gewaehlt = sicht.length ? sicht[sichtbarerVorschlagPos(w, sicht)].text : '';
+  const gewaehlt = liste.length ? liste[gewaehlterVorschlag(w.id, liste.length)] : '';
   /* ⭐⭐ Seit dem 12.10.2026 steht der VORSCHLAG oben im Kasten und seine eigene
      DARUNTER. Elias: „wenn ich eine notiz bei karteikarten habe beim lernen dann
      will ich das die unter dem vorschlag steht und das ich trotzdem noch die
@@ -1667,43 +1666,7 @@ function vorschlagsListe(w){
   return liste;
 }
 
-/* ---------- „Taugt nichts" nimmt den Vorschlag SOFORT weg (17.11.2026) ----------
-
-   Elias (Eingang, 16.11.2026): „Drückt Elias bei einer Eselsbrücke auf ‚Taugt
-   nichts', soll diese Eselsbrücke sofort weg sein. Er muss nichts speichern und
-   nichts weiter bestätigen, der Knopf allein reicht." · „die alte darf nicht
-   wieder angezeigt werden" · „Die Entfernung muss dauerhaft sein".
-
-   ⛔ Damit ist MEINE Regel vom 19.08.2026 aufgehoben („Verworfen heisst NICHT
-   versteckt", Marke + Durchstreichen, nochmal tippen nimmt zurück). Sein Satz
-   schlägt sie.
-
-   Gespeichert wird wie bisher in `vt_vorschlagWeg` (js/kern.js, mit Text, mit
-   Zeit, wird abgeglichen) — daraus liest die Eselsbrücken-Routine, für welches
-   Wort eine neue fällig ist (`werkzeuge/vorschlaege-holen.mjs --auftrag`).
-   `vorschlagsListe()` bleibt die VOLLE Liste: die Nummern darin sind die
-   Schlüssel der Ablehnungen und der Wahl, und die Diagnose in js/kern.js
-   (aufgebraucht, verwaist) zählt gegen sie. Angezeigt wird nur noch, was
-   diese Funktion liefert — `nr` ist die Nummer in der vollen Liste.
-   Bewacht von test-taugt-nicht.mjs. */
-function sichtbareVorschlaege(w){
-  const raus = [];
-  vorschlagsListe(w).forEach((text, nr) => {
-    if (w && typeof istVorschlagVerworfen === 'function' && istVorschlagVerworfen(w.id, nr, text)) return;
-    raus.push({ text, nr });
-  });
-  return raus;
-}
-/* Wo in der sichtbaren Liste steht der Vorschlag, zu dem er zuletzt geblättert hat?
-   Ist der abgelehnt (also nicht mehr sichtbar), der erste sichtbare. */
-function sichtbarerVorschlagPos(w, sicht){
-  const nr = gewaehlterVorschlag(w.id, vorschlagsListe(w).length);
-  const pos = sicht.findIndex(s => s.nr === nr);
-  return pos < 0 ? 0 : pos;
-}
-
 let VORSCHLAEGE = [];
-let VORSCHLAG_NRN = [];   /* je Eintrag in VORSCHLAEGE seine Nummer in vorschlagsListe() */
 let VORSCHLAG_NR = 0;
 
 function zeigeVorschlag(){
@@ -1735,17 +1698,19 @@ function zeigeVorschlag(){
      Nur ueber die Nummer gefragt, trug ein Vorschlag, den er NIE gesehen hat,
      seine Marke „taugt nicht" — und einer, den er wirklich abgelehnt hat,
      stand wieder blank da. [[eingefrorenes_feld_ist_kein_zustand]] */
-  /* ⭐ Seit dem 17.11.2026 steht hier nie ein abgelehnter Vorschlag (sie fallen
-     schon beim Öffnen aus der Liste, siehe sichtbareVorschlaege()). Der Knopf
-     braucht also keinen Zustand mehr. „bitte ersetzen" stimmt jetzt auch beim
-     einzigen Vorschlag: die Ablehnung geht an die Eselsbrücken-Routine. */
+  const weg = !!(w && istVorschlagVerworfen(w.id, VORSCHLAG_NR, text));
   const knopf = document.getElementById('btnVorschlagWeg');
   if (knopf){
-    knopf.setAttribute('aria-pressed', 'false');
-    knopf.textContent = 'Taugt nicht — bitte ersetzen';
-    knopf.title = '';
+    knopf.setAttribute('aria-pressed', String(weg));
+    knopf.textContent = weg
+      /* 17.11.2026, Elias: „einfach das der knopf die eselsbrücke durchschtreicht und du
+         dann das ersetzt. unten ist halt der speichen knopf und ich befürchtete das ich auch
+         speichern muss und das wollte ich nicht." — darum steht es am Knopf. */
+      ? 'Gemerkt ✓ — wird ersetzt, kein Speichern nötig'
+      : (mehrere ? 'Taugt nicht — bitte ersetzen' : 'Taugt nicht — merken');
+    knopf.title = mehrere ? '' : 'Für dieses Wort gibt es nur diesen einen Vorschlag.';
   }
-  document.getElementById('neVorschlag').classList.remove('ist-weg');
+  document.getElementById('neVorschlag').classList.toggle('ist-weg', weg);
 }
 
 function blaettereVorschlag(schritt){
@@ -1757,7 +1722,7 @@ function blaettereVorschlag(schritt){
      siehe den langen Kommentar an setzeGewaehltenVorschlag() in js/kern.js. */
   const w = SESSION.words[SESSION.idx];
   if (!w) return;
-  setzeGewaehltenVorschlag(w.id, VORSCHLAG_NRN[VORSCHLAG_NR]);
+  setzeGewaehltenVorschlag(w.id, VORSCHLAG_NR);
   renderNotiz(w);   /* die Karte dahinter sofort mitziehen, nicht erst beim naechsten Aufbau */
 }
 
@@ -1777,13 +1742,11 @@ function oeffneNotizEditor(){
      Bis dahin stand hier `getNote(w.id) ? [] : vorschlagsListe(w)` — mit einer
      eigenen Eselsbrücke war die Liste leer, und Blättern, „Taugt nicht" und
      „Übernehmen" waren nicht mehr zu erreichen. */
-  const sicht = sichtbareVorschlaege(w);
-  VORSCHLAEGE = sicht.map(s => s.text);
-  VORSCHLAG_NRN = sicht.map(s => s.nr);
+  VORSCHLAEGE = vorschlagsListe(w);
   /* Dort weitermachen, wo er stehengeblieben ist - sonst faengt das Blaettern
      bei jedem Oeffnen wieder bei Nummer 1 an, waehrend die Karte dahinter
      laengst Nummer 3 zeigt. */
-  VORSCHLAG_NR = sicht.length ? sichtbarerVorschlagPos(w, sicht) : 0;
+  VORSCHLAG_NR = gewaehlterVorschlag(w.id, VORSCHLAEGE.length);
   zeigeVorschlag();
   vorschlagKasten.classList.toggle('hidden', !VORSCHLAEGE.length);
   document.getElementById('btnDeleteNote').style.visibility = getNote(w.id) ? 'visible' : 'hidden';
@@ -1848,33 +1811,19 @@ function uebernimmVorschlag(){
      tippt ins Feld. */
 }
 document.getElementById('btnVorschlagUebernehmen').addEventListener('click', uebernimmVorschlag);
-/* „Taugt nicht" (17.11.2026): EIN Tippen merkt die Ablehnung (dauerhaft, in
-   `vt_vorschlagWeg`) und nimmt den Vorschlag sofort aus dem Fenster und von der
-   Karte — ohne Speichern, ohne Rückfrage, ohne Zurücknehmen (Elias, Eingang
-   16.11.2026, zitiert an sichtbareVorschlaege()). Gibt es noch einen, steht der
-   nächste da. War es der letzte, verschwindet der Vorschlagskasten; die Karte
-   zeigt dann seine eigene oder „Eselsbrücke hinzufügen", bis die Routine eine
-   neue geschrieben hat. */
+/* „Taugt nicht": merkt den Vorschlag als abgelehnt und blaettert weiter, wenn
+   es noch einen gibt. Das Weiterblaettern ist Absicht — er hat gesagt, der
+   Vorschlag solle „ausgetauscht werden durch einen besseren", also soll gleich
+   der naechste dastehen statt der abgelehnte. Beim Zuruecknehmen wird NICHT
+   geblaettert, sonst spraenge die Ansicht bei jedem Antippen. */
 document.getElementById('btnVorschlagWeg').addEventListener('click', ()=>{
   const w = SESSION.words[SESSION.idx];
   if (!w || !VORSCHLAEGE.length) return;
-  const nr = VORSCHLAG_NRN[VORSCHLAG_NR];
-  const text = VORSCHLAEGE[VORSCHLAG_NR];
-  /* ⚠️ schalteVorschlagWeg() SCHALTET um — gilt der Text schon als abgelehnt,
-     nähme es zurück. Sichtbar ist so einer nicht, aber der Riegel kostet nichts. */
-  if (!istVorschlagVerworfen(w.id, nr, text)) schalteVorschlagWeg(w.id, nr, text);
-  VORSCHLAEGE.splice(VORSCHLAG_NR, 1);
-  VORSCHLAG_NRN.splice(VORSCHLAG_NR, 1);
-  if (VORSCHLAEGE.length){
-    VORSCHLAG_NR = VORSCHLAG_NR % VORSCHLAEGE.length;
-    setzeGewaehltenVorschlag(w.id, VORSCHLAG_NRN[VORSCHLAG_NR]);
-    zeigeVorschlag();
-  } else {
-    VORSCHLAG_NR = 0;
-    document.getElementById('neVorschlag').classList.add('hidden');
-  }
-  renderNotiz(w);
-  toast('Eselsbrücke entfernt. Für dieses Wort wird eine neue geschrieben.');
+  const jetztWeg = schalteVorschlagWeg(w.id, VORSCHLAG_NR, VORSCHLAEGE[VORSCHLAG_NR]);
+  if (jetztWeg && VORSCHLAEGE.length > 1) blaettereVorschlag(1);
+  else zeigeVorschlag();
+  /* 17.11.2026: sagen, dass er NICHT speichern muss (sein Satz am Knopftext oben). */
+  if (jetztWeg && typeof toast === 'function') toast('Gemerkt — wird ersetzt. Speichern ist nicht nötig.');
 });
 document.getElementById('btnVorschlagWeiter').addEventListener('click', ()=> blaettereVorschlag(1));
 document.getElementById('btnVorschlagZurueck').addEventListener('click', ()=> blaettereVorschlag(-1));
