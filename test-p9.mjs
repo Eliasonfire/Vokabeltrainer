@@ -241,8 +241,13 @@ vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ct
 console.log('\n— Vorgezogene Karten (v603) —');
 vm.runInContext('PROGRESS.t1 = { box:5, nextReview:"2026-08-15", correct:3, wrong:0 }; stufenVorschau()', ctx);
 const fr5 = lies();
-ok('Box 5 vorgezogen: gut/leicht bleiben in Box 5, noch 5 Tage',
-   fr5[2].box === 5 && fr5[3].box === 5 && fr5[2].text === '5 Tage' && fr5[3].text === '5 Tage',
+/* ⛔ Seit 17.11.2026 steigt eine vorgezogene Karte mit gut/leicht auf wie eine fällige —
+   die Regel „Box 4–7 vorgezogen → Box und Termin bleiben" (v603, mein Vorschlag) ist
+   heraus. Sie war im Russisch-Trainer die Ursache von drei gemeldeten „Box-Bugs"; Elias
+   (Eingang 16.11.2026): „Den Arabisch-Trainer auf dieselbe Schwachstelle prüfen und
+   denselben Test dort einsetzen." Bewacht von werkzeuge/pruefe-boxen.mjs. */
+ok('Box 5 vorgezogen: gut → Box 6 (30 Tage), leicht → Box 7 (60 Tage), wie fällig',
+   fr5[2].box === 6 && fr5[3].box === 7 && fr5[2].text === '30 Tage' && fr5[3].text === '60 Tage',
    JSON.stringify(fr5));
 ok('Box 5 vorgezogen: nochmal → Box 4 (7 Tage), schwer bleibt (16 Tage)',
    fr5[0].box === 4 && fr5[0].text === '7 Tage' && fr5[1].box === 5 && fr5[1].text === '16 Tage',
@@ -264,8 +269,11 @@ ok('Mitglied fällig: nochmal/schwer → Box 1 · 2 Tage, gut → Box 2 · morge
    && gr[2].box === 2 && gr[2].text === 'morgen' && gr[3].box === 3, JSON.stringify(gr));
 vm.runInContext('PROGRESS.t1.nextReview = "2026-08-11"; stufenVorschau()', ctx);
 const grFrueh = lies();
-ok('Mitglied vorgezogen (andere Hälfte): alle vier Knöpfe Box 1 · morgen',
-   grFrueh.every(x => x.box === 1 && x.text === 'morgen'), JSON.stringify(grFrueh));
+/* Seit 17.11.2026 (siehe 5b): nochmal/schwer lassen das vorgezogene Mitglied, wo es ist;
+   gut/leicht steigen auf wie bei einem fälligen. */
+ok('Mitglied vorgezogen (andere Hälfte): nochmal/schwer Box 1 · morgen, gut → Box 2, leicht → Box 3',
+   grFrueh[0].box === 1 && grFrueh[0].text === 'morgen' && grFrueh[1].box === 1 && grFrueh[1].text === 'morgen'
+   && grFrueh[2].box === 2 && grFrueh[3].box === 3, JSON.stringify(grFrueh));
 vm.runInContext('PROGRESS.t1 = { box:1, nextReview:"", correct:0, wrong:0 }', ctx);
 
 /* ---------- 5d. v605: der erste Tag eines neuen Wortes ----------

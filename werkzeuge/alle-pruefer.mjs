@@ -979,7 +979,11 @@ const PRUEFER = [
   ['test-mehrzahl-dinge.mjs', []],
   /* 17.11.2026 — Hörmodus: derselbe Ton ab dem dritten Abspielen langsamer, Zähler je Wort (in der
      laufenden App, Sprachausgabe abgefangen, Störtest). Elias (Eingang 16.11.): „beim 3. Mal reduziert". */
-  ['werkzeuge/pruefe-hoer-langsam.mjs', []]
+  ['werkzeuge/pruefe-hoer-langsam.mjs', []],
+  /* 17.11.2026 — Box-Rechnung: Box 1–7 × fällig/vorgezogen × 4 Knöpfe + Lerngruppe, 64 Fälle, mit
+     Störtest (gebaut von der Sitzung „Russisch Vokabeltrainer App"). Elias (Eingang 16.11.): „Den
+     Arabisch-Trainer auf dieselbe Schwachstelle prüfen und denselben Test dort einsetzen." */
+  ['werkzeuge/pruefe-boxen.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App

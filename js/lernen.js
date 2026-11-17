@@ -2175,10 +2175,9 @@ const STUFEN = {
    · Box 2/3 vorgezogen: alles wie immer, richtig steigt auf. Elias: „so kann
      man die auch weiter hoch bringen und ich meine trotzdessen das ihre zeit
      noch nicht gekommen ist".
-   · Box 4–7 vorgezogen und richtig: Box UND Termin bleiben — sonst verkürzte
-     das Vorziehen genau die langen Abstände, für die Box 6 und 7 da sind.
-     MEIN Vorschlag, ihm so gesagt (25.09.2026, 05:2x), auf seine Vorgabe
-     „wenn das der fall sein sollte dann einfach box 4-7".
+   · ⛔ AUFGEHOBEN am 17.11.2026 (siehe unten im Rumpf): „Box 4–7 vorgezogen
+     und richtig: Box UND Termin bleiben" — MEIN Vorschlag vom 25.09.2026. Jetzt
+     steigt auch eine vorgezogene Box-4–7-Karte mit gut/leicht auf.
    · falsch („nochmal"/„schwer"): wie immer.
    Ergebnis { box, tage, frueh, bleibt } — tage = in wie vielen Tagen sie
    wiederkommt. Fehlt der Fortschritt, gilt Box 1 (wie in der ganzen App). */
@@ -2192,10 +2191,16 @@ function stufeErgebnis(stufe, p, heute){
      einspringt, übt nur — Box und Termin bleiben. Elias: „dann kann einfach ein
      wort aus dem zweiten teil der lerngruppe für den heutigen tag einspringen
      und dann morgen auch wo es normalerweise dran wäre". */
-  if (frueh && mitglied)
+  /* 17.11.2026: eine vorgezogene Karte steigt mit „gut"/„leicht" auf wie eine
+     fällige — auch ein Lerngruppen-Mitglied, auch Box 4–7. Die Sonderregel
+     „Box 4–7 vorgezogen → Box und Termin bleiben" (v603, MEIN Vorschlag) ist
+     heraus. Sie war im Russisch-Trainer die Ursache von drei gemeldeten
+     „Box-Bugs"; Elias, 16.11.2026: „Den Arabisch-Trainer auf dieselbe
+     Schwachstelle prüfen und denselben Test dort einsetzen."
+     Bewacht von werkzeuge/pruefe-boxen.mjs. Nur „nochmal"/„schwer" lassen ein
+     vorgezogenes Mitglied, wo es ist. */
+  if (frueh && mitglied && !(s.richtig && s.box(box) > 1))
     return { box, tage: Math.max(0, tageZwischen(t, p.nextReview)), frueh, bleibt: true, gruppe: 'bleibt' };
-  if (frueh && s.richtig && box >= 4)
-    return { box, tage: Math.max(0, tageZwischen(t, p.nextReview)), frueh, bleibt: true, gruppe: null };
   const nach = s.box(box);
   /* v604: ein fälliges Mitglied verlässt die Gruppe mit „gut" (Box 2) oder
      „leicht" (Box 3); mit „nochmal"/„schwer" bleibt es und kommt in
@@ -2247,8 +2252,8 @@ function stufenVorschau(){
     const el = document.getElementById('stufe' + ziel[k]);
     if (!el) return;
     /* v603: Box UND Tage aus stufeErgebnis() — derselben Rechnung wie in
-       answer(). Bei einer vorgezogenen Box-4–7-Karte bleiben beide stehen:
-       dann steht hier ihre Box und die Tage bis zu ihrem alten Termin. */
+       answer(). (Das Stehenbleiben vorgezogener Box-4–7-Karten ist seit
+       17.11.2026 aufgehoben.) */
     const e = stufeErgebnis(k, PROGRESS[w.id] || { box });
     el.innerHTML = `<b>Box ${e.box}</b><i>${text(e.tage)}</i>`;
   });
