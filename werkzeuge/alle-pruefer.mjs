@@ -983,13 +983,18 @@ const PRUEFER = [
   /* 17.11.2026 — Box-Rechnung: Box 1–7 × fällig/vorgezogen × 4 Knöpfe + Lerngruppe, 64 Fälle, mit
      Störtest (gebaut von der Sitzung „Russisch Vokabeltrainer App"). Elias (Eingang 16.11.): „Den
      Arabisch-Trainer auf dieselbe Schwachstelle prüfen und denselben Test dort einsetzen." */
-  ['werkzeuge/pruefe-boxen.mjs', []]
+  ['werkzeuge/pruefe-boxen.mjs', []],
+  /* 17.11.2026 — jede der 114 Suren hat ihre deutsche Bedeutung (Feld `de`, Quelle deutsche Wikipedia,
+     Elias: „Ja, Wikipedia") und js/quran.js zeigt sie in Liste, Zeile unter dem Kopf und Suche. */
+  ['werkzeuge/pruefe-surenbedeutung.mjs', []]
 ];
 
 /* ⛔ pruefe-oberflaeche.js läuft NICHT unter node — es prüft die laufende App
    und braucht Browser, DOM und localStorage. Sein Exitcode 3 heißt „falsch
    aufgerufen", nicht „Fehler gefunden". Es hier mitlaufen zu lassen hieße,
-   jeden Lauf mit einem falschen Rot zu beginnen. */
+   jeden Lauf mit einem falschen Rot zu beginnen.
+   ⭐ Seit 12.11.2026 läuft er trotzdem in jedem Sammellauf mit: werkzeuge/pruefe-durchklicken.mjs
+   öffnet die App in einem unsichtbaren Edge mit leerem Profil und führt ihn dort aus. */
 const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
 
 /* ⭐ test-p8.mjs stand bis zum 21.08.2026 NICHT in der Liste oben: es

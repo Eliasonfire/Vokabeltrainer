@@ -14,6 +14,7 @@ const SURAH_DATA = [
   "ar": "الفاتحة",
   "arTaschkil": "الْفَاتِحَة",
   "name": "Al-Fatihah",
+  "de": "Die Eröffnung",
   "verses": 7,
   "juz": [
    1
@@ -24,6 +25,7 @@ const SURAH_DATA = [
   "ar": "البقرة",
   "arTaschkil": "الْبَقَرَة",
   "name": "Al-Baqarah",
+  "de": "Die Kuh",
   "verses": 286,
   "juz": [
    1,
@@ -36,6 +38,7 @@ const SURAH_DATA = [
   "ar": "آل عمران",
   "arTaschkil": "آلِ عِمْرَان",
   "name": "Ali 'Imran",
+  "de": "Die Sippe Imrans",
   "verses": 200,
   "juz": [
    3,
@@ -47,6 +50,7 @@ const SURAH_DATA = [
   "ar": "النساء",
   "arTaschkil": "النِّسَاء",
   "name": "An-Nisa",
+  "de": "Die Frauen",
   "verses": 176,
   "juz": [
    4,
@@ -59,6 +63,7 @@ const SURAH_DATA = [
   "ar": "المائدة",
   "arTaschkil": "الْمَائِدَة",
   "name": "Al-Ma'idah",
+  "de": "Der Tisch",
   "verses": 120,
   "juz": [
    6,
@@ -70,6 +75,7 @@ const SURAH_DATA = [
   "ar": "الأنعام",
   "arTaschkil": "الْأَنْعَام",
   "name": "Al-An'am",
+  "de": "Das Vieh",
   "verses": 165,
   "juz": [
    7,
@@ -81,6 +87,7 @@ const SURAH_DATA = [
   "ar": "الأعراف",
   "arTaschkil": "الْأَعْرَاف",
   "name": "Al-A'raf",
+  "de": "Die Höhen",
   "verses": 206,
   "juz": [
    8,
@@ -92,6 +99,7 @@ const SURAH_DATA = [
   "ar": "الأنفال",
   "arTaschkil": "الْأَنفَال",
   "name": "Al-Anfal",
+  "de": "Die Beute",
   "verses": 75,
   "juz": [
    9,
@@ -103,6 +111,7 @@ const SURAH_DATA = [
   "ar": "التوبة",
   "arTaschkil": "التَّوْبَة",
   "name": "At-Tawbah",
+  "de": "Die Buße",
   "verses": 129,
   "juz": [
    10,
@@ -114,6 +123,7 @@ const SURAH_DATA = [
   "ar": "يونس",
   "arTaschkil": "يُونُس",
   "name": "Yunus",
+  "de": "Jonas",
   "verses": 109,
   "juz": [
    11
@@ -124,6 +134,7 @@ const SURAH_DATA = [
   "ar": "هود",
   "arTaschkil": "هُود",
   "name": "Hud",
+  "de": "Hud",
   "verses": 123,
   "juz": [
    11,
@@ -135,6 +146,7 @@ const SURAH_DATA = [
   "ar": "يوسف",
   "arTaschkil": "يُوسُف",
   "name": "Yusuf",
+  "de": "Joseph",
   "verses": 111,
   "juz": [
    12,
@@ -146,6 +158,7 @@ const SURAH_DATA = [
   "ar": "الرعد",
   "arTaschkil": "الرَّعْد",
   "name": "Ar-Ra'd",
+  "de": "Der Donner",
   "verses": 43,
   "juz": [
    13
@@ -156,6 +169,7 @@ const SURAH_DATA = [
   "ar": "ابراهيم",
   "arTaschkil": "إِبْرَاهِيم",
   "name": "Ibrahim",
+  "de": "Abraham",
   "verses": 52,
   "juz": [
    13
@@ -166,6 +180,7 @@ const SURAH_DATA = [
   "ar": "الحجر",
   "arTaschkil": "الْحِجْر",
   "name": "Al-Hijr",
+  "de": "Das steinige Land",
   "verses": 99,
   "juz": [
    14
@@ -176,6 +191,7 @@ const SURAH_DATA = [
   "ar": "النحل",
   "arTaschkil": "النَّحْل",
   "name": "An-Nahl",
+  "de": "Die Biene",
   "verses": 128,
   "juz": [
    14
@@ -186,6 +202,7 @@ const SURAH_DATA = [
   "ar": "الإسراء",
   "arTaschkil": "الْإِسْرَاء",
   "name": "Al-Isra",
+  "de": "Die nächtliche Reise",
   "verses": 111,
   "juz": [
    15
@@ -196,6 +213,7 @@ const SURAH_DATA = [
   "ar": "الكهف",
   "arTaschkil": "الْكَهْف",
   "name": "Al-Kahf",
+  "de": "Die Höhle",
   "verses": 110,
   "juz": [
    15,
@@ -207,6 +225,7 @@ const SURAH_DATA = [
   "ar": "مريم",
   "arTaschkil": "مَرْيَم",
   "name": "Maryam",
+  "de": "Maria",
   "verses": 98,
   "juz": [
    16
@@ -217,6 +236,7 @@ const SURAH_DATA = [
   "ar": "طه",
   "arTaschkil": "طه",
   "name": "Taha",
+  "de": "Ta Ha",
   "verses": 135,
   "juz": [
    16
@@ -227,6 +247,7 @@ const SURAH_DATA = [
   "ar": "الأنبياء",
   "arTaschkil": "الْأَنبِيَاء",
   "name": "Al-Anbya",
+  "de": "Die Propheten",
   "verses": 112,
   "juz": [
    17
@@ -237,6 +258,7 @@ const SURAH_DATA = [
   "ar": "الحج",
   "arTaschkil": "الْحَجّ",
   "name": "Al-Hajj",
+  "de": "Die Wallfahrt",
   "verses": 78,
   "juz": [
    17
@@ -247,6 +269,7 @@ const SURAH_DATA = [
   "ar": "المؤمنون",
   "arTaschkil": "الْمُؤْمِنُون",
   "name": "Al-Mu'minun",
+  "de": "Die Gläubigen",
   "verses": 118,
   "juz": [
    18
@@ -257,6 +280,7 @@ const SURAH_DATA = [
   "ar": "النور",
   "arTaschkil": "النُّور",
   "name": "An-Nur",
+  "de": "Das Licht",
   "verses": 64,
   "juz": [
    18
@@ -267,6 +291,7 @@ const SURAH_DATA = [
   "ar": "الفرقان",
   "arTaschkil": "الْفُرْقَان",
   "name": "Al-Furqan",
+  "de": "Die Rettung",
   "verses": 77,
   "juz": [
    18,
@@ -278,6 +303,7 @@ const SURAH_DATA = [
   "ar": "الشعراء",
   "arTaschkil": "الشُّعَرَاء",
   "name": "Ash-Shu'ara",
+  "de": "Die Dichter",
   "verses": 227,
   "juz": [
    19
@@ -288,6 +314,7 @@ const SURAH_DATA = [
   "ar": "النمل",
   "arTaschkil": "النَّمْل",
   "name": "An-Naml",
+  "de": "Die Ameisen",
   "verses": 93,
   "juz": [
    19,
@@ -299,6 +326,7 @@ const SURAH_DATA = [
   "ar": "القصص",
   "arTaschkil": "الْقَصَص",
   "name": "Al-Qasas",
+  "de": "Die Geschichte",
   "verses": 88,
   "juz": [
    20
@@ -309,6 +337,7 @@ const SURAH_DATA = [
   "ar": "العنكبوت",
   "arTaschkil": "الْعَنكَبُوت",
   "name": "Al-'Ankabut",
+  "de": "Die Spinne",
   "verses": 69,
   "juz": [
    20,
@@ -320,6 +349,7 @@ const SURAH_DATA = [
   "ar": "الروم",
   "arTaschkil": "الرُّوم",
   "name": "Ar-Rum",
+  "de": "Die Römer",
   "verses": 60,
   "juz": [
    21
@@ -330,6 +360,7 @@ const SURAH_DATA = [
   "ar": "لقمان",
   "arTaschkil": "لُقْمَان",
   "name": "Luqman",
+  "de": "Luqman",
   "verses": 34,
   "juz": [
    21
@@ -340,6 +371,7 @@ const SURAH_DATA = [
   "ar": "السجدة",
   "arTaschkil": "السَّجْدَة",
   "name": "As-Sajdah",
+  "de": "Die Niederwerfung",
   "verses": 30,
   "juz": [
    21
@@ -350,6 +382,7 @@ const SURAH_DATA = [
   "ar": "الأحزاب",
   "arTaschkil": "الْأَحْزَاب",
   "name": "Al-Ahzab",
+  "de": "Die Gruppen",
   "verses": 73,
   "juz": [
    21,
@@ -361,6 +394,7 @@ const SURAH_DATA = [
   "ar": "سبإ",
   "arTaschkil": "سَبَإ",
   "name": "Saba",
+  "de": "Die Sabäer",
   "verses": 54,
   "juz": [
    22
@@ -371,6 +405,7 @@ const SURAH_DATA = [
   "ar": "فاطر",
   "arTaschkil": "فَاطِر",
   "name": "Fatir",
+  "de": "Der Schöpfer",
   "verses": 45,
   "juz": [
    22
@@ -381,6 +416,7 @@ const SURAH_DATA = [
   "ar": "يس",
   "arTaschkil": "يسٓ",
   "name": "Ya-Sin",
+  "de": "Ya-Sin",
   "verses": 83,
   "juz": [
    22,
@@ -392,6 +428,7 @@ const SURAH_DATA = [
   "ar": "الصافات",
   "arTaschkil": "الصَّافَّات",
   "name": "As-Saffat",
+  "de": "Die in Reih und Glied stehen",
   "verses": 182,
   "juz": [
    23
@@ -402,6 +439,7 @@ const SURAH_DATA = [
   "ar": "ص",
   "arTaschkil": "صٓ",
   "name": "Sad",
+  "de": "Sad",
   "verses": 88,
   "juz": [
    23
@@ -412,6 +450,7 @@ const SURAH_DATA = [
   "ar": "الزمر",
   "arTaschkil": "الزُّمَر",
   "name": "Az-Zumar",
+  "de": "Die Scharen",
   "verses": 75,
   "juz": [
    23,
@@ -423,6 +462,7 @@ const SURAH_DATA = [
   "ar": "غافر",
   "arTaschkil": "غَافِر",
   "name": "Ghafir",
+  "de": "Der Vergebende",
   "verses": 85,
   "juz": [
    24
@@ -433,6 +473,7 @@ const SURAH_DATA = [
   "ar": "فصلت",
   "arTaschkil": "فُصِّلَتْ",
   "name": "Fussilat",
+  "de": "Auseinandergesetzt sind",
   "verses": 54,
   "juz": [
    24,
@@ -444,6 +485,7 @@ const SURAH_DATA = [
   "ar": "الشورى",
   "arTaschkil": "الشُّورَىٰ",
   "name": "Ash-Shuraa",
+  "de": "Die Beratung",
   "verses": 53,
   "juz": [
    25
@@ -454,6 +496,7 @@ const SURAH_DATA = [
   "ar": "الزخرف",
   "arTaschkil": "الزُّخْرُف",
   "name": "Az-Zukhruf",
+  "de": "Der Prunk",
   "verses": 89,
   "juz": [
    25
@@ -464,6 +507,7 @@ const SURAH_DATA = [
   "ar": "الدخان",
   "arTaschkil": "الدُّخَان",
   "name": "Ad-Dukhan",
+  "de": "Der Rauch",
   "verses": 59,
   "juz": [
    25
@@ -474,6 +518,7 @@ const SURAH_DATA = [
   "ar": "الجاثية",
   "arTaschkil": "الْجَاثِيَة",
   "name": "Al-Jathiyah",
+  "de": "Das Knien",
   "verses": 37,
   "juz": [
    25
@@ -484,6 +529,7 @@ const SURAH_DATA = [
   "ar": "الأحقاف",
   "arTaschkil": "الْأَحْقَاف",
   "name": "Al-Ahqaf",
+  "de": "Die Dünen",
   "verses": 35,
   "juz": [
    26
@@ -494,6 +540,7 @@ const SURAH_DATA = [
   "ar": "محمد",
   "arTaschkil": "مُحَمَّد",
   "name": "Muhammad",
+  "de": "Mohammed",
   "verses": 38,
   "juz": [
    26
@@ -504,6 +551,7 @@ const SURAH_DATA = [
   "ar": "الفتح",
   "arTaschkil": "الْفَتْح",
   "name": "Al-Fath",
+  "de": "Der Erfolg",
   "verses": 29,
   "juz": [
    26
@@ -514,6 +562,7 @@ const SURAH_DATA = [
   "ar": "الحجرات",
   "arTaschkil": "الْحُجُرَات",
   "name": "Al-Hujurat",
+  "de": "Die Gemächer",
   "verses": 18,
   "juz": [
    26
@@ -524,6 +573,7 @@ const SURAH_DATA = [
   "ar": "ق",
   "arTaschkil": "قٓ",
   "name": "Qaf",
+  "de": "Qaf",
   "verses": 45,
   "juz": [
    26
@@ -534,6 +584,7 @@ const SURAH_DATA = [
   "ar": "الذاريات",
   "arTaschkil": "الذَّارِيَات",
   "name": "Adh-Dhariyat",
+  "de": "Das Aufwirbeln",
   "verses": 60,
   "juz": [
    26,
@@ -545,6 +596,7 @@ const SURAH_DATA = [
   "ar": "الطور",
   "arTaschkil": "الطُّور",
   "name": "At-Tur",
+  "de": "Der Berg",
   "verses": 49,
   "juz": [
    27
@@ -555,6 +607,7 @@ const SURAH_DATA = [
   "ar": "النجم",
   "arTaschkil": "النَّجْم",
   "name": "An-Najm",
+  "de": "Der Stern",
   "verses": 62,
   "juz": [
    27
@@ -565,6 +618,7 @@ const SURAH_DATA = [
   "ar": "القمر",
   "arTaschkil": "الْقَمَر",
   "name": "Al-Qamar",
+  "de": "Der Mond",
   "verses": 55,
   "juz": [
    27
@@ -575,6 +629,7 @@ const SURAH_DATA = [
   "ar": "الرحمن",
   "arTaschkil": "الرَّحْمَٰن",
   "name": "Ar-Rahman",
+  "de": "Der Barmherzige",
   "verses": 78,
   "juz": [
    27
@@ -585,6 +640,7 @@ const SURAH_DATA = [
   "ar": "الواقعة",
   "arTaschkil": "الْوَاقِعَة",
   "name": "Al-Waqi'ah",
+  "de": "Die hereinbrechende Katastrophe",
   "verses": 96,
   "juz": [
    27
@@ -595,6 +651,7 @@ const SURAH_DATA = [
   "ar": "الحديد",
   "arTaschkil": "الْحَدِيد",
   "name": "Al-Hadid",
+  "de": "Das Eisen",
   "verses": 29,
   "juz": [
    27
@@ -605,6 +662,7 @@ const SURAH_DATA = [
   "ar": "المجادلة",
   "arTaschkil": "الْمُجَادِلَة",
   "name": "Al-Mujadila",
+  "de": "Der Streit",
   "verses": 22,
   "juz": [
    28
@@ -615,6 +673,7 @@ const SURAH_DATA = [
   "ar": "الحشر",
   "arTaschkil": "الْحَشْر",
   "name": "Al-Hashr",
+  "de": "Die Versammlung",
   "verses": 24,
   "juz": [
    28
@@ -625,6 +684,7 @@ const SURAH_DATA = [
   "ar": "الممتحنة",
   "arTaschkil": "الْمُمْتَحَنَة",
   "name": "Al-Mumtahanah",
+  "de": "Die Prüfung",
   "verses": 13,
   "juz": [
    28
@@ -635,6 +695,7 @@ const SURAH_DATA = [
   "ar": "الصف",
   "arTaschkil": "الصَّفّ",
   "name": "As-Saf",
+  "de": "Reih und Glied",
   "verses": 14,
   "juz": [
    28
@@ -645,6 +706,7 @@ const SURAH_DATA = [
   "ar": "الجمعة",
   "arTaschkil": "الْجُمُعَة",
   "name": "Al-Jumu'ah",
+  "de": "Der Freitag",
   "verses": 11,
   "juz": [
    28
@@ -655,6 +717,7 @@ const SURAH_DATA = [
   "ar": "المنافقون",
   "arTaschkil": "الْمُنَافِقُون",
   "name": "Al-Munafiqun",
+  "de": "Die Heuchler",
   "verses": 11,
   "juz": [
    28
@@ -665,6 +728,7 @@ const SURAH_DATA = [
   "ar": "التغابن",
   "arTaschkil": "التَّغَابُن",
   "name": "At-Taghabun",
+  "de": "Die Übervorteilung",
   "verses": 18,
   "juz": [
    28
@@ -675,6 +739,7 @@ const SURAH_DATA = [
   "ar": "الطلاق",
   "arTaschkil": "الطَّلَاق",
   "name": "At-Talaq",
+  "de": "Die Entlassung (Scheidung)",
   "verses": 12,
   "juz": [
    28
@@ -685,6 +750,7 @@ const SURAH_DATA = [
   "ar": "التحريم",
   "arTaschkil": "التَّحْرِيم",
   "name": "At-Tahrim",
+  "de": "Das Verbot",
   "verses": 12,
   "juz": [
    28
@@ -695,6 +761,7 @@ const SURAH_DATA = [
   "ar": "الملك",
   "arTaschkil": "الْمُلْك",
   "name": "Al-Mulk",
+  "de": "Die Königsherrschaft",
   "verses": 30,
   "juz": [
    29
@@ -705,6 +772,7 @@ const SURAH_DATA = [
   "ar": "القلم",
   "arTaschkil": "الْقَلَم",
   "name": "Al-Qalam",
+  "de": "Die Schreibfeder",
   "verses": 52,
   "juz": [
    29
@@ -715,6 +783,7 @@ const SURAH_DATA = [
   "ar": "الحاقة",
   "arTaschkil": "الْحَاقَّة",
   "name": "Al-Haqqah",
+  "de": "Die Wahrheit",
   "verses": 52,
   "juz": [
    29
@@ -725,6 +794,7 @@ const SURAH_DATA = [
   "ar": "المعارج",
   "arTaschkil": "الْمَعَارِج",
   "name": "Al-Ma'arij",
+  "de": "Die Himmelsleiter",
   "verses": 44,
   "juz": [
    29
@@ -735,6 +805,7 @@ const SURAH_DATA = [
   "ar": "نوح",
   "arTaschkil": "نُوح",
   "name": "Nuh",
+  "de": "Noah",
   "verses": 28,
   "juz": [
    29
@@ -745,6 +816,7 @@ const SURAH_DATA = [
   "ar": "الجن",
   "arTaschkil": "الْجِنّ",
   "name": "Al-Jinn",
+  "de": "Die Jinn",
   "verses": 28,
   "juz": [
    29
@@ -755,6 +827,7 @@ const SURAH_DATA = [
   "ar": "المزمل",
   "arTaschkil": "الْمُزَّمِّل",
   "name": "Al-Muzzammil",
+  "de": "Der sich eingehüllt hat",
   "verses": 20,
   "juz": [
    29
@@ -765,6 +838,7 @@ const SURAH_DATA = [
   "ar": "المدثر",
   "arTaschkil": "الْمُدَّثِّر",
   "name": "Al-Muddaththir",
+  "de": "Der sich zugedeckt hat",
   "verses": 56,
   "juz": [
    29
@@ -775,6 +849,7 @@ const SURAH_DATA = [
   "ar": "القيامة",
   "arTaschkil": "الْقِيَامَة",
   "name": "Al-Qiyamah",
+  "de": "Die Auferstehung",
   "verses": 40,
   "juz": [
    29
@@ -785,6 +860,7 @@ const SURAH_DATA = [
   "ar": "الانسان",
   "arTaschkil": "الْإِنسَان",
   "name": "Al-Insan",
+  "de": "Der Mensch",
   "verses": 31,
   "juz": [
    29
@@ -795,6 +871,7 @@ const SURAH_DATA = [
   "ar": "المرسلات",
   "arTaschkil": "الْمُرْسَلَات",
   "name": "Al-Mursalat",
+  "de": "Die Gesandten",
   "verses": 50,
   "juz": [
    29
@@ -805,6 +882,7 @@ const SURAH_DATA = [
   "ar": "النبإ",
   "arTaschkil": "النَّبَإ",
   "name": "An-Naba",
+  "de": "Die Ankündigung",
   "verses": 40,
   "juz": [
    30
@@ -815,6 +893,7 @@ const SURAH_DATA = [
   "ar": "النازعات",
   "arTaschkil": "النَّازِعَات",
   "name": "An-Nazi'at",
+  "de": "Die ausziehen",
   "verses": 46,
   "juz": [
    30
@@ -825,6 +904,7 @@ const SURAH_DATA = [
   "ar": "عبس",
   "arTaschkil": "عَبَس",
   "name": "'Abasa",
+  "de": "Er zog die Stirne kraus",
   "verses": 42,
   "juz": [
    30
@@ -835,6 +915,7 @@ const SURAH_DATA = [
   "ar": "التكوير",
   "arTaschkil": "التَّكْوِير",
   "name": "At-Takwir",
+  "de": "Das Einhüllen",
   "verses": 29,
   "juz": [
    30
@@ -845,6 +926,7 @@ const SURAH_DATA = [
   "ar": "الإنفطار",
   "arTaschkil": "الانفِطَار",
   "name": "Al-Infitar",
+  "de": "Die Spaltung",
   "verses": 19,
   "juz": [
    30
@@ -855,6 +937,7 @@ const SURAH_DATA = [
   "ar": "المطففين",
   "arTaschkil": "الْمُطَفِّفِين",
   "name": "Al-Mutaffifin",
+  "de": "Die Betrüger",
   "verses": 36,
   "juz": [
    30
@@ -865,6 +948,7 @@ const SURAH_DATA = [
   "ar": "الإنشقاق",
   "arTaschkil": "الانشِقَاق",
   "name": "Al-Inshiqaq",
+  "de": "Das Zerbrechen",
   "verses": 25,
   "juz": [
    30
@@ -875,6 +959,7 @@ const SURAH_DATA = [
   "ar": "البروج",
   "arTaschkil": "الْبُرُوج",
   "name": "Al-Buruj",
+  "de": "Die Türme",
   "verses": 22,
   "juz": [
    30
@@ -885,6 +970,7 @@ const SURAH_DATA = [
   "ar": "الطارق",
   "arTaschkil": "الطَّارِق",
   "name": "At-Tariq",
+  "de": "Der bei Nacht kommende",
   "verses": 17,
   "juz": [
    30
@@ -895,6 +981,7 @@ const SURAH_DATA = [
   "ar": "الأعلى",
   "arTaschkil": "الْأَعْلَىٰ",
   "name": "Al-A'la",
+  "de": "Der Allerhöchste",
   "verses": 19,
   "juz": [
    30
@@ -905,6 +992,7 @@ const SURAH_DATA = [
   "ar": "الغاشية",
   "arTaschkil": "الْغَاشِيَة",
   "name": "Al-Ghashiyah",
+  "de": "Die zudecken wird",
   "verses": 26,
   "juz": [
    30
@@ -915,6 +1003,7 @@ const SURAH_DATA = [
   "ar": "الفجر",
   "arTaschkil": "الْفَجْر",
   "name": "Al-Fajr",
+  "de": "Die Morgendämmerung",
   "verses": 30,
   "juz": [
    30
@@ -925,6 +1014,7 @@ const SURAH_DATA = [
   "ar": "البلد",
   "arTaschkil": "الْبَلَد",
   "name": "Al-Balad",
+  "de": "Die Stadt",
   "verses": 20,
   "juz": [
    30
@@ -935,6 +1025,7 @@ const SURAH_DATA = [
   "ar": "الشمس",
   "arTaschkil": "الشَّمْس",
   "name": "Ash-Shams",
+  "de": "Die Sonne",
   "verses": 15,
   "juz": [
    30
@@ -945,6 +1036,7 @@ const SURAH_DATA = [
   "ar": "الليل",
   "arTaschkil": "اللَّيْل",
   "name": "Al-Layl",
+  "de": "Die Nacht",
   "verses": 21,
   "juz": [
    30
@@ -955,6 +1047,7 @@ const SURAH_DATA = [
   "ar": "الضحى",
   "arTaschkil": "الضُّحَىٰ",
   "name": "Ad-Duhaa",
+  "de": "Der Morgen",
   "verses": 11,
   "juz": [
    30
@@ -965,6 +1058,7 @@ const SURAH_DATA = [
   "ar": "الشرح",
   "arTaschkil": "الشَّرْح",
   "name": "Ash-Sharh",
+  "de": "Das Weiten",
   "verses": 8,
   "juz": [
    30
@@ -975,6 +1069,7 @@ const SURAH_DATA = [
   "ar": "التين",
   "arTaschkil": "التِّين",
   "name": "At-Tin",
+  "de": "Die Feigenbäume",
   "verses": 8,
   "juz": [
    30
@@ -985,6 +1080,7 @@ const SURAH_DATA = [
   "ar": "العلق",
   "arTaschkil": "الْعَلَق",
   "name": "Al-'Alaq",
+  "de": "Der Blutklumpen",
   "verses": 19,
   "juz": [
    30
@@ -995,6 +1091,7 @@ const SURAH_DATA = [
   "ar": "القدر",
   "arTaschkil": "الْقَدْر",
   "name": "Al-Qadr",
+  "de": "Die Bestimmung",
   "verses": 5,
   "juz": [
    30
@@ -1005,6 +1102,7 @@ const SURAH_DATA = [
   "ar": "البينة",
   "arTaschkil": "الْبَيِّنَة",
   "name": "Al-Bayyinah",
+  "de": "Der klare Beweis",
   "verses": 8,
   "juz": [
    30
@@ -1015,6 +1113,7 @@ const SURAH_DATA = [
   "ar": "الزلزلة",
   "arTaschkil": "الزَّلْزَلَة",
   "name": "Az-Zalzalah",
+  "de": "Das Beben",
   "verses": 8,
   "juz": [
    30
@@ -1025,6 +1124,7 @@ const SURAH_DATA = [
   "ar": "العاديات",
   "arTaschkil": "الْعَادِيَات",
   "name": "Al-'Adiyat",
+  "de": "Das Laufen",
   "verses": 11,
   "juz": [
    30
@@ -1035,6 +1135,7 @@ const SURAH_DATA = [
   "ar": "القارعة",
   "arTaschkil": "الْقَارِعَة",
   "name": "Al-Qari'ah",
+  "de": "Die Polternde",
   "verses": 11,
   "juz": [
    30
@@ -1045,6 +1146,7 @@ const SURAH_DATA = [
   "ar": "التكاثر",
   "arTaschkil": "التَّكَاثُر",
   "name": "At-Takathur",
+  "de": "Die Sucht, mehr zu haben",
   "verses": 8,
   "juz": [
    30
@@ -1055,6 +1157,7 @@ const SURAH_DATA = [
   "ar": "العصر",
   "arTaschkil": "الْعَصْر",
   "name": "Al-'Asr",
+  "de": "Der Nachmittag",
   "verses": 3,
   "juz": [
    30
@@ -1065,6 +1168,7 @@ const SURAH_DATA = [
   "ar": "الهمزة",
   "arTaschkil": "الْهُمَزَة",
   "name": "Al-Humazah",
+  "de": "Der Stichler",
   "verses": 9,
   "juz": [
    30
@@ -1075,6 +1179,7 @@ const SURAH_DATA = [
   "ar": "الفيل",
   "arTaschkil": "الْفِيل",
   "name": "Al-Fil",
+  "de": "Der Elefant",
   "verses": 5,
   "juz": [
    30
@@ -1085,6 +1190,7 @@ const SURAH_DATA = [
   "ar": "قريش",
   "arTaschkil": "قُرَيْش",
   "name": "Quraysh",
+  "de": "Die Quraisch",
   "verses": 4,
   "juz": [
    30
@@ -1095,6 +1201,7 @@ const SURAH_DATA = [
   "ar": "الماعون",
   "arTaschkil": "الْمَاعُون",
   "name": "Al-Ma'un",
+  "de": "Die Hilfeleistung",
   "verses": 7,
   "juz": [
    30
@@ -1105,6 +1212,7 @@ const SURAH_DATA = [
   "ar": "الكوثر",
   "arTaschkil": "الْكَوْثَر",
   "name": "Al-Kawthar",
+  "de": "Die Fülle",
   "verses": 3,
   "juz": [
    30
@@ -1115,6 +1223,7 @@ const SURAH_DATA = [
   "ar": "الكافرون",
   "arTaschkil": "الْكَافِرُون",
   "name": "Al-Kafirun",
+  "de": "Die Ungläubigen",
   "verses": 6,
   "juz": [
    30
@@ -1125,6 +1234,7 @@ const SURAH_DATA = [
   "ar": "النصر",
   "arTaschkil": "النَّصْر",
   "name": "An-Nasr",
+  "de": "Die Hilfe",
   "verses": 3,
   "juz": [
    30
@@ -1135,6 +1245,7 @@ const SURAH_DATA = [
   "ar": "المسد",
   "arTaschkil": "الْمَسَد",
   "name": "Al-Masad",
+  "de": "Der Palmfaserstrick",
   "verses": 5,
   "juz": [
    30
@@ -1145,6 +1256,7 @@ const SURAH_DATA = [
   "ar": "الإخلاص",
   "arTaschkil": "الْإِخْلَاص",
   "name": "Al-Ikhlas",
+  "de": "Die Aufrichtigkeit",
   "verses": 4,
   "juz": [
    30
@@ -1155,6 +1267,7 @@ const SURAH_DATA = [
   "ar": "الفلق",
   "arTaschkil": "الْفَلَق",
   "name": "Al-Falaq",
+  "de": "Das Frühlicht",
   "verses": 5,
   "juz": [
    30
@@ -1165,6 +1278,7 @@ const SURAH_DATA = [
   "ar": "الناس",
   "arTaschkil": "النَّاس",
   "name": "An-Nas",
+  "de": "Die Menschheit",
   "verses": 6,
   "juz": [
    30
