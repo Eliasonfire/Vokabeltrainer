@@ -1706,7 +1706,9 @@ function zeigeVorschlag(){
       /* 17.11.2026, Elias: „einfach das der knopf die eselsbrücke durchschtreicht und du
          dann das ersetzt. unten ist halt der speichen knopf und ich befürchtete das ich auch
          speichern muss und das wollte ich nicht." — darum steht es am Knopf. */
-      ? 'Gemerkt ✓ — wird ersetzt, kein Speichern nötig'
+      /* „kein Speichern nötig" wieder heraus — Elias, 17.11.2026: „mach das ,,kein speichern
+         nötig" einfach weg falls du das da hin gemacht hast". */
+      ? 'Gemerkt ✓ — wird ersetzt'
       : (mehrere ? 'Taugt nicht — bitte ersetzen' : 'Taugt nicht — merken');
     knopf.title = mehrere ? '' : 'Für dieses Wort gibt es nur diesen einen Vorschlag.';
   }
@@ -1822,8 +1824,7 @@ document.getElementById('btnVorschlagWeg').addEventListener('click', ()=>{
   const jetztWeg = schalteVorschlagWeg(w.id, VORSCHLAG_NR, VORSCHLAEGE[VORSCHLAG_NR]);
   if (jetztWeg && VORSCHLAEGE.length > 1) blaettereVorschlag(1);
   else zeigeVorschlag();
-  /* 17.11.2026: sagen, dass er NICHT speichern muss (sein Satz am Knopftext oben). */
-  if (jetztWeg && typeof toast === 'function') toast('Gemerkt — wird ersetzt. Speichern ist nicht nötig.');
+  if (jetztWeg && typeof toast === 'function') toast('Gemerkt — wird ersetzt.');
 });
 document.getElementById('btnVorschlagWeiter').addEventListener('click', ()=> blaettereVorschlag(1));
 document.getElementById('btnVorschlagZurueck').addEventListener('click', ()=> blaettereVorschlag(-1));
