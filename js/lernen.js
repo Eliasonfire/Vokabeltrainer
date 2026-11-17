@@ -1824,7 +1824,8 @@ document.getElementById('btnVorschlagWeg').addEventListener('click', ()=>{
   const jetztWeg = schalteVorschlagWeg(w.id, VORSCHLAG_NR, VORSCHLAEGE[VORSCHLAG_NR]);
   if (jetztWeg && VORSCHLAEGE.length > 1) blaettereVorschlag(1);
   else zeigeVorschlag();
-  if (jetztWeg && typeof toast === 'function') toast('Gemerkt — wird ersetzt.');
+  /* Keine Meldung unten (17.11.2026, Elias: „die kleine pop up benachrichtigung das es
+     gemerkt ist und ersetzt wird kannst du auch aus beiden apps wieder raus nehmen"). */
 });
 document.getElementById('btnVorschlagWeiter').addEventListener('click', ()=> blaettereVorschlag(1));
 document.getElementById('btnVorschlagZurueck').addEventListener('click', ()=> blaettereVorschlag(-1));
