@@ -2558,7 +2558,14 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    Muslim, fasten, Seele, Sünde, Hidschab, Mekka, Morgen, Gottheit, Paradies, gute Tat, Engel,
    heilig, Almosen. Statt einer zweiten Karte (A13); die übrigen stehen in data/kalender.js. */
 const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254', '46070',
-  '50312', '46155', '46552', '47016', '48038', '50486', '50317', '47223', '47215', '47944', '50385', '47216', '47858'];
+  '50312', '46155', '46552', '47016', '48038', '50317', '47223', '47215', '47944', '50385', '47216', '47858'];
+/* ⛔ Mekka (50486) wieder heraus (18.11.2026, 13:20). Elias: „die vokabel mekka selbst kannst auch aus
+   beiden apps raus machen". Sie stand von v773 bis v774 in der Liste oben. Die Liste allein streichen
+   reicht nicht: auf seinen Geräten steht der Eintrag schon in EINZELN. Deshalb wird er einmal
+   zurückgenommen — nur, wenn ihn v773 gesetzt hat (Zeitstempel zwischen v773 und dieser Fassung).
+   Schaltet Elias Mekka später selbst frei, ist der Stempel neuer und bleibt stehen.
+   [[ausfall_ist_unsichtbar_gebaut]] Eine Rücknahme braucht einen Zeitpunkt. */
+const ZURUECKNEHMEN_AUF_WUNSCH = [{ id: '50486', gesetztAb: Date.parse('2026-11-18T08:00:00+01:00'), gesetztBis: Date.parse('2026-11-18T13:20:00+01:00') }];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)
@@ -2585,6 +2592,10 @@ function einzelnFreigeschaltete(){
     .filter(id => EINZELN[id] && EINZELN[id].an)
     .map(id => VOCAB_DATA.find(w => String(w.id) === String(id)))
     .filter(Boolean)
+  for (const r of ZURUECKNEHMEN_AUF_WUNSCH){
+    const e = EINZELN[r.id];
+    if (e && e.an && Number(e.zeit) >= r.gesetztAb && Number(e.zeit) < r.gesetztBis){ EINZELN[r.id] = { an: false, zeit: Date.now() }; neu = true; }
+  }
     .sort((a,b) => (EINZELN[b.id].zeit || 0) - (EINZELN[a.id].zeit || 0));
 }
 /* ⛔⛔ DIE GEGENRICHTUNG — und der Grund, warum es sie geben MUSS (07.09.2026)
