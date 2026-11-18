@@ -134,6 +134,9 @@ const GESEHEN = {
   /* 29.10.2026 (Wartung Mi), eine neue aus Madina 1 Kapitel 15 — ihm in die To-Do gelegt:
      45934 Woche (MEINE Einschätzung: weit, gebrochener Plural afāʿīl ohne Tanwīn). */
   '45934': 'wartet',
+  /* 18.11.2026 (Wartung Mi), eine neue — ihm in die To-Do gelegt: 45937 Hotel
+     (MEINE Einschätzung: weit, gebrochener Plural faʿāliq ohne Tanwīn, wie Woche). */
+  '45937': 'wartet',
 };
 
 /* ---------- Zeichen, als Codepunkte (nichts Arabisches getippt) ---------- */
