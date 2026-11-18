@@ -2568,6 +2568,10 @@ const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '5
 const ZURUECKNEHMEN_AUF_WUNSCH = [{ id: '50486', gesetztAb: Date.parse('2026-11-18T08:00:00+01:00'), gesetztBis: Date.parse('2026-11-18T13:20:00+01:00') }];
 {
   let neu = false;
+  for (const r of ZURUECKNEHMEN_AUF_WUNSCH){
+    const e = EINZELN[r.id];
+    if (e && e.an && Number(e.zeit) >= r.gesetztAb && Number(e.zeit) < r.gesetztBis){ EINZELN[r.id] = { an: false, zeit: Date.now() }; neu = true; }
+  }
   for (const id of FREISCHALTEN_AUF_WUNSCH)
     if (!EINZELN[id]){ EINZELN[id] = { an: true, zeit: Date.now() }; neu = true; }
   if (neu) LS.set(EINZELN_SCHLUESSEL, EINZELN);
@@ -2592,10 +2596,6 @@ function einzelnFreigeschaltete(){
     .filter(id => EINZELN[id] && EINZELN[id].an)
     .map(id => VOCAB_DATA.find(w => String(w.id) === String(id)))
     .filter(Boolean)
-  for (const r of ZURUECKNEHMEN_AUF_WUNSCH){
-    const e = EINZELN[r.id];
-    if (e && e.an && Number(e.zeit) >= r.gesetztAb && Number(e.zeit) < r.gesetztBis){ EINZELN[r.id] = { an: false, zeit: Date.now() }; neu = true; }
-  }
     .sort((a,b) => (EINZELN[b.id].zeit || 0) - (EINZELN[a.id].zeit || 0));
 }
 /* ⛔⛔ DIE GEGENRICHTUNG — und der Grund, warum es sie geben MUSS (07.09.2026)
