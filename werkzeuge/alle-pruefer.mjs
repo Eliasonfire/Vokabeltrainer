@@ -994,6 +994,7 @@ const PRUEFER = [
    aufgerufen", nicht „Fehler gefunden". Es hier mitlaufen zu lassen hieße,
    jeden Lauf mit einem falschen Rot zu beginnen.
    ⭐ Seit 12.11.2026 läuft er trotzdem in jedem Sammellauf mit: werkzeuge/pruefe-durchklicken.mjs
+  ['werkzeuge/pruefe-loeschen-buchkarte.mjs', []],
    öffnet die App in einem unsichtbaren Edge mit leerem Profil und führt ihn dort aus. */
 const NUR_IM_BROWSER = ['pruefe-oberflaeche.js'];
 

@@ -447,9 +447,16 @@ const BUCHDUBLETTEN_AUSBLENDEN = new Set([
 
 function einhaengen(liste){
   const nachId = new Map(VOCAB_DATA.map(w=>[String(w.id), w]));
+  /* ⛔ Gelöschte Buchkarten bleiben draußen (18.11.2026). Elias: „ich möchte die
+     vokabelkarten auch löschen können anstatt nur bearbeiten. füge auch einen löschen
+     knopf hinzu" und „Ja, Arabisch auch". Direkt aus dem Speicher gelesen wie in
+     js/kern.js — sonst stünde die Karte beim nächsten Start wieder da. */
+  const wegRoh = typeof LS !== 'undefined' ? LS.get('vt_geloescht', {}) : {};   /* Prüfer laden die Datei ohne LS */
+  const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
   let neu = 0, ergaenzt = 0, verworfen = 0;
   liste.forEach(roh=>{
     if (BUCHDUBLETTEN_AUSBLENDEN.has(String(roh.id))) return;
+    if (weg[roh.id] && weg[roh.id].an) return;
     const da = nachId.get(String(roh.id));
     if (!da){ VOCAB_DATA.push(Object.assign({}, roh)); neu++; return; }
     /* Vorhandenes gewinnt: Beispielsatz, Quran-Beleg und Startbox aus
@@ -509,8 +516,10 @@ function einhaengen(liste){
 async function einzelneAusAnderenBuechern(){
   if (typeof EINZELN === 'undefined' || !EINZELN) return 0;
   const da = new Set(VOCAB_DATA.map(w => String(w.id)));
+  const wegRoh = typeof LS !== 'undefined' ? LS.get('vt_geloescht', {}) : {};   /* gelöschte Karten nicht nachladen (18.11.2026) */
+  const weg = (wegRoh && typeof wegRoh === 'object' && !Array.isArray(wegRoh)) ? wegRoh : {};
   const fehlen = new Set(Object.keys(EINZELN).filter(id =>
-    /^\d+$/.test(id) && EINZELN[id] && EINZELN[id].an && !da.has(id)));
+    /^\d+$/.test(id) && EINZELN[id] && EINZELN[id].an && !da.has(id) && !(weg[id] && weg[id].an)));
   if (!fehlen.size) return 0;
   const gewaehlt = new Set(aktiveBuecher());
   const andere = (typeof BUECHER !== 'undefined' && Array.isArray(BUECHER) ? BUECHER : [])
@@ -751,8 +760,8 @@ function koranKartenEinordnen(){
     } else if (eigene){
       steht.set(String(e.id), e);
       bericht.eigene++;
-    } else if (geladen){
-      zurueck.push(e);
+    } else if (geladen && !(typeof GELOESCHT !== 'undefined' && GELOESCHT[e.id] && GELOESCHT[e.id].an)){
+      zurueck.push(e);   /* gelöschte Karten nicht zurückholen (18.11.2026) */
     }
   }
   if (weg.size) for (let i = VOCAB_DATA.length - 1; i >= 0; i--) if (weg.has(String(VOCAB_DATA[i].id))) VOCAB_DATA.splice(i, 1);

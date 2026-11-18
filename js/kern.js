@@ -504,7 +504,11 @@ const ABGELOESTE_MNEMO = new Map();
      Geprüft von werkzeuge/pruefe-offene-runde.mjs. [[ausfall_ist_unsichtbar_gebaut]] */
   for (let i = VOCAB_DATA.length - 1; i >= 0; i--){
     const w = VOCAB_DATA[i];
-    if (w && w.chapter === 'personal' && weg[w.id] && weg[w.id].an){
+    /* Seit 18.11.2026 jede Karte, nicht nur 'personal': Elias darf jede Vokabelkarte
+       löschen („ich möchte die vokabelkarten auch löschen können …", „Ja, Arabisch auch").
+       Gemessen: Buchkarte 45751 steht in vocab-data.js und kam nach dem Neuladen zurück.
+       vt_geloescht schreibt nur loeschePersonalVocab(); ältere Einträge sind alle eigene Wörter. */
+    if (w && weg[w.id] && weg[w.id].an){
       if (w.mnemo && typeof ABGELOESTE_MNEMO !== 'undefined') ABGELOESTE_MNEMO.set(String(w.id), w.mnemo);
       VOCAB_DATA.splice(i, 1);
     }
@@ -2010,7 +2014,12 @@ function blendeKapitelDublettenAus(){
 
 function loeschePersonalVocab(id){
   const w = VOCAB_DATA.find(x => x.id === id);
-  if (!w || w.chapter !== 'personal') return false;   /* Fachbegriffe sind seit dem 20.08.2026 selbst 'personal'. */
+  /* ⭐ Seit 18.11.2026 JEDE Karte außer Mehrzahlkarten. Elias: „ich möchte die
+     vokabelkarten auch löschen können anstatt nur bearbeiten. füge auch einen löschen
+     knopf hinzu" und „Ja, Arabisch auch". Buchkarten bleiben über vt_geloescht draußen
+     (einhaengen() und einzelneAusAnderenBuechern() in js/buecher.js). Hier stand
+     `w.chapter !== 'personal'`. */
+  if (!w || w.istPlural) return false;
 
   /* ⚠️ Seit C8 (18.08.2026) stehen unter 'personal' ZWEI Herkuenfte: was Elias
      hier im Trainer angelegt hat (PERSONAL_VOCAB im Geraetespeicher) und was er

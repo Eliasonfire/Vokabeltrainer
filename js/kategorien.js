@@ -755,17 +755,18 @@ function baueWortKarte(w){
      bearbeiten können, alle. aber vorallem will ich auch die möglichkeit haben
      meine eigenen vokabeln auch wieder zu löschen. das kann ich aktuell nicht."
 
-     ⛔ Geloescht wird nur, was ihm gehoert. Eine Buchvokabel zu loeschen waere
-     eine Scheinfunktion: der naechste arabicroots-Abzug brachte sie zurueck,
-     und niemand wuesste warum. Fuer die gibt es stattdessen das Zuruecksetzen
-     auf den Abzug, sobald er etwas geaendert hat. */
+     ⭐ Seit 18.11.2026 hat JEDE Karte den Knopf, auch Buchkarten. Elias: „ich möchte
+     die vokabelkarten auch löschen können anstatt nur bearbeiten. füge auch einen
+     löschen knopf hinzu" und „Ja, Arabisch auch". Die frühere Sorge (hier stand: eine
+     Buchvokabel zu löschen wäre eine Scheinfunktion, der nächste Abzug brächte sie
+     zurück) ist gelöst: vt_geloescht wird beim Einhängen der Bücher gelesen
+     (js/buecher.js). Mehrzahlkarten sind ausgenommen, ihr Zweig kehrt vorher zurück. */
   /* ⚠️ Auch die Fachbegriffe (18.08.2026, Elias: „fachbegriffe möchte ich auch
      löschen können"). Sie liegen in einer ausgelieferten Datei und werden nicht
      wirklich gelöscht, sondern beim Laden übersprungen — für ihn ist das
      dasselbe. ⛔ Diese Zeile stand zuerst nur auf 'personal', während kern.js
      schon beide erlaubte: der Knopf erschien nie, obwohl die Funktion dahinter
      fertig war. Aufgefallen nur, weil ich es im Browser durchgeklickt habe. */
-  const eigen = w.chapter === 'personal';
   /* ⛔ „Auf Original zurück" (24.09.2026): seit speichereWortAenderung() JEDE
      Änderung nach vt_wortAenderungen schreibt, gibt es ein Original auch bei
      seiner arabicroots-Eigenliste und bei den Fachbegriffen — beide stehen in
@@ -833,7 +834,7 @@ function baueWortKarte(w){
   t.push(`<div class="wk-aktionen">
     ${wkFreiKnopf}
     <button class="btn btn-secondary btn-klein" data-wkbearbeiten>${icon('note')}Bearbeiten</button>
-    ${eigen ? `<button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>` : ''}
+    <button class="btn btn-secondary btn-klein wk-loeschen" data-wkloeschen>${icon('trash')}Löschen</button>
     ${(geaendert && !nurImGeraet) ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
   </div>`);
 
@@ -1232,7 +1233,7 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
       if (typeof renderCategories === 'function') renderCategories();
       toast('Vokabel gelöscht');
     } else {
-      toast('Nur eigene Vokabeln lassen sich löschen');
+      toast('Diese Karte lässt sich nicht löschen');
     }
     return;
   }

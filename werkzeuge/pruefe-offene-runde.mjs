@@ -294,7 +294,10 @@ else {
     vm.runInContext(quelle, ctx);
     return ctx.VOCAB_DATA.map(w => w.id);
   };
-  pruefe('gelöschte eigene fehlen, alles andere bleibt', ['bleibt', 'buch', 'zurueck', 'p_1'], laden(mFilter[0]));
+  /* Seit 18.11.2026 fehlt auch die gelöschte BUCHkarte („buch"). Hier stand ['bleibt','buch',…]:
+     damals ließen sich nur eigene Wörter löschen. Elias: „ich möchte die vokabelkarten auch
+     löschen können anstatt nur bearbeiten" und „Ja, Arabisch auch". */
+  pruefe('gelöschte Karten fehlen, alles andere bleibt', ['bleibt', 'zurueck', 'p_1'], laden(mFilter[0]));
   const ohne = mFilter[0].replace(/  for \(let i = VOCAB_DATA\.length - 1;[\s\S]*?\n  \}\n/, '');
   pruefe('Störtest: ohne den Filter stünde „Fleisch" wieder da', true, laden(ohne).includes('fleisch'));
 }
