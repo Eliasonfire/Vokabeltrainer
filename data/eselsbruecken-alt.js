@@ -3671,6 +3671,150 @@ const ESELSBRUECKEN_ALT = {
     'Das Gegenstück zu صَبَاحٌ: صَبَاحُ الْخَيْرِ am Morgen, مَسَاءُ الْخَيْرِ am Abend.',
     'أَذْكَارُ الْمَسَاءِ: die Abendgebete, die du nach Asr sprichst.'
   ],
+  'isl-s01': [
+    'نُصَلِّي heißt wir beten: dasselbe Verb wie صَلَّى, mit نُ für „wir“.',
+    'بِنَا heißt wörtlich „mit uns“: Los, mit uns!'
+  ],
+  'isl-s02': [
+    'نُقِيمُ heißt wir verrichten, نُ für „wir“ wie in نُصَلِّي.',
+    'Wörtlich: das Gebet aufrichten. قَامَ heißt stehen.'
+  ],
+  'isl-s03': [
+    'الْآنَ heißt jetzt: das Wort, das vorne steht, wenn es dringend ist.',
+    'Fünf أَوْقَاتُ الصَّلَاةِ hat der Tag, وَقْتٌ ist eine davon.'
+  ],
+  'isl-s04': [
+    'لِلَّهِ ist لِ (für) und اللَّهِ: das Lob gehört Allah.',
+    'Nach dem Gebet sagst du es 33-mal an der Gebetskette.'
+  ],
+  'isl-s05': [
+    'شَاءَ steckt auch in مَا شَاءَ اللَّهُ, was Allah gewollt hat.',
+    'Im Deutschen „Inschallah“: drei Wörter, zusammengezogen.'
+  ],
+  'isl-s06': [
+    'فِيكَ heißt in dir: Allah lege Segen in dich.',
+    'Die Antwort darauf: وَفِيكَ بَارَكَ اللَّهُ, und in dir auch.'
+  ],
+  'isl-s07': [
+    'أَكْبَرُ ist die Steigerung von كَبِيرٌ (groß): größer als alles.',
+    'Nach dem Gebet sagst du es 34-mal an der Gebetskette.'
+  ],
+  'isl-s08': [
+    'لَا بُدَّ heißt „es führt kein Weg daran vorbei“, also: ich muss.',
+    'Nach أَنْ steht das Verb mit Fatha am Ende: أَتَوَضَّأَ.'
+  ],
+  'isl-s09': [
+    'Vom selben Stamm wie وُضُوءٌ, nur als Verb.',
+    'Genauso gebaut: صَلَّيْتُ, ich habe gebetet. Beide enden auf ـْتُ.'
+  ],
+  'isl-s10': [
+    'Wörtlich: Die Zeit des Gebets hat sich genähert.',
+    'وَقْتُ الصَّلَاةِ kennst du aus „Jetzt ist Gebetszeit“.'
+  ],
+  'isl-s11': [
+    'صَلَّيْتُ ist صَلَّى mit ـْتُ für „ich“.',
+    'Die Frage dazu lautet: هَلْ صَلَّيْتَ؟ Mit Fatha am Ende, weil du gefragt wirst.'
+  ],
+  'isl-s12': [
+    'هَلْ macht aus jedem Satz eine Ja-Nein-Frage.',
+    'Die Antwort lautet: نَعَمْ، قَدْ صَلَّيْتُ. Jetzt mit Damma, weil du von dir sprichst.'
+  ],
+  'isl-s13': [
+    'أُصَلِّي heißt ich bete, mit أُ für „ich“.',
+    'Wurzel ن ظ ر wie نَظَرَ (schauen): wer wartet, schaut nach dem, was kommt.'
+  ],
+  'isl-s14': [
+    'بِسُرْعَةٍ heißt mit Schnelligkeit, also schnell.',
+    'Nach أَنْ bekommt أُصَلِّي ein Fatha: أُصَلِّيَ.'
+  ],
+  'isl-s15': [
+    'Für das Pflichtgebet sagt man صَلَّى, für die Bitte für jemanden دَعَا.',
+    'لِي heißt für mich: لِ (für) und ي (mich), wie bei einer Bitte an einen Freund.'
+  ],
+  'isl-s16': [
+    'أَيْنَ fragt nach dem Ort, هُنَا heißt hier.',
+    'مَسْجِدٌ mit Tanwin: irgendeine Moschee, keine bestimmte.'
+  ],
+  'isl-s17': [
+    'Nach إِلَى steht der Genitiv: الْمَسْجِدِ.',
+    'Das Gegenteil, aus der Moschee: مِنَ الْمَسْجِدِ.'
+  ],
+  'isl-s18': [
+    'Das Verb fehlt und wird mitverstanden: Los, mit uns zur Moschee!',
+    'إِلَى heißt zu, nach: es zeigt die Richtung, danach kommt das Ziel im Genitiv.'
+  ],
+  'isl-s19': [
+    'نَاسٌ heißt Leute, wie in النَّاسُ: die Menschen, die zum Freitagsgebet kommen.',
+    'كَثِيرُونَ ist die Mehrzahl von كَثِيرٌ (viel) für Menschen.'
+  ],
+  'isl-s20': [
+    'بَعْدَ heißt nach, danach steht der Genitiv.',
+    'Zum Abschied sagt man auch: إِلَى اللِّقَاءِ, bis zum Treffen.'
+  ],
+  'isl-s21': [
+    'عَنْ heißt von … weg: zu spät für das Gebet.',
+    'Das ـْتُ am Ende heißt ich, genau wie in صَلَّيْتُ und تَوَضَّأْتُ.'
+  ],
+  'isl-s22': [
+    'Nach أَنْ steht أُصَلِّيَ mit Fatha am Ende, nicht mit Damma wie sonst.',
+    'أَيْنَ fragt nach dem Ort, und das passt zu مَكَانٌ.'
+  ],
+  'isl-s23': [
+    'هَلْ macht daraus eine Ja-Nein-Frage, die Antwort ist also نَعَمْ oder لَا.',
+    'هُنَا heißt hier und steht am Ende des Satzes.'
+  ],
+  'isl-s24': [
+    'Eine Frau sagt: أَنَا صَائِمَةٌ. Das ة macht die Form weiblich, wie bei مُسْلِمَةٌ.',
+    'Muster فَاعِلٌ wie طَالِبٌ: wer etwas tut.'
+  ],
+  'isl-s25': [
+    'Die Antwort darauf: نَعَمْ، أَنَا صَائِمٌ. Ja, ich faste.',
+    'صَائِمٌ hat die Wurzel ص و م wie صِيَامٌ.'
+  ],
+  'isl-s26': [
+    'آكُلُ heißt ich esse, von أَكَلَ. Nach أَنْ mit Fatha: آكُلَ.',
+    'لِي heißt für mich: für mich ist es nicht erlaubt.'
+  ],
+  'isl-s27': [
+    'الْيَوْمُ am Satzanfang heißt heute, wörtlich: der Tag, also dieser Tag.',
+    'رَمَضَانَ hat nach مِنْ kein Tanwin und ein Fatha: ein Diptoton.'
+  ],
+  'isl-s28': [
+    'Auch üblich ist: رَمَضَانُ كَرِيمٌ, der großzügige Ramadan.',
+    'Wurzel ب ر ك wie بَرَكَةٌ (Segen) und بَارَكَ اللَّهُ فِيكَ.'
+  ],
+  'isl-s29': [
+    'أَيْنَ heißt wo, مَتَى heißt wann: zwei Fragewörter, die du ständig brauchst.',
+    'الْإِفْطَارُ kennst du von der Karte Iftar.'
+  ],
+  'isl-s30': [
+    'إِلَيْنَا ist إِلَى und نَا zusammen: zu uns, also zu uns nach Hause.',
+    'لِلْإِفْطَارِ ist لِ und الْإِفْطَارِ: zum Iftar.'
+  ],
+  'isl-s31': [
+    'Die Antwort darauf ist عَفْوًا, gern geschehen, wörtlich: Verzeihung.',
+    'Wurzel ش ك ر wie الشُّكْرُ لِلَّهِ, der Dank gebührt Allah.'
+  ],
+  'isl-s32': [
+    'حَلَالٌ ist das Gegenteil von حَرَامٌ: erlaubt gegen verboten.',
+    'هَذَا zeigt auf das Essen vor dir: dieses hier, das auf dem Tisch steht.'
+  ],
+  'isl-s33': [
+    'آكُلُهُ heißt ich esse es: آكُلُ und هُ (es).',
+    'لَا vor dem Verb verneint die Gegenwart.'
+  ],
+  'isl-s34': [
+    'لَا آكُلُ heißt ich esse nicht: لَا vor dem Verb verneint die Gegenwart.',
+    'لَحْمَ steht im Akkusativ: es ist das, was ich nicht esse.'
+  ],
+  'isl-s35': [
+    'لَا تَقْلَقْ heißt sorg dich nicht. Nach dem Verbots-لَا steht das Verb ohne Endung.',
+    'يُعِينُ hat die Wurzel ع و ن wie عَوْنٌ (Hilfe).'
+  ],
+  'isl-s36': [
+    'حَفِظَ heißt auch bewahren: was du auswendig lernst, bewahrst du.',
+    'الْقُرْآنَ steht im Akkusativ: das, was ich lerne.'
+  ],
 
   '46070': [
     'In Sūrat al-Qadr, die du auswendig kannst: خَيْرٌ مِّنْ أَلْفِ شَهْرٍ (97:3) — die Nacht der Bestimmung ist „besser als tausend Monate".',
