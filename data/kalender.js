@@ -122,6 +122,11 @@ const KALENDER_VOKABELN = [
   { id: 'isl-niyya', ar: 'نِيَّةٌ', sg: 'نِيَّةٌ', pl: 'نِيَّاتٌ', de: 'Absicht (Niyya)', type: 'noun', gender: 'feminine', root: 'ن و ي', chapter: 'personal', book: 'personal' },
   { id: 'isl-qiyama', ar: 'يَوْمُ الْقِيَامَةِ', sg: 'يَوْمُ الْقِيَامَةِ', de: 'Tag des Gerichts', type: 'noun', gender: 'masculine', chapter: 'personal', book: 'personal' },
   { id: 'isl-masa', ar: 'مَسَاءٌ', sg: 'مَسَاءٌ', pl: 'أَمْسِيَةٌ', de: 'Abend', type: 'noun', gender: 'masculine', root: 'م س ي', chapter: 'personal', book: 'personal' },
+  /* Zweiter Schub (18.11.2026, abends). Elias in der Russisch-Sitzung zu deren 32 neuen Karten: „auch arabisch soll die haben“. Vorhandene Buchkarten statt neuer Karten: Sure 47991, barmherzig 47658, Fasten brechen 47718, Hadith 46126 (FREISCHALTEN_AUF_WUNSCH in js/kern.js); Minarett 46235 und danken 46283 hat er schon. Formen aus dem enwikt-Auszug, تَوْبَةٌ gegengeprüft bei arabdict. */
+  { id: 'isl-amin', ar: 'آمِينَ', sg: 'آمِينَ', de: 'Amen (Āmīn)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-khutba', ar: 'خُطْبَةٌ', sg: 'خُطْبَةٌ', pl: 'خُطَبٌ', de: 'Predigt (Khutba)', type: 'noun', gender: 'feminine', root: 'خ ط ب', chapter: 'personal', book: 'personal' },
+  { id: 'isl-tawba', ar: 'تَوْبَةٌ', sg: 'تَوْبَةٌ', de: 'Reue, Umkehr (Tawba)', type: 'noun', gender: 'feminine', root: 'ت و ب', chapter: 'personal', book: 'personal' },
+  { id: 'isl-sunna', ar: 'سُنَّةٌ', sg: 'سُنَّةٌ', de: 'Sunna', type: 'noun', gender: 'feminine', root: 'س ن ن', chapter: 'personal', book: 'personal' },
   /* Wendungen und kleine Alltagssätze (18.11.2026). Elias in der Russisch-Sitzung: „ich brauche auch für die vokabeln so ein paar kleine sätze also zb ich muss noch wudu machen oder sowas" und für Arabisch „außer das mach alle rein" (ohne „In welcher Richtung liegt Mekka?"). Jedes Wort gegen enwikt geprüft (Formen und Gegenwartsstämme), gebeugte Verbformen bei Reverso als vorhanden bestätigt.
      ⚠️ KEIN Beispielsatz in data/beispielsaetze.js: die Karte IST der Satz, und viele Wendungen enthalten Wörter, die er noch nicht freigeschaltet hat (pruefe-saetze.js) — als Übungssatz wäre das gegen Regel 1 der Beispielsätze. vorrat.mjs zählt sie deshalb unter „fehlende Beispielsaetze", bewusst. */
   { id: 'isl-s01', ar: 'هَيَّا بِنَا نُصَلِّي', sg: 'هَيَّا بِنَا نُصَلِّي', de: 'Komm, lass uns beten!', type: 'expression', chapter: 'personal', book: 'personal' },
@@ -160,6 +165,29 @@ const KALENDER_VOKABELN = [
   { id: 'isl-s34', ar: 'لَا آكُلُ لَحْمَ الْخِنْزِيرِ', sg: 'لَا آكُلُ لَحْمَ الْخِنْزِيرِ', de: 'Ich esse kein Schweinefleisch.', type: 'expression', chapter: 'personal', book: 'personal' },
   { id: 'isl-s35', ar: 'لَا تَقْلَقْ، اللَّهُ سَيُعِينُكَ', sg: 'لَا تَقْلَقْ، اللَّهُ سَيُعِينُكَ', de: 'Mach dir keine Sorgen, Allah wird helfen.', type: 'expression', chapter: 'personal', book: 'personal' },
   { id: 'isl-s36', ar: 'أَحْفَظُ الْقُرْآنَ', sg: 'أَحْفَظُ الْقُرْآنَ', de: 'Ich lerne den Koran auswendig.', type: 'expression', chapter: 'personal', book: 'personal' },
+  /* Zweiter Schub Satzkarten (18.11.2026, abends), aus derselben Russisch-Liste („auch arabisch soll die haben“). Wie isl-s01…s36 ohne Beispielsatz. */
+  { id: 'isl-s37', ar: 'السَّلَامُ عَلَيْكُمْ', sg: 'السَّلَامُ عَلَيْكُمْ', de: 'Friede sei mit euch! (Assalamu alaikum)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s38', ar: 'وَعَلَيْكُمُ السَّلَامُ', sg: 'وَعَلَيْكُمُ السَّلَامُ', de: 'Und mit euch sei Friede! (Antwort auf den Gruß)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s39', ar: 'بِسْمِ اللَّهِ', sg: 'بِسْمِ اللَّهِ', de: 'Im Namen Allahs. (Bismillah)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s40', ar: 'اللَّهُ أَعْلَمُ', sg: 'اللَّهُ أَعْلَمُ', de: 'Allah weiß es besser. (Allahu aʿlam)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s41', ar: 'أَنَا مُسْلِمٌ', sg: 'أَنَا مُسْلِمٌ', de: 'Ich bin Muslim.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s42', ar: 'لَا أَشْرَبُ الْخَمْرَ', sg: 'لَا أَشْرَبُ الْخَمْرَ', de: 'Ich trinke keinen Alkohol.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s43', ar: 'لَا تَنْسَ الصَّلَاةَ', sg: 'لَا تَنْسَ الصَّلَاةَ', de: 'Vergiss nicht zu beten!', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s44', ar: 'أَيْقِظْنِي لِلسَّحُورِ', sg: 'أَيْقِظْنِي لِلسَّحُورِ', de: 'Weck mich zum Suhur!', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s45', ar: 'كَمْ بَقِيَ عَلَى الْإِفْطَارِ', sg: 'كَمْ بَقِيَ عَلَى الْإِفْطَارِ', de: 'Wie lange noch bis zum Iftar?', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s46', ar: 'أَيْنَ يُمْكِنُ أَنْ أَتَوَضَّأَ', sg: 'أَيْنَ يُمْكِنُ أَنْ أَتَوَضَّأَ', de: 'Wo kann man die Waschung machen?', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s47', ar: 'نَسِيتُ أَنْ أُصَلِّيَ', sg: 'نَسِيتُ أَنْ أُصَلِّيَ', de: 'Ich habe vergessen zu beten.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s48', ar: 'هَلْ تَذْهَبُ إِلَى صَلَاةِ الْجُمُعَةِ', sg: 'هَلْ تَذْهَبُ إِلَى صَلَاةِ الْجُمُعَةِ', de: 'Gehst du zum Freitagsgebet?', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s49', ar: 'حَفِظْتُ سُورَةً جَدِيدَةً', sg: 'حَفِظْتُ سُورَةً جَدِيدَةً', de: 'Ich habe eine neue Sure auswendig gelernt.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s50', ar: 'أَسْتَغْفِرُ اللَّهَ', sg: 'أَسْتَغْفِرُ اللَّهَ', de: 'Ich bitte Allah um Vergebung. (Astaghfirullah)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s51', ar: 'عَافَاكَ اللَّهُ', sg: 'عَافَاكَ اللَّهُ', de: 'Gott gebe dir Gesundheit!', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s52', ar: 'جَزَاكَ اللَّهُ خَيْرًا', sg: 'جَزَاكَ اللَّهُ خَيْرًا', de: 'Möge Allah dich mit Gutem belohnen! (Jazakallahu khairan)', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s53', ar: 'دَخَلَ فِي الْإِسْلَامِ', sg: 'دَخَلَ فِي الْإِسْلَامِ', de: 'Er hat den Islam angenommen.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s54', ar: 'مَتَى يَبْدَأُ رَمَضَانُ', sg: 'مَتَى يَبْدَأُ رَمَضَانُ', de: 'Wann beginnt der Ramadan?', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s55', ar: 'بَعْدَ الصَّلَاةِ أَقْرَأُ الْقُرْآنَ', sg: 'بَعْدَ الصَّلَاةِ أَقْرَأُ الْقُرْآنَ', de: 'Nach dem Gebet lese ich Koran.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s56', ar: 'حَانَ وَقْتُ الْإِفْطَارِ', sg: 'حَانَ وَقْتُ الْإِفْطَارِ', de: 'Zeit, das Fasten zu brechen!', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s57', ar: 'أَنَا صَائِمٌ الْيَوْمَ، شُكْرًا', sg: 'أَنَا صَائِمٌ الْيَوْمَ، شُكْرًا', de: 'Heute faste ich, danke.', type: 'expression', chapter: 'personal', book: 'personal' },
+  { id: 'isl-s58', ar: 'أَدْعُو لَكَ', sg: 'أَدْعُو لَكَ', de: 'Ich bete für dich.', type: 'expression', chapter: 'personal', book: 'personal' },
 ];
 
 /* Buchkarten, die nur ein anderes Deutsch bekommen (angewandt in js/buecher.js, vor seinen

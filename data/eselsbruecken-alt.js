@@ -3815,6 +3815,126 @@ const ESELSBRUECKEN_ALT = {
     'حَفِظَ heißt auch bewahren: was du auswendig lernst, bewahrst du.',
     'الْقُرْآنَ steht im Akkusativ: das, was ich lerne.'
   ],
+  '46126': [
+    'Die Wurzel ح د ث hat mit Erzählen zu tun: حَدَّثَ heißt er erzählte.',
+    'حَدِيثٌ heißt auch Gespräch oder modern: Muster فَعِيلٌ wie جَدِيدٌ (neu).'
+  ],
+  '47658': [
+    'Die Wurzel ر ح م steckt auch in رَحْمَةٌ (Barmherzigkeit) und in رَحِمٌ (Mutterleib).',
+    'Muster فَعِيلٌ wie كَبِيرٌ und جَدِيدٌ: eine Eigenschaft, die bleibt.'
+  ],
+  '47718': [
+    'Auch عِيدُ الْفِطْرِ gehört dazu: das Fest, an dem das Fasten des Ramadan endet.',
+    'Im Alltag heißt أَفْطَرَ auch frühstücken: das erste Essen nach der Nacht.'
+  ],
+  '47991': [
+    'سُورَةٌ ist dasselbe Wort wie das deutsche Sure, nur mit langem ū: SŪ-ra.',
+    'Vor fast jeder Sure steht بِسْمِ اللَّهِ; nur vor einer einzigen fehlt es, vor der neunten.'
+  ],
+  'isl-amin': [
+    'Es klingt wie das deutsche Amen, nur mit langem ā vorn und langem ī hinten: ʾĀ-mīn.',
+    'Nicht verwechseln mit أَمِينٌ (vertrauenswürdig): dort ist das erste a kurz, und am Ende steht ein Tanwin.'
+  ],
+  'isl-khutba': [
+    'Wer die Predigt hält, heißt خَطِيبٌ: dieselbe Wurzel خ ط ب wie خُطْبَةٌ.',
+    'Vorsicht: خِطْبَةٌ mit i heißt Verlobung, خُطْبَةٌ mit u heißt Predigt.'
+  ],
+  'isl-tawba': [
+    'Das Verb dazu ist تَابَ (er bereute, er kehrte um); تَوْبَةٌ ist das Tun als Ding.',
+    'Wer oft umkehrt, ist تَوَّابٌ, und التَّوَّابُ ist einer der Namen Allahs: der die Reue annimmt.'
+  ],
+  'isl-sunna': [
+    'Nicht verwechseln mit سَنَةٌ (Jahr), das du schon hast: Bei سُنَّةٌ steht u statt a und ein Schadda.',
+    'Die Muslime, die sich nach der Sunna richten, heißen أَهْلُ السُّنَّةِ, die Leute der Sunna.'
+  ],
+  'isl-s37': [
+    'عَلَيْكُمْ ist عَلَى mit ـكُمْ: auf euch. Man sagt euch auch zu einer einzelnen Person.',
+    'Wurzel س ل م wie الْإِسْلَامُ und مُسْلِمٌ: Friede und Hingabe gehören zusammen.'
+  ],
+  'isl-s38': [
+    'Vor dem Artikel bekommt عَلَيْكُمْ ein u am Ende: عَلَيْكُمُ السَّلَامُ, damit es sich gut spricht.',
+    'Wer mehr sagen will, hängt an: وَرَحْمَةُ اللَّهِ وَبَرَكَاتُهُ, und die Barmherzigkeit Allahs und Sein Segen.'
+  ],
+  'isl-s39': [
+    'بِسْمِ ist بِ (mit, in) und اسْمٌ (Name): Das Alif von اسْمٌ fällt dabei weg.',
+    'Nach dem Essen sagst du dann الْحَمْدُ لِلَّهِ, das du als Satzkarte schon hast.'
+  ],
+  'isl-s40': [
+    'Muster أَفْعَلُ für mehr, wie أَكْبَرُ in اللَّهُ أَكْبَرُ (Allah ist größer).',
+    'Man sagt es, wenn man bei einer Frage nicht sicher ist: Allah weiß es besser als ich.'
+  ],
+  'isl-s41': [
+    'Eine Frau sagt أَنَا مُسْلِمَةٌ, mit ـةٌ am Ende wie bei مُسْلِمَةٌ (Muslimin).',
+    'مُسْلِمٌ ist der, der sich Allah hingibt: Wurzel س ل م wie الْإِسْلَامُ.'
+  ],
+  'isl-s42': [
+    'لَا vor dem Verb in der Gegenwart verneint: لَا أَشْرَبُ heißt ich trinke nicht.',
+    'أَشْرَبُ kommt von شَرِبَ (trinken): dazu ein أَ vorn für ich.'
+  ],
+  'isl-s43': [
+    'Bei تَنْسَ fällt das lange Ende von تَنْسَى weg, weil es ein Verbot ist.',
+    'الصَّلَاةَ steht im Akkusativ: Es ist das, was man nicht vergessen soll.'
+  ],
+  'isl-s44': [
+    'لِ und السَّحُورِ werden zu لِلسَّحُورِ: Das Alif des Artikels fällt nach لِ weg.',
+    'Wer wach ist, ist يَقْظَانُ: dieselbe Wurzel ي ق ظ wie أَيْقَظَ.'
+  ],
+  'isl-s45': [
+    'بَقِيَ heißt bleiben, übrig sein: Wie viel Zeit bleibt noch bis zum Iftar?',
+    'عَلَى zeigt hier, worauf man wartet: عَلَى الْإِفْطَارِ, bis zum Iftar.'
+  ],
+  'isl-s46': [
+    'أَتَوَضَّأَ kommt von تَوَضَّأَ: dieselbe Wurzel wie وُضُوءٌ, die Waschung.',
+    'Nach أَنْ steht das Verb mit a am Ende: أَتَوَضَّأَ, nicht أَتَوَضَّأُ.'
+  ],
+  'isl-s47': [
+    'Gebaut wie يَجِبُ أَنْ أُصَلِّيَ: Nach أَنْ folgt das Verb mit a am Ende.',
+    'Wer ein Gebet vergessen hat, betet es, sobald er sich daran erinnert: Das lehrt ein Hadith.'
+  ],
+  'isl-s48': [
+    'صَلَاةُ الْجُمُعَةِ ist eine Genitivverbindung: das Gebet des Freitags.',
+    'هَلْ macht aus einem Satz eine Ja-Nein-Frage: هَلْ تَذْهَبُ heißt gehst du?'
+  ],
+  'isl-s49': [
+    'سُورَةً جَدِيدَةً: Das Adjektiv folgt dem Nomen, beide weiblich und beide mit ـةً.',
+    'Sure 93, die du schon auswendig kannst, heißt سُورَةُ الضُّحَى.'
+  ],
+  'isl-s50': [
+    'Dieselbe Wurzel غ ف ر wie مَغْفِرَةٌ (Vergebung), das du schon hast.',
+    'Man sagt es nach einem Fehler und dreimal nach jedem Pflichtgebet.'
+  ],
+  'isl-s51': [
+    'Dieselbe Wurzel wie الْعَافِيَةُ (Wohlbefinden): Man bittet Allah um Afiya.',
+    'Man sagt es als Dank oder wenn jemand krank ist: Gott gebe dir Gesundheit.'
+  ],
+  'isl-s52': [
+    'خَيْرًا steht im Akkusativ: mit Gutem. Darauf antwortet man وَإِيَّاكَ, dir ebenso.',
+    'Das schönste Danke unter Muslimen: Man dankt und bittet zugleich für den anderen.'
+  ],
+  'isl-s53': [
+    'دَخَلَ heißt eintreten: Er ist in den Islam eingetreten wie in ein Haus.',
+    'Wer den Islam annimmt, spricht die شَهَادَةٌ, das Glaubensbekenntnis.'
+  ],
+  'isl-s54': [
+    'يَبْدَأُ kommt von بَدَأَ (beginnen); رَمَضَانُ ist hier das Subjekt.',
+    'Der Ramadan beginnt, wenn die neue Mondsichel gesehen wird: Er ist der 9. Monat.'
+  ],
+  'isl-s55': [
+    'أَقْرَأُ und الْقُرْآنُ haben dieselbe Wurzel ق ر أ: lesen und das Gelesene.',
+    'Nach بَعْدَ steht der Genitiv: بَعْدَ الصَّلَاةِ mit i am Ende.'
+  ],
+  'isl-s56': [
+    'Gebaut wie الْآنَ وَقْتُ الصَّلَاةِ, das du als Satzkarte hast: وَقْتٌ heißt Zeit.',
+    'وَقْتُ الْإِفْطَارِ ist eine Genitivverbindung: die Zeit des Iftar.'
+  ],
+  'isl-s57': [
+    'So lehnt man höflich ab, wenn einem tagsüber Essen oder Tee angeboten wird.',
+    'Gebaut wie أَنَا صَائِمٌ, das du als Satzkarte schon hast, mit الْيَوْمَ (heute) dazu.'
+  ],
+  'isl-s58': [
+    'لَكَ ist لِ (für) mit ـكَ: für dich. Zu einer Frau sagt man أَدْعُو لَكِ.',
+    'Die Bitte dazu hast du schon als Satzkarte: ادْعُ لِي, bete für mich.'
+  ],
 
   '46070': [
     'In Sūrat al-Qadr, die du auswendig kannst: خَيْرٌ مِّنْ أَلْفِ شَهْرٍ (97:3) — die Nacht der Bestimmung ist „besser als tausend Monate".',

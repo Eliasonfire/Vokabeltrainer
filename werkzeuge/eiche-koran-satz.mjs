@@ -38,6 +38,8 @@ const ANGESEHEN = new Set([
   'bestimmt:46020',   /* Karte „Spiegel" (mirʾāh): im Satzbestand steht mit denselben Buchstaben „die Frau" (al-marʾa)   */
   'gen:mb1-75-8:3',   /* „die Frau" im Nominativ; der Genitiv-Beleg mit denselben Buchstaben ist „des Spiegels"          */
   'mudaf:46005',      /* Karte „Tochter" (ibna): der Satzbestand schreibt das Verbindungs-Alif mit eigenem Kasra         */
+  'mudaf:45940',      /* Karte „Jahr" (sana): im Satzbestand steht seit 18.11.2026 mit denselben Buchstaben „Sunna von …"
+                         (sunnatu, Satz der Karte isl-sunna) — ein anderes Wort, keine falsch gebildete Form          */
 ]);
 
 let bestand, saetze;

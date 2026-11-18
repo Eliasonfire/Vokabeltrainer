@@ -214,6 +214,15 @@ const BEISPIELSAETZE = {
   'isl-maghfira': { sentAr: 'الْمَغْفِرَةُ مِنَ اللَّهِ.', sentDe: 'Die Vergebung kommt von Allah.' },
   'isl-niyya':    { sentAr: 'النِّيَّةُ فِي الْقَلْبِ.', sentDe: 'Die Absicht ist im Herzen.' },
   'isl-masa':     { sentAr: 'أَنَا فِي الْبَيْتِ فِي الْمَسَاءِ.', sentDe: 'Am Abend bin ich zu Hause.' },
+  /* Zweiter Schub (18.11.2026, abends): vier neue Wörter und vier freigeschaltete Buchkarten. */
+  'isl-amin': { sentAr: 'بَعْدَ الدُّعَاءِ نَقُولُ: آمِينَ.', sentDe: 'Nach dem Bittgebet sagen wir: Amen.' },
+  'isl-khutba': { sentAr: 'الْخُطْبَةُ فِي الْمَسْجِدِ.', sentDe: 'Die Predigt ist in der Moschee.' },
+  'isl-tawba': { sentAr: 'التَّوْبَةُ إِلَى اللَّهِ.', sentDe: 'Die Umkehr ist zu Allah hin.' },
+  'isl-sunna': { sentAr: 'هَذِهِ سُنَّةُ النَّبِيِّ.', sentDe: 'Das ist die Sunna des Propheten.' },
+  '47991': { sentAr: 'هَذِهِ سُورَةٌ قَصِيرَةٌ.', sentDe: 'Das ist eine kurze Sure.' },
+  '47658': { sentAr: 'اللَّهُ هُوَ الرَّحِيمُ.', sentDe: 'Allah ist der Barmherzige.' },
+  '47718': { sentAr: 'أَفْطَرْنَا بَعْدَ الْأَذَانِ.', sentDe: 'Wir haben das Fasten nach dem Gebetsruf gebrochen.' },
+  '46126': { sentAr: 'هَذَا حَدِيثٌ مَشْهُورٌ.', sentDe: 'Das ist ein bekannter Hadith.' },
 
   /* ضَعِيفٌ — schwach (bayna-yadayk-2, Kapitel 2, einzeln freigeschaltet)
      Nominalsatz: hādhā als Subjekt, Nomen mit Adjektiv als Prädikat. Alle drei Wörter stehen so auf seinen Karten (50160, 45764, 46549); geschrieben in der Nachtschicht vom 20.10.2026 — in seinen Büchern und Schlüsseln steht kein Satz mit dem Wort (gesucht in 608 Sätzen des Repos und in den Schlüsseln Band 2 und 3). */

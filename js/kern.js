@@ -2558,7 +2558,12 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    Muslim, fasten, Seele, Sünde, Hidschab, Mekka, Morgen, Gottheit, Paradies, gute Tat, Engel,
    heilig, Almosen. Statt einer zweiten Karte (A13); die übrigen stehen in data/kalender.js. */
 const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254', '46070',
-  '50312', '46155', '46552', '47016', '48038', '50317', '47223', '47215', '47944', '50385', '47216', '47858'];
+  '50312', '46155', '46552', '47016', '48038', '50317', '47223', '47215', '47944', '50385', '47216', '47858',
+  /* 18.11.2026, abends — Elias (Russisch-Sitzung, weitergegeben): „auch arabisch soll die haben“ (deren 32 neue Karten).
+     Vorhandene Buchkarten statt neuer: Sure, barmherzig, das Fasten brechen, Hadith. Minarett und danken
+     stehen in Madina 2 — freigeschaltet, aber nicht in seiner Buchauswahl (Abzug .stand-app.json vom
+     15.11.: madina-1 + bayna-yadayk-1), im Probe-Browser also nicht bekannt; deshalb auch sie einzeln. */
+  '47991', '47658', '47718', '46126', '46235', '46283'];
 /* ⛔ Mekka (50486) wieder heraus (18.11.2026, 13:20). Elias: „die vokabel mekka selbst kannst auch aus
    beiden apps raus machen". Sie stand von v773 bis v774 in der Liste oben. Die Liste allein streichen
    reicht nicht: auf seinen Geräten steht der Eintrag schon in EINZELN. Deshalb wird er einmal
