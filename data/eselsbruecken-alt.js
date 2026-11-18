@@ -3570,6 +3570,108 @@ const ESELSBRUECKEN_ALT = {
     'Der 12. und letzte Monat: Danach beginnt mit مُحَرَّمٌ ein neues Jahr.'
   ],
 
+  /* Islamische Wörter (18.11.2026, data/kalender.js) — die zweite und dritte Eselsbrücke. Kein Koranvers. */
+  'isl-islam': [
+    'مُسْلِمٌ ist der, der sich hingibt; الْإِسْلَامُ ist die Hingabe selbst. Beide aus س ل م.',
+    'Muster إِفْعَالٌ wie إِيمَانٌ und إِفْطَارٌ: das Verbalnomen von أَسْلَمَ (sich hingeben).'
+  ],
+  'isl-muslima': [
+    'Wie طَالِبٌ und طَالِبَةٌ: die weibliche Form hängt einfach ة an.',
+    'Mehrzahl مُسْلِمَاتٌ: die Endung ـَاتٌ für viele Frauen.'
+  ],
+  'isl-quran': [
+    'Wer den Koran vorträgt, ist ein قَارِئٌ, dieselbe Wurzel ق ر أ.',
+    'Muster فُعْلَانٌ wie غُفْرَانٌ (Vergebung): ein Verbalnomen, wörtlich „das Vortragen".'
+  ],
+  'isl-allah': [
+    'اللَّهُ أَكْبَرُ hörst du in jedem Gebetsruf und sagst es zu Beginn jedes Gebets.',
+    'سُبْحَانَ اللَّهِ an der Gebetskette: in jedem Tasbih steht اللَّهُ.'
+  ],
+  'isl-iman': [
+    'مُؤْمِنٌ (Gläubiger) ist der, der إِيمَانٌ hat. Beide aus أ م ن.',
+    'Die sechs أَرْكَانُ الْإِيمَانِ (Glaubenssäulen): Allah, Engel, Bücher, Propheten, der Letzte Tag, die Vorherbestimmung.'
+  ],
+  'isl-jahannam': [
+    'Das deutsche Wort „Gehenna" ist dasselbe Wort wie جَهَنَّمُ.',
+    'جَهَنَّمُ ist weiblich und hat kein Tanwin, wie ein Eigenname.'
+  ],
+  'isl-salah': [
+    'حَيَّ عَلَى الصَّلَاةِ — „kommt zum Gebet", ruft der Muezzin in jedem Adhan.',
+    'Fünfmal am Tag: die fünf صَلَوَاتٌ, die Mehrzahl mit ـَاتٌ.'
+  ],
+  'isl-wudu': [
+    'Mit Damma وُضُوءٌ ist die Waschung, mit Fatha وَضُوءٌ das Wasser dafür.',
+    'Erst Wudu, dann der Gebetsteppich: وُضُوءٌ kommt vor der صَلَاةٌ.'
+  ],
+  'isl-siyam': [
+    'صِيَامُ رَمَضَانَ — das Fasten im Ramadan, eine der fünf Säulen des Islam.',
+    'Es gibt zwei Wörter für das Fasten: صَوْمٌ und صِيَامٌ, beide von صَامَ.'
+  ],
+  'isl-eid-fitr': [
+    'Man wünscht sich عِيدٌ مُبَارَكٌ — gesegnetes Fest.',
+    'Am 1. Shawwal: der Ramadan ist vorbei, das Fasten wird gebrochen.'
+  ],
+  'isl-eid-adha': [
+    'Es fällt in die Zeit des Hadsch, wenn die Pilger in Mekka sind.',
+    'Zwei Feste im Jahr: عِيدُ الْفِطْرِ nach dem Ramadan, عِيدُ الْأَضْحَى beim Hadsch.'
+  ],
+  'isl-hajj': [
+    'Wer den Hadsch gemacht hat, heißt حَاجٌّ (Hadschi).',
+    'Die fünfte Säule des Islam: الْحَجُّ nach Mekka.'
+  ],
+  'isl-iftar': [
+    'Muster إِفْعَالٌ wie الْإِسْلَامُ und إِيمَانٌ.',
+    'Im Alltag heißt إِفْطَارٌ auch Frühstück: das erste Essen nach der Nacht.'
+  ],
+  'isl-suhur': [
+    'Der Prophet sagte: Esst Suhur, denn فِي السَّحُورِ بَرَكَةً — im Suhur liegt Segen.',
+    'Suhur am Morgen, Iftar am Abend: سَحُورٌ und إِفْطَارٌ rahmen den Fastentag ein.'
+  ],
+  'isl-zakat': [
+    'Im Koran steht die زَكَاةٌ oft direkt neben der صَلَاةٌ: beten und abgeben gehören zusammen.',
+    'Eine der fünf Säulen des Islam, gleich nach Schahada und Gebet.'
+  ],
+  'isl-halal': [
+    'Auf Fleischpackungen liest du „Halal": dasselbe Wort.',
+    'Wurzel ح ل ل: حَلَّ heißt lösen, freigeben. Erlaubt ist, was freigegeben ist.'
+  ],
+  'isl-haram': [
+    'Dieselbe Wurzel wie مُحَرَّمٌ, der heilige 1. Monat.',
+    'Auch das Wort „Harem" kommt daher: ein geschützter, für Fremde verbotener Bereich.'
+  ],
+  'isl-adhan': [
+    'Wurzel أ ذ ن wie أُذُنٌ (Ohr): der Gebetsruf ist für die Ohren.',
+    'Der Adhan beginnt mit اللَّهُ أَكْبَرُ, viermal hintereinander, damit es jeder hört.'
+  ],
+  'isl-mumin': [
+    'Muster مُفْعِلٌ wie مُسْلِمٌ: wer etwas tut, hier: wer glaubt.',
+    'Einer der Namen Allahs ist الْمُؤْمِنُ, der Sicherheit Gebende.'
+  ],
+  'isl-subha': [
+    'Auch مِسْبَحَةٌ ist üblich: das Gerät für den Tasbih.',
+    'Nach dem Gebet: 33-mal سُبْحَانَ اللَّهِ, 33-mal الْحَمْدُ لِلَّهِ, 34-mal اللَّهُ أَكْبَرُ.'
+  ],
+  'isl-sabr': [
+    'Die Redewendung صَبْرٌ جَمِيلٌ: schöne Geduld, ohne zu klagen.',
+    'Wer viel Geduld hat, ist صَابِرٌ: dieselbe Wurzel ص ب ر, einmal die Sache, einmal der Mensch.'
+  ],
+  'isl-maghfira': [
+    'Einer der Namen Allahs ist الْغَفُورُ, der Vergebende.',
+    'Muster مَفْعِلَةٌ wie مَعْرِفَةٌ (Wissen).'
+  ],
+  'isl-niyya': [
+    'Vor dem Fasten fasst du die نِيَّةٌ, die Absicht zu fasten.',
+    'Wurzel ن و ي wie das Verb نَوَى (beabsichtigen): die نِيَّةٌ ist das, was du vorhast.'
+  ],
+  'isl-qiyama': [
+    'Ein anderer Name: يَوْمُ الدِّينِ, der Tag der Vergeltung.',
+    'Eine Wurzel ق و م: قَامَ (aufstehen), قِيَامٌ (das Stehen), قِيَامَةٌ (die Auferstehung).'
+  ],
+  'isl-masa': [
+    'Das Gegenstück zu صَبَاحٌ: صَبَاحُ الْخَيْرِ am Morgen, مَسَاءُ الْخَيْرِ am Abend.',
+    'أَذْكَارُ الْمَسَاءِ: die Abendgebete, die du nach Asr sprichst.'
+  ],
+
   '46070': [
     'In Sūrat al-Qadr, die du auswendig kannst: خَيْرٌ مِّنْ أَلْفِ شَهْرٍ (97:3) — die Nacht der Bestimmung ist „besser als tausend Monate".',
     'Dieselbe Wurzel ش ه ر wie مَشْهُورٌ (berühmt), das du aus Madina 1 hast. Zusammen klingen sie wie ein Reim: شَهْرٌ مَشْهُورٌ, „ein berühmter Monat".'

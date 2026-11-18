@@ -190,6 +190,31 @@ const BEISPIELSAETZE = {
     sentDe: 'Dhul-Hijja kommt nach Dhul-Qada.'
   },
 
+  /* Islamische Wörter (18.11.2026, data/kalender.js) — kurze Nominalsätze. Ohne Satz bleiben
+     Hölle, Zakat und Tag des Gerichts: mit seinen Wörtern ging kein Satz, der nicht gestellt wäre. */
+  'isl-islam':    { sentAr: 'أَنَا مُسْلِمٌ وَدِينِي الْإِسْلَامُ.', sentDe: 'Ich bin Muslim, und meine Religion ist der Islam.' },
+  'isl-muslima':  { sentAr: 'هِيَ مُسْلِمَةٌ.', sentDe: 'Sie ist Muslimin.' },
+  'isl-quran':    { sentAr: 'الْقُرْآنُ عَلَى الْمَكْتَبِ.', sentDe: 'Der Koran liegt auf dem Schreibtisch.' },
+  'isl-allah':    { sentAr: 'بِسْمِ اللَّهِ.', sentDe: 'Im Namen Allahs.' },
+  'isl-iman':     { sentAr: 'الْإِيمَانُ فِي الْقَلْبِ.', sentDe: 'Der Glaube ist im Herzen.' },
+  'isl-salah':    { sentAr: 'الصَّلَاةُ فِي الْمَسْجِدِ.', sentDe: 'Das Gebet ist in der Moschee.' },
+  'isl-wudu':     { sentAr: 'الْوُضُوءُ قَبْلَ الصَّلَاةِ.', sentDe: 'Die Waschung kommt vor dem Gebet.' },
+  'isl-siyam':    { sentAr: 'الصِّيَامُ فِي رَمَضَانَ.', sentDe: 'Das Fasten ist im Ramadan.' },
+  'isl-eid-fitr': { sentAr: 'عِيدُ الْفِطْرِ بَعْدَ رَمَضَانَ.', sentDe: 'Das Fest des Fastenbrechens ist nach dem Ramadan.' },
+  'isl-eid-adha': { sentAr: 'عِيدُ الْأَضْحَى فِي ذِي الْحِجَّةِ.', sentDe: 'Das Opferfest ist im Dhul-Hijja.' },
+  'isl-hajj':     { sentAr: 'الْحَجُّ فِي ذِي الْحِجَّةِ.', sentDe: 'Der Hadsch ist im Dhul-Hijja.' },
+  'isl-iftar':    { sentAr: 'الْإِفْطَارُ فِي الْمَسَاءِ.', sentDe: 'Das Iftar ist am Abend.' },
+  'isl-suhur':    { sentAr: 'السَّحُورُ قَبْلَ الصَّبَاحِ.', sentDe: 'Das Suhur ist vor dem Morgen.' },
+  'isl-halal':    { sentAr: 'هَذَا اللَّحْمُ حَلَالٌ.', sentDe: 'Dieses Fleisch ist halal.' },
+  'isl-haram':    { sentAr: 'هَذَا حَرَامٌ.', sentDe: 'Das ist haram.' },
+  'isl-adhan':    { sentAr: 'الْأَذَانُ مِنَ الْمَسْجِدِ.', sentDe: 'Der Gebetsruf kommt aus der Moschee.' },
+  'isl-mumin':    { sentAr: 'أَبِي مُؤْمِنٌ.', sentDe: 'Mein Vater ist ein Gläubiger.' },
+  'isl-subha':    { sentAr: 'السُّبْحَةُ عَلَى الْمَكْتَبِ.', sentDe: 'Die Gebetskette liegt auf dem Schreibtisch.' },
+  'isl-sabr':     { sentAr: 'الصَّبْرُ جَمِيلٌ.', sentDe: 'Geduld ist schön.' },
+  'isl-maghfira': { sentAr: 'الْمَغْفِرَةُ مِنَ اللَّهِ.', sentDe: 'Die Vergebung kommt von Allah.' },
+  'isl-niyya':    { sentAr: 'النِّيَّةُ فِي الْقَلْبِ.', sentDe: 'Die Absicht ist im Herzen.' },
+  'isl-masa':     { sentAr: 'أَنَا فِي الْبَيْتِ فِي الْمَسَاءِ.', sentDe: 'Am Abend bin ich zu Hause.' },
+
   /* ضَعِيفٌ — schwach (bayna-yadayk-2, Kapitel 2, einzeln freigeschaltet)
      Nominalsatz: hādhā als Subjekt, Nomen mit Adjektiv als Prädikat. Alle drei Wörter stehen so auf seinen Karten (50160, 45764, 46549); geschrieben in der Nachtschicht vom 20.10.2026 — in seinen Büchern und Schlüsseln steht kein Satz mit dem Wort (gesucht in 608 Sätzen des Repos und in den Schlüsseln Band 2 und 3). */
   '46549': {

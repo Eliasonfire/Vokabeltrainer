@@ -2553,7 +2553,12 @@ if (!EINZELN || typeof EINZELN !== 'object' || Array.isArray(EINZELN)) EINZELN =
    abgeglichenen Stand (KV 26.10.2026, geändert 16:11 UTC) kein Eintrag in vt_einzeln_frei,
    vt_bekannt, vt_geloescht, vt_wortAenderungen, kein eigenes Wort „Monat"; in vt_progress
    ein unbewerteter Eintrag. Satz, drei Eselsbrücken und Markierungen kamen im selben Zug. */
-const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254', '46070'];
+/* 18.11.2026 dazu: 13 Buchkarten aus Elias' Liste der islamischen Wörter („für die arabisch app
+   brauche ich auch die die wir gesagt hatte", „ich brauche auch morgen und abend als vokabel") —
+   Muslim, fasten, Seele, Sünde, Hidschab, Mekka, Morgen, Gottheit, Paradies, gute Tat, Engel,
+   heilig, Almosen. Statt einer zweiten Karte (A13); die übrigen stehen in data/kalender.js. */
+const FREISCHALTEN_AUF_WUNSCH = ['50164', '50165', '50169', '50170', '50172', '50285', '46549', '50339', '46913', '47254', '46070',
+  '50312', '46155', '46552', '47016', '48038', '50486', '50317', '47223', '47215', '47944', '50385', '47216', '47858'];
 {
   let neu = false;
   for (const id of FREISCHALTEN_AUF_WUNSCH)

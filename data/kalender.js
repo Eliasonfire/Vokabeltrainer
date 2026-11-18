@@ -83,6 +83,45 @@ const KALENDER_VOKABELN = [
   { id: 'kal-dhulqada', ar: 'ذُو الْقَعْدَةِ', sg: 'ذُو الْقَعْدَةِ', de: 'Dhul-Qada (11. Monat)', type: 'noun', gender: 'masculine', chapter: 'personal', book: 'personal', monat: 11 },
   /* enwikt „ذو الحجة“ (name), Beugungstabelle, Nominativ · Wurzel: enwikt „حجة“ */
   { id: 'kal-dhulhijja', ar: 'ذُو الْحِجَّةِ', sg: 'ذُو الْحِجَّةِ', de: 'Dhul-Hijja (12. Monat)', type: 'noun', gender: 'masculine', root: 'ح ج ج', chapter: 'personal', book: 'personal', monat: 12 },
+
+  /* ---------- Islamische Wörter (18.11.2026) ----------
+     Elias in der Sitzung „Russisch Vokabeltrainer App": „für die arabisch app brauche ich auch die
+     die wir gesagt hatte" — die Liste der islamischen Wörter, dazu „ich brauche auch morgen und
+     abend als vokabel" (hier direkt gesagt). Und auf die Frage nach der Quelle der Vokalzeichen:
+     „guck die sätze und so nach mit den wörterbüchern die wir haben".
+     ⭐ Was es als Buchkarte schon gibt, bekommt keine zweite Karte (A13): beten, Moschee, Prophet,
+     Imam, Ramadan und Teppich hat er schon; 13 weitere Buchkarten (Muslim, fasten, Seele, Sünde,
+     Hidschab, Mekka, Morgen, Gottheit, Paradies, gute Tat, Engel, heilig, Almosen) schaltet
+     FREISCHALTEN_AUF_WUNSCH in js/kern.js einzeln frei.
+     ⛔ HERKUNFT: jede Form aus dem enwikt-Auszug (data-ersatz/quellen/auszuege/enwikt-arabisch.jsonl),
+     gegengeprüft bei arabdict am 18.11.2026. Abweichungen: Wudu — arabdict nennt zuerst wadūʾ
+     (das Waschwasser), enwikt wuḍūʾ für die Waschung (hier); Suhur — enwikt saḥūr für die Mahlzeit
+     (hier), arabdict suḥūr (das Verbalnomen). Allah wie überall in der App: اللَّهُ. */
+  { id: 'isl-islam', ar: 'الْإِسْلَامُ', sg: 'الْإِسْلَامُ', de: 'der Islam', type: 'noun', gender: 'masculine', root: 'س ل م', chapter: 'personal', book: 'personal' },
+  { id: 'isl-muslima', ar: 'مُسْلِمَةٌ', sg: 'مُسْلِمَةٌ', pl: 'مُسْلِمَاتٌ', de: 'Muslimin', type: 'noun', gender: 'feminine', root: 'س ل م', chapter: 'personal', book: 'personal' },
+  { id: 'isl-quran', ar: 'الْقُرْآنُ', sg: 'الْقُرْآنُ', de: 'der Koran', type: 'noun', gender: 'masculine', root: 'ق ر أ', chapter: 'personal', book: 'personal' },
+  { id: 'isl-allah', ar: 'اللَّهُ', sg: 'اللَّهُ', de: 'Allah', type: 'noun', gender: 'masculine', chapter: 'personal', book: 'personal' },
+  { id: 'isl-iman', ar: 'إِيمَانٌ', sg: 'إِيمَانٌ', de: 'Glaube', type: 'noun', gender: 'masculine', root: 'أ م ن', chapter: 'personal', book: 'personal' },
+  { id: 'isl-jahannam', ar: 'جَهَنَّمُ', sg: 'جَهَنَّمُ', de: 'Hölle', type: 'noun', gender: 'feminine', chapter: 'personal', book: 'personal' },
+  { id: 'isl-salah', ar: 'صَلَاةٌ', sg: 'صَلَاةٌ', pl: 'صَلَوَاتٌ', de: 'Pflichtgebet (Salah)', type: 'noun', gender: 'feminine', root: 'ص ل و', chapter: 'personal', book: 'personal' },
+  { id: 'isl-wudu', ar: 'وُضُوءٌ', sg: 'وُضُوءٌ', de: 'rituelle Waschung (Wudu)', type: 'noun', gender: 'masculine', root: 'و ض أ', chapter: 'personal', book: 'personal' },
+  { id: 'isl-siyam', ar: 'صِيَامٌ', sg: 'صِيَامٌ', de: 'das Fasten', type: 'noun', gender: 'masculine', root: 'ص و م', chapter: 'personal', book: 'personal' },
+  { id: 'isl-eid-fitr', ar: 'عِيدُ الْفِطْرِ', sg: 'عِيدُ الْفِطْرِ', de: 'Fest des Fastenbrechens', type: 'noun', gender: 'masculine', chapter: 'personal', book: 'personal' },
+  { id: 'isl-eid-adha', ar: 'عِيدُ الْأَضْحَى', sg: 'عِيدُ الْأَضْحَى', de: 'Opferfest', type: 'noun', gender: 'masculine', chapter: 'personal', book: 'personal' },
+  { id: 'isl-hajj', ar: 'حَجٌّ', sg: 'حَجٌّ', de: 'Hadsch (Pilgerfahrt)', type: 'noun', gender: 'masculine', root: 'ح ج ج', chapter: 'personal', book: 'personal' },
+  { id: 'isl-iftar', ar: 'إِفْطَارٌ', sg: 'إِفْطَارٌ', de: 'Iftar (Fastenbrechen am Abend)', type: 'noun', gender: 'masculine', root: 'ف ط ر', chapter: 'personal', book: 'personal' },
+  { id: 'isl-suhur', ar: 'سَحُورٌ', sg: 'سَحُورٌ', de: 'Suhur (Mahlzeit vor der Morgendämmerung)', type: 'noun', gender: 'masculine', root: 'س ح ر', chapter: 'personal', book: 'personal' },
+  { id: 'isl-zakat', ar: 'زَكَاةٌ', sg: 'زَكَاةٌ', de: 'Zakat (Pflichtabgabe)', type: 'noun', gender: 'feminine', root: 'ز ك و', chapter: 'personal', book: 'personal' },
+  { id: 'isl-halal', ar: 'حَلَالٌ', sg: 'حَلَالٌ', de: 'halal (erlaubt)', type: 'adjective', root: 'ح ل ل', chapter: 'personal', book: 'personal' },
+  { id: 'isl-haram', ar: 'حَرَامٌ', sg: 'حَرَامٌ', femSg: 'حَرَامٌ', de: 'haram (verboten)', type: 'adjective', root: 'ح ر م', chapter: 'personal', book: 'personal' },
+  { id: 'isl-adhan', ar: 'أَذَانٌ', sg: 'أَذَانٌ', de: 'Gebetsruf (Adhan)', type: 'noun', gender: 'masculine', root: 'أ ذ ن', chapter: 'personal', book: 'personal' },
+  { id: 'isl-mumin', ar: 'مُؤْمِنٌ', sg: 'مُؤْمِنٌ', pl: 'مُؤْمِنُونَ', de: 'Gläubiger', type: 'noun', gender: 'masculine', root: 'أ م ن', chapter: 'personal', book: 'personal' },
+  { id: 'isl-subha', ar: 'سُبْحَةٌ', sg: 'سُبْحَةٌ', pl: 'سُبُحَاتٌ', de: 'Gebetskette', type: 'noun', gender: 'feminine', root: 'س ب ح', chapter: 'personal', book: 'personal' },
+  { id: 'isl-sabr', ar: 'صَبْرٌ', sg: 'صَبْرٌ', de: 'Geduld', type: 'noun', gender: 'masculine', root: 'ص ب ر', chapter: 'personal', book: 'personal' },
+  { id: 'isl-maghfira', ar: 'مَغْفِرَةٌ', sg: 'مَغْفِرَةٌ', de: 'Vergebung', type: 'noun', gender: 'feminine', root: 'غ ف ر', chapter: 'personal', book: 'personal' },
+  { id: 'isl-niyya', ar: 'نِيَّةٌ', sg: 'نِيَّةٌ', pl: 'نِيَّاتٌ', de: 'Absicht (Niyya)', type: 'noun', gender: 'feminine', root: 'ن و ي', chapter: 'personal', book: 'personal' },
+  { id: 'isl-qiyama', ar: 'يَوْمُ الْقِيَامَةِ', sg: 'يَوْمُ الْقِيَامَةِ', de: 'Tag des Gerichts', type: 'noun', gender: 'masculine', chapter: 'personal', book: 'personal' },
+  { id: 'isl-masa', ar: 'مَسَاءٌ', sg: 'مَسَاءٌ', pl: 'أَمْسِيَةٌ', de: 'Abend', type: 'noun', gender: 'masculine', root: 'م س ي', chapter: 'personal', book: 'personal' },
 ];
 
 /* Buchkarten, die nur ein anderes Deutsch bekommen (angewandt in js/buecher.js, vor seinen
