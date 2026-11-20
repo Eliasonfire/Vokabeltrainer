@@ -797,8 +797,12 @@ let lexikonSchwer = 0;
     const EICH_E = [
       ['fi ayyi dawrin', () => { const r = analysiereSatz(FI + ' ' + AYYI + ' ' + DAWRIN + '؟'); return r[1].erwartet === 'jarr' && r[1].stimmt === true && r[2].erwartet === 'jarr' && r[2].stimmt === true; },
         'ayy nach fi steht im Genitiv und ist مُضَاف, nicht unveraenderlich'],
-      ['kam taliban fi l-fasli', () => { const r = analysiereSatz(KAM + ' ' + TALIBAN + ' ' + FI + ' ' + ALFASLI + '؟'); return r[1].erwartet === null && r[1].stimmt === null; },
-        'nach kam keine Rolle und kein Kasus (tamyiz steht in keiner seiner Regeln), nicht مَفْعُول مُطْلَق'],
+      /* ⭐ Seit 20.11.2026 gelernt (Folge 33, 28:39, mansub-nach-kam-01): nach كَمْ manṣūb.
+         Vorher hieß der Fall „keine Rolle und kein Kasus". Fall 3 ist Madina 1, S. 101. */
+      ['kam taliban fi l-fasli', () => { const r = analysiereSatz(KAM + ' ' + TALIBAN + ' ' + FI + ' ' + ALFASLI + '؟'); return r[1].erwartet === 'nasb' && r[1].stimmt === true && !/مُطْلَق/.test(r[1].rolle); },
+        'nach kam manṣūb (Folge 33, mansub-nach-kam-01), nicht مَفْعُول مُطْلَق'],
+      ['kam taliban jadidan', () => { const r = analysiereSatz(KAM + ' ' + TALIBAN + ' ' + z(0x062C,0x064E,0x062F,0x0650,0x064A,0x062F,0x064B,0x0627) + ' ' + FI + ' ' + ALFASLI + '؟'); return r[2].erwartet === 'nasb' && r[2].stimmt === true && /نَعْت/.test(r[2].rolle); },
+        'das Adjektiv nach dem Wort nach kam ist sein نَعْت, manṣūb — kein خَبَر'],
       ['ladayna shaqqatun', () => { const r = analysiereSatz(LADAYNA + ' ' + SHAQQATUN + '.'); return r[0].erwartet === null && r[1].erwartet === 'raf' && r[1].stimmt === true; },
         'ladayna ist ein ظَرْف wie indana, kein مُبْتَدَأ']
     ];

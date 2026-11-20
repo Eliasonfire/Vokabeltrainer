@@ -652,6 +652,9 @@ const istMonatsZusatz = (vorher, wort) => {
    Skript herausgezogen, nicht getippt): nat, und mamnu min as-sarf wie in
    funktionenVon() Punkt 5. */
 const NAT_MONAT = 'نَعْت (Teil des Monatsnamens)';
+/* Das Wort nach كَمْ: Einzahl, manṣūb (Folge 33, mansub-nach-kam-01). js/uebung.js erkennt die
+   Rolle an genau diesem Text — Übung 6 und 7 fragen manṣūb nur hier ab, nicht beim Objekt. */
+const ROLLE_NACH_KAM = 'nach كَمْ (Einzahl, manṣūb)';
 const MAMNU = 'مَمْنُوع مِنَ الصَّرْف';
 
 /* Verben, die in den Beispielsaetzen dieses Repos vorkommen. Ohne diese Liste
@@ -1550,6 +1553,7 @@ function analysiereSatz(satz){
      ⛔ Als Index und nicht als Flag: ein Flag ueberlebte das يَا in
      شُكْرًا يَا مُدَرِّسُ, und der مُنَادَى wurde zum نَعْت erklaert. */
   let mafulIndex = -2;
+  let kamIndex = -2;           // Stelle des Wortes nach كَمْ (mansub-nach-kam-01)
   let nachVerb = false;   /* steht das naechste Wort hinter einem Verb? */
   /* Das Objekt kam VOR einem genannten Täter (Befund (b) unten): ein Nomen im
      Nominativ danach ist dann der فَاعِل, kein zweites Objekt. */
@@ -1875,6 +1879,12 @@ function analysiereSatz(satz){
          nicht sein: dazu fehlt ein مُبْتَدَأ. */
       rolle = 'نَعْت (zum مَفْعُول مُطْلَق)';
       erwartet = letzterKasus;
+    } else if (i === kamIndex + 1 && letzterKasus && !istBestimmt(wort) && gelesen && gelesen.kasus === letzterKasus){
+      /* كَمْ طَالِبًا جَدِيدًا (Madina 1, S. 101): نَعْت zum Wort nach كَمْ, im selben Fall
+         und unbestimmt (nat-vier-bedingungen-01). Nur wenn die Endung es auch zeigt —
+         sonst ist es der Anfang eines neuen Satzteils. */
+      rolle = 'نَعْت (zum Wort nach كَمْ)';
+      erwartet = letzterKasus;
     } else if (i > 0 && letzterKasus && !nachKomma && istMonatsZusatz(woerter[i - 1], wort)){
       /* Der Zusatz eines zweiteiligen Monatsnamens (MONATS_PAARE oben): nat des Namens,
          im selben Fall — Rabiun al-awwalu, bada Rabiin al-awwali. */
@@ -1996,8 +2006,16 @@ function analysiereSatz(satz){
          مَفْعُول مُطْلَق „(Verb mitgedacht)" — falsch. Richtig heißt die Rolle
          تَمْيِيز, und die steht in keiner seiner Regeln (grammar-data.js,
          regelsammlung-data.js: 0 Treffer). Also keine falsche Rolle und keine
-         Kasusaussage, wie beim Dual: „noch nicht geprüft". */
-      rolle = 'nach كَمْ — noch nicht geprüft';
+         Kasusaussage, wie beim Dual: „noch nicht geprüft".
+         ⭐ SEIT 20.11.2026 GEPRÜFT: Sein Lehrer hat es in Folge 33 unterrichtet (28:39,
+         „Kam macht den Ism danach manṣūb … im Singular"), Regel mansub-nach-kam-01.
+         Elias: „diese regel für akkusativ also mansub brauche ich und die soll auch im
+         satzmodus irgendwie vor kommen". Den Fachnamen tamyīz nennt der Lehrer nicht —
+         die Rolle heißt deshalb nach seinem Wort (ROLLE_NACH_KAM). Ein Adjektiv direkt
+         danach ist sein نَعْت (كَمْ طَالِبًا جَدِيدًا, Madina 1 S. 101), kein خَبَر. */
+      rolle = ROLLE_NACH_KAM;
+      erwartet = 'nasb';
+      kamIndex = i;
       ersteRolleVergeben = true;
     } else if (!ersteRolleVergeben && gelesen && gelesen.kasus === 'nasb' && gelesen.tanwin){
       /* ⛔ EIN مُبْتَدَأ IST IMMER مَرْفُوع (20.08.2026). Steht das erste Wort mit

@@ -221,6 +221,29 @@ const GEPRUEFT_0911 = {
   'zuruf-makan-weitere-01': 'zarf-lada-01'
 };
 for (const [a, bs] of Object.entries(GEPRUEFT_0911)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
+/* 20.11.2026, nach mansub-nach-kam-01 und muthanna-bildung-01 (Folge 33): 30 neue Paare am Wort
+   gelesen. Diese 27 gelten dort NICHT zusammen: an einem Wort ohne كَمْ davor greift die كَمْ-Regel
+   nicht; am Wort nach كَمْ (أُخْتًا, سَبُّورَةً) greifen weder Eigenname, Ruf, Nominativ, Genitiv
+   noch Alif maqṣūra; an einem Plural greift der Dual nicht und umgekehrt. Die übrigen drei
+   (كَمْ ↔ Alif-Regel, كَمْ unter irab-drei-faelle-01) stehen in js/uebung.js. */
+const GEPRUEFT_2011 = {
+  'alif-maqsura-01': 'mansub-nach-kam-01',
+  'alif-maqsura-unveraenderlich-01': 'mansub-nach-kam-01',
+  'irab-drei-faelle-01': 'mansub-nach-kam-01',
+  'mamnu-min-as-sarf-01': 'mansub-nach-kam-01',
+  'mamnu-min-as-sarf-plural-01': 'mansub-nach-kam-01',
+  'marfu-grundfall-01': 'mansub-nach-kam-01',
+  'tanwin-eigennamen-01': 'mansub-nach-kam-01',
+  'tanwin-maennername-ta-01': 'mansub-nach-kam-01',
+  'tanwin-nach-harf-jarr-01': 'mansub-nach-kam-01',
+  'jam-ghayr-aqil-01': 'muthanna-bildung-01',
+  'jam-muannath-salim-01': 'muthanna-bildung-01',
+  'jam-mudhakkar-salim-01': 'muthanna-bildung-01',
+  'jam-taksir-01': 'muthanna-bildung-01',
+  'mansub-nach-kam-01': 'alif-maqsura-01 alif-maqsura-unveraenderlich-01 mamnu-min-as-sarf-01 mamnu-min-as-sarf-namen-01 mamnu-min-as-sarf-plural-01 marfu-grundfall-01 tanwin-eigennamen-01 tanwin-maennername-ta-01 tanwin-nach-harf-jarr-01 ya-nida-01',
+  'muthanna-bildung-01': 'jam-ghayr-aqil-01 jam-muannath-salim-01 jam-mudhakkar-salim-01 jam-taksir-01'
+};
+for (const [a, bs] of Object.entries(GEPRUEFT_2011)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
 const GEPRUEFT_PAARE = new Set(Object.entries(GEPRUEFT).flatMap(([a, bs]) => bs.split(' ').map(b => a + ' → ' + b)));
 
 function schneideFunktion(text, name){

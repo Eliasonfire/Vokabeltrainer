@@ -340,6 +340,17 @@ function uebungBezugswort(z, i, weiblich){
    7 ihn mit ab. Die Auswahl (مَنْصُوبٌ, Fatḥa, Fatḥatān) bleibt stehen. */
 const UEB_AKKUSATIV_REGEL = 'akkusativ-01';
 const uebAkkusativBekannt = () => typeof regelArt === 'function' && !!regelArt(UEB_AKKUSATIV_REGEL);
+/* ⭐ DER ERSTE AKKUSATIV, DEN ER GELERNT HAT: NACH كَمْ (20.11.2026). Elias: „er hatte in der
+   folge gesagt ‚wenn ein nomen unbestimmt mansub ist dann erhält es am ende ein alif', diese
+   regel für akkusativ also mansub brauche ich und die soll auch im satzmodus irgendwie vor
+   kommen". Sein Lehrer (Folge 33, 28:39): „Kam macht den Ism danach manṣūb". Deshalb fragen
+   Übung 6 und 7 manṣūb jetzt AN DIESER STELLE ab (das Wort nach كَمْ und sein نَعْت), das Objekt
+   (سَأَغْسِلُ الْمَلَابِسَ) bleibt gesperrt, bis akkusativ-01 kommt — gemessen: ganz offen kämen
+   11 Objekt-Aufgaben dazu, die er nicht gelernt hat. Die Rollentexte setzt js/irab.js. */
+const UEB_KAM_REGEL = 'mansub-nach-kam-01';
+const UEB_KAM_ROLLEN = ['nach كَمْ (Einzahl, manṣūb)', 'نَعْت (zum Wort nach كَمْ)'];
+const uebNasbErlaubt = t => uebAkkusativBekannt()
+  || (typeof regelArt === 'function' && !!regelArt(UEB_KAM_REGEL) && !!t && UEB_KAM_ROLLEN.includes(t.rolle));
 /* Der Grund einer Endung — die Rolle ohne Klammerzusatz („نَعْت (zum …)" →
    „نَعْت"). uebungMischen() zieht damit innerhalb einer Antwort reihum. */
 const uebGrund = t => String((t && t.rolle) || '').replace(/\s*\(.*$/, '').trim() || null;
@@ -1576,7 +1587,7 @@ const UEBUNGEN = [
   {
     id:'kasus', nr:6, name:'Welcher Fall?', art:'wahl',
     baue(z){
-      return z.map((t,i)=>(t.erwartet && (t.erwartet !== 'nasb' || uebAkkusativBekannt())) ? {
+      return z.map((t,i)=>(t.erwartet && (t.erwartet !== 'nasb' || uebNasbErlaubt(t))) ? {
         frage:'In welchem Fall steht das hervorgehobene Wort?',
         wortIdx:i, optionen:KASUS_WAHL, loesung:t.erwartet, grund:uebGrund(t),
         aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar} (${KASUS[t.erwartet].de})`
@@ -1617,12 +1628,16 @@ const UEBUNGEN = [
            Dual (اِثْنَانِ) wird damit weiter nach seinem Kasra gefragt — offen,
            bis der Dual unterrichtet ist. */
         if (/(ُونَ|ِينَ)$/.test(String(t.rein || ''))) return null;
-        if (t.erwartet === 'nasb' && !uebAkkusativBekannt()) return null;
+        if (t.erwartet === 'nasb' && !uebNasbErlaubt(t)) return null;
         if (!HARAKA_WAHL.some(h=>h.wert === t.gelesen.zeichen)) return null;
         return {
           frage:'Welche Endung gehört an das hervorgehobene Wort?',
           wortIdx:i, ohneEndung:true, optionen:HARAKA_WAHL, loesung:t.gelesen.zeichen, grund:uebGrund(t),
           aufloesung:`${typeof rolleAnzeige === 'function' ? rolleAnzeige(t.rolle) : t.rolle} → ${KASUS[t.erwartet].ar}, also ${uebZeichenName(t.gelesen.zeichen)}: ${t.rein}`
+            /* Die Alif-Regel gleich dazu, wo sie greift (tanwin-fath-alif-01, Folge 33, 1:34 und 29:10). */
+            + (t.gelesen.zeichen === 'Fathatan' && UEB_KAM_ROLLEN.includes(t.rolle)
+                ? (/ة/.test(String(t.rein || '')) ? ' — nach ة ohne Alif' : ' — unbestimmt und manṣūb, deshalb hinten ein Alif')
+                : '')
         };
       }).filter(Boolean);
     }
@@ -2702,6 +2717,7 @@ function uebungKeineRegel(r){
      beschreibt er genau diese Stelle (bi-l-jāmiʿati oder fī l-jāmiʿati bei fī l-jāmiʿati). */
 const UEBUNG_ZUSAMMEN = [
   ['mudaf-01', 'mudaf-ohne-al-01', 'idafa-erkennen-01'],          // erstes Wort der Iḍāfa (bintu)
+  ['mansub-nach-kam-01', 'tanwin-fath-alif-01'],                   // كَمْ قَلَمًا: manṣūb UND das Alif (20.11.2026)
   ['mudaf-ilayh-01', 'idafa-zweitglied-01'],                       // zweites Wort (l-mudarrisi)
   ['ismul-isara-hadha-01', 'isara-genus-kongruenz-01'],            // hādhā
   ['ismul-isara-dhalika-01', 'kaf-der-entfernung-01', 'isara-genus-kongruenz-01'],   // dhālika
@@ -2795,7 +2811,7 @@ const UEBUNG_OBERBEGRIFF = {
   'hurufu-jarr-bedeutungen-01': ['harf-jarr-idafa-01', ...UEBUNG_LI_BI.filter(id => !id.startsWith('harf-jarr-bi'))],
   'zarf-01':               UEBUNG_ZARF_IMMER,
   'zarf-mansub-01':        ['zarf-als-mudaf-01', 'zuruf-makan-weitere-01', 'zarf-makan-rollenname-01'],
-  'irab-drei-faelle-01':   ['marfu-grundfall-01', 'tanwin-fath-alif-01', 'tanwin-nach-harf-jarr-01', 'tanwin-eigennamen-01',
+  'irab-drei-faelle-01':   ['marfu-grundfall-01', 'tanwin-fath-alif-01', 'mansub-nach-kam-01', 'tanwin-nach-harf-jarr-01', 'tanwin-eigennamen-01',
                             'ya-nida-01', 'tanwin-maennername-ta-01', 'mamnu-min-as-sarf-01', 'mamnu-min-as-sarf-plural-01',
                             'mamnu-min-as-sarf-namen-01'],
   'mamnu-min-as-sarf-01':  ['mamnu-min-as-sarf-plural-01', 'mamnu-min-as-sarf-namen-01', 'tanwin-maennername-ta-01',
