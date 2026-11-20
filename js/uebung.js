@@ -119,7 +119,8 @@ function uebungLexikon(){
      Übungen 11, 12, 16, 18) erwarten die Einzahlkarte — Übung 18 hatte dadurch 0 Aufgaben.
      Die Form fehlt nicht: sie steht als `pl` auf der Einzahlkarte. Bewacht von
      test-mehrzahl-einsetzen.mjs (2p) und werkzeuge/pruefe-lexikon-einzahl.mjs. */
-  const zaehlt = w => !(w && typeof istPluralKarte === 'function' && uebMzKern(() => istPluralKarte(String(w.id)), false));
+  /* Die Dualkarte (…#du, seit 20.11.2026) genauso: ihr `ar` ist der Dual, nicht die Einzahl. */
+  const zaehlt = w => !(w && (w.istDual || (typeof istPluralKarte === 'function' && uebMzKern(() => istPluralKarte(String(w.id)), false))));
   const quelle = VOCAB_DATA.filter(zaehlt);
   /* `ar` in einem eigenen Durchgang zuerst: ein Wort, das selbst Vokabel ist,
      schlaegt die femSg-Angabe einer anderen Vokabel. */
@@ -1259,7 +1260,7 @@ const UEB_DING_IDS = new Set(['45751','45752','45753','45754','45755','45756','4
 /* 'mensch' | 'ding' | null (nicht eingeordnet). Eine Mehrzahlkarte (…#pl) gilt wie ihre Einzahl. */
 function uebMenschOderDing(w){
   if (!w) return null;
-  const id = String(w.plVon || w.id || '').replace(/#pl$/, '');
+  const id = String(w.plVon || w.dualVon || w.id || '').replace(/#(pl|du)$/, '');
   return UEB_MENSCH_IDS.has(id) ? 'mensch' : UEB_DING_IDS.has(id) ? 'ding' : null;
 }
 function uebMehrzahlKarten(){

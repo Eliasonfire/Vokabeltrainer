@@ -15,8 +15,8 @@
  *   D2  Kein Raten: ab/akh, Alif oder Hamza am Ende, Manqūṣ, Endung ā, Diptoton, Artikel, Verb,
  *       Zahlwort, Mehrzahlkarte und zwei Formen ergeben KEINE Form — mit dem richtigen Grund.
  *   D3  Die Karte: Kennung „<id>#du", deutsche Zeile „zwei …" beim Nomen, „… (Dual)" sonst.
- *   D4  AUS: dualKartenStufe() ist false, und kein Quelltext unter js/ ruft baueDualKarte() oder
- *       dualFormen() außerhalb von js/kern.js auf — keine Dualkarte in Runde, Liste, Suche.
+ *   D4  AN (seit 20.11.2026, Elias: „ja"): dualKartenStufe() ist true, js/kern.js baut die Karten beim
+ *       Start, js/buecher.js nach dem Bücherwechsel, und pluralBereit() lässt sie auf ihre Einzahl warten.
  * Jede Aussage hat einen Störtest am echten Quelltext (im Speicher verändert), der rot werden muss.
  *
  *   node test-dual.mjs     Exit 0 = alles grün, alle Störtests schlagen an
@@ -112,13 +112,16 @@ function pruefe(kern, aufrufer){
   if (!kj || kj.de !== 'neu (Dual)') f.push('D3: Karte „neu" heißt ' + (kj && kj.de));
   if (D.baueDualKarte(NEIN[0][0]) !== null) f.push('D3: unsichere Form ergibt eine Karte');
   if (!D.istDualKarte('b1#du') || D.istDualKarte('b1#pl')) f.push('D3: istDualKarte() trennt nicht');
-  /* D4 */
-  if (D.dualKartenStufe() !== false) f.push('D4: dualKartenStufe() ist nicht false — er hat „noch nicht" gesagt');
-  for (const [datei, text] of aufrufer){
-    /* Kommentare zählen nicht (der Kopf über DUAL_MARKE nennt die Funktionen beim Namen). */
-    const ohneDef = ohneKommentareUndTexte(datei === 'js/kern.js' ? text.replace(dualTeil(text), '') : text, { texte: false });
-    if (/\b(baueDualKarte|dualFormen|dualPruefen)\s*\(/.test(ohneDef)) f.push(`D4: ${datei} ruft die Dualformen auf — sie sind noch AUS`);
-  }
+  /* D4 — seit 20.11.2026 AN (Elias: „ja" auf „Dual-Karten … Einschalten?"). Die Karten müssen
+     beim Start UND nach jedem Bücherwechsel gebaut werden, und eine Dualkarte wartet wie die
+     Mehrzahl auf ihre Einzahl (pluralBereit kennt „#du"). */
+  if (D.dualKartenStufe() !== true) f.push('D4: dualKartenStufe() ist nicht true — er hat „ja" gesagt');
+  const code = new Map(aufrufer.map(([datei, text]) => [datei, ohneKommentareUndTexte(text, { texte: false })]));
+  if (!/^wendeDualKartenAn\s*\(\s*dualKartenStufe\s*\(\s*\)\s*\)/m.test(code.get('js/kern.js') || '')) f.push('D4: js/kern.js baut die Dualkarten beim Start nicht');
+  if (!/\bwendeDualKartenAn\s*\(/.test(code.get('js/buecher.js') || '')) f.push('D4: js/buecher.js baut die Dualkarten nach dem Bücherwechsel nicht neu');
+  let bereit = '';
+  try { bereit = fn(aufrufer.find(([d]) => d === 'js/kern.js')[1], 'function pluralBereit('); } catch (e){}
+  if (!bereit.includes("endsWith('#du')")) f.push('D4: pluralBereit() kennt die Dualkarte nicht — sie käme vor ihrer Einzahl');
   return f;
 }
 
@@ -126,7 +129,7 @@ const JS = fs.readdirSync(path.join(W, 'js')).filter(d => d.endsWith('.js')).map
 let rot = 0;
 const echt = pruefe(KERN, JS);
 if (echt.length){ rot++; console.log('❌ Am echten Quelltext:'); echt.forEach(x => console.log('   ' + x)); }
-else console.log(`✅ D1–D4 grün: ${GUT.length} Formen wie im Buch, ${NEIN.length} unsichere Fälle ohne Form, Dual AUS.`);
+else console.log(`✅ D1–D4 grün: ${GUT.length} Formen wie im Buch, ${NEIN.length} unsichere Fälle ohne Form, Dual AN.`);
 
 const ersetze = (q, alt, neu, name) => { const n = q.split(alt).length - 1; if (n !== 1) throw new Error(`Störtest „${name}" greift nicht: Stelle ${n}× gefunden`); return q.replace(alt, neu); };
 const STOER = [
@@ -134,7 +137,7 @@ const STOER = [
   ['S2 Genitiv mit -āni', 'D1', 'DUAL_Z(0x64A) + DUAL_Z(0x652) + DUAL_Z(0x646)', 'DUAL_Z(0x627) + DUAL_Z(0x646)'],
   ['S3 ohne Tanwin-Prüfung', 'D2', "  if (!zeichen.includes(DUAL_Z(0x64C))) return", '  if (false) return'],
   ['S4 ab/akh nicht gesperrt', 'D2', '[[0x623, 0x628], [0x623, 0x62E], [0x627, 0x628], [0x627, 0x62E]]', '[]'],
-  ['S5 Dual eingeschaltet', 'D4', '  return false;\n}\n/* → { nom, gen }', '  return true;\n}\n/* → { nom, gen }'],
+  ['S5 Dual wieder aus', 'D4', '  return true;\n}\n/* Wie wendePluralKartenAn()', '  return false;\n}\n/* Wie wendePluralKartenAn()'],
   ['S6 Schadda fällt weg', 'D1', '  if (zeichen.includes(DUAL_Z(0x651))) stamm += DUAL_Z(0x651);\n', ''],
   ['S7 Hamza am Ende erlaubt', 'D2', '.map(DUAL_Z).includes(letzter)) return', '.map(DUAL_Z).includes(letzter) && false) return'],
   ['S8 jede Wortart', 'D2', "  if (!['noun', 'adjective'].includes(w.type)) return", '  if (false) return'],
@@ -146,11 +149,17 @@ for (const [name, ziel, alt, neu] of STOER){
   if (fehl.some(x => x.startsWith(ziel + ':'))) console.log(`✅ ${name}: rot (${fehl.filter(x => x.startsWith(ziel)).length}× ${ziel})`);
   else { rot++; console.log(`❌ ${name}: bleibt grün in ${ziel}`); }
 }
-/* S9: ein Aufruf in einer anderen Datei muss D4 rot machen. */
+/* S9: fehlt der Neubau nach dem Bücherwechsel, muss D4 rot werden. S11: kennt pluralBereit
+   die Dualkarte nicht, ebenso. Beide am echten Quelltext, im Speicher verändert. */
 {
-  const fehl = pruefe(KERN, [...JS, ['js/probe-aufrufer.js', 'VOCAB_DATA.push(baueDualKarte(w));']]);
-  if (fehl.some(x => x.startsWith('D4:'))) console.log('✅ S9 Dualkarte eingehängt: rot (D4)');
-  else { rot++; console.log('❌ S9 Dualkarte eingehängt: bleibt grün in D4'); }
+  const ohneBuecher = JS.map(([d, t]) => [d, d === 'js/buecher.js' ? t.replace(/wendeDualKartenAn\(dualKartenStufe\(\)\);/, '') : t]);
+  const fehl = pruefe(KERN, ohneBuecher);
+  if (fehl.some(x => x.startsWith('D4:'))) console.log('✅ S9 kein Neubau nach Bücherwechsel: rot (D4)');
+  else { rot++; console.log('❌ S9 kein Neubau nach Bücherwechsel: bleibt grün in D4'); }
+  const ohneBereit = JS.map(([d, t]) => [d, d === 'js/kern.js' ? t.replace("w.id.endsWith('#du') ? '#du'", "false ? '#du'") : t]);
+  const fehl2 = pruefe(KERN, ohneBereit);
+  if (fehl2.some(x => x.startsWith('D4:'))) console.log('✅ S11 Dual ohne Wartezeit: rot (D4)');
+  else { rot++; console.log('❌ S11 Dual ohne Wartezeit: bleibt grün in D4'); }
 }
-console.log(rot ? `\n❌ ${rot} Befund(e).` : `\n✅ Alles grün: 4 Aussagen, ${STOER.length + 1} Störtests schlagen an.`);
+console.log(rot ? `\n❌ ${rot} Befund(e).` : `\n✅ Alles grün: 4 Aussagen, ${STOER.length + 2} Störtests schlagen an.`);
 process.exit(rot ? 1 : 0);

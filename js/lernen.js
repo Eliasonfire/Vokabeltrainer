@@ -591,6 +591,8 @@ function renderCard(){
   document.getElementById('cardChapter').textContent = (w.istPlural && w.sgAr)
     ? 'Plural' + (art ? ' · ' + art : '')
     : kapitelBeschriftung(w);
+  /* Dualkarte (seit 20.11.2026): oben nur „Dual", die Einzahl erst unten im Kästchen „Singular". */
+  if (w.istDual) document.getElementById('cardChapter').textContent = 'Dual';
 
   /* ⭐ „Laut sagen" — auf etwa der Hälfte der Karten, reihum wechselnd.
      Die Auswahl trifft `waehleLautKarten()` beim Rundenaufbau; hier wird sie
@@ -708,6 +710,7 @@ function renderCard(){
        15.10.2026 weg („dieses klingt wie ist quatsch, das soll raus").
        Bewacht von test-plural-karte.mjs (L1 bis L8). */
     if (w.istPlural && w.sgAr) forms.push({label:'Singular', value:formenAnzeige(w.sgAr)});
+    if (w.istDual && w.sgAr) forms.push({label:'Singular', value:formenAnzeige(w.sgAr)});   // Dualkarte, 20.11.2026
     if (w.pl && typeof istZahlwort === 'function' && istZahlwort(w))
       forms.push({label:(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), value:formenAnzeige(w.pl)});
     if (w.femSg) forms.push({label:'Fem.', value:formenAnzeige(w.femSg)});

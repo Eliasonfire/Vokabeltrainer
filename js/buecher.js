@@ -1226,6 +1226,10 @@ document.addEventListener('DOMContentLoaded', async ()=>{
   if (typeof wendePluralKartenAn === 'function' && typeof SETTINGS !== 'undefined'){
     wendePluralKartenAn(pluralKartenStufe(SETTINGS));
   }
+  /* Die Dualkarten genauso frisch (seit 20.11.2026 an, dualKartenStufe() in js/kern.js). */
+  if (typeof wendeDualKartenAn === 'function' && typeof dualKartenStufe === 'function'){
+    wendeDualKartenAn(dualKartenStufe());
+  }
 
   /* ---------- Seine Änderungen an den Mehrzahlkarten (20.10.2026) ----------
      wendePluralKartenAn() baut die Mehrzahlkarten eben frisch, aus der Einzahl und OHNE das,

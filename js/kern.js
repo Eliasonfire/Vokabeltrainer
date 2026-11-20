@@ -98,6 +98,7 @@ function kapitelBeschriftung(w){
     const art = (typeof pluralArtText === 'function') ? pluralArtText(w.sgAr, w.ar) : '';
     return (art ? art + ' · ' : '') + `Plural von ${w.sgAr}`;
   }
+  if (w.istDual && w.sgAr) return `Dual von ${w.sgAr}`;   // seit 20.11.2026
   if (w.chapter === 'personal') return 'Eigene Vokabel';
   /* „Koran häufigste" (11.10.2026): der Platz nach Häufigkeit statt der Nummer des
      Stücks — „Kap. 2" hieße hier nur „irgendwo zwischen Platz 31 und 60". */
@@ -1033,14 +1034,16 @@ function pluralBereit(w){
      istBekannt(), das jede Liste fragt, stürzte mit ab (gemessen 19.10.2026: fünf Übungen in
      werkzeuge/pruefe-hinweise.mjs bauten 0 Aufgaben). Dieselbe Marke wie PLURAL_MARKE;
      test-plural-platz.mjs (C4) hält beide gleich. */
-  if (!w || typeof w.id !== 'string' || !w.id.endsWith('#pl')) return true;
+  /* Die Dualkarte (…#du, seit 20.11.2026) wartet genauso auf ihre Einzahl. */
+  const marke = (w && typeof w.id === 'string') ? (w.id.endsWith('#pl') ? '#pl' : (w.id.endsWith('#du') ? '#du' : null)) : null;
+  if (!marke) return true;
   /* ⛔ try statt typeof: PROGRESS und BEKANNT sind `let` weiter unten. Vor ihrer Zeile
      wirft schon `typeof PROGRESS` (zeitliche Totzone, derselbe Fallstrick wie bei
      SETTINGS in wendePluralKartenAn). Bis dahin ist eine Mehrzahl nicht bereit. */
   try {
     const eigen = PROGRESS[w.id];
     if (eigen && (eigen.gruppe || (eigen.box || 1) > 1 || (eigen.correct || 0) + (eigen.wrong || 0) > 0)) return true;
-    const sgId = String(w.plVon || w.id.slice(0, -'#pl'.length));
+    const sgId = String(w.plVon || w.dualVon || w.id.slice(0, -marke.length));
     if (typeof kennErSchon === 'function' && kennErSchon({ id: sgId })) return true;
     const sg = PROGRESS[sgId];
     return !!sg && (sg.box || 1) >= 2;
@@ -1313,8 +1316,27 @@ function istDualKarte(id){
   return typeof id === 'string' && id.endsWith(DUAL_MARKE);
 }
 function dualKartenStufe(){
-  /* „ich will erstmal mich nur auf singular und plural konzentrieren" (20.10.2026, 01:55). */
-  return false;
+  /* „ich will erstmal mich nur auf singular und plural konzentrieren" (20.10.2026, 01:55).
+     ⭐ SEIT 20.11.2026 AN. Nach Folge 33 (der Dual im Unterricht, Regel muthanna-bildung-01) auf
+     meine Frage „Dual-Karten: 209 sind fertig, aber noch ausgeschaltet. Einschalten?": „ja".
+     Eingehängt wie die Mehrzahl (wendeDualKartenAn unten): bereit erst, wenn die Einzahl in
+     Box 2 liegt (pluralBereit), in die Runde nur über den Mehrzahl-Platz (lerngruppeHeute) —
+     beides MEINE Übertragung seiner Mehrzahl-Entscheidungen auf den Dual. */
+  return true;
+}
+/* Wie wendePluralKartenAn(): räumt die Dualkarten ab und baut sie frisch aus den Einzahlen. */
+function wendeDualKartenAn(an){
+  for (let i = VOCAB_DATA.length - 1; i >= 0; i--){
+    if (istDualKarte(VOCAB_DATA[i].id)) VOCAB_DATA.splice(i, 1);
+  }
+  if (!an) return 0;
+  const neu = [];
+  VOCAB_DATA.forEach(w => {
+    if (!w || w.istPlural || istDualKarte(w.id)) return;
+    const k = baueDualKarte(w); if (k) neu.push(k);
+  });
+  VOCAB_DATA.push(...neu);
+  return neu.length;
 }
 /* → { nom, gen } oder { grund }. Nur lesen, nichts schreiben. */
 function dualPruefen(w){
@@ -1441,6 +1463,7 @@ function pluralKartenStufe(){
 }
 
 wendePluralKartenAn(pluralKartenStufe(LS.get('vt_settings', {}) || {}));
+wendeDualKartenAn(dualKartenStufe());
 
 /* ---------- Was sich beim Anlegen SICHER ableiten lässt (20.08.2026) ----------
 
@@ -1583,7 +1606,7 @@ function istGeloescht(id){ const e = GELOESCHT[id]; return !!(e && e.an); }
    Partikeln (لِ, يَا) haben keine, mehrteilige Fachausdrücke auch nicht, und
    ein Mangel, der keiner ist, wäre nur Rauschen. */
 function wasFehlt(w){
-  if (!w || w.istPlural) return [];
+  if (!w || w.istPlural || w.istDual) return [];
   /* ⛔ DIE FÜNFZEHN FACHBEGRIFFE MELDEN NICHTS — bei ihnen ist das Fehlende
      eine ENTSCHEIDUNG, kein Mangel. Gemessen am 20.08.2026: ohne diese Zeile
      meldeten ALLE Fünfzehn „Noch offen“, die meisten dreifach.
@@ -1983,7 +2006,7 @@ function blendeKapitelDublettenAus(){
   const gruppen = new Map();
   for (const w of VOCAB_DATA){
     if (!w || !w.ar || w.chapter === 'personal') continue;
-    if (typeof istPluralKarte === 'function' && istPluralKarte(w.id)) continue;
+    if (typeof istPluralKarte === 'function' && (istPluralKarte(w.id) || String(w.id).endsWith('#du'))) continue;
     const k = dubForm(dubOhneArtikel(w.ar), false);
     if (!k) continue;
     if (!gruppen.has(k)) gruppen.set(k, []);
@@ -2019,7 +2042,7 @@ function loeschePersonalVocab(id){
      knopf hinzu" und „Ja, Arabisch auch". Buchkarten bleiben über vt_geloescht draußen
      (einhaengen() und einzelneAusAnderenBuechern() in js/buecher.js). Hier stand
      `w.chapter !== 'personal'`. */
-  if (!w || w.istPlural) return false;
+  if (!w || w.istPlural || w.istDual) return false;
 
   /* ⚠️ Seit C8 (18.08.2026) stehen unter 'personal' ZWEI Herkuenfte: was Elias
      hier im Trainer angelegt hat (PERSONAL_VOCAB im Geraetespeicher) und was er
@@ -2193,6 +2216,8 @@ function wendeWortAenderungenAn(){
 function speichereWortAenderung(id, felder){
   /* Eine Mehrzahlkarte speichert anders: ihre arabische Form gehört der Einzahl (20.10.2026). */
   if (istPluralKarte(id)) return speicherePluralKartenAenderung(id, felder);
+  /* Eine Dualkarte wird aus der Einzahl gebaut und nicht selbst gespeichert (20.11.2026). */
+  if (String(id).endsWith('#du')) return false;
   const w = VOCAB_DATA.find(x => x.id === id);
   if (!w) return false;
   const sauber = {};
@@ -4468,7 +4493,7 @@ function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
   const KORAN_PLAETZE = 2;
   const koranwort = w => !!w && w.book === 'koran-haeufig';
   const PLURAL_PLAETZE = 2;
-  const pluralwort = w => !!w && typeof istPluralKarte === 'function' && istPluralKarte(String(w.id));
+  const pluralwort = w => !!w && typeof istPluralKarte === 'function' && (istPluralKarte(String(w.id)) || String(w.id).endsWith('#du'));   // Dual teilt den Platz (20.11.2026)
   const G = 2 * platz1;
   const p = w => PROGRESS[w.id] || {};
   const nachTermin = (a, b) => String(p(a).nextReview || '').localeCompare(String(p(b).nextReview || ''));
@@ -4482,7 +4507,7 @@ function lerngruppeHeute(pool, neu, gruppe, platz1, beitritt){
     const zurueckW = kand.filter(w => p(w).zurueck).sort((a, b) => String(p(a).zurueck).localeCompare(String(p(b).zurueck)));
     /* Der Mehrzahl-Platz (Begründung über der Funktion): Mehrzahlen nur hier, die
        sicherste Einzahl zuerst, eine am Tag. */
-    const sgBox = w => (PROGRESS[String(w.plVon || '')] || {}).box || 1;
+    const sgBox = w => (PROGRESS[String(w.plVon || w.dualVon || '')] || {}).box || 1;
     const plW = kand.filter(w => pluralwort(w) && !p(w).zurueck).sort((a, b) => (sgBox(b) - sgBox(a))
       || ((Number(a.chapter) || 0) - (Number(b.chapter) || 0))
       || String(a.id).localeCompare(String(b.id), 'de', { numeric: true }));
