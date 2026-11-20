@@ -3646,6 +3646,10 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 .surah-row .sr-de{white-space:normal;}   /* lange Bedeutungen ganz zeigen statt „…" */
+/* Seit dem 20.11.2026 steht die Bedeutung in `.sr-name` an der Stelle der Umschrift (Elias:
+   „umlautschrift soll bei vokabeltrianer verschwinden"). Sie darf dort genauso umbrechen —
+   gemessen bei 375 px: „Die Eröffnung · 7 …", „Die Sippe Imran…" waren abgeschnitten. */
+.surah-row .sr-name{white-space:normal;}
 #hifzStand .hifz-de{font-style:italic;color:var(--text);}
 /* ⚠️ Der Juz hatte bis zum 04.08.2026 abends eine eigene Spalte rechts neben
    dem Namen. Begründung damals: die Namenszeile trage bei angefangenen Suren

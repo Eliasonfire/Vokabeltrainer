@@ -1232,12 +1232,18 @@ function surahZeile(s){
      - das steht jetzt unten beim Juz, wo Platz ist. Der alte Grund gilt also
      nicht mehr, statt ihn zu umgehen. */
   const unten = [juzText(s), zusatz].filter(Boolean).join(' · ');
+  /* ⛔ Seit dem 20.11.2026 auch in der LISTE die Bedeutung statt der Umschrift, nicht kursiv.
+     Elias zum Kopf: „übrigens möchte ich, dass diese deutsche umlautschrift des namens
+     komplett wegfällt und stattdessen die übersetzung des namens an die stelle kommt aber
+     nicht in kursiv sondern normal“; auf die Frage, ob auch die Liste: „umlautschrift soll
+     bei vokabeltrianer verschwinden“. Die kursive Zeile `.sr-de` darunter fällt damit weg —
+     sie hätte dasselbe noch einmal gesagt. Die Suche findet weiter über die Umschrift
+     („yasin“) UND die Bedeutung („kuh“), siehe renderSurahList(). */
   return `
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
       <div class="sr-mid">
-        <div class="sr-name">${s.name} · ${s.verses} Verse</div>
-        ${surenBedeutung(s) ? `<div class="sr-de">${escapeHtml(surenBedeutung(s))}</div>` : ''}
+        <div class="sr-name">${escapeHtml(surenBedeutung(s) || s.name)} · ${s.verses} Verse</div>
         <div class="sr-unten">${unten}</div>
       </div>
       <div class="sr-ar">${surenTitel(s)}</div>

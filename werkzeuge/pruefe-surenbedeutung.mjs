@@ -41,7 +41,10 @@ zeige('B1 114 Suren, jede mit Bedeutung', echt.B1);
 zeige('B2 Bedeutung deutsch, ohne Markup, höchstens 40 Zeichen', echt.B2);
 zeige('B3 feste Fälle (Die Eröffnung, Die Kuh, Die Aufrichtigkeit)', echt.B3);
 const stellen = {
-  liste: /class="sr-de">\$\{escapeHtml\(surenBedeutung\(s\)\)\}/.test(QURAN),
+  /* Seit dem 20.11.2026 in der Liste an der Stelle der Umschrift (Elias: „umlautschrift soll
+     bei vokabeltrianer verschwinden“). Rot, wenn dort wieder `${s.name}` allein steht. */
+  liste: /class="sr-name">\$\{escapeHtml\(surenBedeutung\(s\) \|\| s\.name\)\}/.test(QURAN)
+    && !/class="sr-name">\$\{s\.name\}/.test(QURAN),
   /* Seit dem 20.11.2026 im Kopf an der Stelle der Umschrift, nicht mehr kursiv darunter. Elias:
      „übrigens möchte ich, dass diese deutsche umlautschrift des namens komplett wegfällt und
      stattdessen die übersetzung des namens an die stelle kommt aber nicht in kursiv sondern
