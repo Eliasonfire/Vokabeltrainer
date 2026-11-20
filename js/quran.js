@@ -2622,14 +2622,21 @@ async function openSurah(id, opt){
      Also andersherum als zuvor: der arabische Name traegt die Zeile, die
      Umschrift steht klein daneben. Die Nummer bleibt vorn - sie ist die
      Ordnung, nach der er sucht. */
+  /* ⛔ Neben dem arabischen Namen steht seit dem 20.11.2026 die deutsche BEDEUTUNG,
+     nicht mehr die Umschrift. Elias, mit Bild vom Kopf der Sure 2 („Al-Baqarah" und
+     „Die Kuh" rot umrandet): „übrigens möchte ich, dass diese deutsche umlautschrift
+     des namens komplett wegfällt und stattdessen die übersetzung des namens an die
+     stelle kommt aber nicht in kursiv sondern normal sowohl beim qurantrainer als
+     auch arabisch vokabeltrainer". Die Klasse heißt weiter `qt-um` — ihr Aussehen
+     (nicht kursiv, gedämpft, eine Stufe größer seit dem 18.08.2026) ist genau das
+     gewünschte. Die Umschrift bleibt nur Rückfall, falls eine Bedeutung fehlt.
+     Bis dahin stand die Bedeutung kursiv in der Zeile darunter, weil neben
+     Nummer, arabischem Namen UND Umschrift bei 375 px kein Platz war (17.11.2026);
+     ohne die Umschrift ist er da (gemessen bei der längsten, Sure 56). */
   document.getElementById('quranFullTitle').innerHTML =
     `<span class="qt-nr">${id}.</span>` +
     `<span class="qt-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(surah))}</span>` +
-    `<span class="qt-um">${escapeHtml(surah.name)}</span>`;
-  /* ⚠️ Die deutsche Bedeutung steht NICHT hier im Kopf (17.11.2026): bei 375 px
-     blieb neben Nummer, arabischem Namen und Umschrift kaum Platz, aus „Die
-     hereinbrechende Katastrophe" wurde „Di…" (Probefoto). Sie steht in der
-     Zeile darunter vor der Verszahl, siehe aktualisiereHifzLeiste(). */
+    `<span class="qt-um">${escapeHtml(surenBedeutung(surah) || surah.name)}</span>`;
   /* ⛔ Zweite Stelle, die auf das entfallene `quranFullIntro` zeigte — sie
      hätte das Öffnen einer Sure genauso stillgelegt wie die Liste. Siehe den
      Kommentar bei renderSurahList(). */
@@ -2905,11 +2912,10 @@ function aktualisiereHifzLeiste(id, surah){
     : kann === 0 ? `${gesamt} Verse`
     : kann >= gesamt ? `Alle ${gesamt} Verse auswendig`
     : `${kann} von ${gesamt} Versen auswendig`;
-  /* Die deutsche Bedeutung des Surennamens vorn (17.11.2026, surenBedeutung()). */
-  const bedeutung = surenBedeutung(surah || SURAH_DATA.find(s => s.id === id));
-  document.getElementById('hifzStand').innerHTML = bedeutung
-    ? `<span class="hifz-de">${escapeHtml(bedeutung)}</span> · ${escapeHtml(stand)}`
-    : escapeHtml(stand);
+  /* Die deutsche Bedeutung des Surennamens stand hier vom 17.11. bis 20.11.2026 kursiv
+     vor der Verszahl. Seitdem steht sie im Kopf an der Stelle der Umschrift (Elias,
+     20.11.2026, siehe openSurah()); diese Zeile trägt nur noch den Stand. */
+  document.getElementById('hifzStand').textContent = stand;
   const knopf = document.getElementById('btnHifzVerdecken');
   knopf.classList.toggle('active', HIFZ_VERDECKT);
   knopf.disabled = kann === 0;

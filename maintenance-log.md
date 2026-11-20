@@ -10162,3 +10162,14 @@ Gemessen am 18.11.2026 und weiter offen:
 - 8× `pl`, 2× `femSg` · 5 Regelkandidaten für ihn · 12 Entscheidungen auf seiner Warteseite · Tagesziel-Frage (jetzt 24 Tage).
 - Übung 17: Lücke huma-f. Box-1-Schlange 631 → 639. Balance 7,3 %.
 - Fremde, ausgelieferte, aber nicht committete Änderungen im Arbeitsbaum — Sitzung.
+
+## 20.11.2026 — v778: Surenkopf zeigt die Bedeutung statt der Umschrift (aus der Korantrainer-Sitzung)
+
+Elias, mit Bild vom Kopf der Sure 2 („Al-Baqarah" und „Die Kuh" rot umrandet): „übrigens möchte ich, dass diese deutsche umlautschrift des namens komplett wegfällt und stattdessen die übersetzung des namens an die stelle kommt aber nicht in kursiv sondern normal sowohl beim qurantrainer als auch arabisch vokabeltrainer".
+
+- `js/quran.js` openSurah(): `.qt-um` trägt `surenBedeutung(surah) || surah.name`; aktualisiereHifzLeiste(): `#hifzStand` nur noch der Stand (die kursive Bedeutung davor ist weg).
+- `index.html`: `#quranFullTitle .qt-um` darf umbrechen (Sure 56 „Die hereinbrechende Katastrophe" wurde bei 375 px zu „Die hereinbrec…": 223 px Text, 116 px Platz), `#quranFullTitle` mittig ausgerichtet. Gemessen bei 375 px: Sure 2, 37, 56 nicht abgeschnitten, nicht kursiv, Zeile darunter „286 Verse".
+- `werkzeuge/pruefe-surenbedeutung.mjs` B4 prüft jetzt den Kopf statt der Zeile darunter.
+- Surenliste und Suche unverändert (dort steht weiter „Al-Baqarah · 286 Verse" und die Bedeutung kursiv darunter — nicht Teil seines Satzes).
+- `validate.js` grün (36 Prüfungen, 2 Hinweise). `alle-pruefer.mjs`: 214 Prüfer, 9 rot; neu rot nur `kandidaten-bewerten.mjs` (15 Hörkandidaten f33-… ohne Urteil — Wartungsrückstand, nicht von dieser Änderung).
+- Commit mit explizitem Pfad; von `index.html` nur dieser Abschnitt (die fremden Änderungen im Arbeitsbaum bleiben unberührt). NICHT ausgeliefert — nur auf Elias' Wort.

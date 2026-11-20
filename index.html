@@ -3627,6 +3627,13 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    trägt die Zeile weiterhin, das war Elias' Entscheidung vom 04.08.2026. */
 #quranFullTitle .qt-um{font-size:var(--fs-md);font-weight:600;color:var(--text-dim);
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;}
+/* Seit dem 20.11.2026 steht hier die deutsche BEDEUTUNG statt der Umschrift (Elias:
+   „stattdessen die übersetzung des namens an die stelle … aber nicht in kursiv sondern
+   normal"). Bedeutungen sind länger: „Die hereinbrechende Katastrophe" (Sure 56) wurde
+   bei 375 px zu „Die hereinbrec…" (gemessen: 223 px Text, 116 px Platz). Darum darf sie
+   umbrechen statt abgeschnitten zu werden. */
+#quranFullTitle{align-items:center;}
+#quranFullTitle .qt-um{white-space:normal;overflow:visible;line-height:1.25;}
 .surah-row .sr-name{
   font-size:var(--fs-sm);color:var(--text-dim);
   min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;

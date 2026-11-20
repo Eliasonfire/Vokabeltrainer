@@ -10,7 +10,7 @@
  *   B1  114 Suren, jede mit nicht leerem Feld `de` (eingetragen von werkzeuge/surennamen-deutsch.mjs)
  *   B2  `de` ist deutsch: keine arabischen Zeichen, kein Wiki-Markup (<, [[, ''), höchstens 40 Zeichen
  *   B3  feste Fälle aus der Quelle: 2 „Die Kuh", 1 „Die Eröffnung", 112 „Die Aufrichtigkeit"
- *   B4  js/quran.js liest das Feld an allen drei Stellen: Liste, Zeile unter dem Surenkopf, Suche
+ *   B4  js/quran.js liest das Feld an allen drei Stellen: Liste, Kopf der Sure (statt der Umschrift, 20.11.2026), Suche
  * Störtest: eine Bedeutung gelöscht und eine mit Markup → B1 und B2 müssen rot werden.
  */
 import fs from 'node:fs';
@@ -42,10 +42,15 @@ zeige('B2 Bedeutung deutsch, ohne Markup, höchstens 40 Zeichen', echt.B2);
 zeige('B3 feste Fälle (Die Eröffnung, Die Kuh, Die Aufrichtigkeit)', echt.B3);
 const stellen = {
   liste: /class="sr-de">\$\{escapeHtml\(surenBedeutung\(s\)\)\}/.test(QURAN),
-  kopfzeile: /class="hifz-de">\$\{escapeHtml\(bedeutung\)\}/.test(QURAN) && /const bedeutung = surenBedeutung\(/.test(QURAN),
+  /* Seit dem 20.11.2026 im Kopf an der Stelle der Umschrift, nicht mehr kursiv darunter. Elias:
+     „übrigens möchte ich, dass diese deutsche umlautschrift des namens komplett wegfällt und
+     stattdessen die übersetzung des namens an die stelle kommt aber nicht in kursiv sondern
+     normal". Rot, wenn im Kopf wieder `surah.name` allein steht. */
+  kopf: /class="qt-um">\$\{escapeHtml\(surenBedeutung\(surah\) \|\| surah\.name\)\}/.test(QURAN)
+    && !/class="qt-um">\$\{escapeHtml\(surah\.name\)\}/.test(QURAN),
   suche: /surenBedeutung\(s\)\.toLowerCase\(\)\.includes\(q\)/.test(QURAN),
 };
-zeige('B4 js/quran.js zeigt sie in Liste, Zeile unter dem Kopf und Suche', { ok: Object.values(stellen).every(Boolean), ist: stellen });
+zeige('B4 js/quran.js zeigt sie in Liste, im Kopf der Sure und Suche', { ok: Object.values(stellen).every(Boolean), ist: stellen });
 
 const gestoert = JSON.parse(JSON.stringify(ctx.S));
 delete gestoert[1].de; gestoert[5].de = "[[Vieh]] ''x''";
