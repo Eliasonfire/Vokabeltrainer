@@ -186,3 +186,8 @@ vocab-data.js
 grammar-data.js
 lehrbuch-saetze.js
 quran-text.js
+# Altkopien derselben Dateien (grammar-data.js.vor-markierung stand bis
+# 21.11.2026 im Verlauf und wurde mit herausgeschrieben).
+grammar-data.js.*
+vocab-data.js.*
+lehrbuch-saetze.js.*
