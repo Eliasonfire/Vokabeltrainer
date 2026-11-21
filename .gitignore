@@ -171,3 +171,18 @@ data-ersatz/
 # ist (werkzeuge/ersatz-wechsel.mjs --hin), stehen die Buchdateien von
 # arabicroots hier statt in data/. Dieselbe Sperre wie data/vokabeln-*.js.
 data-abzug/
+
+# ⛔ Aus dem oeffentlichen Repo genommen am 21.11.2026. Elias, woertlich, auf
+# den Fund, dass Lehrerregeln, arabicroots-Woerter und Madina-Saetze im
+# Repo fuer jeden lesbar sind: „entferne sie".
+#   vocab-data.js      arabicroots-Woerter mit Beispielsaetzen
+#   grammar-data.js    Regeln aus den Unterrichtsaufzeichnungen des Lehrers
+#   lehrbuch-saetze.js Saetze aus dem Madina-Lehrwerk
+#   quran-text.js      enthaelt die deutsche Uebersetzung (Rechte ungeklaert)
+# Sie bleiben LOKAL liegen; veroeffentlichen.mjs baut aus dem Arbeitsordner,
+# die App merkt davon nichts. Folge: Aenderungen an diesen vier Dateien
+# stehen ab jetzt in keinem Git-Verlauf mehr.
+vocab-data.js
+grammar-data.js
+lehrbuch-saetze.js
+quran-text.js
