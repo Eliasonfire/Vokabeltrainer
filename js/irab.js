@@ -956,7 +956,7 @@ function funktionenVon(w){
      Kasra. Ueber alle 4.687 Karten gemessen: die einzige Mehrwortkarte, die das traf. */
   if (ohneAl && endetAufDamma && !hatTanwin && !karteUnveraenderlich && !/\s/.test(wort)
       && (w.type === 'noun' || w.type === 'adjective'))
-    nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwin, nie Kasra');
+    nenn('مَمْنُوع مِنَ الصَّرْف — nie Tanwīn, nie Kasra');
 
   /* 6. Zum Schluss die Wortart, falls noch nichts Genaueres dasteht. */
   const art = WORTART[w.type] === 'Wort' ? erschlosseneWortart(wort) : WORTART[w.type];

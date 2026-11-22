@@ -26,7 +26,7 @@ function renderStats(){
      Erst die Ursache, dann die Kosmetik. [[erst_ursache_dann_zweite_massnahme]] */
   document.getElementById('statsGrid').innerHTML = `
     <div class="stat-card"><div class="v" data-count="${acc}" data-suffix="%">0%</div><div class="l">Trefferquote (in dieser App)</div></div>
-    <div class="stat-card"><div class="v" data-count="${getStreak().count}">0</div><div class="l">Tage-Streak <span aria-hidden="true">🔥</span></div></div>
+    <div class="stat-card"><div class="v" data-count="${getStreak().count}">0</div><div class="l">Tage am Stück <span aria-hidden="true">🔥</span></div></div>
   `;
   document.querySelectorAll('#statsGrid .v[data-count]').forEach(el=>{
     animateNumber(el, Number(el.dataset.count), el.dataset.suffix || '');

@@ -1109,7 +1109,7 @@ function renderWeiterlesen(){
   const s = LESESTAND && SURAH_DATA.find(x => x.id === LESESTAND.sure);
   if (!s){ knopf.classList.add('hidden'); return; }
   document.getElementById('weiterlesenStelle').textContent =
-    `${s.id}. ${s.name} · Ayah ${LESESTAND.vers}`;
+    `${s.id}. ${s.name} · Vers ${LESESTAND.vers}`;
   knopf.classList.remove('hidden');
 }
 
@@ -2919,9 +2919,9 @@ function renderAyahListe(id){
     const nr = i + 1;
     const kann = HIFZ[id] || kannVers(id, nr);
     return `<button class="ayah-sprung${kann?' auswendig':''}" data-ayah="${nr}"
-                    aria-label="Zu Ayah ${nr} springen">${nr}</button>`;
+                    aria-label="Zu Vers ${nr} springen">${nr}</button>`;
   }).join('');
-  document.getElementById('ayahPopoverTitel').textContent = `Ayah 1–${anzahl}`;
+  document.getElementById('ayahPopoverTitel').textContent = `Vers 1–${anzahl}`;
   knopf.classList.remove('hidden');
 }
 
@@ -3056,7 +3056,7 @@ document.getElementById('weiterlesen').addEventListener('click', async ()=>{
     if (ziel){ hebeVersHervor(ziel); return; }
     await new Promise(r => requestAnimationFrame(r));
   }
-  toast(`Ayah ${vers} liess sich nicht anspringen.`);
+  toast(`Vers ${vers} ließ sich nicht anspringen.`);
 });
 
 document.getElementById('btnAyahListe').addEventListener('click', oeffneAyahListe);
@@ -3068,7 +3068,7 @@ document.getElementById('ayahGrid').addEventListener('click', (e)=>{
   if (!knopf) return;
   const nr = Number(knopf.dataset.ayah);
   const ziel = document.querySelector(`#verseList .verse-item[data-versnr="${nr}"]`);
-  if (!ziel){ toast(`Ayah ${nr} liess sich nicht anspringen.`); return; }
+  if (!ziel){ toast(`Vers ${nr} ließ sich nicht anspringen.`); return; }
   document.querySelectorAll('#ayahGrid .ayah-sprung.aktiv').forEach(k=>k.classList.remove('aktiv'));
   knopf.classList.add('aktiv');
   /* Erst zumachen, dann springen: solange die Liste offen ist, liegt sie ueber
