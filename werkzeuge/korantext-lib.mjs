@@ -1,4 +1,4 @@
-/* korantext-lib.mjs — der Korantext von quran.com und was jedes Werkzeug davon braucht (19.10.2026)
+/* korantext-lib.mjs — der Korantext des König-Fahd-Komplexes und was jedes Werkzeug davon braucht
  * ===================================================================================
  *
  * Elias, 19.10.2026: „ja hört sich gut an" (Sukun und Tanwīn im Leser wie bei quran.com),
@@ -6,9 +6,10 @@
  * heruntergeladene Datei NICHT derselbe Text ist: „stelle sicher das sie gleich sind damit
  * keine fehler da sind".
  *
- * Seitdem ist quran-text.js der Text von quran.com, Zeichen für Zeichen: das Feld
- * `text_qpc_hafs` von api.quran.com, ohne die Versnummer am Ende. Gebaut und geprüft von
- * werkzeuge/korantext-bauen.mjs, bewacht von test-korantext.mjs.
+ * Seit dem 22.11.2026 ist quran-text.js der Text des König-Fahd-Komplexes, Zeichen für Zeichen
+ * (Elias: „dann nimm fahd"). Das ist derselbe Text wie das Feld `text_qpc_hafs` von quran.com
+ * (gemessen, 6236 von 6236 Versen). Gebaut und geprüft von werkzeuge/korantext-bauen.mjs,
+ * bewacht von test-korantext.mjs.
  *
  * ⛔⛔ DIE KODIERUNG GEHÖRT ZUR SCHRIFT. quran.com schreibt das versetzte Tanwīn mit
  * U+0657 / U+065E / U+0656 und das Sukun des Muṣḥaf mit U+06E1. Im Unicode-Standard
@@ -43,25 +44,43 @@ import { fileURLToPath } from 'node:url';
 export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const Z = (...c) => String.fromCodePoint(...c);
 
-/** Woher der Text kommt — ein Abruf je Sure. */
-export const QUELLE_URL = s => `https://api.quran.com/api/v4/quran/verses/qpc_hafs?chapter_number=${s}`;
-export const QUELLE_FELD = 'text_qpc_hafs';
-/* Die PAUSENZEICHEN kommen seit dem 24.10.2026 aus `text_uthmani` (= quran.com „V1", die Schrift,
-   in der Elias liest). Elias, mit Bild aus 67:23: „und diese zeichen (alle) müssen auch identisch
-   sein weil jeder eine andere bedetuung hat". Gemischt wird mit quranPausenV1() aus js/quran.js —
-   aus der Datei geschnitten, damit Bau und Rückfall des Lesers nie verschieden mischen. */
-export const PAUSEN_URL = s => `https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${s}`;
-export const PAUSEN_FELD = 'text_uthmani';
-export function pausenV1(){
-  const q = fs.readFileSync(path.join(REPO, 'js', 'quran.js'), 'utf8');
-  const von = q.indexOf('function quranPausenV1('), bis = q.indexOf('/* ende quranPausenV1 */');
-  if (von < 0 || bis < von) throw new Error('quranPausenV1() steht nicht mehr in js/quran.js');
-  return new Function(q.slice(von, bis) + '\n;return quranPausenV1;')();
+/* ⭐ Woher der Text kommt — seit dem 22.11.2026 die Datei des KÖNIG-FAHD-KOMPLEXES, unverändert.
+   Elias: „dann nimm fahd" und „nimm fahd für all meine apps und stelle sicher das meine
+   markierungen auf den neuen text übernommen werden".
+   Datei: hafsData_v18.json (Hafs, Fassung 18) des King Fahd Glorious Qur'an Printing Complex.
+   Die offizielle Adresse (download.qurancomplex.gov.sa) gab am 22.11.2026 404 (Seite im Umbau);
+   geholt über den Spiegel github.com/thetruetruth/quran-data-kfgqpc. Feld `aya_text`, am Ende die
+   Versnummer in arabisch-indischen Ziffern.
+   Bedingungen (dm.qurancomplex.gov.sa/copyright, Archiv 18.05.2024): kostenlos, auch für
+   Computerprogramme, ohne Frist und ohne Konto; die Schrift darf nicht verändert werden, das
+   Verändern des Textes regeln sie nicht → der Text wird NICHT verändert, auch nicht die
+   Pausenzeichen (bis 22.11.2026 kamen die aus quran.com „V1", 352 Wörter in 326 Versen).
+   Gemessen am 22.11.2026: dieser Text ist Zeichen für Zeichen das Feld `text_qpc_hafs` von
+   api.quran.com (6236 von 6236 Versen) — darum kann der Rückfall des Lesers es weiter laden.
+   Die Datei liegt in data-ersatz/quellen/kfgqpc/ (nicht in Git). */
+export const QUELLE_DATEI = path.join(REPO, 'data-ersatz', 'quellen', 'kfgqpc', 'hafsData_v18.json');
+export const QUELLE_NAME = "King Fahd Glorious Qur'an Printing Complex, hafsData_v18.json (Hafs, Fassung 18)";
+export const QUELLE_HERKUNFT = 'https://github.com/thetruetruth/quran-data-kfgqpc';
+export const QUELLE_FELD = 'aya_text';
+/* Gegenprobe im Netz: dasselbe Feld, das der Rückfall des Lesers lädt. */
+export const QURANCOM_URL = s => `https://api.quran.com/api/v4/quran/verses/qpc_hafs?chapter_number=${s}`;
+
+/** Liest die Datei des Komplexes: { [Sure]: [Vers 1, Vers 2, …] } ohne Versnummer.
+ *  Wirft, wenn ein Vers keine Versnummer am Ende trägt (Datei anders gebaut als erwartet). */
+export function ladeKomplex(datei = QUELLE_DATEI){
+  const roh = JSON.parse(fs.readFileSync(datei, 'utf8'));
+  const koran = {};
+  for (const v of roh){
+    const t = ohneVersnummer(v[QUELLE_FELD]);
+    if (t === v[QUELLE_FELD]) throw new Error(`${v.sora}:${v.aya_no}: keine Versnummer am Ende`);
+    (koran[v.sora] ||= [])[v.aya_no - 1] = t;
+  }
+  return koran;
 }
 
 /* Die Versnummer am Ende des Feldes: Leerzeichen oder U+00A0, dann arabisch-indische
-   Ziffern (gemessen: „ … قَدِيرٌ ١" in der Kapitel-Abfrage, U+00A0 vor der Ziffer in der
-   Abfrage verses/by_chapter). */
+   Ziffern (gemessen: Leerzeichen vor der Ziffer in der Kapitel-Abfrage von quran.com und in
+   der Datei des Komplexes, U+00A0 in der Abfrage verses/by_chapter). */
 const VERSNUMMER = new RegExp('[ ' + Z(0xA0) + ']*[' + Z(0x660) + '-' + Z(0x669) + ']+$');
 export const ohneVersnummer = t => String(t).replace(VERSNUMMER, '');
 

@@ -1413,13 +1413,18 @@ export const PFLEGEPLAN = [
        war ausgeführt worden). ⭐ Seit 24.10.2026 (v713) kommen die PAUSENZEICHEN aus
        text_uthmani (= quran.com „V1", in der Elias liest; Elias: „und diese zeichen
        (alle) müssen auch identisch sein weil jeder eine andere bedetuung hat"),
-       gemischt mit quranPausenV1() aus js/quran.js; --pruefen vergleicht mit beiden
-       Feldern, test-korantext.mjs (K8) bewacht es ohne Netz. MEINE Entscheidung: kein
+       gemischt mit quranPausenV1() aus js/quran.js. ⭐⭐ Seit 22.11.2026 ist der Text
+       der des KÖNIG-FAHD-KOMPLEXES, unverändert, auch die Pausenzeichen (Elias: „dann
+       nimm fahd", „nimm fahd für all meine apps und stelle sicher das meine markierungen
+       auf den neuen text übernommen werden"). Quelle data-ersatz/quellen/kfgqpc/
+       hafsData_v18.json; --pruefen vergleicht mit dieser Datei (ohne Netz),
+       --gegen-qurancom prüft, ob der Rückfall des Lesers (text_qpc_hafs) noch derselbe
+       Text ist (22.11.2026: 6236 von 6236), K8 bewacht die Pausenzeichen. MEINE Entscheidung: kein
        Routineschritt dafür — der Text des King-Fahd-Komplexes ist festgelegt, und
        ein Schritt, der nie etwas findet, wird nicht gelesen (dieselbe Überlegung wie
        beim Verszeichen darüber). Wird der Text neu gebaut: danach
        verszeichen-bauen.mjs, koran-haeufig-bauen.mjs --pruefen und alle-pruefer. */
-    veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht (der Qurantext ist seit 19.10.2026 der von quran.com; korantext-bauen.mjs --pruefen zeigt, ob quran.com je etwas ändert). quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs), quran-verszeichen.js aus dem Qurantext (verszeichen-bauen.mjs) — beide nur neu zu erzeugen, wenn sich ihre Quelle ändert; neue Wurzeln brächte nur ein neues Lehrwerk.' },
+    veralten: { nein: 'Qurantext, Suren und Seitengrenzen ändern sich nicht (der Qurantext ist seit 22.11.2026 der des König-Fahd-Komplexes, Datei fest im Ordner; korantext-bauen.mjs --gegen-qurancom zeigt, ob der Rückfall von quran.com je abweicht). quran-frequency-data.js wird aus dem Quran-Korpus berechnet (baue-quran-frequenz.mjs), quran-verszeichen.js aus dem Qurantext (verszeichen-bauen.mjs) — beide nur neu zu erzeugen, wenn sich ihre Quelle ändert; neue Wurzeln brächte nur ein neues Lehrwerk.' },
   },
   {
     /* ⭐ 08.11.2026 — ALLTAGSSÄTZE IM HÖRMODUS. Elias: „der Hörmodus soll jetzt auch kleinere

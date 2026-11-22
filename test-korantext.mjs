@@ -19,11 +19,13 @@
  *       Feld von quran.com und schneidet die Versnummer ab
  *   K7  zuStandard() (für Karten und Vergleiche) lässt kein Zeichen der Muṣḥaf-Kodierung übrig und
  *       ändert keinen Buchstaben
- *   K8  die PAUSENZEICHEN sind die von quran.com „V1" (Feld text_uthmani), in der Elias liest.
- *       Elias, 24.10.2026, mit Bild aus 67:23: „und diese zeichen (alle) müssen auch identisch sein
- *       weil jeder eine andere bedetuung hat". Geprüft: sein Beispiel 67:23 Wort 9 (ṣalā), der
- *       Fingerabdruck nennt die Quelle, quranPausenV1() mischt richtig (Pausenzeichen in text_uthmani
- *       als eigenes Wort), und der Rückfall ohne quran-text.js mischt genauso
+ *   K8  die PAUSENZEICHEN sind die des König-Fahd-Komplexes, unverändert (seit 22.11.2026).
+ *       Elias: „dann nimm fahd" und „nimm fahd für all meine apps und stelle sicher das meine
+ *       markierungen auf den neuen text übernommen werden". Bis dahin kamen sie aus quran.com „V1"
+ *       (text_uthmani, Elias 24.10.2026: „und diese zeichen (alle) müssen auch identisch sein").
+ *       Geprüft: 67:23 Wort 9 trägt jīm wie beim Komplex (V1 hatte ṣalā), kein Vers trägt lā (der
+ *       Komplex setzt es nie, V1 67×), der Fingerabdruck nennt den Komplex, quranPausenV1() ist aus
+ *       js/quran.js verschwunden und der Rückfall ohne quran-text.js mischt nichts bei
  *
  * Gegen das HEUTIGE quran.com (mit Netz) prüft:  node werkzeuge/korantext-bauen.mjs --pruefen
  *
@@ -52,13 +54,6 @@ function funktionenAus(quelle){
   const von = quelle.indexOf('function quranWorte(text){'), bis = quelle.indexOf('function quranAnsicht');
   if (von < 0 || bis < 0 || bis <= von) return null;
   try { return new Function(quelle.slice(von, bis) + '\n;return { quranWorte, quranOhneVersnummer };')(); }
-  catch (e){ return null; }
-}
-
-function pausenAus(quelle){
-  const von = quelle.indexOf('function quranPausenV1('), bis = quelle.indexOf('/* ende quranPausenV1 */');
-  if (von < 0 || bis <= von) return null;
-  try { return new Function(quelle.slice(von, bis) + '\n;return quranPausenV1;')(); }
   catch (e){ return null; }
 }
 
@@ -120,23 +115,19 @@ function pruefe(koran, quelle){
   if (buchstabenAnders) b.push(`K7: zuStandard() ändert Buchstaben, zuerst in ${buchstabenAnders}`);
   /* K8 */
   const w67 = ((koran[67] && koran[67][22]) ? koran[67][22][0] : '').split(' ')[8] || '';
-  if (!w67.endsWith(Z(0x06D6))) b.push('K8: 67:23 Wort 9 trägt nicht das Pausenzeichen ṣalā wie quran.com V1');
-  if (!ABDRUCK.pausenzeichen || ABDRUCK.pausenzeichen.feld !== 'text_uthmani' || !(ABDRUCK.pausenzeichen.woerter > 0)) b.push('K8: der Fingerabdruck nennt keine Pausenzeichen aus text_uthmani');
-  const mische = pausenAus(quelle);
-  if (!mische) b.push('K8: quranPausenV1() liess sich nicht aus js/quran.js schneiden');
-  else {
-    /* Probe ohne echten Vers: in text_uthmani steht das Pausenzeichen als eigenes Wort */
-    const qpc = Z(0x0628, 0x064E, 0x06DA) + ' ' + Z(0x062A, 0x064E);
-    const uth = Z(0x0628, 0x064E) + ' ' + Z(0x06D6) + ' ' + Z(0x062A, 0x064E);
-    if (mische(qpc, uth) !== Z(0x0628, 0x064E, 0x06D6) + ' ' + Z(0x062A, 0x064E)) b.push('K8: quranPausenV1() übernimmt das Pausenzeichen aus text_uthmani nicht');
-  }
-  if (!/fields=text_qpc_hafs,text_uthmani/.test(rueck) || !/quranPausenV1\(qpc, v\.text_uthmani\)/.test(rueck)) b.push('K8: der Rückfall ohne quran-text.js mischt die Pausenzeichen nicht');
+  if (!w67.endsWith(Z(0x06DA))) b.push('K8: 67:23 Wort 9 trägt nicht das Pausenzeichen jīm des Komplexes');
+  let la = 0;
+  for (const l of Object.values(koran)) for (const [ar] of l) for (const c of ar) if (c === Z(0x06D9)) la++;
+  if (la) b.push(`K8: ${la}× das Pausenzeichen lā — der Komplex setzt es nie (das sind die Zeichen von quran.com V1)`);
+  if (!/König-Fahd|King Fahd/.test(String(ABDRUCK.quelle)) || ABDRUCK.feld !== 'aya_text') b.push('K8: der Fingerabdruck nennt nicht die Datei des König-Fahd-Komplexes');
+  if (/function quranPausenV1\(/.test(quelle)) b.push('K8: quranPausenV1() steht wieder in js/quran.js — mischt der Leser Pausenzeichen bei?');
+  if (/text_uthmani/.test((rueck.match(/fetch\([^)]*\)/) || [''])[0]) || /quranPausenV1\(/.test(rueck)) b.push('K8: der Rückfall ohne quran-text.js mischt Pausenzeichen aus text_uthmani bei');
   return { befunde: b, verse };
 }
 
 let schlecht = 0;
 const lauf = pruefe(KORAN, QUELLE);
-console.log('Korantext = quran.com (Elias, 19.10.2026: „stelle sicher das sie gleich sind")');
+console.log('Korantext = König-Fahd-Komplex (Elias, 22.11.2026: „dann nimm fahd")');
 console.log(`  ${lauf.verse} Verse · Fingerabdruck vom ${ABDRUCK.gebaut} · Schrift „${SCHRIFT.name}" ${SCHRIFT.version}, ${SCHRIFT.zeichen.size} Zeichen`);
 if (lauf.befunde.length){ schlecht++; for (const x of lauf.befunde) console.log('  ⛔ ' + x); }
 else console.log('  ✅ K1–K8 grün');
@@ -148,9 +139,9 @@ const STOERTESTS = [
   ['ein abgetrenntes Alif wie bis v691 (hudan in 2:2)', () => { const k = kopie(); k[2][1][0] = k[2][1][0].replace(Z(0x0657, 0x0649), Z(0x0657) + ' ' + Z(0x0649)); return [k, QUELLE]; }, /^K4:/],
   ['quranWorte() trennt wieder an jedem Leerraum', () => [KORAN, QUELLE.replace("return String(text || '').trim().split(/ +/).filter(Boolean);", "return String(text || '').trim().split(/\\s+/).filter(Boolean);")], /^K5:/],
   ['der Rückfall lädt wieder text_uthmani', () => [KORAN, QUELLE.replace('fields=text_qpc_hafs', 'fields=text_uthmani')], /^K6:/],
-  ['67:23 Wort 9 wieder mit jīm wie text_qpc_hafs', () => { const k = kopie(); const w = k[67][22][0].split(' '); w[8] = w[8].replace(Z(0x06D6), Z(0x06DA)); k[67][22][0] = w.join(' '); return [k, QUELLE]; }, /^K8:/],
-  ['quranPausenV1() erkennt das Pausenzeichen als eigenes Wort nicht mehr', () => [KORAN, QUELLE.replace("String.fromCodePoint(0x6D6) + '-' + String.fromCodePoint(0x6DC) + String.fromCodePoint(0x6DE, 0x6E9)", 'String.fromCodePoint(0x6DE, 0x6E9)')], /^K8:/],
-  ['der Rückfall mischt die Pausenzeichen nicht mehr', () => [KORAN, QUELLE.replace('quranPausenV1(qpc, v.text_uthmani) || qpc', 'qpc')], /^K8:/],
+  ['67:23 Wort 9 wieder mit ṣalā wie quran.com V1', () => { const k = kopie(); const w = k[67][22][0].split(' '); w[8] = w[8].replace(Z(0x06DA), Z(0x06D6)); k[67][22][0] = w.join(' '); return [k, QUELLE]; }, /^K8:/],
+  ['ein lā wie bei quran.com V1 (an 1:7, letztes Wort)', () => { const k = kopie(); k[1][6][0] = k[1][6][0] + Z(0x06D9); return [k, QUELLE]; }, /^K8:/],
+  ['der Rückfall lädt wieder text_uthmani mit', () => [KORAN, QUELLE.replace('fields=text_qpc_hafs&', 'fields=text_qpc_hafs,text_uthmani&')], /^K8:/],
 ];
 console.log('');
 console.log('Störtests (jeder muss rot werden):');
