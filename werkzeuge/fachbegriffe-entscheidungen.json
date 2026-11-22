@@ -709,6 +709,16 @@
       "entscheidung": "abgelehnt",
       "grund": "Beispielwort (Mehrzahl von jadīd, neu) in jam-salim-taksir-01, jam-taksir-01 und jam-ghayr-aqil-01, kein Fachbegriff",
       "am": "2026-11-15"
+    },
+    "لي اخ": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwendung (lī akhun, ich habe einen Bruder) in li-vs-inda-01, li-mit-suffix-01 und mansub-nach-kam-01, kein Fachbegriff",
+      "am": "2026-11-22"
+    },
+    "لك": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielform (laka/laki, dir) in li-mit-suffix-01, mansub-nach-kam-01 und muthanna-bildung-01, kein Fachbegriff — die Form selbst erklärt li-mit-suffix-01",
+      "am": "2026-11-22"
     }
   }
 }

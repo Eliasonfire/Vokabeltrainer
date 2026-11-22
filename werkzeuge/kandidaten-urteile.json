@@ -1215,6 +1215,76 @@
     "f32-3845": {
       "urteil": "weg",
       "grund": "Vokabelliste und Schluss: Aufgabe 1 bleibt als Hausaufgabe, Kapitel 17 ist beendet, der Lehrer ist bis zum 12. auf Umrah (Projektarbeit oder aufgenommene Videos), Kapitel 18 handelt von den Zahlen. Keine Regel."
+    },
+    "f33-145": {
+      "urteil": "unbelegt",
+      "grund": "Zwei Punkte. (1) kam macht den Ism danach mansub, und ein unbestimmtes mansub-Nomen bekommt hinten ein Alif (kam akhan) — steht als mansub-nach-kam-01 und tanwin-fath-alif-01 (v779). (2) Neu: 'Die Zahl 1 kommt als Na't und kommt dementsprechend natuerlich danach dem Wort. qalamun wahidun, akhun wahidun, baytun wahidun, masjidun wahidun.' Das Buch zeigt es zweimal (mb1-61-2 und mb1-100-1: li akhun wahidun ... li ukhtun wahidatun), sagt es aber nicht als Regel; der Madina-Schluessel 1 nennt zu Lektion 18 nur Dual, Adjektiv im Dual, kam und das Alif der Akkusativendung (Vault-Notiz Schluessel-Regeln, Abschnitt Lektion 18), nichts zu wahid. Im Bestand steht keine Regel dazu (grammar-data.js: kein Treffer fuer wahid). Gedruckt ist also nur das Beispiel, nicht der Lehrsatz.",
+      "quelle": "Unterricht Folge 33 @ 1:45–2:30 · Beispiel im Buch mb1-61-2, mb1-100-1 · Schluessel 1 L18 ohne Aussage dazu",
+      "frage": "Dein Lehrer sagt in Folge 33: die Zahl 1 (wahid) steht als Adjektiv HINTER dem Wort — akhun wahidun, ukhtun wahidatun. Dein Buch zeigt genau das zweimal (Seite 61 und 100), sagt es aber nicht als Regel, und der Schluessel schweigt dazu. Eigene Regel daraus machen, oder reicht die Adjektivregel (vier Bedingungen)?"
+    },
+    "f33-415": {
+      "urteil": "schon-regel",
+      "quelle": "muthanna-bildung-01",
+      "grund": "Der Lehrsatz zur Dualbildung (Singular + Alif und Nun: kitabun -> kitabani, qalamani, masjidani, ukhtani, ajalatani) mit seinen Beispielen. Steht seit v779 als muthanna-bildung-01, Zeitmarke 3:34 bis 4:19 dort zitiert. Danach Aufgabe: kam idan fi s-sana — Anwendung von mansub-nach-kam-01."
+    },
+    "f33-645": {
+      "urteil": "schon-regel",
+      "quelle": "nat-vier-bedingungen-01 · muthanna-bildung-01",
+      "grund": "Der Lehrer erinnert an die vier Bedingungen des Na't (Zahl, Fall, Geschlecht, Bestimmtheit) und zeigt, dass der Dual dazugehoert: sayyaratani kabiratani. Steht als nat-vier-bedingungen-01, die Dual-Anwendung ist in muthanna-bildung-01 mit Zitat 6:00 ausgeschrieben; Schluessel 1 L18 sagt dasselbe ('ein Adjektiv, das ein Substantiv im Dual naeher bestimmt, ist auch im Dual')."
+    },
+    "f33-845": {
+      "urteil": "schon-regel",
+      "quelle": "muthanna-bildung-01",
+      "grund": "Seine Zusammenfassung: Dual = Singular + Alif und Nun, 'egal ob maennlich oder weiblich', dazu die Hinweiswoerter hadha -> hadhani und hadhihi -> hatani. Beides steht in muthanna-bildung-01 (Zitate 8:47 und 8:53). Danach die Vokabelliste (kam, al-id, al-hayy, raka'a)."
+    },
+    "f33-1015": {
+      "urteil": "schon-regel",
+      "quelle": "muthanna-bildung-01",
+      "grund": "Vokabeln des Kapitels (kam, al-id, al-hayy, raka'a, ajala, riyal, mistara mit Plural masatir) und Uebung 1: Dualformen bilden (sayyaratani, tabibatani, waladani, tajirani, mudarrisani, babani). Anwendung der Dualregel, kein neuer Lehrsatz."
+    },
+    "f33-1315": {
+      "urteil": "weg",
+      "grund": "Uebung: Dualformen (imra'atani, ukhtani). Einzige Besonderheit: der Dual von akhun ist akhawani, 'akhani geht nicht' (auch 28:45). Das ist eine Sonderform eines einzelnen Wortes — Wortschatz, keine allgemeine Regel. Danach Leseaufgabe Seite 101, Aufgabe 2."
+    },
+    "f33-1515": {
+      "urteil": "weg",
+      "grund": "Uebung 2, Satz 1: Khalid hat zwei Soehne und zwei Toechter (ibnani, bintani). Hinweis des Lehrers, bei bint aufzupassen: bintun, bintani, banatun — drei aehnliche Formen. Wortschatz zu einem Wort, kein Lehrsatz; die Dualbildung selbst steht als muthanna-bildung-01, der Plural banat in jam-muannath-salim-01."
+    },
+    "f33-1745": {
+      "urteil": "weg",
+      "grund": "Uebung: Saetze im Dual uebersetzen (zwei Augen, zwei Haende, zwei Beine; rijlun Bein gegen rajulun Mann; fi hadha l-hayy madrasatani; salatu l-fajr rak'atani; li l-bayti miftahani). Korrektur von Schuelerantworten und Wortschatz, kein neuer Lehrsatz."
+    },
+    "f33-1915": {
+      "urteil": "schon-regel",
+      "quelle": "li-al-lil-01 · muthanna-bildung-01",
+      "grund": "Satz 8: li-mani l-baqaratani? — hatani l-baqaratani li l-fallahi; der Lehrer nennt li als Harf Jar. li + al- -> lil steht als li-al-lil-01. Danach: Sind diese zwei Aerzte aus England? — Uebung."
+    },
+    "f33-2045": {
+      "urteil": "weg",
+      "grund": "Uebungssaetze (humma min Faransa; fi qaryati masjidani saghirani — qarya heisst Dorf) und Uebergang zu Aufgabe 4 (hadha kitabun -> der Dual). Anwendung, kein Lehrsatz."
+    },
+    "f33-2215": {
+      "urteil": "schon-regel",
+      "quelle": "muthanna-bildung-01",
+      "grund": "Hinweis zur Schreibung: hadhihi wird ohne Alif geschrieben, der Dual hatani dagegen mit (ha-ta-ni). Die Formen hadhani/hatani stehen in muthanna-bildung-01 (in Arabisch geschrieben, also mit der richtigen Schreibung); dazu der allgemeine Lernhinweis 'parallel mitschreiben, je mehr Sinne teilhaben'. Kein weiterer Lehrsatz."
+    },
+    "f33-2345": {
+      "urteil": "weg",
+      "grund": "Schuelerfrage zum kleinen Strich (Dolch-Alif) in hadha: 'den schreibe ich nicht, normalerweise'; dazu die Basmala, in der das Alif von ism nach bi wegfaellt — 'mal gucken, ob wir irgendwann so weit kommen'. Ein Ausblick, kein Lehrsatz (aus einer Abwaegung wird keine Regel). Danach Uebungssaetze hadhani rajulani mudarrisani."
+    },
+    "f33-2515": {
+      "urteil": "schon-regel",
+      "quelle": "li-al-lil-01",
+      "grund": "Uebung (hatani s-sa'atani min al-Yaban — 'Japan bleibt Japan, aber die Uhr muss jetzt noch dual werden') und die Erklaerung zu li l-mudiri: aus li + al-mudiru faellt das Alif weg, 'dann haben wir Lam auf Lam'. Steht als li-al-lil-01."
+    },
+    "f33-2645": {
+      "urteil": "weg",
+      "grund": "Uebersetzungshinweis: li-man hadhani l-miftahani — im Deutschen 'diese beiden Schluessel' sagen, sonst ist die Dualinformation beim Zurueckuebersetzen verloren. Ein Rat zum Uebersetzen, keine Grammatikregel des Arabischen; die Dualform selbst steht als muthanna-bildung-01."
+    },
+    "f33-2845": {
+      "urteil": "schon-regel",
+      "quelle": "mansub-nach-kam-01 · tanwin-fath-alif-01",
+      "grund": "kam macht den Ism danach mansub und im Singular (kam qalaman indaka? — qalamani), das Alif der unbestimmten Akkusativendung (kitaban, qalaman, masjidan) und die Ausnahme bei Ta marbuta (sayyaratan ohne Alif). Alles seit v779 in mansub-nach-kam-01 (28:39/28:45) und tanwin-fath-alif-01 (29:10). Nebenbei der Dual akhawani (Wortschatz, siehe f33-1315); danach Kapitel 19 (Zahlen 3 bis 10)."
     }
   }
 }
