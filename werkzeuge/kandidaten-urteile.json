@@ -1285,6 +1285,72 @@
       "urteil": "schon-regel",
       "quelle": "mansub-nach-kam-01 · tanwin-fath-alif-01",
       "grund": "kam macht den Ism danach mansub und im Singular (kam qalaman indaka? — qalamani), das Alif der unbestimmten Akkusativendung (kitaban, qalaman, masjidan) und die Ausnahme bei Ta marbuta (sayyaratan ohne Alif). Alles seit v779 in mansub-nach-kam-01 (28:39/28:45) und tanwin-fath-alif-01 (29:10). Nebenbei der Dual akhawani (Wortschatz, siehe f33-1315); danach Kapitel 19 (Zahlen 3 bis 10)."
+    },
+    "f34-045": {
+      "urteil": "schon-regel",
+      "quelle": "mansub-nach-kam-01 · muthanna-bildung-01",
+      "grund": "Hausaufgabe aus Kapitel 18 (Uebung 1): kam qalaman indaka? — indi qalamani. Anwendung von kam mit mansub-Singular und Dual; kein neuer Lehrsatz."
+    },
+    "f34-545": {
+      "urteil": "schon-regel",
+      "quelle": "li-vs-inda-01 · zarf-lada-01",
+      "grund": "Schuelerfrage zu laka: li fuer Untrennbares (Geschwister, Koerperteile), inda fuer Dinge, die man bei sich hat, lada bei Abstraktem. li gegen inda steht als li-vs-inda-01 (untrennbar gegen trennbar), lada als zarf-lada-01."
+    },
+    "f34-815": {
+      "urteil": "schon-regel",
+      "quelle": "Schluessel 1, Lektion 19 (S. 64): 'Diese Zahlen werden als Mudaf verwendet'; eins und zwei als Adjektiv hinter dem Wort, ithnani meist ausgelassen, weil der Dual schon 'zwei' sagt",
+      "regel": "adad-3-10-idafa-01",
+      "eingebaut": "2026-11-23",
+      "grund": "ithnani nur zur Betonung ('das ani im Dual sagt schon aus, dass es 2 ist'), dann: die Zahlen von 3 bis 10 sind Mudaf, Mudaf ilayhi, mit der Zahlenreihe thalathatu bis ashratu. Lehrer und Schluessel einig; eingebaut am 23.11.2026 auf Elias' Auftrag."
+    },
+    "f34-945": {
+      "urteil": "schon-regel",
+      "quelle": "Schluessel 1, Lektion 19 (S. 64-65) und Lektion 20 (S. 67): bei weiblichem Ma'dud faellt das Ta marbuta der Zahl weg, Formenliste 3 bis 10",
+      "regel": "adad-3-10-genus-01",
+      "eingebaut": "2026-11-23",
+      "grund": "Das Gezaehlte heisst Ma'dud und hat das gegenteilige Geschlecht zur Zahl: sab'atu tullabin (Zahl weiblich, tullab maennlich), muhandis maennlich -> Zahl weiblich; in Kapitel 19 nur die Form mit Ta marbuta, gedreht in Kapitel 20; 11/12, 13-19 und die Zehner haben eigene Regeln (spaeterer Stoff). Eingebaut am 23.11.2026; Elias: 'ja genau das ist auch wichtig und brauche ich auch'."
+    },
+    "f34-1215": {
+      "urteil": "schon-regel",
+      "quelle": "Buch Madina 1, S. 105 (mb1-105-1) · Schluessel 1, Lektion 19 (S. 64)",
+      "regel": "adad-3-10-idafa-01",
+      "eingebaut": "2026-11-23",
+      "grund": "Dialog: fihi ashratu tullabin judud — 'ashratu, Mudaf, Tullabin, Mudaf ilayhi, Jududun, Na't'; juddud, weil Studenten Verstand haben, bei Buechern jadidatun (jam-ghayr-aqil-01); kulluhum min baladin wahidin. Das Beispiel steht als Markierung von adad-3-10-idafa-01."
+    },
+    "f34-1415": {
+      "urteil": "schon-regel",
+      "quelle": "adad-3-10-idafa-01 · adad-3-10-genus-01 · Schluessel 1, Lektion 19 (S. 64)",
+      "regel": "adad-3-10-idafa-01",
+      "eingebaut": "2026-11-23",
+      "grund": "arba'atu tullabin: 'Mudaf, Mudaf ilayhi, und Gegenteil Geschlecht'; talibani (Dual) und talibun wahidun (Na't): 'in diesem Abschnitt hier haben wir die Regeln fuer alle Zahlen von 1 bis 10'; fihi sab'atu tullabin min amrika ist die Markierung von adad-3-10-genus-01. Eins und zwei als Adjektiv stehen im Text von adad-3-10-idafa-01 (Schluessel S. 64)."
+    },
+    "f34-1645": {
+      "urteil": "schon-regel",
+      "quelle": "Schluessel 1, Lektion 19 (S. 64-65) und Lektion 20 (S. 67)",
+      "regel": "adad-3-10-idafa-01",
+      "eingebaut": "2026-11-23",
+      "grund": "Die Zusammenfassung des Kapitels: 'Regel Nummer 1, Mudaf plus Mudaf ilayhi. Regel Nummer 2, Gegenteilgeschlecht' — beide eingebaut am 23.11.2026 (adad-3-10-idafa-01, adad-3-10-genus-01). Elias, woertlich: 'ich gucke gerade folge 34 und da sagt er das die zahlen von 3-10 mudaf und mudaf ilayhi sind. das ist wichtig das muss hinzugefügt werden'. Danach die Vokabelliste (thaman, nisf, riyal, hafila, su'al, balad)."
+    },
+    "f34-1815": {
+      "urteil": "weg",
+      "grund": "Vokabelliste von Kapitel 19: yawm/ayyam, qirsh ('die Cent-Waehrung von Riyal, wir haben Euro und Cent'), rakib, qadim, al-jayb ('die Hosentasche'), Almania, Yugoslafiya; Aufgabe 2: indi khamsatu kutubin wa thalathatu aqlamin. Wortschatz und Anwendung, kein neuer Lehrsatz. Elias will qirsh und al-jayb als Vokabel (23.11.2026) — das ist Wortschatz, steht in der To-Do."
+    },
+    "f34-2345": {
+      "urteil": "schon-regel",
+      "quelle": "adad-3-10-idafa-01 · jam-ghayr-aqil-01",
+      "grund": "Uebung: fi hadha l-hayyi tis'atu buyutin jadidatun — Zahl als Mudaf, buyutin Mudaf ilayhi, das Adjektiv weiblich Singular, weil Haeuser keinen Verstand haben. Anwendung von zwei bestehenden Regeln."
+    },
+    "f34-2645": {
+      "urteil": "weg",
+      "grund": "Uebung zum Preis: kam thamanu hadha l-kitab? — thamanuhu sab'atu riyalatin wa nisf (7,5). Anwendung und Wortschatz (thaman, nisf); die Auslassung des Geldworts nach kam thamanu nennt der Schluessel 1 L19 S. 65, der Lehrer sagt sie hier nicht."
+    },
+    "f34-3015": {
+      "urteil": "weg",
+      "grund": "Uebung: khamsatu qurushin ('der Centbetrag von denen'), riyalani als Dual, 'fi hadhihi l-hafila ashratu rukkabin'. Anwendung, kein neuer Lehrsatz."
+    },
+    "f34-3145": {
+      "urteil": "weg",
+      "grund": "Hausaufgabe (Uebung 3: mit der Zahl in Klammern antworten) und Ausblick: Kapitel 20 ist dasselbe Kapitel umgedreht (weibliches Ma'dud). Der Inhalt von Kapitel 20 steht schon in adad-3-10-genus-01 (Schluessel 1, Lektion 20); hier kein neuer Lehrsatz."
     }
   }
 }
