@@ -5611,6 +5611,49 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   .nav-btn{min-width:124px;font-size:.82rem;}
   .nav-btn .nav-icon{font-size:1.7rem;}
 }
+
+/* ----- Stil-Schicht · Vokabelkarte (24.11.2026), wie Talib Fassung A. Elias in der Talib-Sitzung:
+   „ich finde a am besten aber das nomen ganz oben steht find ich nicht so gut“ und danach „lasse in
+   allen apps die karten so sein“. Übernommen aus G:\1. Workspace\Arabisch-App\index.html, Block
+   „Stil-Schicht · Vokabelkarte“ (Commit aac7a15); Aufbau und Aussehen gleich, Farbe die Akzentfarbe
+   dieser App. Gebaut in baueWortKarte() (js/kategorien.js).
+   ⛔ Steht am ENDE, damit es .wk-ar/.wk-de von oben schlägt. Die Bedeutung ist hier hell wie in Talib
+   und im Russisch-Trainer, nicht mehr rot wie seit 16.08.2026 („deutsch rot arabisch weiß“) — die neue
+   Karte ist Elias' spätere Wahl. Block löschen = alles untereinander wie früher, nur ohne die alte
+   Formenzeile für Wurzel und Mehrzahl. ----- */
+.wk-held{position:relative;text-align:center;border-radius:var(--r-4);padding:var(--sp-6) var(--sp-4) var(--sp-4);
+  background:radial-gradient(120% 90% at 50% 0%, var(--red-wash), transparent 70%), var(--surface-2);
+  border:1px solid var(--red-dim);display:flex;flex-direction:column;align-items:center;gap:var(--sp-1);min-width:0;
+  margin-bottom:var(--sp-2);}
+.wk-held .wk-zu{position:absolute;top:var(--sp-2);right:var(--sp-2);}
+.wk-held .wk-ar{font-size:clamp(2.6rem,13vw,3.6rem);line-height:1.5;text-shadow:none;overflow-wrap:anywhere;
+  max-width:100%;padding:0 var(--sp-8);margin:0;}
+.wk-held.wk-lang .wk-ar{font-size:clamp(1.9rem,8vw,2.4rem);}
+.wk-held.wk-sehr-lang .wk-ar{font-size:clamp(1.4rem,6vw,1.7rem);line-height:1.7;}
+.wk-held .wk-de{font-size:clamp(1.3rem,6vw,1.6rem);line-height:1.25;color:var(--text);overflow-wrap:anywhere;margin:0;}
+.wk-meta{display:flex;flex-wrap:wrap;justify-content:center;font-size:var(--fs-sm);color:var(--text-dim);}
+.wk-meta-teil + .wk-meta-teil::before{content:"·";margin:0 6px;color:var(--text-faint);}
+.wk-meta-hinweis{color:var(--text-faint);font-size:var(--fs-xs);}
+.wk-held .wk-ton{margin-top:var(--sp-3);}
+.wk-hoeren{gap:6px;border-radius:var(--r-full);padding-left:var(--sp-5);padding-right:var(--sp-5);}
+.wk-hoeren .ic{width:18px;height:18px;}
+.wk-felder{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2);margin-bottom:var(--sp-2);}
+.wk-felder.wk-ein-feld{grid-template-columns:1fr;}
+.wk-feldkarte{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);
+  padding:var(--sp-2);display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;
+  font:inherit;color:inherit;}
+.wk-wurzel{cursor:pointer;transition:transform var(--dur-1) var(--ease-spring), border-color var(--dur-2) ease;}
+.wk-wurzel:hover{border-color:var(--red-dim);}
+.wk-wurzel:active{transform:scale(.97);}
+.wk-feldname{font-size:var(--fs-xs);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);}
+.wk-chips{display:flex;gap:4px;justify-content:center;flex-wrap:nowrap;}
+.wk-buchstabe{min-width:36px;height:44px;padding:0 4px 4px;border-radius:var(--r-2);background:var(--surface-3);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;line-height:1;
+  font-family:var(--font-ar);font-size:calc(1.3rem * var(--ar-faktor));color:var(--text);}
+.wk-alle{font-size:var(--fs-xs);font-weight:700;color:var(--red-bright);}
+.wk-alle::after{content:" →";}
+.wk-feld-ar{font-family:var(--font-ar);direction:rtl;font-size:calc(1.35rem * var(--ar-faktor));line-height:1.5;
+  color:var(--text);text-align:center;overflow-wrap:anywhere;}
 </style>
 </head>
 <body>
@@ -6529,7 +6572,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
           <span class="qa-titel">Übersetzung</span>
           <div class="qa-modi" id="quranUeb">
             <button class="qa-modus" data-quranueb="de">Deutsch</button>
-            <button class="qa-modus" data-quranueb="en">English</button>
+            <button class="qa-modus" data-quranueb="en">Englisch</button>
             <button class="qa-modus" data-quranueb="beide">Beide</button>
           </div>
         </div>

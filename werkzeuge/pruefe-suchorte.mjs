@@ -231,7 +231,10 @@ const STOER = [
   ['die Kategorien bekommen die Regeln zurück', 'kat', 'mitRegeln: false', 'mitRegeln: true'],
   ['auf der Suche vom Start stehen die Regeln oben', 'kat', 'treffer.innerHTML = wortBlock + regelBlock;', 'treffer.innerHTML = regelBlock + wortBlock;'],
   ['auf der Suche vom Start fallen die Regeln weg', 'kat', 'mitRegeln: true', 'mitRegeln: false'],
-  ['das Startfeld reicht wieder in die Kategorien durch', 'kat', "showScreen('suche')", "showScreen('categories')"],
+  /* Mit dem Kommentar davor: seit der Vokabelkarte „Fassung A" (24.11.2026) springt auch die Wurzel
+     auf der Karte zur Suche (wkZurWurzel), die Zeile allein steht darum zweimal da. */
+  ['das Startfeld reicht wieder in die Kategorien durch', 'kat', "im Feld steht. */\n    if (typeof showScreen === 'function') showScreen('suche');",
+    "im Feld steht. */\n    if (typeof showScreen === 'function') showScreen('categories');"],
   ['„Regeln" zeichnet ein Wort mit', 'regeln', '+ regelSuchZeilenHtml(treffer);', `+ regelSuchZeilenHtml(treffer) + '<div data-suchwort="x"></div>';`],
   ['der Bildschirm „Suche" wird beim Öffnen nicht gezeichnet', 'nav', "if (name==='suche'", "if (name==='suche-aus'"],
   ['die Koran-Zahl kommt rechts in die Wortzeilen zurück', 'kat', '      <div class="wl-marken">\n',

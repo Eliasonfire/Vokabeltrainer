@@ -1530,7 +1530,10 @@ function quranUebersetzung(){
  *  Uebersetzung. ⛔ Die Schluessel sind dieselben drei Werte, die
  *  quranUebersetzung() zurueckgibt — kommt dort einer dazu, faellt er hier auf
  *  „Deutsch" zurueck und ist damit sichtbar falsch, nicht still. */
-const QURAN_UEB_TITEL = { de: 'Deutsch', en: 'English', beide: 'Deutsch/English' };
+/* 24.11.2026, Elias in der Talib-Sitzung: „übrigens sollen die englischen und deutschen überstzungen
+   heißen und nicht beim namen nennen und bei englisch soll englisch/deutsch stehen“ und „das soll in
+   all meinen apps so sein“. Also „Englisch“, nicht „English“ (wie Talib, Commit 8ce24bf). */
+const QURAN_UEB_TITEL = { de: 'Deutsch', en: 'Englisch', beide: 'Deutsch/Englisch' };
 
 /* ⭐ Die Schriftart des Lesers (08.09.2026). Elias mit Bild von
    diegebetszeiten.de: „ich möchte unebdingt diese schriftart haben" — gemessen

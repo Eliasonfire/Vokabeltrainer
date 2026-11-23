@@ -70,7 +70,7 @@ function laufe(kern, anzeige, still){
      grün, weil das Bearbeiten-Feld die Funktion zweimal aufruft. */
   const STELLEN = [
     ['Lernkarte (js/lernen.js)', "label:(typeof plBeschriftung === 'function' ? plBeschriftung(w)"],
-    ['Wortkarte (js/kategorien.js)', "formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w)"],
+    ['Wortkarte (js/kategorien.js)', "<span class=\"wk-feldname\">${escapeHtml(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural')}"],
     ['Bearbeiten-Feld (js/kategorien.js)', "feld('wkPl', (typeof plBeschriftung === 'function'"]
   ];
   for (const [wo, text] of STELLEN) sag(anzeige.includes(text), wo + ' fragt plBeschriftung(w)');
@@ -85,7 +85,7 @@ let alleRot = true;
 for (const [name, kern, anzeige] of [
   ['bauePluralKarte ohne die Zahlwort-Sperre', KERN.replace(' || istZahlwort(w)) return null;', ') return null;'), ANZEIGE],
   ['plBeschriftung sagt immer „Plural"', KERN.replace("istZahlwort(w) ? 'bei weiblichem Nomen' : 'Plural'", "'Plural'"), ANZEIGE],
-  ['die Wortkarte schreibt wieder fest „Plural"', KERN, ANZEIGE.replace("formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'),", "formen.push(['Plural',")]
+  ['die Wortkarte schreibt wieder fest „Plural"', KERN, ANZEIGE.replace("<span class=\"wk-feldname\">${escapeHtml(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural')}", "<span class=\"wk-feldname\">Plural")]
 ]){
   if (kern === KERN && anzeige === ANZEIGE){ alleRot = false; console.log('  ✘ ' + name + ' — Störung griff nicht'); continue; }
   const n = laufe(kern, anzeige, true);

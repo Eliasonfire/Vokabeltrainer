@@ -598,23 +598,60 @@ function baueWortKarte(w){
   const wkNochNicht = (typeof istBekannt === 'function') && !istBekannt(w);
   const wkEigen     = w.chapter === 'personal';
 
-  t.push(`<div class="wk-kopfzeile">
-    <div class="wk-marken">
-      <span class="chip chip-chapter">${escapeHtml(kapitelBeschriftung(w))}</span>
-      ${wkEinzeln ? `<span class="chip chip-einzeln">einzeln freigeschaltet</span>` : ''}
-      ${wkNochNicht ? `<span class="chip chip-fremd">noch nicht dran</span>` : ''}
-      <span class="wl-box">Box ${box}</span>
+  /* ⭐ KOPF DER KARTE, FASSUNG A (24.11.2026), wie Talib (Arabisch-App, Commit aac7a15).
+     Elias in der Talib-Sitzung zu drei gezeichneten Fassungen: „ich finde a am besten aber das
+     nomen ganz oben steht find ich nicht so gut“, und danach: „lasse in allen apps die karten so
+     sein“. Darum: das Wort groß in einem leuchtenden Feld, darunter die Bedeutung, dann EINE
+     graue Zeile mit Wortart, Buch · Kapitel und Box (jedes Stück ein eigenes <span>, die Punkte
+     setzt das CSS), dann die Taste „Anhören“. Keine Marke über dem Wort.
+     Die Reihenfolge vom 18.08.2026 bleibt: „die deutsche übersetzung sollte direkt unter dem
+     arabischen sein … die deutsche übersetzung sollte über dem ton zeichen sein." */
+  const wkWort = w.sg || w.ar;
+  const wkArt = (w.type && w.type !== 'vocab' && w.type !== 'other')
+    ? (WORTART_WAHL.find(([k]) => k === w.type) || [])[1] || '' : '';
+  /* Lange Ausdrücke kleiner (in Talib gemessen: 46 Zeichen machten den Kopf 645 px hoch). */
+  const wkLaenge = String(wkWort).length;
+  t.push(`<div class="wk-held${wkLaenge > 24 ? ' wk-sehr-lang' : wkLaenge > 12 ? ' wk-lang' : ''}">
+    <button class="icon-btn wk-zu" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+    <div class="wk-ar" lang="ar" dir="rtl">${escapeHtml(wkWort)}</div>
+    <div class="wk-de">${escapeHtml(w.de)}</div>
+    ${w.deNeben ? `<div class="wk-neben">auch: ${escapeHtml(w.deNeben)}</div>` : ''}
+    <div class="wk-meta">
+      ${wkArt ? `<span class="wk-meta-teil">${escapeHtml(wkArt)}</span>` : ''}
+      <span class="wk-meta-teil">${escapeHtml(kapitelBeschriftung(w))}</span>
+      <span class="wk-meta-teil">Box ${box}</span>
     </div>
-    <button class="icon-btn" id="btnCloseWortKarte" aria-label="Schließen"><svg class="ic"><use href="#ic-close"/></svg></button>
+    ${(wkEinzeln || wkNochNicht) ? `<div class="wk-meta wk-meta-hinweis">
+      ${wkEinzeln ? `<span class="wk-meta-teil">einzeln freigeschaltet</span>` : ''}
+      ${wkNochNicht ? `<span class="wk-meta-teil">noch nicht dran</span>` : ''}
+    </div>` : ''}
+    <div class="wk-ton">
+      <button class="btn btn-primary wk-hoeren" data-wksprich aria-label="Vorlesen"><svg class="ic"><use href="#ic-speaker"/></svg>Anhören</button>
+    </div>
   </div>`);
 
-  /* ⚠️ Reihenfolge auf Elias' Ansage vom 18.08.2026: „die deutsche übersetzung
-     sollte direkt unter dem arabischen sein … die deutsche übersetzung sollte
-     über dem ton zeichen sein." Vorher stand der Lautsprecher dazwischen und
-     trennte Wort und Bedeutung. */
-  t.push(`<div class="wk-ar" lang="ar" dir="rtl">${escapeHtml(w.sg || w.ar)}</div>`);
-  t.push(`<div class="wk-de">${escapeHtml(w.de)}</div>`);
-  if (w.deNeben) t.push(`<div class="wk-neben">auch: ${escapeHtml(w.deNeben)}</div>`);
+  /* Wurzel und Mehrzahl als zwei Felder (Fassung A). Die Buchstaben der Wurzel führen zur Suche
+     mit dieser Wurzel, die alle Wörter der Familie zeigt. Bei Zahlwörtern ist `pl` die Form beim
+     weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
+  const wkWurzel = String(w.root || '').trim().split(/\s+/).filter(Boolean);
+  const wkFelder = [];
+  if (wkWurzel.length) wkFelder.push(`<button class="wk-feldkarte wk-wurzel" data-wkwurzel="${escapeHtml(w.root)}"
+      aria-label="Alle Wörter der Wurzel ${escapeHtml(w.root)}">
+      <span class="wk-feldname">Wurzel</span>
+      <span class="wk-chips" lang="ar" dir="rtl">${wkWurzel.map(b => `<span class="wk-buchstabe">${escapeHtml(b)}</span>`).join('')}</span>
+      <span class="wk-alle">alle Wörter</span>
+    </button>`);
+  /* Elias, 20.10.2026: „ich will das hier bei den pluralkarten genauso der singular neben den wurzel
+     steht." Seit Fassung A ein Feld neben der Wurzel, so wie die Mehrzahl auf der Einzahlkarte.
+     Bewacht von test-plural-karte.mjs (W1). */
+  if (w.istPlural && w.sgAr) wkFelder.push(`<div class="wk-feldkarte"><span class="wk-feldname">Singular</span><span class="wk-feld-ar" lang="ar" dir="rtl">${escapeHtml(formenAnzeige(w.sgAr))}</span></div>`);
+  if (w.pl) wkFelder.push(`<div class="wk-feldkarte">
+      <span class="wk-feldname">${escapeHtml(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural')}</span>
+      <span class="wk-feld-ar" lang="ar" dir="rtl">${escapeHtml(formenAnzeige(w.pl))}</span>
+    </div>`);
+  /* Vier Buchstaben passen auf dem Handy nicht in ein halbes Feld (in Talib gemessen: zwei Zeilen). */
+  const wkUntereinander = wkFelder.length === 1 || wkWurzel.length > 3;
+  if (wkFelder.length) t.push(`<div class="wk-felder${wkUntereinander ? ' wk-ein-feld' : ''}">${wkFelder.join('')}</div>`);
 
   /* ⭐⭐ WAS IST DIESES WORT? — Elias am 20.08.2026: „ich würde auch gerne bei
      den infokarten, dass ihre funktion auch gezeigt wird also wie zb bei inda
@@ -628,13 +665,12 @@ function baueWortKarte(w){
 
      ⚠️ Direkt unter der Bedeutung und ÜBER dem Lautsprecher: die Funktion
      gehört zum Wort, nicht zu den Zusatzangaben weiter unten. */
-  const wkFunktionen = (typeof funktionenVon === 'function') ? funktionenVon(w) : [];
+  /* Seit Fassung A (24.11.2026): was die graue Zeile im Kopf schon sagt („Nomen“), steht hier
+     nicht noch einmal; der Lautsprecher ist jetzt die Taste „Anhören“ im Kopf. */
+  const wkFunktionen = ((typeof funktionenVon === 'function') ? funktionenVon(w) : []).filter(f => f !== wkArt);
   if (wkFunktionen.length)
     t.push(`<div class="wk-funktionen">` + wkFunktionen.map(f =>
       `<span class="wk-funktion">${arabischHervorheben(f)}</span>`).join('') + `</div>`);
-  t.push(`<div class="wk-ton">
-    <button class="speak-btn" data-wksprich aria-label="Vorlesen"><svg class="ic"><use href="#ic-speaker"/></svg></button>
-  </div>`);
 
   /* Formen unabhaengig von SETTINGS.showPlural: dieser Kasten ist zum
      Nachschlagen da, und wer hier hersieht, will alles sehen. Auf der Lernkarte
@@ -644,15 +680,12 @@ function baueWortKarte(w){
      mit einem Bild der Infokarte von aṣdiqāʾ („Freund (Plural)"), auf der unter dem
      Lautsprecher nur die Wurzel stand: „ich will das hier bei den pluralkarten genauso der
      singular neben den wurzel steht." Genauso wie auf der Einzahlkarte die Mehrzahl neben
-     der Wurzel steht — deshalb an derselben Stelle, als erstes Kästchen. Die Form ist
-     `sgAr` aus bauePluralKarte() in js/kern.js; ändert er das Wort, zieht
-     pluralKarteNachziehen() sie sofort mit. Bewacht von test-plural-karte.mjs (W1). */
-  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);
-  /* Bei Zahlwörtern ist `pl` die Form beim weiblichen Nomen, kein Plural — plBeschriftung() in js/kern.js. */
-  if (w.pl)    formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural'), formenAnzeige(w.pl)]);
+     der Wurzel steht. Die Form ist `sgAr` aus bauePluralKarte() in js/kern.js; ändert er
+     das Wort, zieht pluralKarteNachziehen() sie sofort mit.
+     Seit Fassung A (24.11.2026) stehen Einzahl, Mehrzahl und Wurzel als Felder oben (wkFelder),
+     die Einzahl direkt neben der Wurzel. Bewacht von test-plural-karte.mjs (W1). */
   if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);
   if (w.femPl) formen.push(['Fem. Pl.', formenAnzeige(w.femPl)]);
-  if (w.root)  formen.push(['Wurzel',   w.root]);
   if (formen.length) t.push(`<div class="wk-formen">` + formen.map(([l,v])=>
     `<span><i class="lbl">${escapeHtml(l)}</i><span class="wf-ar">${escapeHtml(v)}</span></span>`).join('') + `</div>`);
   /* Eselsbruecke: seine eigene Notiz schlaegt jeden Vorschlag - dieselbe harte
@@ -1115,10 +1148,29 @@ function schliesseWortKarte(){
   document.getElementById('wortKarteBackdrop').classList.add('hidden');
 }
 
+/* Von der Wurzel auf der Karte zur Suche mit dieser Wurzel (Fassung A, 24.11.2026, wie Talib
+   wkZurWurzel()). ⚠️ Das Schließen läuft meist über history.back() und wirkt erst im nächsten Zug
+   (overlayZuUeberHistorie): erst danach die Suche zeigen, sonst nähme das Zurück den neuen
+   Bildschirm gleich wieder mit. */
+function wkZurWurzel(wurzel){
+  if (!wurzel) return;
+  const zeigen = () => {
+    document.getElementById('alleSuche').value = wurzel;
+    if (typeof showScreen === 'function') showScreen('suche');
+    if (typeof zeichneAlleSuche === 'function') zeichneAlleSuche();
+  };
+  const ueberVerlauf = (history.state || {}).overlay === 'wortKarte';
+  if (ueberVerlauf) window.addEventListener('popstate', () => setTimeout(zeigen, 0), { once: true });
+  schliesseWortKarte();
+  if (!ueberVerlauf && document.getElementById('wortKarte').classList.contains('hidden')) zeigen();
+}
+
 document.getElementById('wortKarteBackdrop').addEventListener('click', schliesseWortKarte);
 document.getElementById('wortKarte').addEventListener('click', (e)=>{
   if (e.target.closest('#btnCloseWortKarte')) { schliesseWortKarte(); return; }
   if (e.target.closest('[data-wksprich]') && WK_WORT){ speakArabic(sprechText(WK_WORT)); return; }
+  const wurzelKnopf = e.target.closest('[data-wkwurzel]');
+  if (wurzelKnopf){ wkZurWurzel(wurzelKnopf.getAttribute('data-wkwurzel')); return; }
   const karte = document.getElementById('wortKarte');
 
   /* Von der Pluralkarte zur Grundvokabel. `zeigeWortKarte` baut die offene

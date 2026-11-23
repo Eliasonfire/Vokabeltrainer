@@ -160,12 +160,15 @@ function rueckseite(kern, lernen, uebung, einstellungen, opt){
    als Funktion gefahren — dazu bauePluralKarte() aus dem Kern, damit die Mehrzahlkarte genau so
    aussieht wie in der App. */
 function wortkarte(kern, kateg, uebung){
-  const a = kateg.indexOf('  const formen = [];');
-  if (a < 0) throw new Error('der Formen-Block der Infokarte wurde nicht gefunden');
-  const block = schneideBis(kateg.slice(a), '  const formen = [];', ".join('') + `</div>`);");
+  /* Seit Fassung A (24.11.2026) beginnt der Block bei den Feldern (Wurzel, Einzahl, Mehrzahl) und
+     reicht bis zum Ende der Kästchen darunter. `wkArt` setzt sonst der Kopf der Karte. */
+  const START = '  const wkWurzel = ';
+  const a = kateg.indexOf(START);
+  if (a < 0) throw new Error('die Felder der Infokarte (wkWurzel) wurden nicht gefunden');
+  const block = schneideBis(kateg.slice(a), START, ".join('') + `</div>`);");
   const w = welt(kern, uebung);
   vm.runInContext(schneideFunktion(kern, 'function bauePluralKarte(')
-    + '\nfunction __infokarte(w){\n  const t = [];\n' + block + '\n  return t.join("");\n}', w.ctx);
+    + '\nfunction __infokarte(w){\n  const t = [];\n  const wkArt = "";\n' + block + '\n  return t.join("");\n}', w.ctx);
   return {
     einzahl: id => w.hole('__infokarte(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + '))'),
     mehrzahl: id => w.hole('__infokarte(bauePluralKarte(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + ')))'),
@@ -405,18 +408,24 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
 
   /* Elias, 20.10.2026 um 02:00, mit einem Bild der Infokarte von aṣdiqāʾ: „ich will das hier bei den
      pluralkarten genauso der singular neben den wurzel steht." */
-  fall('W1 Infokarte einer Mehrzahlkarte: „Singular" mit der Einzahl steht als erstes Kästchen, vor „Wurzel" (Elias, 20.10.2026)', () => {
+  /* Seit der Vokabelkarte „Fassung A" (24.11.2026, Elias: „lasse in allen apps die karten so sein")
+     stehen Wurzel, Einzahl und Mehrzahl als Felder oben (<span class="wk-feldname">), nicht mehr als
+     Kästchen unten. Sein Satz vom 20.10. gilt weiter: die Einzahl steht direkt neben der Wurzel. */
+  const felder = h => [...h.matchAll(/<span class="wk-feldname">([^<]*)<\/span>\s*(?:<span class="wk-chips"[^>]*>([\s\S]*?)<\/span>\s*<span class="wk-alle">|<span class="wk-feld-ar"[^>]*>([^<]*)<\/span>)/g)]
+    .map(m => [m[1], m[3] || '']);
+  fall('W1 Infokarte einer Mehrzahlkarte: „Singular" mit der Einzahl steht als Feld direkt neben „Wurzel" (Elias, 20.10.2026)', () => {
     const h = wortkarte(kern, kateg, uebung).mehrzahl(1);
-    const kaestchen = [...h.matchAll(/<i class="lbl">([^<]*)<\/i><span class="wf-ar">([^<]*)<\/span>/g)].map(m => [m[1], m[2]]);
-    if (!kaestchen.length) return 'keine Kästchen: ' + h;
-    if (kaestchen[0][0] !== 'Singular') return 'das erste Kästchen heißt „' + kaestchen[0][0] + '": ' + h;
-    if (kaestchen[0][1] !== ar('rajulN')) return 'im Kästchen „Singular" steht nicht die Einzahl rajul: ' + kaestchen[0][1];
-    const wurzel = kaestchen.findIndex(k => k[0] === 'Wurzel');
-    return wurzel === 1 ? true : 'die Wurzel steht nicht direkt daneben (Stelle ' + wurzel + '): ' + h;
+    const f = felder(h);
+    if (!f.length) return 'keine Felder: ' + h;
+    const s = f.findIndex(k => k[0] === 'Singular'), wz = f.findIndex(k => k[0] === 'Wurzel');
+    if (s < 0) return 'kein Feld „Singular": ' + h;
+    if (f[s][1] !== ar('rajulN')) return 'im Feld „Singular" steht nicht die Einzahl rajul: ' + f[s][1];
+    return (wz >= 0 && Math.abs(s - wz) === 1) ? true : 'die Wurzel steht nicht direkt daneben (Wurzel ' + wz + ', Singular ' + s + '): ' + h;
   });
-  fall('W2 Die Einzahlkarte bekommt kein Kästchen „Singular": dort stehen „Plural" und „Wurzel" wie bisher', () => {
+  fall('W2 Die Einzahlkarte bekommt kein Feld „Singular": dort stehen „Plural" und „Wurzel"', () => {
     const h = wortkarte(kern, kateg, uebung).einzahl(1);
-    return h.includes('<i class="lbl">Plural</i>') && h.includes('<i class="lbl">Wurzel</i>') && !h.includes('>Singular<') ? true : h;
+    const namen = felder(h).map(k => k[0]);
+    return namen.includes('Plural') && namen.includes('Wurzel') && !namen.includes('Singular') ? true : h;
   });
 
   const T = (einst, geraet) => tippWelt(kern, lernen, uebung, { einstellungen: einst, fortschritt: TIPP_STAND, karten: TIPP_KARTEN, geraet });
@@ -735,11 +744,11 @@ const STOER = [
   { name: 'S31 ein verborgenes Teil zählt zur Höhe', muss: ['H1'],
     lernen: q => ersetze(q, '  const sichtbar = [...vorn.children].filter(k => k.offsetHeight);', '  const sichtbar = [...vorn.children];', 'S31') },
   { name: 'S35 die Infokarte der Mehrzahl zeigt die Einzahl nicht mehr', muss: ['W1'],
-    kateg: q => ersetze(q, "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", '', 'S35') },
-  { name: 'S36 die Einzahl rutscht hinter die Wurzel', muss: ['W1'],
-    kateg: q => ersetze(ersetze(q, "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", '', 'S36a'),
-      "  if (w.root)  formen.push(['Wurzel',   w.root]);\n",
-      "  if (w.root)  formen.push(['Wurzel',   w.root]);\n  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n", 'S36b') },
+    kateg: q => ersetze(q, "  if (w.istPlural && w.sgAr) wkFelder.push(", "  if (false) wkFelder.push(", 'S35') },
+  { name: 'S36 die Einzahl rutscht von der Wurzel weg nach unten', muss: ['W1'],
+    kateg: q => ersetze(ersetze(q, "  if (w.istPlural && w.sgAr) wkFelder.push(", "  if (false) wkFelder.push(", 'S36a'),
+      "  if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);\n",
+      "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n  if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);\n", 'S36b') },
   { name: 'S44 oben links steht wieder „Plural von <Einzahl>" (wie bis 12.11.2026)', muss: ['K1'],
     lernen: q => ersetze(q, "    ? 'Plural' + (art ? ' · ' + art : '')\n", '    ? kapitelBeschriftung(w)\n', 'S44') },
 ];
