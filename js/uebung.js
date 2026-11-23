@@ -2798,7 +2798,12 @@ const UEBUNG_DAZU = {
                             'mudaf-ilayh-01', 'idafa-zweitglied-01', 'idafa-kein-adjektiv-01'],
   'adad-3-10-genus-01':    ['adad-3-10-idafa-01', 'idafa-01', 'idafa-erkennen-01', 'mudaf-01', 'mudaf-ohne-al-01',
                             'mudaf-ilayh-01', 'idafa-zweitglied-01', 'idafa-kein-adjektiv-01',
-                            'ta-marbuta-fem-01', 'ta-marbuta-grenzen-01', 'fem-bildung-01']
+                            'ta-marbuta-fem-01', 'ta-marbuta-grenzen-01', 'fem-bildung-01'],
+  /* 24.11.2026, eins und zwei (Folge 34, 14:15, „Taliban wahidun, Na't“): وَاحِدٌ ist ein
+     نَعْتٌ — an أَخٌ وَاحِدٌ / أُخْتٌ وَاحِدَةٌ gelten die allgemeinen نَعْت-Regeln mit
+     (vier Bedingungen, Geschlecht, Bestimmtheit, Endung). Die Angleichung des Prädikats
+     (mutabaqa-genus-01) gilt dort NICHT: وَاحِدٌ ist kein خَبَر. */
+  'adad-1-2-nat-01':       ['nat-vier-bedingungen-01', 'nat-fem-01', 'nat-bestimmtheit-01', 'nat-wen-beschreibt-01']
 };
 const UEBUNG_DAZU_MEHRWORTIG = {
   'mudaf-01':            ['mudaf-ilayh-01', 'idafa-zweitglied-01'],

@@ -239,6 +239,19 @@ const GEPRUEFT_2411 = {
   'adad-3-10-genus-01': 'eigennamen-fem-ohne-tanwin-01 koerperteile-genus-01 fem-ohne-ta-marbuta-01'
 };
 for (const [a, bs] of Object.entries(GEPRUEFT_2411)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
+/* 24.11.2026, nach adad-1-2-nat-01 (eins und zwei als نَعْتٌ): 18 neue Paare am Wort gelesen.
+   Diese 13 gelten dort NICHT zusammen: an einem Wort ohne Zahl (بَيْتٌ جَمِيلٌ, جَدِيدٌ, طَالِبٌ)
+   greift die Zahlregel nicht; an أَخٌ وَاحِدٌ / أُخْتٌ وَاحِدَةٌ gibt es keinen bestimmten مُضَاف,
+   keinen Eigennamen, kein Relativpronomen, keine ـَانُ-Form, keine Steigerung, und وَاحِدٌ ist
+   kein خَبَر (mutabaqa-genus-01). Die übrigen fünf (die allgemeinen نَعْت-Regeln) stehen in
+   js/uebung.js unter UEBUNG_DAZU. */
+const GEPRUEFT_2411_EINS = {
+  'nat-vier-bedingungen-01': 'adad-1-2-nat-01', 'mutabaqa-genus-01': 'adad-1-2-nat-01', 'nat-fem-01': 'adad-1-2-nat-01',
+  'nat-bestimmtheit-01': 'adad-1-2-nat-01', 'adjektive-an-ohne-tanwin-01': 'adad-1-2-nat-01', 'nat-eigenname-01': 'adad-1-2-nat-01',
+  'nat-wen-beschreibt-01': 'adad-1-2-nat-01',
+  'adad-1-2-nat-01': 'nat-bestimmter-mudaf-01 nat-eigenname-01 mutabaqa-genus-01 ismun-mawsul-allati-01 ismun-mawsul-alladhi-01 adjektive-an-ohne-tanwin-01 adjektive-steigerung-akbar-01'
+};
+for (const [a, bs] of Object.entries(GEPRUEFT_2411_EINS)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
 /* 20.11.2026, nach mansub-nach-kam-01 und muthanna-bildung-01 (Folge 33): 30 neue Paare am Wort
    gelesen. Diese 27 gelten dort NICHT zusammen: an einem Wort ohne كَمْ davor greift die كَمْ-Regel
    nicht; am Wort nach كَمْ (أُخْتًا, سَبُّورَةً) greifen weder Eigenname, Ruf, Nominativ, Genitiv
