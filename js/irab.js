@@ -1885,6 +1885,18 @@ function analysiereSatz(satz){
          sonst ist es der Anfang eines neuen Satzteils. */
       rolle = 'نَعْت (zum Wort nach كَمْ)';
       erwartet = letzterKasus;
+    } else if (i > 0 && letzterKasus === 'jarr' && !nachKomma && !nachNida && out.length
+               && out[out.length - 1].rolle === 'مُضَاف إِلَيْه' && !istBestimmt(woerter[i - 1])
+               && !istBestimmt(wort) && gelesen && gelesen.kasus === 'jarr'){
+      /* فِيهِ عَشَرَةُ طُلَّابٍ جُدُدٍ (Madina 1, S. 105; 24.11.2026): ein unbestimmtes Wort
+         mit sichtbarem Genitiv direkt hinter einem unbestimmten مُضَاف إِلَيْه ist dessen
+         نَعْت — ein خَبَر steht nie im Genitiv, und mit Tanwīn endet die Verbindung, das
+         Wort kann also kein weiterer مُضَاف إِلَيْه sein. Ohne diesen Zweig galt جُدُدٍ als
+         خَبَر, sobald جُدُدٌ nicht im geladenen Wortschatz stand. Der Lehrer (Folge 34,
+         12:15): „ashratu, Mudaf, Tullabin, Mudaf ilayhi, Jududun, Na't". Nur wenn die
+         Endung es zeigt, wie beim Zweig nach كَمْ. */
+      rolle = 'نَعْت (Adjektiv zum Wort davor)';
+      erwartet = 'jarr';
     } else if (i > 0 && letzterKasus && !nachKomma && istMonatsZusatz(woerter[i - 1], wort)){
       /* Der Zusatz eines zweiteiligen Monatsnamens (MONATS_PAARE oben): nat des Namens,
          im selben Fall — Rabiun al-awwalu, bada Rabiin al-awwali. */

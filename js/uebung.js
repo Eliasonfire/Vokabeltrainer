@@ -2789,7 +2789,16 @@ const UEBUNG_DAZU = {
   'adjektive-an-ohne-tanwin-01': ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01', 'nakira-marifa-01'],
   'nat-eigenname-01':      ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01', 'tanwin-eigennamen-01', 'mubtada-khabar-01'],
   'nat-bestimmtheit-01':   ['nat-bestimmter-mudaf-01', 'nat-eigenname-01'],
-  'nat-bestimmter-mudaf-01': ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01']
+  'nat-bestimmter-mudaf-01': ['nat-bestimmtheit-01', 'nat-wen-beschreibt-01'],
+  /* Zahlen 3–10 (24.11.2026): markiert ist die ganze Verbindung عَشَرَةُ طُلَّابٍ / سَبْعَةُ طُلَّابٍ.
+     Dort gelten die allgemeinen Iḍāfa-Regeln mit, und beide Zahlenregeln füreinander.
+     Bei der Geschlechterregel zusätzlich die Tāʾ-marbūṭa-Regeln: der Lehrer nennt die
+     Form mit ة „weiblich“ — im Zweifel mit drin. */
+  'adad-3-10-idafa-01':    ['adad-3-10-genus-01', 'idafa-01', 'idafa-erkennen-01', 'mudaf-01', 'mudaf-ohne-al-01',
+                            'mudaf-ilayh-01', 'idafa-zweitglied-01', 'idafa-kein-adjektiv-01'],
+  'adad-3-10-genus-01':    ['adad-3-10-idafa-01', 'idafa-01', 'idafa-erkennen-01', 'mudaf-01', 'mudaf-ohne-al-01',
+                            'mudaf-ilayh-01', 'idafa-zweitglied-01', 'idafa-kein-adjektiv-01',
+                            'ta-marbuta-fem-01', 'ta-marbuta-grenzen-01', 'fem-bildung-01']
 };
 const UEBUNG_DAZU_MEHRWORTIG = {
   'mudaf-01':            ['mudaf-ilayh-01', 'idafa-zweitglied-01'],

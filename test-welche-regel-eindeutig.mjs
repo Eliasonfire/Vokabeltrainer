@@ -221,6 +221,24 @@ const GEPRUEFT_0911 = {
   'zuruf-makan-weitere-01': 'zarf-lada-01'
 };
 for (const [a, bs] of Object.entries(GEPRUEFT_0911)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
+
+/* 24.11.2026, die zwei Zahlenregeln (Folge 34), jedes Paar am Wort gelesen — MEINE Lesart:
+   - eine andere Regel ist richtig, eine Zahlenregel wird falsch angeboten: an all diesen Stellen
+     steht keine Zahl (بَابُ, الطَّبِيبِ, ثَمَنُ الْقَلَمِ, الْمَدْرَسَةِ, آمِنَةُ …) → klar falsch.
+   - eine Zahlenregel ist richtig (عَشَرَةُ طُلَّابٍ, سَبْعَةُ طُلَّابٍ): kein ẓarf, kein ayyu, keine
+     Besitzendung, keine Kette aus drei Wörtern, kein Eigenname, kein Körperteil, und سَبْعَةُ hat
+     ein ة → diese Antworten sind dort falsch. Was dort mitgilt, steht in UEBUNG_DAZU (js/uebung.js). */
+const GEPRUEFT_2411 = {
+  'mudaf-01': 'adad-3-10-idafa-01', 'mudaf-ohne-al-01': 'adad-3-10-idafa-01', 'mudaf-ilayh-01': 'adad-3-10-idafa-01',
+  'idafa-zweitglied-01': 'adad-3-10-idafa-01', 'possessiv-ist-idafa-01': 'adad-3-10-idafa-01', 'idafa-01': 'adad-3-10-idafa-01',
+  'idafa-erkennen-01': 'adad-3-10-idafa-01', 'idafa-kein-adjektiv-01': 'adad-3-10-idafa-01', 'zarf-als-mudaf-01': 'adad-3-10-idafa-01',
+  'idafa-verkettung-01': 'adad-3-10-idafa-01',
+  'ta-marbuta-fem-01': 'adad-3-10-genus-01', 'ta-marbuta-grenzen-01': 'adad-3-10-genus-01', 'koerperteile-genus-01': 'adad-3-10-genus-01',
+  'fem-ohne-ta-marbuta-01': 'adad-3-10-genus-01', 'eigennamen-fem-ohne-tanwin-01': 'adad-3-10-genus-01', 'fem-bildung-01': 'adad-3-10-genus-01',
+  'adad-3-10-idafa-01': 'zarf-als-mudaf-01 idafa-ayyu-01 possessiv-ist-idafa-01 idafa-verkettung-01',
+  'adad-3-10-genus-01': 'eigennamen-fem-ohne-tanwin-01 koerperteile-genus-01 fem-ohne-ta-marbuta-01'
+};
+for (const [a, bs] of Object.entries(GEPRUEFT_2411)) GEPRUEFT[a] = ((GEPRUEFT[a] || '') + ' ' + bs).trim();
 /* 20.11.2026, nach mansub-nach-kam-01 und muthanna-bildung-01 (Folge 33): 30 neue Paare am Wort
    gelesen. Diese 27 gelten dort NICHT zusammen: an einem Wort ohne كَمْ davor greift die كَمْ-Regel
    nicht; am Wort nach كَمْ (أُخْتًا, سَبُّورَةً) greifen weder Eigenname, Ruf, Nominativ, Genitiv
