@@ -190,9 +190,10 @@ function tonFehlertext(code, stimmenZahl){
    Liste schon bestätigt — genau so, wie die App es nach seinem Ja tut. Der
    Test geht also durch DIESELBEN Wachen (onend, 1400-ms-Uhr) wie jedes Wort. */
 /* `tempo` (17.11.2026, optional): Sprechtempo statt der üblichen 0,85 — der
-   Hörmodus spricht ab dem dritten Abspielen desselben Worts langsamer
-   (hoerNaechstesTempo() in js/hoeren.js). */
-function speakArabic(text, probe, tempo){
+   Hörmodus spricht langsamer, wenn die Schnecken-Taste gedrückt wird
+   (hoerAbspielen(true) in js/hoeren.js, seit 23.11.2026). */
+/* `zweiterVersuch` (22.11.2026): intern, siehe u.onerror. */
+function speakArabic(text, probe, tempo, zweiterVersuch){
   if (!('speechSynthesis' in window)){
     toast('Sprachausgabe wird von diesem Browser nicht unterstützt');
     return;
@@ -245,7 +246,7 @@ function speakArabic(text, probe, tempo){
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'ar-SA';
   const gewaehlt = ARABIC_VOICES.find(v=>v.voiceURI===SETTINGS.voiceURI) || ARABIC_VOICES[0];
-  if (gewaehlt) u.voice = gewaehlt;
+  if (gewaehlt && !zweiterVersuch) u.voice = gewaehlt;
   /* Bei `ohneListe` bleibt `u.voice` absichtlich leer (die Liste ist ja leer):
      dann reicht Chrome nur `lang` ans Sprachmodul des Geräts weiter. */
   u.rate = (typeof tempo === 'number' && tempo > 0) ? tempo : 0.85;
@@ -261,8 +262,26 @@ function speakArabic(text, probe, tempo){
   u.onerror = (e)=>{
     /* Ohne Liste, aber bestätigt, zählt wie „eine Stimme ist da": ein
        unbekannter Fehler nennt dann seinen Code statt des Installierwegs. */
-    const txt = tonFehlertext(e && e.error, ARABIC_VOICES.length || (ohneListe ? 1 : 0));
+    const code = e && e.error;
+    /* ⭐ ZWEITER VERSUCH (22.11.2026). Elias, mit Bildern aus beiden Apps (Arabisch
+       03:16, Russisch 03:19, beide „Die Sprachausgabe des Geräts hat abgelehnt."):
+       „Ich hab keine sprachausgabe plötzlich, das muss später auch gefixt werden",
+       dann „Fix das". Beide Sprachmodule waren seit dem 17.11. unverändert — der
+       Code `synthesis-failed` kommt vom Sprachdienst des Geräts. Ein bekannter
+       Auslöser ist eine gewählte Stimme, die das Gerät nicht mehr bereitstellt
+       (meine Annahme, auf seinem Gerät NICHT gemessen). Darum einmal neu: ohne
+       `u.voice`, nur mit `lang`, nach einem frischen cancel(). Erst wenn auch das
+       scheitert, kommt die Meldung — mit dem Rat, das Gerät neu zu starten. */
+    if ((code === 'synthesis-failed' || code === 'synthesis-unavailable') && !zweiterVersuch){
+      gemeldet = true;
+      clearTimeout(speakArabic._uhr);
+      setTimeout(()=>speakArabic(text, probe, tempo, true), 200);
+      return;
+    }
+    let txt = tonFehlertext(code, ARABIC_VOICES.length || (ohneListe ? 1 : 0));
     if (!txt) return;                       // eigenes cancel(), nicht melden
+    if (zweiterVersuch && (code === 'synthesis-failed' || code === 'synthesis-unavailable'))
+      txt += ' Auch der zweite Versuch mit der Standardstimme kam nicht durch — bitte das Gerät einmal neu starten.';
     gemeldet = true;
     toast(txt);
   };

@@ -1231,7 +1231,12 @@ function surahZeile(s){
      die Namenszeile bei angefangenen Suren schon "12 von 286 auswendig" traegt
      - das steht jetzt unten beim Juz, wo Platz ist. Der alte Grund gilt also
      nicht mehr, statt ihn zu umgehen. */
-  const unten = [juzText(s), zusatz].filter(Boolean).join(' · ');
+  /* ⭐ Seit dem 22.11.2026 steht die Verszahl UNTEN beim Juz. Elias, mit zwei Bildern
+     (Liste und Kopf der Sure 67): „Hier wo die suren angezeigt werden sollen die arabischen
+     Namen stehen und daneben die deutschen Übersetzungen so wie hier". Oben steht also
+     der arabische Name und direkt daneben die Bedeutung, wie im Kopf (`#quranFullTitle`);
+     die eigene Spalte `.sr-ar` rechts fällt weg. Für „· 30 Verse" ist oben kein Platz mehr. */
+  const unten = [`${s.verses} Verse`, juzText(s), zusatz].filter(Boolean).join(' · ');
   /* ⛔ Seit dem 20.11.2026 auch in der LISTE die Bedeutung statt der Umschrift, nicht kursiv.
      Elias zum Kopf: „übrigens möchte ich, dass diese deutsche umlautschrift des namens
      komplett wegfällt und stattdessen die übersetzung des namens an die stelle kommt aber
@@ -1243,10 +1248,12 @@ function surahZeile(s){
     <div class="surah-row" data-opensurah="${s.id}">
       <div class="sr-num">${s.id}</div>
       <div class="sr-mid">
-        <div class="sr-name">${escapeHtml(surenBedeutung(s) || s.name)} · ${s.verses} Verse</div>
+        <div class="sr-kopf">
+          <span class="sr-ar" lang="ar" dir="rtl">${escapeHtml(surenTitel(s))}</span>
+          <span class="sr-name">${escapeHtml(surenBedeutung(s) || s.name)}</span>
+        </div>
         <div class="sr-unten">${unten}</div>
       </div>
-      <div class="sr-ar">${surenTitel(s)}</div>
       <div class="sr-knoepfe">
         <button class="fav-stern${fav?' on':''}" data-favtoggle="${s.id}"
                 aria-pressed="${fav}" aria-label="${s.name} zu den Favoriten">${icon('stern')}</button>

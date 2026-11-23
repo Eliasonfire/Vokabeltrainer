@@ -389,27 +389,38 @@ function renderWochenquote(){
 
   const monate = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
   const kurz = (d) => { const x = new Date(d); return x.getDate() + '. ' + monate[x.getMonth()]; };
-  kasten.innerHTML = reihe.map(w => {
-    const leer = !w.gestellt;
+  /* ⭐ 12.11.2026 — je Übungsart eine eigene Reihe. Elias: „und die trefferquote
+     je woche bezieht sich auf den satzmodus oder die lern karteikarten? schreib
+     das in klammern am besten dazu", dann „am besten trefferquote pro woche für
+     sätze, karteikarten, und hören" — „für beide apps". Bis dahin stand hier EINE
+     Reihe mit allen drei zusammen. Sätze und Hören wurden bis zum 12.11. nicht
+     getrennt gezählt (merkeQuote() in js/kern.js) — diese Wochen stehen in einer
+     eigenen Reihe „zusammen", statt in eine der beiden geraten zu werden. */
+  const saeulen = (feldG, feldR) => reihe.map(w => {
+    const g = w[feldG] || 0, r = w[feldR] || 0;
+    const leer = !g, quote = leer ? null : Math.round(r / g * 100);
     /* Die Säulenhöhe ist die Quote in Prozent — 1 : 1, damit die Höhe nicht
        lügt. Eine gestreckte Skala würde kleine Unterschiede aufblasen, und
        genau die will Elias beurteilen. */
-    const hoehe = leer ? 0 : Math.max(2, w.quote);
-    /* ⭐ Die Aufschlüsselung gehört in den Tooltip, nicht unter die Säule: die
-       Reihe soll acht Wochen nebeneinander vergleichbar halten. Sie steht aber
-       da — sonst wüsste beim Rauschversuch niemand mehr, wie viel von welcher
-       Sorte in einer Woche steckt. [[stand_besteht_aus_mehreren_zahlen]] */
-    const teile = [];
-    if (w.karten)  teile.push(`${w.kartenR} von ${w.karten} Karteikarten`);
-    if (w.abfrage) teile.push(`${w.abfrageR} von ${w.abfrage} Abfragen`);
+    const hoehe = leer ? 0 : Math.max(2, quote);
     return `<div class="wq-woche${leer ? ' wq-leer' : ''}" title="${escapeHtml(w.von)} bis ${escapeHtml(w.bis)}${
-      leer ? ' — keine Aufgaben' : ` — ${w.richtig} von ${w.gestellt} richtig`
-        + (teile.length > 1 ? ` (${teile.join(' · ')})` : '')}">
-      <div class="wq-zahl">${leer ? '—' : w.quote + '%'}</div>
+      leer ? ' — keine Aufgaben' : ` — ${r} von ${g} richtig`}">
+      <div class="wq-zahl">${leer ? '—' : quote + '%'}</div>
       <div class="wq-saeule"><div class="wq-fuellung" style="height:${hoehe}%"></div></div>
       <div class="wq-datum">${kurz(w.von)}</div>
     </div>`;
   }).join('');
+  const reihen = [
+    ['Karteikarten', 'karten', 'kartenR'],
+    ['Sätze (Satzmodus)', 'saetze', 'saetzeR'],
+    ['Hören', 'hoeren', 'hoerenR'],
+  ];
+  /* ⛔ Die Reihe „Sätze und Hören zusammen" (Wochen vor dem 12.11.2026) ist seit
+     13.11.2026 weg. Elias: „mach bei beiden das ,,beides satz und hören weg"" —
+     „beiden" = Arabisch- und Russisch-App. Die Zahlen bleiben gespeichert
+     (`gemischt` in quoteJeWoche()), sie werden nur nicht mehr gezeigt. */
+  kasten.innerHTML = reihen.map(([titel, g, r]) =>
+    `<div class="wq-titel">${escapeHtml(titel)}</div><div class="wq-reihe">${saeulen(g, r)}</div>`).join('');
 }
 
 /* ---------- Die Trefferquote eines einzelnen Tages (R4, 08.09.2026) -------

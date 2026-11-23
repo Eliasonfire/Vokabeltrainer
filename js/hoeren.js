@@ -686,7 +686,6 @@ function naechsteHoerfrage(){
   HOER.beantwortet = false;
   HOER.fertig = false;
   HOER.sperreBis = 0;
-  HOER.zaehlWort = null;   /* neue Frage → der Ton zählt wieder ab 1 (hoerNaechstesTempo) */
 
   hoerStandSchreiben();
   document.getElementById('hoerHinweis').textContent = HOER.wort.satz ? 'Was bedeutet der Satz?' : 'Was bedeutet das Wort?';
@@ -714,40 +713,30 @@ function naechsteHoerfrage(){
   else hoerAbspielen();
 }
 
-/* ---------- Beim dritten Mal langsamer (17.11.2026) ----------
+/* ---------- Langsam nur mit der Schnecken-Taste (23.11.2026) ----------
 
-   Elias (Eingang, 16.11.2026): „Im Hörmodus soll derselbe Ton beim dritten
-   Abspielen langsamer wiedergegeben werden, damit er besser zu verstehen ist."
-   · „Beim 1. und 2. Mal normale Geschwindigkeit, beim 3. Mal reduziert" ·
-   „Zähler pro Ton: bei einem neuen Wort/Ton wieder bei 1 anfangen."
+   Elias, 23.11.2026 (über die Talib-Sitzung, für alle seine Apps): „wir sollten
+   beim hören modus auch so ein schnecken zeichen haben statt alle drei mal es
+   langsamer zu machen. das sollst du für all meine apps machen".
 
-   Gezählt wird JEDES Abspielen desselben Worts oder Satzes: das von selbst
-   beim Erscheinen, jedes Tippen auf den Lautsprecher und das Vorsprechen nach
-   der Antwort. Der Zähler hängt am Wort selbst (`zaehlWort`), springt also bei
-   jedem neuen Wort auf 0, und naechsteHoerfrage() setzt ihn zusätzlich zurück
-   (falls zufällig dasselbe Wort noch einmal drankommt).
+   Vorher (17.11.2026, Elias: „Im Hörmodus soll derselbe Ton beim dritten
+   Abspielen langsamer wiedergegeben werden") sprach die App ab dem dritten
+   Abspielen desselben Worts von selbst langsamer. Das ist weg: der Lautsprecher
+   spricht immer im normalen Tempo, die Schnecke rechts daneben immer langsam.
+   Das Vorsprechen nach der Antwort ist normal. Der Geh-Modus bleibt unberührt.
 
-   ⛔ MEINE Wahl, nicht seine: das Tempo 0,6 (normal ist 0,85) und dass es AB
-   dem dritten Mal langsam bleibt (auch beim vierten, fünften …). Eine
-   Einstellung dafür gibt es noch nicht; sein Satz nannte sie nur als Beispiel.
-   Der Geh-Modus spricht jedes Wort nur einmal und bleibt unberührt.
+   ⛔ MEINE Wahl, nicht seine (aus der alten Fassung übernommen): das Tempo 0,6
+   (normal ist 0,85). Vorlage: Talib, Commit 2ada84d.
    Bewacht von werkzeuge/pruefe-hoer-langsam.mjs. */
-const HOER_LANGSAM_AB = 3;
 const HOER_LANGSAM_TEMPO = 0.6;
-function hoerNaechstesTempo(){
-  if (HOER.zaehlWort !== HOER.wort){ HOER.zaehlWort = HOER.wort; HOER.abgespielt = 0; }
-  HOER.abgespielt = (HOER.abgespielt || 0) + 1;
-  return HOER.abgespielt >= HOER_LANGSAM_AB ? HOER_LANGSAM_TEMPO : undefined;
-}
 
-function hoerAbspielen(){
+function hoerAbspielen(langsam){
   if (!HOER.wort) return;
-  const knopf = document.getElementById('btnHoerPlay');
-  knopf.classList.add('spielt');
-  setTimeout(()=>knopf.classList.remove('spielt'), 600);
+  const knopf = document.getElementById(langsam ? 'btnHoerLangsam' : 'btnHoerPlay');
+  if (knopf){ knopf.classList.add('spielt'); setTimeout(()=>knopf.classList.remove('spielt'), 600); }
   /* Die Vollform mit Endung sprechen, nicht die nackte Schreibweise - so
      hoert Elias das Wort, wie es im Satz klingt. */
-  speakArabic(sprechText(HOER.wort), undefined, hoerNaechstesTempo());
+  speakArabic(sprechText(HOER.wort), undefined, langsam ? HOER_LANGSAM_TEMPO : undefined);
 }
 
 function beantworteHoerfrage(i){
@@ -803,7 +792,7 @@ function beantworteHoerfrage(i){
   /* ⭐ Q3 (08.09.2026): und je WORT. Der Hoermodus ist neben der Karteikarte
      die zweite Stelle, an der eine Antwort eindeutig EINEM Wort gehoert. */
   /* Ein Hoersatz ist keine Vokabel — er zaehlt nur in der Tagesquote, nicht je Wort. */
-  if (typeof merkeQuote === 'function') merkeQuote(richtig, undefined, w && !w.satz ? w.id : undefined);
+  if (typeof merkeQuote === 'function') merkeQuote(richtig, 'hoeren', w && !w.satz ? w.id : undefined);
 
   const ziel = hoerTagesziel();
   const zielJetztErreicht = vorher < ziel && t.gesamt >= ziel;
@@ -837,7 +826,7 @@ function beantworteHoerfrage(i){
 
   /* Nach der Antwort noch einmal vorsprechen: jetzt sieht man die Schrift
      dazu, und genau dabei praegt sich der Klang ein. */
-  setTimeout(()=>speakArabic(sprechText(w), undefined, hoerNaechstesTempo()), 320);
+  setTimeout(()=>speakArabic(sprechText(w), undefined, undefined), 320);
 }
 
 document.getElementById('hoerOptionen').addEventListener('click', (e)=>{
@@ -883,7 +872,8 @@ document.getElementById('hoerKarte').addEventListener('click', (e)=>{
      der Q8-Sperre nach einer falschen Antwort: die Sperre hält das Weiterblättern
      auf, nicht das Hinhören. Überall sonst auf der Karte geht es weiter wie
      bisher. Bewacht von werkzeuge/pruefe-hoer-ton.mjs. */
-  if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(); return; }
+  if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(false); return; }
+  if (e.target.closest('#btnHoerLangsam')){ hoerAbspielen(true); return; }
   if (HOER.beantwortet){
     /* ⛔ Q8: waehrend der Sperre passiert nichts — auch keine Fehlermeldung.
        Ein Ton oder ein Ruckeln waere Strafe; gewollt ist nur, dass der Blick
