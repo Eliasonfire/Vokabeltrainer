@@ -47,9 +47,10 @@ function befunde(quelle){
   const z = zuhoerer(quelle);
   if (!z) return ['der Klick-Zuhörer der Karte (#hoerKarte) ist in js/hoeren.js nicht zu finden'];
   const raus = [];
-  const ton = z.search(/if \(e\.target\.closest\('#btnHoerPlay'\)\)\s*\{\s*hoerAbspielen\(\);\s*return;\s*\}/);
+  /* Seit der Schnecken-Taste (23.11.2026) heißt der Aufruf hoerAbspielen(false); beide Schreibweisen zählen. */
+  const ton = z.search(/if \(e\.target\.closest\('#btnHoerPlay'\)\)\s*\{\s*hoerAbspielen\((?:false)?\);\s*return;\s*\}/);
   const weiter = z.indexOf('if (HOER.beantwortet)');
-  if (ton < 0) raus.push('kein Lautsprecher-Zweig „if (e.target.closest(\'#btnHoerPlay\')){ hoerAbspielen(); return; }" im Zuhörer');
+  if (ton < 0) raus.push('kein Lautsprecher-Zweig „if (e.target.closest(\'#btnHoerPlay\')){ hoerAbspielen(false); return; }" im Zuhörer');
   else if (weiter >= 0 && ton > weiter) raus.push('der Lautsprecher-Zweig steht HINTER „if (HOER.beantwortet)" — nach der Antwort schaltet der Lautsprecher weiter');
   return raus;
 }
@@ -59,12 +60,12 @@ const echt = befunde(HOEREN);
 if (echt.length) echt.forEach(schlecht);
 else gut('der Lautsprecher-Zweig steht vor dem Weiter-Zweig und endet mit return');
 
-const ZEILE = "if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(); return; }";
+const ZEILE = "if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(false); return; }";
 const STOERUNGEN = [
   /* Die Zeile an die alte Stelle: hinter den Weiter-Zweig, als letzte Zeile des Zuhörers. */
   ['Reihenfolge wie vor dem 24.09.', q => q.replace(ZEILE, '')
     .replace(/(nur nicht auf dem Lautsprecher \(oben\) \*\/\r?\n  \}\r?\n)(\}\);)/, '$1  ' + ZEILE + '\n$2')],
-  ['return entfernt', q => q.replace(ZEILE, "if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(); }")],
+  ['return entfernt', q => q.replace(ZEILE, "if (e.target.closest('#btnHoerPlay')){ hoerAbspielen(false); }")],
 ];
 for (const [name, stoere] of STOERUNGEN){
   if (!HOEREN.includes(ZEILE)){ schlecht('Störtest „' + name + '": die Zeile „' + ZEILE + '" steht nicht mehr in js/hoeren.js — Störtest anpassen'); continue; }
