@@ -2179,13 +2179,8 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .wk-abschnitt .de{color:var(--text-dim);font-size:var(--fs-sm);line-height:1.55;}
 .wk-blaettern{display:flex;gap:var(--sp-2);}
 .wk-blaettern .btn{flex:1;min-width:0;}
-.wk-formen{display:flex;flex-wrap:wrap;gap:var(--sp-2);justify-content:center;}.wk-formen span{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);
-  padding:2px var(--sp-2);font-size:var(--fs-xs);
-}
-.wk-formen .lbl{color:var(--text-faint);font-style:normal;}
-.wk-formen .wf-ar{font-family:var(--font-ar);direction:rtl;font-size:calc(var(--fs-sm) * var(--ar-faktor));}
+/* Hier standen bis zum 24.11.2026 die Pillen .wk-formen („Fem.“, „Fem. Pl.“). Seit Schritt 2 der Karte sind
+   das Felder in .wk-felder (js/kategorien.js). */
 .wk-aktionen{display:flex;gap:var(--sp-2);flex-wrap:wrap;justify-content:flex-end;}
 /* Erklärzeile unter den Knöpfen der Wortkarte. Sie steht dort, wo sonst ein
    „Bearbeiten" wäre, und sagt, warum es hier keines gibt (Pluralkarten). */
@@ -5628,13 +5623,28 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .wk-wurzel:active{transform:scale(.97);}
 .wk-feldname{font-size:var(--fs-xs);font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--text-faint);}
 .wk-chips{display:flex;gap:4px;justify-content:center;flex-wrap:nowrap;}
-.wk-buchstabe{min-width:36px;height:44px;padding:0 4px 4px;border-radius:var(--r-2);background:var(--surface-3);
+/* Buchstabe der Wurzel: nur Anzeige, der Knopf ist das ganze Feld „Wurzel“. Klein seit Schritt 2 (24.11.2026,
+   aus Talib 3a5bdfb; Elias dort: „mach die viel kleiner“). Der Name enthält bewusst kein „tab“/„btn“:
+   test-lesbarkeit und test-trefferflaechen erkennen Knöpfe am Namen. */
+.wk-zeichen{min-width:28px;height:32px;padding:0 4px 2px;border-radius:var(--r-2);background:var(--surface-3);
   border:1px solid var(--border);display:flex;align-items:center;justify-content:center;line-height:1;
-  font-family:var(--font-ar);font-size:calc(1.3rem * var(--ar-faktor));color:var(--text);}
+  font-family:var(--font-ar);font-size:calc(.8rem * var(--ar-faktor));color:var(--text);}
 .wk-alle{font-size:var(--fs-xs);font-weight:700;color:var(--red-bright);}
 .wk-alle::after{content:" →";}
 .wk-feld-ar{font-family:var(--font-ar);direction:rtl;font-size:calc(1.35rem * var(--ar-faktor));line-height:1.5;
   color:var(--text);text-align:center;overflow-wrap:anywhere;}
+/* Schritt 2 der Karte (24.11.2026, aus Talib 3a5bdfb): alle Formen als gleich große, kleine Felder.
+   Drei Felder mit Plural: die dritte Form unter der Wurzel, der Plural über beide Zeilen; sonst bei ungerader
+   Zahl das letzte Feld über die ganze Breite. */
+.wk-felder.wk-drei{grid-template-areas:"a b" "c b";}
+.wk-felder.wk-drei > :nth-child(1){grid-area:a;}
+.wk-felder.wk-drei > :nth-child(2){grid-area:b;justify-content:center;}
+.wk-felder.wk-drei > :nth-child(3){grid-area:c;}
+.wk-felder.wk-ungerade > :last-child{grid-column:1 / -1;}
+.wk-felder .wk-feldkarte{padding:8px 6px;gap:4px;}
+.wk-felder .wk-feld-ar{width:100%;font-size:calc(.8rem * var(--ar-faktor));line-height:1.6;}
+.wk-form{display:block;white-space:nowrap;}
+.wk-form.wk-mehrwort{white-space:normal;}
 
 /* ----- Stil-Schicht · Flächenfarbe (24.11.2026, aus Talib eb3c51f): die 30 % der Regel 60-30-10.
    Elias, 24.11.2026: „startbildschirm, hören, hot bar, statistik und übung sollst du übernehmen. auch die

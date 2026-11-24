@@ -638,20 +638,33 @@ function baueWortKarte(w){
   if (wkWurzel.length) wkFelder.push(`<button class="wk-feldkarte wk-wurzel" data-wkwurzel="${escapeHtml(w.root)}"
       aria-label="Alle Wörter der Wurzel ${escapeHtml(w.root)}">
       <span class="wk-feldname">Wurzel</span>
-      <span class="wk-chips" lang="ar" dir="rtl">${wkWurzel.map(b => `<span class="wk-buchstabe">${escapeHtml(b)}</span>`).join('')}</span>
+      <span class="wk-chips" lang="ar" dir="rtl">${wkWurzel.map(b => `<span class="wk-zeichen">${escapeHtml(b)}</span>`).join('')}</span>
       <span class="wk-alle">alle Wörter</span>
     </button>`);
   /* Elias, 20.10.2026: „ich will das hier bei den pluralkarten genauso der singular neben den wurzel
      steht." Seit Fassung A ein Feld neben der Wurzel, so wie die Mehrzahl auf der Einzahlkarte.
      Bewacht von test-plural-karte.mjs (W1). */
-  if (w.istPlural && w.sgAr) wkFelder.push(`<div class="wk-feldkarte"><span class="wk-feldname">Singular</span><span class="wk-feld-ar" lang="ar" dir="rtl">${escapeHtml(formenAnzeige(w.sgAr))}</span></div>`);
-  if (w.pl) wkFelder.push(`<div class="wk-feldkarte">
-      <span class="wk-feldname">${escapeHtml(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural')}</span>
-      <span class="wk-feld-ar" lang="ar" dir="rtl">${escapeHtml(formenAnzeige(w.pl))}</span>
-    </div>`);
-  /* Vier Buchstaben passen auf dem Handy nicht in ein halbes Feld (in Talib gemessen: zwei Zeilen). */
-  const wkUntereinander = wkFelder.length === 1 || wkWurzel.length > 3;
-  if (wkFelder.length) t.push(`<div class="wk-felder${wkUntereinander ? ' wk-ein-feld' : ''}">${wkFelder.join('')}</div>`);
+  /* Schritt 2 der Karte (24.11.2026, aus Talib 3a5bdfb): auch Weiblich und Weiblich Plural sind eigene Felder
+     in derselben, kleineren Größe, keine Pillen mehr darunter. Elias in Talib zur Karte von „Bruder“:
+     „vielleicht kann man statt wurzel so groß zu haben da eher dieses männlich und weiblich hinpacken das die
+     dann einheitlich groß sind. jetzt sticht das so raus“, zum Bild mit vier Feldern „mach die viel kleiner“,
+     und laut der Talib-Sitzung für alle Apps bestätigt. Die Einzahl bleibt direkt neben der Wurzel (unsere
+     Regel vom 20.10.2026 oben). Unabhängig von SETTINGS.showPlural: dieser Kasten ist zum Nachschlagen da;
+     auf der Lernkarte wäre die Form ein Ratehinweis. */
+  const wkForm = (name, wert) => `<div class="wk-feldkarte"><span class="wk-feldname">${escapeHtml(name)}</span><span class="wk-feld-ar" lang="ar" dir="rtl">${wkFormenHtml(wert)}</span></div>`;
+  if (w.istPlural && w.sgAr) wkFelder.push(wkForm('Singular', w.sgAr));
+  if (w.pl) wkFelder.push(wkForm(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural', w.pl));
+  if (w.femSg) wkFelder.push(wkForm('Weiblich', w.femSg));
+  if (w.femPl) wkFelder.push(wkForm('Weiblich Plural', w.femPl));
+  /* Mit den kleineren Kästchen passen vier Buchstaben in ein halbes Feld (in Talib gemessen); ab fünf wird es
+     eng. Drei Felder mit Wurzel und Plural: die dritte Form unter der Wurzel, der Plural über beide Zeilen;
+     sonst bei ungerader Zahl das letzte Feld über die ganze Breite (Aufteilung von Claude, in Talib). */
+  const wkUntereinander = wkFelder.length === 1 || wkWurzel.length > 4;
+  const wkPlZweites = wkWurzel.length && w.pl && !(w.istPlural && w.sgAr);
+  const wkAufteilung = wkUntereinander ? ' wk-ein-feld'
+    : (wkFelder.length === 3 && wkPlZweites) ? ' wk-drei'
+    : (wkFelder.length % 2) ? ' wk-ungerade' : '';
+  if (wkFelder.length) t.push(`<div class="wk-felder${wkAufteilung}">${wkFelder.join('')}</div>`);
 
   /* ⭐⭐ WAS IST DIESES WORT? — Elias am 20.08.2026: „ich würde auch gerne bei
      den infokarten, dass ihre funktion auch gezeigt wird also wie zb bei inda
@@ -672,10 +685,6 @@ function baueWortKarte(w){
     t.push(`<div class="wk-funktionen">` + wkFunktionen.map(f =>
       `<span class="wk-funktion">${arabischHervorheben(f)}</span>`).join('') + `</div>`);
 
-  /* Formen unabhaengig von SETTINGS.showPlural: dieser Kasten ist zum
-     Nachschlagen da, und wer hier hersieht, will alles sehen. Auf der Lernkarte
-     bleibt der Schalter, was er ist - dort waere die Form ein Ratehinweis. */
-  const formen = [];
   /* ⭐ DIE EINZAHL NEBEN DER WURZEL, auf jeder Mehrzahlkarte (20.10.2026). Elias um 02:00,
      mit einem Bild der Infokarte von aṣdiqāʾ („Freund (Plural)"), auf der unter dem
      Lautsprecher nur die Wurzel stand: „ich will das hier bei den pluralkarten genauso der
@@ -683,11 +692,9 @@ function baueWortKarte(w){
      der Wurzel steht. Die Form ist `sgAr` aus bauePluralKarte() in js/kern.js; ändert er
      das Wort, zieht pluralKarteNachziehen() sie sofort mit.
      Seit Fassung A (24.11.2026) stehen Einzahl, Mehrzahl und Wurzel als Felder oben (wkFelder),
-     die Einzahl direkt neben der Wurzel. Bewacht von test-plural-karte.mjs (W1). */
-  if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);
-  if (w.femPl) formen.push(['Fem. Pl.', formenAnzeige(w.femPl)]);
-  if (formen.length) t.push(`<div class="wk-formen">` + formen.map(([l,v])=>
-    `<span><i class="lbl">${escapeHtml(l)}</i><span class="wf-ar">${escapeHtml(v)}</span></span>`).join('') + `</div>`);
+     die Einzahl direkt neben der Wurzel. Bewacht von test-plural-karte.mjs (W1).
+     Seit Schritt 2 (24.11.2026) stehen auch Weiblich und Weiblich Plural dort als Felder; die Pillen
+     „Fem.“ und „Fem. Pl.“ an dieser Stelle sind weg. */
   /* Eselsbruecke: seine eigene Notiz schlaegt jeden Vorschlag - dieselbe harte
      Rangfolge wie auf der Lernkarte (Punkt 8 vom 10.08.2026). */
   /* ⭐ Elias, 18.08.2026: „abgesehen davon kann ich die vorschläge nicht mehr
@@ -1029,6 +1036,30 @@ function baueNotizFormular(w){
       <button class="btn btn-secondary btn-klein" data-wkabbrechen>Zurück zur Karte</button>
     </div>
     <div class="wk-hinweis">Wird beim Zurückgehen und beim Schließen von selbst gespeichert. Arabisches darfst du hineinschreiben — es bekommt seine eigene Schrift.</div>`;
+}
+
+/* Formen in den Feldern der Karte (24.11.2026, aus Talib 3a5bdfb): jede Form eine Zeile, nie mitten im Wort
+   getrennt. In Talib gemessen: bei 267 von 3225 Formen war das halbe Feld auf 375 px zu schmal, und die Form
+   brach mitten im Wort um. Eine zu breite Form wird kleiner gesetzt, bis sie passt (nicht unter 18 px); eine
+   Form aus mehreren Wörtern darf an der Lücke umbrechen. */
+function wkFormenHtml(wert){
+  return formen(wert).map(f => `<span class="wk-form${/\s/.test(f.trim()) ? ' wk-mehrwort' : ''}">${escapeHtml(f)}</span>`).join('');
+}
+function wkFormenEinpassen(karte){
+  karte.querySelectorAll('.wk-form').forEach(f => {
+    f.style.fontSize = '';
+    const platz = f.parentElement.clientWidth, breite = f.scrollWidth;
+    if (!platz || breite <= platz) return;
+    const basis = parseFloat(getComputedStyle(f).fontSize);
+    f.style.fontSize = Math.max(18, Math.floor(basis * platz / breite)) + 'px';
+  });
+}
+if (typeof document !== 'undefined') {
+  const karte = document.getElementById('wortKarte');
+  if (karte && typeof MutationObserver === 'function') {
+    new MutationObserver(() => wkFormenEinpassen(karte)).observe(karte, { childList: true });
+    window.addEventListener('resize', () => { if (!karte.classList.contains('hidden')) wkFormenEinpassen(karte); });
+  }
 }
 
 function zeigeWortKarte(id){

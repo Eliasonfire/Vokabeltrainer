@@ -167,7 +167,8 @@ function wortkarte(kern, kateg, uebung){
   if (a < 0) throw new Error('die Felder der Infokarte (wkWurzel) wurden nicht gefunden');
   const block = schneideBis(kateg.slice(a), START, ".join('') + `</div>`);");
   const w = welt(kern, uebung);
-  vm.runInContext(schneideFunktion(kern, 'function bauePluralKarte(')
+  /* Seit Schritt 2 der Karte (24.11.2026) schreibt wkFormenHtml() jede Form in ein eigenes span. */
+  vm.runInContext(schneideFunktion(kern, 'function bauePluralKarte(') + '\n' + schneideFunktion(kateg, 'function wkFormenHtml(')
     + '\nfunction __infokarte(w){\n  const t = [];\n  const wkArt = "";\n' + block + '\n  return t.join("");\n}', w.ctx);
   return {
     einzahl: id => w.hole('__infokarte(__KARTEN.find(k => k.id === ' + JSON.stringify(String(id)) + '))'),
@@ -411,8 +412,9 @@ function laufe(kern, lernen, uebung, kateg = KATEG){
   /* Seit der Vokabelkarte „Fassung A" (24.11.2026, Elias: „lasse in allen apps die karten so sein")
      stehen Wurzel, Einzahl und Mehrzahl als Felder oben (<span class="wk-feldname">), nicht mehr als
      Kästchen unten. Sein Satz vom 20.10. gilt weiter: die Einzahl steht direkt neben der Wurzel. */
-  const felder = h => [...h.matchAll(/<span class="wk-feldname">([^<]*)<\/span>\s*(?:<span class="wk-chips"[^>]*>([\s\S]*?)<\/span>\s*<span class="wk-alle">|<span class="wk-feld-ar"[^>]*>([^<]*)<\/span>)/g)]
-    .map(m => [m[1], m[3] || '']);
+  /* Seit Schritt 2 (24.11.2026) steht jede Form in <span class="wk-form">; gelesen wird der Text ohne die Tags. */
+  const felder = h => [...h.matchAll(/<span class="wk-feldname">([^<]*)<\/span>\s*(?:<span class="wk-chips"[^>]*>([\s\S]*?)<\/span>\s*<span class="wk-alle">|<span class="wk-feld-ar"[^>]*>((?:<span class="wk-form[^"]*">[^<]*<\/span>)*|[^<]*)<\/span>)/g)]
+    .map(m => [m[1], (m[3] || '').replace(/<\/span><span[^>]*>/g, ' / ').replace(/<[^>]+>/g, '')]);
   fall('W1 Infokarte einer Mehrzahlkarte: „Singular" mit der Einzahl steht als Feld direkt neben „Wurzel" (Elias, 20.10.2026)', () => {
     const h = wortkarte(kern, kateg, uebung).mehrzahl(1);
     const f = felder(h);
@@ -746,9 +748,10 @@ const STOER = [
   { name: 'S35 die Infokarte der Mehrzahl zeigt die Einzahl nicht mehr', muss: ['W1'],
     kateg: q => ersetze(q, "  if (w.istPlural && w.sgAr) wkFelder.push(", "  if (false) wkFelder.push(", 'S35') },
   { name: 'S36 die Einzahl rutscht von der Wurzel weg nach unten', muss: ['W1'],
+    /* Seit Schritt 2 (24.11.2026): die Einzahl rutscht hinter die Mehrzahl und die weiblichen Formen. */
     kateg: q => ersetze(ersetze(q, "  if (w.istPlural && w.sgAr) wkFelder.push(", "  if (false) wkFelder.push(", 'S36a'),
-      "  if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);\n",
-      "  if (w.istPlural && w.sgAr) formen.push(['Singular', formenAnzeige(w.sgAr)]);\n  if (w.femSg) formen.push(['Fem.',     formenAnzeige(w.femSg)]);\n", 'S36b') },
+      "  if (w.femPl) wkFelder.push(wkForm('Weiblich Plural', w.femPl));\n",
+      "  if (w.femPl) wkFelder.push(wkForm('Weiblich Plural', w.femPl));\n  wkFelder.push(wkForm('Mehr', 'x'));\n  if (w.istPlural && w.sgAr) wkFelder.push(wkForm('Singular', w.sgAr));\n", 'S36b') },
   { name: 'S44 oben links steht wieder „Plural von <Einzahl>" (wie bis 12.11.2026)', muss: ['K1'],
     lernen: q => ersetze(q, "    ? 'Plural' + (art ? ' · ' + art : '')\n", '    ? kapitelBeschriftung(w)\n', 'S44') },
 ];
