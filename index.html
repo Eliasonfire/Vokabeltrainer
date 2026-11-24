@@ -5879,6 +5879,17 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .uw-sub{display:block;margin-top:2px;color:var(--text-weich);font-size:.92rem;line-height:1.4;}
 .uw-pfeil{flex:0 0 auto;color:var(--text-dim);}
 .uw-pfeil .ic{width:20px;height:20px;}
+
+/* ----- Stil-Schicht · Startseite ohne Wurzeln (24.11.2026, aus Talib 033a22f). Elias dort: „wurzel soll hier weg
+   weil es ist ja schon in üben drinne“. Es bleiben Vokabeln und Regeln: nebeneinander auf jeder Breite. Ist der
+   Quran-Bezug eingeschaltet, steht er als dritte Kachel darunter über die ganze Breite (Handy, Tablet) oder
+   daneben (PC). ----- */
+.home-grid .tile-regeln{grid-column:auto;}
+.home-grid #quranTile{grid-column:1 / -1;}
+@media (min-width:1024px){
+  .home-grid:not(:has(#quranTile:not(.hidden))){grid-template-columns:repeat(2,1fr);}
+  .home-grid #quranTile{grid-column:auto;}
+}
 </style>
 </head>
 <body>
@@ -6142,15 +6153,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            Reihe und nimmt deshalb die ganze Breite — ab 1100 px stehen alle
            drei nebeneinander. Die Quran-Bezug-Kachel bleibt dahinter. -->
       <div class="home-grid stagger">
-        <!-- ⚠️ NICHT #ic-folder: das trägt die Kachel „Vokabeln" gleich
-             nebenan. Zwei gleiche Zeichen wären hier
-             nicht auseinanderzuhalten. #ic-irab steht im Bestand für das
-             Zerlegen eines Wortes — genau das ist hier die Aufgabe. -->
-        <button class="tile" data-nav="wurzeln">
-          <span class="tile-icon"><svg class="ic"><use href="#ic-irab"/></svg></span>
-          <span class="tile-title">Wurzeln</span>
-          <span class="tile-sub">Wortfamilien üben</span>
-        </button>
+        <!-- ⛔ Hier stand bis zum 24.11.2026 die Kachel „Wurzeln“. Sie ist weg, weil Wurzeln jetzt auf der
+             Seite „Üben“ steht (aus Talib 033a22f). Elias dort: „wurzel soll hier weg weil es ist ja schon in
+             üben drinne“. Vokabeln und Regeln stehen nebeneinander, Block „Stil-Schicht · Startseite ohne
+             Wurzeln“. -->
         <!-- ⭐ Hiess bis zum 12.09.2026 „Kategorien". Elias an dem Tag um
              14:18: „ich finde man sollte die kategorien in vokabeln umbenennen
              weil tatsächlich sind nur noch die vokabeln in dem bereich" — und

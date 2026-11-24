@@ -70,7 +70,12 @@ function laufe(seiteRoh, navRoh, still){
     pruefe(/const navName = navMap\[name\] \|\| name;/.test(nav), 'es gibt keinen Sonderweg neben der Zuordnung');
   }
 
-  // 4. Der Stil
+  // 4. Startseite ohne Wurzeln (aus Talib 033a22f, Elias dort: „wurzel soll hier weg weil es ist ja schon in üben drinne“)
+  const start = (seite.match(/<div class="home-grid[^"]*">([\s\S]*?)<\/div>/) || [])[1] || '';
+  pruefe(start.includes('data-nav="categories"') && !start.includes('data-nav="wurzeln"'),
+    'die Startseite hat keine Kachel „Wurzeln“ mehr (Wurzeln steht unter „Üben“)');
+
+  // 5. Der Stil
   pruefe(/Stil-Schicht · Üben[\s\S]*?\.uw-karte\{/.test(seiteRoh), 'der Block „Stil-Schicht · Üben“ mit .uw-karte steht im Stylesheet');
   return fehler;
 }
@@ -91,7 +96,8 @@ const stoerungen = [
   ['Zurück fehlt', SEITE.replace(/(id="screen-ueben"[\s\S]*?)<button class="icon-btn" data-back/, '$1<button class="icon-btn" data-weg'), NAV],
   ['Hören leuchtet nicht bei Üben', SEITE, NAV.replace("hoeren:'ueben'", "hoeren:'home'")],
   ['Tabelle zeigt auf alten Knopf', SEITE, NAV.replace("sentences:'ueben'", "sentences:'sentences'")],
-  ['Stilblock fehlt', SEITE.replace('Stil-Schicht · Üben', 'Stil-Schicht · Uebungen'), NAV]
+  ['Stilblock fehlt', SEITE.replace('Stil-Schicht · Üben', 'Stil-Schicht · Uebungen'), NAV],
+  ['Kachel Wurzeln wieder auf dem Start', SEITE.replace('<button class="tile" data-nav="categories">', '<button class="tile" data-nav="wurzeln"></button><button class="tile" data-nav="categories">'), NAV]
 ];
 let alleRot = true;
 for (const [name, s, n] of stoerungen){
