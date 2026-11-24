@@ -47,7 +47,13 @@ function zeigeBildschirm(name){
   /* ⚠️ `regeln` (11.09.2026) wie categories und wurzeln: erreicht über eine
      Kachel des Startbildschirms, unten leuchtet deshalb Start. Ebenso `suche`
      (11.09.2026 abends): erreicht über das Suchfeld auf dem Start. */
-  const navMap = {home:'home', learn:'learn-entry', categories:'home', sentences:'sentences', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'hoeren', wurzeln:'home', regeln:'home', suche:'home', settings:'home'};
+  /* ⭐ Seit 24.11.2026 (aus Talib e286fd6) hat die Leiste VIER Knöpfe:
+       home · learn-entry · quranfull · ueben
+     Hören, Wurzeln und Sätze stehen als Karten auf der Seite „Üben“ und lassen deshalb „Üben“ leuchten.
+     Elias zur Liste der Unterschiede: „startbildschirm, hören, hot bar, statistik und übung sollst du
+     übernehmen“. Die Zeilen oben zu den fünf Knöpfen sind der Stand vom 21.08.2026. Bewacht von
+     test-ueben.mjs und validate.js (7c). */
+  const navMap = {home:'home', learn:'learn-entry', categories:'home', ueben:'ueben', sentences:'ueben', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'ueben', wurzeln:'ueben', regeln:'home', suche:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
 

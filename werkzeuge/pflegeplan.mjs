@@ -1501,6 +1501,16 @@ export const PFLEGEPLAN = [
       wie: 'arabicroots, seine Auswahl, FREIGESCHALTET und die Buchdateien gegeneinander — Befund in den Bericht, eine Frage an ihn nur, wo seine Auswahl entscheidet (Warteseite)' },
   },
   {
+    /* 24.11.2026, aus Talib e286fd6: die Seite hinter dem Eintrag „Üben“ in der Leiste unten.
+       Elias: „startbildschirm, hören, hot bar, statistik und übung sollst du übernehmen“. */
+    funktion: 'Seite „Üben“ (Leiste unten)',
+    dateien: [],
+    bildschirme: ['screen-ueben'],
+    neuerInhalt: { nein: 'Drei feste Karten (Hören, Wurzeln, Sätze), die auf vorhandene Übungen führen; deren Inhalt pflegen ihre eigenen Einträge.' },
+    eingaben: { nein: 'Er wählt nur eine Karte; nichts wird gespeichert.' },
+    veralten: { nein: 'Nichts Gespeichertes; dass Leiste, Karten und navMap zusammenpassen, bewacht test-ueben.mjs im Sammellauf und validate.js (7c).' },
+  },
+  {
     funktion: 'Wurzelmodus',
     dateien: ['js/wurzel.js'],
     bildschirme: ['screen-wurzeln'],
