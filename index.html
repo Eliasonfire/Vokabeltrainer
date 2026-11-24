@@ -5826,6 +5826,12 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .suche-leer-bild{border-radius:var(--r-4);}
 .fm-ton,
 .fm-deck{border-radius:var(--r-full);}
+
+/* ----- Stil-Schicht · Flamme ohne Null (24.11.2026, aus Talib f6a843c): bei Serie 0 steht keine Zahl neben der
+   Flamme, und die Flamme ist grau, bis der erste Lerntag sie anzündet (zeigeSerie() in js/kern.js). Elias zur
+   Liste der Unterschiede: „übernimm das in allen apps“. ----- */
+.streak.leer #streakCount{display:none;}
+.streak.leer .streak-flame{filter:grayscale(1);opacity:.6;}
 </style>
 </head>
 <body>
@@ -5886,14 +5892,14 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
       <span class="brand-mark" role="img" aria-label="طالب — Student, Suchender">طَالِبٌ</span>
       <span class="brand-de">Vokabeltrainer</span>
     </div>
-    <div class="streak" id="streakBadge" title="Tages-Streak">
+    <div class="streak leer" id="streakBadge" title="Tage am Stück">
       <!-- Emoji statt Strich-Symbol, und das ist die EINE bewusste Ausnahme von
            der Regel „nie wieder Emoji in der App" (js/darstellung.js). Elias am
            29.07.2026: "die Tagestreak, so wie sie bildlich dargestellt wird mit
            dieser Flamme, finde ich nicht schön — da finde ich einfach das Emoji
            als Flamme schöner." Seine App, seine Wahl. Überall sonst bleibt es
            beim Sprite, damit die Oberfläche nicht zweigeteilt aussieht. -->
-      <span class="streak-flame" aria-hidden="true">🔥</span><span id="streakCount">0</span>
+      <span class="streak-flame" aria-hidden="true">🔥</span><span id="streakCount"></span>
     </div>
     <button class="icon-btn" id="btnSettings" title="Einstellungen" aria-label="Einstellungen">
       <svg class="ic"><use href="#ic-settings"/></svg>

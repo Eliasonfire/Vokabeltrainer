@@ -47,7 +47,7 @@ function renderHome(){
        : wartet > 0 ? zeile('Heute dran', `${wartet} warten noch`)
        : zeile('Heute dran'))
     : 'Alles erledigt für heute – super gemacht.';
-  document.getElementById('streakCount').textContent = getStreak().count;
+  zeigeSerie(getStreak().count);
 
   /* ⚠️ `bekannteVokabeln()` statt `buchVokabeln()` seit dem 17.08.2026: die
      Box-Zahlen zaehlten alle 311 Woerter des geladenen Buchs, also auch die

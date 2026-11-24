@@ -3481,8 +3481,7 @@ function touchStreak(){
   LS.set('vt_streak', s);
   if (s.count !== vorher){
     const badge = document.getElementById('streakBadge');
-    const zahl = document.getElementById('streakCount');
-    if (zahl) zahl.textContent = s.count;
+    zeigeSerie(s.count);
     if (badge && !REDUCED_MOTION){
       badge.classList.remove('bump');
       void badge.offsetWidth;
@@ -3500,6 +3499,17 @@ function touchStreak(){
       feiere('serie-meilenstein', { tage: s.count });
   }
   return s;
+}
+/* Die Flamme oben in der Leiste (24.11.2026, aus Talib f6a843c). Bei Serie 0 steht KEINE Zahl daneben, und die
+   Flamme ist grau, bis der erste Lerntag sie anzündet. Elias zur Liste der Unterschiede (Punkt 14, Flamme ohne
+   0): „übernimm das in allen apps“. Die EINE Stelle, die Zahl und Aussehen setzt — touchStreak() und
+   renderHome() rufen sie. Bewacht von test-serie-flamme.mjs. */
+function zeigeSerie(anzahl){
+  const badge = document.getElementById('streakBadge');
+  const zahl = document.getElementById('streakCount');
+  const n = Math.max(0, Math.floor(Number(anzahl) || 0));
+  if (zahl) zahl.textContent = n > 0 ? String(n) : '';
+  if (badge) badge.classList.toggle('leer', n < 1);
 }
 /* ⛔ Hier stand bis zum 14.09.2026 `gnadeVerfuegbar(s, heute)` — die Pruefung
    auf sieben Tage Abstand zum letzten Gnadentag. Sie ist ersatzlos entfallen,

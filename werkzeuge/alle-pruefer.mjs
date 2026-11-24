@@ -282,6 +282,8 @@ const PRUEFER = [
   ['test-rundungen.mjs', []],
   /* 24.11.2026 — Abstände im 4er-Raster, aus Talib (a21a33e). */
   ['test-abstaende.mjs', []],
+  /* 24.11.2026 — Flamme ohne „0“: bei Serie null nur die graue Flamme (aus Talib f6a843c). */
+  ['test-serie-flamme.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

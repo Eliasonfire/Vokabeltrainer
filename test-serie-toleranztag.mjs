@@ -44,7 +44,8 @@ function schneide(text, name){
   return null;
 }
 
-const teile = ['touchStreak', 'getStreak', 'getUebungstage', 'uebungstageAusSerieErgaenzen']
+/* zeigeSerie: seit 24.11.2026 setzt touchStreak() die Zahl neben der Flamme über diese Funktion (aus Talib). */
+const teile = ['touchStreak', 'getStreak', 'zeigeSerie', 'getUebungstage', 'uebungstageAusSerieErgaenzen']
   .map(n => [n, schneide(quelle, n)]);
 const fehlend = teile.filter(([, t]) => !t).map(([n]) => n);
 if (fehlend.length) { console.log('⛔ nicht gefunden: ' + fehlend.join(', ')); process.exit(1); }
