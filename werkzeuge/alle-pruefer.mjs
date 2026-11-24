@@ -293,6 +293,9 @@ const PRUEFER = [
   ['test-startseite.mjs', []],
   ['test-ueben.mjs', []],
   ['test-abschluss.mjs', []],
+  /* 24.11.2026 — kein Knopf „Lernfortschritt zurücksetzen" (alle Karten auf Box 1). Elias, in der Talib-Sitzung:
+     „das brauchen wir nicht, in keinen meiner apps“ und „Ja, raus“. Drei Störtests. */
+  ['werkzeuge/pruefe-kein-zuruecksetzen.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

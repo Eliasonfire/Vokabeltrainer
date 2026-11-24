@@ -964,14 +964,8 @@ document.getElementById('sicherungDatei').addEventListener('change', (e)=>{
   leser.readAsText(datei);
 });
 
-document.getElementById('btnResetProgress').addEventListener('click', ()=>{
-  if (!confirm('Wirklich den gesamten Lernfortschritt zurücksetzen? Alle Karten gehen zurück auf Box 1.')) return;
-  PROGRESS = {};
-  VOCAB_DATA.forEach(w=>{ PROGRESS[w.id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 }; });
-  saveProgress();
-  toast('Lernfortschritt zurückgesetzt');
-  renderHome();
-});
+/* HIER STAND „Lernfortschritt zurücksetzen" (alle Karten auf Box 1). Am 24.11.2026 entfernt, Elias: „das brauchen
+   wir nicht, in keinen meiner apps“ und „Ja, raus“. Bewacht von werkzeuge/pruefe-kein-zuruecksetzen.mjs. */
 /* HIER STAND „Streak zurücksetzen". Am 29.07.2026 auf Elias' Wunsch entfernt.
    Der Schlüssel `vt_streak` bleibt selbstverständlich — nur der Knopf ist weg. */
 
