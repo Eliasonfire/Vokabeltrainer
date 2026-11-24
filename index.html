@@ -5890,6 +5890,48 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   .home-grid:not(:has(#quranTile:not(.hidden))){grid-template-columns:repeat(2,1fr);}
   .home-grid #quranTile{grid-column:auto;}
 }
+
+/* ----- Stil-Schicht · Runde geschafft (24.11.2026, aus Talib d26eeba): die Seite nach jeder Lernrunde. Ein Ring
+   mit Haken, der sich zeichnet, der Titel groß, drei Kacheln, die Serie, EINE große Taste. Alles in der Mitte,
+   auf Tablet und PC höchstens 520 px breit. Die Kacheln (es-kachel) stammen aus Talibs Seite „Geschafft“. ----- */
+.es-kacheln{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:4px;}
+.es-kachel{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 4px 12px;border-radius:var(--r-3);
+  background:var(--surface-2);border:1px solid var(--border);min-width:0;}
+.es-kachel b{font-size:1.5rem;font-weight:800;letter-spacing:-.02em;color:var(--text-stark);line-height:1.1;
+  font-variant-numeric:tabular-nums;white-space:nowrap;}
+.es-kachel em{font-style:normal;font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);
+  text-align:center;line-height:1.3;}  /* „Neue Wörter“ füllt auf 375 px die Kachel genau (96 von 96 px); schmaler bricht es um */
+.rf{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;max-width:520px;
+  margin:0 auto;padding:clamp(12px,4vh,40px) 4px 8px;}
+.rf-ring{width:132px;height:132px;position:relative;}
+.rf-ring::before{content:"";position:absolute;inset:-36px;border-radius:50%;z-index:-1;opacity:.5;
+  background:radial-gradient(closest-side,var(--red-glow),transparent 72%);}
+.rf-ring svg{width:100%;height:100%;display:block;transform:rotate(-90deg);}
+.rf-spur{fill:none;stroke:var(--surface-3);stroke-width:9;}
+.rf-kreis{fill:none;stroke:var(--red);stroke-width:9;stroke-linecap:round;stroke-dasharray:100 100;stroke-dashoffset:100;}
+.rf-haken{fill:none;stroke:var(--red);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:100 100;stroke-dashoffset:100;transform:rotate(90deg);transform-origin:60px 60px;}
+.rf-ring.an .rf-kreis{animation:rfZeichnen .7s var(--ease-out) forwards;}
+.rf-ring.an .rf-haken{animation:rfZeichnen .4s var(--ease-out) .55s forwards;}
+@keyframes rfZeichnen{to{stroke-dashoffset:0;}}
+.rf-titel{margin:8px 0 0;font-size:clamp(1.7rem,7vw,2.1rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;
+  color:var(--text-stark);}
+.rf-satz{margin:0;color:var(--text-weich);font-size:1rem;line-height:1.5;min-height:1.5em;}
+.rf-zahlen{margin-top:8px;}
+.rf-serie{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;
+  border-radius:var(--r-full);background:var(--surface-2);border:1px solid var(--border);
+  color:var(--text);font-size:.95rem;font-weight:700;}
+.rf-serie[hidden]{display:none;}
+.rf-serie .ic{width:20px;height:20px;color:#ff9d2e;}
+.rf-tasten{display:flex;flex-direction:column;gap:8px;width:100%;margin-top:12px;}
+.rf-tasten .btn-big{min-height:56px;font-size:1.05rem;}
+.rf-heim{min-height:48px;border:none;background:none;color:var(--text-weich);font-family:var(--font-ui);
+  font-size:1rem;font-weight:700;cursor:pointer;border-radius:var(--r-2);}
+.rf-heim:hover{color:var(--text);}
+.rf-heim[hidden]{display:none;}
+@media (prefers-reduced-motion:reduce){
+  .rf-ring.an .rf-kreis,.rf-ring.an .rf-haken{animation:none;stroke-dashoffset:0;}
+}
 </style>
 </head>
 <body>
@@ -7947,6 +7989,34 @@ Teil 3</span>
       <p class="settings-note">Dein Fortschritt liegt auf diesem Gerät und — solange du angemeldet bist — zusätzlich in deinem eigenen Speicher bei Cloudflare, damit Handy und PC denselben Stand haben. Er ist an deine Anmeldung gebunden; niemand sonst kommt daran. Die Sicherungsdatei oben brauchst du dafür nicht mehr, sie bleibt als zweites Netz.</p>
     </section>
 
+    <!-- ============ RUNDE GESCHAFFT (js/abschluss.js) ============
+         Kommt nach jeder Lernrunde statt des Sprungs zur Startseite (24.11.2026, aus Talib d26eeba). -->
+    <section class="screen" id="screen-fertig" data-screen="fertig">
+      <div class="rf">
+        <div class="rf-ring" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <circle class="rf-spur" cx="60" cy="60" r="52"></circle>
+            <circle class="rf-kreis" cx="60" cy="60" r="52" pathLength="100"></circle>
+            <path class="rf-haken" pathLength="100" d="M39 62 53 76 82 45"></path>
+          </svg>
+        </div>
+        <h2 class="rf-titel">Runde geschafft</h2>
+        <p class="rf-satz" id="rfSatz"></p>
+        <div class="es-kacheln rf-zahlen">
+          <div class="es-kachel"><b id="rfKarten">0</b><em>Karten</em></div>
+          <div class="es-kachel"><b id="rfGewusst">0</b><em>gewusst</em></div>
+          <div class="es-kachel"><b id="rfNeu">0</b><em>neue Wörter</em></div>
+        </div>
+        <div class="rf-serie" id="rfSerieZeile">
+          <svg class="ic"><use href="#ic-flame"/></svg><span id="rfSerie"></span>
+        </div>
+        <div class="rf-tasten">
+          <button type="button" class="btn btn-primary btn-big" id="rfWeiter">Zur Startseite</button>
+          <button type="button" class="rf-heim" id="rfHeim">Zur Startseite</button>
+        </div>
+      </div>
+    </section>
+
     <!-- „Üben“ (24.11.2026, aus Talib e286fd6, dc2af98, 97b30b5): die Seite hinter dem Eintrag in der Leiste
          unten. Jede Karte öffnet ihre Übung, „Zurück“ führt wieder hierher. Reihenfolge von Elias:
          „lass wurzeln und sätze plätze tauschen“ (23.11.2026) und „ich möchte das sätze ganz unten sind in
@@ -8189,6 +8259,7 @@ Teil 3</span>
 <script src="js/navigation.js"></script>
 <script src="js/start.js"></script>
 <script src="js/lernen.js"></script>
+<script src="js/abschluss.js"></script>
 <script src="js/sprachausgabe.js"></script>
 <script src="js/kategorien.js"></script>
 <script src="uebersichten-data.js"></script>

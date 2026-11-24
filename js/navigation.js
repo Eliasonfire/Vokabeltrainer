@@ -10,6 +10,9 @@ function zeigeBildschirm(name){
   /* Lernbildschirm ohne laufende Runde ergibt keinen Sinn (z.B. wenn man per
      Zurueck-Taste dorthin zurueckkehrt, nachdem die Runde beendet wurde). */
   if (name === 'learn' && !(SESSION.words.length && !SESSION.fertig)) name = 'home';
+  /* Die Seite „Runde geschafft“ ohne Ergebnis einer Runde ergibt ebenso wenig Sinn (Zurück-Taste, neu geladen).
+     24.11.2026, aus Talib d26eeba; js/abschluss.js. */
+  if (name === 'fertig' && !(typeof RUNDE_ERGEBNIS !== 'undefined' && RUNDE_ERGEBNIS)) name = 'home';
 
   /* ⛔⛔ EIN BILDSCHIRM, DEN ES NICHT GIBT, DARF NICHT INS LEERE FUEHREN.
      Bis zum 21.08.2026 stand hier `if (el) el.classList.add('active')` — war
@@ -53,7 +56,7 @@ function zeigeBildschirm(name){
      Elias zur Liste der Unterschiede: „startbildschirm, hören, hot bar, statistik und übung sollst du
      übernehmen“. Die Zeilen oben zu den fünf Knöpfen sind der Stand vom 21.08.2026. Bewacht von
      test-ueben.mjs und validate.js (7c). */
-  const navMap = {home:'home', learn:'learn-entry', categories:'home', ueben:'ueben', sentences:'ueben', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'ueben', wurzeln:'ueben', regeln:'home', suche:'home', settings:'home'};
+  const navMap = {home:'home', learn:'learn-entry', fertig:'learn-entry', categories:'home', ueben:'ueben', sentences:'ueben', wordlist:'home', quran:'home', quranfull:'quranfull', hoeren:'ueben', wurzeln:'ueben', regeln:'home', suche:'home', settings:'home'};
   const navName = navMap[name] || name;
   document.querySelectorAll(`.nav-btn[data-nav="${navName}"]`).forEach(b=>b.classList.add('active'));
 
@@ -90,6 +93,7 @@ function zeigeBildschirm(name){
      zweimal — und die zweite Stelle waere die, die jemand beim naechsten
      Umbau vergisst. */
   if (name==='home') renderHome();
+  if (name==='fertig' && typeof renderRundeFertig === 'function') renderRundeFertig();
   if (name==='learn') renderCard();          // laufende Runde an derselben Karte fortsetzen
   if (name==='categories') renderCategories();
   if (name==='sentences') openSentences();

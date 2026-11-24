@@ -245,10 +245,10 @@ function ringKnopf(name, stand, ziel, nav){
     + '</svg><span class="tr-name">' + name + '</span></button>';
 }
 
-function renderTagesringe(){
-  const kasten = document.getElementById('tagesringe');
-  if (!kasten) return;
-
+/* Stand und Ziel des Karten-Rings und des zweiten Rings (Sätze oder Hören, je nach Tag). Seit 24.11.2026
+   eigene Funktionen (aus Talib d26eeba), weil die Seite „Runde geschafft“ (js/abschluss.js) dieselbe Wahl
+   trifft: „weiter zum nächsten offenen Ring“. Der Inhalt ist unverändert aus renderTagesringe() herausgezogen. */
+function ringKarten(){
   /* ⛔⛔ DAS ZIEL IST DER TAGESDECKEL, NICHT DER RESTVORRAT.
 
      Erster Versuch war `kZiel = erledigte + tagesPool().length` — und Elias
@@ -278,7 +278,10 @@ function renderTagesringe(){
     kZiel = deckel > 0 ? deckel : (kStand + tagesPool().length);
     if (!kZiel) kZiel = null;               /* nichts fällig: kein Ziel, kein Ring */
   }
+  return { stand: kStand, ziel: kZiel };
+}
 
+function ringExtra(){
   /* Der Modus des Tages — dieselbe Abwechslung wie bisher. */
   const modus = heuteExtraModus();
   let zStand = null, zZiel = null, zName, zNav;
@@ -296,6 +299,15 @@ function renderTagesringe(){
       zStand = satzTag().gesamt; zZiel = satzTageszielHeute();
     }
   }
+  return { modus, name: zName, nav: zNav, stand: zStand, ziel: zZiel };
+}
+
+function renderTagesringe(){
+  const kasten = document.getElementById('tagesringe');
+  if (!kasten) return;
+
+  const { stand: kStand, ziel: kZiel } = ringKarten();
+  const { modus, name: zName, nav: zNav, stand: zStand, ziel: zZiel } = ringExtra();
 
   /* ⭐ Die Quran-Ringe stehen seit dem 15.09.2026 hier mit drin — al-Mulk
      täglich, dazu die Wiederholung und die Favoriten-Sure, seit 18.09. auch

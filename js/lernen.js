@@ -91,6 +91,8 @@ function rundeSichern(erledigt){
     ziel: Number(SESSION.ziel) || rundeGezaehlt(),
     /* v605: Rollen je Eintrag (Infokarte/Übung eines neuen Wortes). */
     rollen: SESSION.words.map((_, i) => rundenRolle(i)),
+    /* Für die Seite „Runde geschafft“ (24.11.2026, aus Talib d26eeba): wie viele gezählte Karten bisher gewusst waren. */
+    gewusst: Number(SESSION.gewusst) || 0,
     zeit: Date.now()
   });
 }
@@ -264,7 +266,7 @@ function offeneRundeFortsetzen(){
   words.forEach((w, i) => { if (lautIds.includes(String(w.id))) laut.add(i); });
   /* `dirs` bleibt leer: die Abfragerichtung wird je Karte neu entschieden und
      hängt am Lernstand — der kann sich seit gestern geändert haben. */
-  SESSION = { words, idx, dirs: [], fertig: false, laut, ziel, rollen };
+  SESSION = { words, idx, dirs: [], fertig: false, laut, ziel, rollen, gewusst: Number(g.gewusst) || 0 };
   showScreen('learn');
   return true;
 }
@@ -490,7 +492,8 @@ function passeRundeAnAuswahlAn(){
      die Runde nicht mit anderen Karten wieder auffüllen. */
   const neueRollen = (SESSION.rollen || []).filter((_, i) => behalten[i]);
   SESSION = { words: bleibt, idx: neuerIdx, dirs: [], fertig: false, laut: neueLaut, rollen: neueRollen,
-    ziel: bleibt.filter((_, i) => !neueRollen[i]).length };
+    gewusst: Number(SESSION.gewusst) || 0,
+    ziel:bleibt.filter((_, i) => !neueRollen[i]).length };
   /* Die gesicherte Runde zieht mit: sonst käme beim nächsten Start wieder die
      Fassung MIT den abgewählten Kapiteln. */
   rundeSichern();
@@ -2406,6 +2409,9 @@ function answer(stufe){
      beide halten denselben Augenblick fest — „diese Karte ist erledigt" —, und
      was hier auseinanderläuft, ist genau der Fehler, der Elias in der Nacht
      zum 19.09. eine Karte gekostet hat. */
+  /* Für die Seite „Runde geschafft“: nur gezählte Karten (keine Infokarte, keine Übung eines neuen Wortes).
+     VOR dem Sichern, damit die Zahl ein Schließen der App übersteht. */
+  if (s.richtig && !rundenRolle(SESSION.idx)) SESSION.gewusst = (Number(SESSION.gewusst) || 0) + 1;
   rundeSichern(SESSION.idx + 1);
   /* ⭐ Die Trefferquote je Tag (07.09.2026). Elias: „trefferquote sollte doch
      auch die karteikarten zählen weil der fortschritt da ist ja wirklich sehr
@@ -2496,16 +2502,26 @@ function answer(stufe){
          auslösen kann. [[bedingung_wird_durch_die_handlung_ungueltig]] */
       const restVorrat = (typeof tagesPool === 'function') ? tagesPool().length
                        : (typeof currentPool === 'function') ? currentPool().length : 0;
+      /* 24.11.2026 (aus Talib d26eeba): nach jeder Runde kommt die Seite „Runde geschafft“ (js/abschluss.js)
+         statt nur ein Banner und die Startseite. Das Ergebnis wird JETZT festgehalten, solange SESSION noch
+         die Runde ist. */
+      const mitSeite = typeof rundeAbschlussMerken === 'function' && rundeAbschlussMerken();
       if (typeof feiere === 'function'){
-        feiere('runde-fertig', { karten: rundeGezaehlt() });
+        /* Mit Seite nur das Konfetti: „Runde geschafft“ steht dann groß auf der Seite, nicht doppelt im Banner. */
+        if (mitSeite){ if (typeof feierKonfetti === 'function' && !REDUCED_MOTION) feierKonfetti(55); }
+        else feiere('runde-fertig', { karten: rundeGezaehlt() });
         if (!restVorrat) feiere('alles-faellig', { zahl: rundeGezaehlt() });
         /* ⭐ Und danach: war das der dritte von drei? */
         if (typeof tagKomplettPruefen === 'function') tagKomplettPruefen();
-      } else toast('Runde geschafft!');
+      } else if (!mitSeite) toast('Runde geschafft!');
       /* Beendete Runde ersetzt den Lern-Eintrag in der Historie, statt einen
          neuen anzulegen - sonst landet die Zurueck-Taste auf einer Runde,
-         die es nicht mehr gibt. */
-      setTimeout(()=>showScreen('home', { ersetzen: true }), 900);
+         die es nicht mehr gibt.
+         Steht gerade das große Banner („Alles für heute geschafft“, 2,6 s), wartet die Seite, bis es weg ist:
+         sonst liegt es quer über „Runde geschafft“ (in Talib gesehen am 23.11.2026 auf 375 px). */
+      const grossesBanner = mitSeite && !!document.querySelector('.feier-banner.feier-gross');
+      setTimeout(()=>showScreen(mitSeite ? 'fertig' : 'home', { ersetzen: true }),
+        mitSeite ? (grossesBanner ? 2700 : 350) : 900);
     }
   }
 

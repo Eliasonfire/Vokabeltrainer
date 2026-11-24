@@ -51,6 +51,7 @@ const ASSETS = [
   './js/navigation.js',
   './js/start.js',
   './js/lernen.js',
+  './js/abschluss.js',
   './js/sprachausgabe.js',
   './js/kategorien.js',
   './uebersichten-data.js',

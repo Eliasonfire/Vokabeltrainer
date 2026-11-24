@@ -1511,6 +1511,15 @@ export const PFLEGEPLAN = [
     veralten: { nein: 'Nichts Gespeichertes; dass Leiste, Karten und navMap zusammenpassen, bewacht test-ueben.mjs im Sammellauf und validate.js (7c).' },
   },
   {
+    /* 24.11.2026, aus Talib d26eeba: die Seite nach jeder Lernrunde. */
+    funktion: 'Seite „Runde geschafft“',
+    dateien: ['js/abschluss.js'],
+    bildschirme: ['screen-fertig'],
+    neuerInhalt: { nein: 'Die Seite zeigt nur Zahlen der gerade beendeten Runde; es gibt keinen Vorrat, der wächst.' },
+    eingaben: { nein: 'Sie schreibt nichts. „gewusst“ steht nur in der laufenden Runde (SESSION und die gesicherte offene Runde) und verfällt mit ihr.' },
+    veralten: { nein: 'Nichts Gespeichertes; Verhalten und Rechnung bewacht test-abschluss.mjs im Sammellauf.' },
+  },
+  {
     funktion: 'Wurzelmodus',
     dateien: ['js/wurzel.js'],
     bildschirme: ['screen-wurzeln'],
