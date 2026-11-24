@@ -5763,6 +5763,66 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 /* Anders als in Talib ist hier die Unterzeile (VOKABELTRAINER) breiter als die Marke; die Marke trägt weiter oben
    align-self:flex-start und bliebe links stehen. center verhindert das Strecken genauso (siehe .brand-mark). */
 .brand-mark{align-self:center;}
+
+/* ----- Stil-Schicht · Lesbarkeit (24.11.2026, aus Talib 41456dd): keine Schrift unter 12 px, Tippflächen
+   mindestens 44 px hoch. Elias zur Liste der Unterschiede (Punkt 6, „12 px / 44 px“): „übernimm das in beiden
+   apps also russich und arabisch“. Die kleinste Stufe --fs-xs steigt von 11,2 auf 12 px; was an festen Werten
+   hing, steht einzeln. ⛔ Bewacht von test-lesbarkeit.mjs: eine neue Schrift unter 12 px ohne Zeile hier macht ihn
+   rot. Ausnahme: die Kästchen des Übungskalenders (15 px) sind ein Bild, kein Knopf zum Treffen. ----- */
+:root{--fs-xs:.75rem;}
+.box-pip .l{font-size:.75rem;letter-spacing:0;color:var(--text-dim);}
+.box-pip .iv{font-size:.75rem;opacity:1;color:var(--text-dim);}
+.box-pip.box-schlecht .l,.box-pip.box-gut .l{opacity:1;}
+.learn-rolle{font-size:.75rem;}
+.wq-datum{font-size:.75rem;color:var(--text-dim);}
+.kal-wtage,.kal-kopf{font-size:.75rem;}
+.kal-zahlen span,.kal-fuss{font-size:.75rem;}
+.fm-hinweis,.farbe-name{font-size:.75rem;}
+.farbe-marke,.farbe-kontrast{font-size:.75rem;letter-spacing:0;opacity:1;}
+.es-kachel em,.es-marke{font-size:.75rem;}
+.wk-aktionen .btn{min-height:44px;}
+.qs-knopf{min-width:44px;min-height:44px;}
+.bottombar .nav-btn{font-size:.75rem;}
+@media (min-width:1024px){.bottombar .nav-btn{font-size:.82rem;}}
+.chip-toggle{min-height:44px;min-width:44px;}
+.suche-feld input,.suche-leer-chip,.pool-schalter{min-height:44px;}
+/* Schalter, Stern und Haken sehen aus wie bisher (31 und 28 px); eine unsichtbare Fläche darum macht sie
+   44 px hoch zum Treffen. Beim Stern und Haken der Surenliste nur wenig breiter, sie stehen nebeneinander. */
+.fav-stern,.hifz-check{position:relative;}
+.switch::after,.fav-stern::after,.hifz-check::after{content:"";position:absolute;left:50%;top:50%;
+  width:calc(100% + 8px);height:44px;transform:translate(-50%,-50%);}
+/* Eine noch nie geübte Zeile war als Ganzes auf 60 % gedimmt: „nie“ und „—“ hatten Kontrast 2,4 bis 2,8.
+   Jetzt ist nur die Farbe ruhiger, nicht die Deckkraft. */
+.rz.leer{opacity:1;}
+.rz.leer .rn,.rz.leer .rq,.rz.leer .rd{color:var(--text-dim);}
+
+/* ----- Stil-Schicht · Rundungen (24.11.2026, aus Talib dcb66bb): vier Stufen statt vieler einzelner Werte.
+   Elias zur Liste der Unterschiede (Punkt 6, Rundungen und Abstände): „übernimm das in beiden apps also russich
+   und arabisch“. 4 px für Marken und schmale Felder, 12 px für Felder, kleine Tasten und Bildkästen, 18 px für
+   Tasten und Wahlfelder, 24 px für Karten und Rahmen; dazu „ganz rund“ (--r-full) für Pillen und Kreise.
+   Die Stufen stehen in --r-0 bis --r-5. Die Regeln darunter führen fest geschriebene Werte älterer Bereiche auf
+   diese Stufen; die älteren Regeln selbst bleiben stehen. ----- */
+:root{--r-0:4px;--r-1:12px;--r-2:12px;--r-3:18px;--r-4:24px;--r-5:24px;}
+.quran-treffer,
+.rk-treffer,
+.ar-wort:focus-visible,
+.gram-underline,
+.kal-zelle,
+.farbe-feld,
+.wq-saeule{border-radius:var(--r-0);}
+.tipp-taste,
+.ueb-eingabe,
+.gram-popover .gp-bedeutung,
+.juz-ring:focus-visible,
+.farbe,
+.farb-mischer,
+.fm-code,
+.fm-probe,
+.fm-feld,
+.stimme-anleitung{border-radius:var(--r-1);}
+.suche-leer-bild{border-radius:var(--r-4);}
+.fm-ton,
+.fm-deck{border-radius:var(--r-full);}
 </style>
 </head>
 <body>
