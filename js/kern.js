@@ -3454,9 +3454,27 @@ function saveCustomCats(){ LS.set('vt_customCats', CUSTOM_CATS); }
    zum Mittwochs-Lerntag — ein ausgelassener Tag bei nur 24 Stunden Abstand.
    Fuer den Alltag ist die Tagesrechnung die freundlichere, weil sie sich nach
    dem Tag richtet und nicht nach der Uhrzeit der letzten Karte. */
+/* ⭐⭐ EIN TAG ZÄHLT ERST AB DEM HALBEN TAGESZIEL (24.11.2026). Elias, wörtlich: „lasse bei den flammen erst der
+   tag als ,,gelernt" markiert werden bei den flammen wenn die hälfte durch geklickt ist an karten die man täglich
+   lernen möchte. mach das für alle drei apps also vokabeltrainer und talib“.
+   Damit ist seine Antwort vom 14.09.2026 („nein ist gut so“, eine Karte genügt; siehe lernen.js bei touchStreak())
+   von ihm selbst abgelöst. „Karten, die man täglich lernen möchte“ = „Karten pro Tag“ (tagesDeckel()), gezählt
+   wird in vt_uebungstage (tagZaehlen()). Die Hälfte wird aufgerundet: bei 15 sind es 8.
+   ⚠️ MEINE Entscheidung: ohne Tagesziel („Karten pro Tag“ aus) gibt es keine Hälfte; dann zählt der Tag wie
+   bisher mit der ersten Karte. Ein Tag unter der Hälfte gilt wie ein ausgelassener Tag (Gnadentag-Regel unten).
+   Bewacht von test-serie-haelfte.mjs. */
+function serieSchwelle(){
+  const d = (typeof tagesDeckel === 'function') ? Number(tagesDeckel()) || 0 : 0;
+  return d > 0 ? Math.ceil(d / 2) : 0;
+}
 function touchStreak(){
   let s = LS.get('vt_streak', {count:0,last:null,gnadeAm:null});
   const t = todayStr(0), y = todayStr(-1), vy = todayStr(-2);
+  const schwelle = serieSchwelle();
+  if (schwelle > 0 && s.last !== t){
+    const heuteZahl = Number(getUebungstage()[t]) || 0;
+    if (heuteZahl < schwelle) return s;      /* noch nicht die Hälfte: der Tag zählt noch nicht */
+  }
   const vorher = s.count;
   if (s.last === t) { /* schon heute gezaehlt */ }
   else if (s.last === y) { s.count += 1; s.last = t; }

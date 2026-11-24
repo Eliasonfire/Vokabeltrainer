@@ -2388,13 +2388,19 @@ function answer(stufe){
      Dieselbe Entscheidung steht als Hinweis an beiden Stellen.
      [[antwort_auf_meine_frage_ist_keine_freigabe]]
 
+     ⭐⭐ ABGELÖST am 24.11.2026 für die Karteikarten, von Elias selbst: „lasse bei den flammen erst der tag als
+     ,,gelernt" markiert werden … wenn die hälfte durch geklickt ist an karten die man täglich lernen möchte“.
+     Eine Karte genügt also nicht mehr: touchStreak() zählt den Tag erst ab der Hälfte von „Karten pro Tag“
+     (serieSchwelle() in js/kern.js). Darum zählt tagZaehlen() jetzt ZUERST — die Karte, die gerade beantwortet
+     wurde, muss in der Zahl schon stecken. Sätze und Hören rühren die Serie weiter nicht an (sein Satz oben).
+
      Der Kalender zaehlt eine Zeile weiter mit — beide meinen dasselbe
      Ereignis: heute wurde geuebt. Der Unterschied ist, dass die Serie nur den
      letzten Tag behaelt und der Kalender jeden. ⭐ Dass beide an DERSELBEN
      Stelle haengen, ist der Grund, warum Kalender und Serie nie
      auseinanderlaufen koennen. [[dieselbe_frage_zwei_antworten]] */
-  touchStreak();
   if (typeof tagZaehlen === 'function') tagZaehlen();
+  touchStreak();
   /* ⭐ Und im selben Zug die angefangene Runde sichern, mit dem Stand NACH
      dieser Karte (19.09.2026). Sie steht bewusst direkt bei `tagZaehlen()`:
      beide halten denselben Augenblick fest — „diese Karte ist erledigt" —, und

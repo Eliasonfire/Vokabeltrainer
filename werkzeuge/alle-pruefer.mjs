@@ -284,6 +284,9 @@ const PRUEFER = [
   ['test-abstaende.mjs', []],
   /* 24.11.2026 — Flamme ohne „0“: bei Serie null nur die graue Flamme (aus Talib f6a843c). */
   ['test-serie-flamme.mjs', []],
+  /* 24.11.2026 — ein Tag zählt für die Serie erst ab der Hälfte von „Karten pro Tag". Elias: „lasse bei den
+     flammen erst der tag als ,,gelernt" markiert werden … wenn die hälfte durch geklickt ist". */
+  ['test-serie-haelfte.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht
