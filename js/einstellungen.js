@@ -26,6 +26,7 @@ function renderSettings(){
   document.getElementById('toggleWurzelAusrichten')
     .classList.toggle('on', SETTINGS.wurzelAusrichten !== false);
   zeichneFarbwahl();
+  if (typeof zeichneFlaechenwahl === 'function') zeichneFlaechenwahl();
   zeichneKenneSchonListe();
   zeichneEinzelnFreiListe();
   loadVoices();
@@ -1847,3 +1848,28 @@ function zeichneFarbwahl(){
     toast('Akzentfarbe: ' + name);
   });
 })();
+
+/* Flächenfarbe (30 %), 24.11.2026 aus Talib übernommen (Elias: „auch die flächenfarben“): dieselben Knöpfe wie
+   bei der Akzentfarbe. Das Feld zeigt die Fläche so, wie sie auf dem Grund wirkt (Ton zu 35 % in die Fläche
+   gemischt); „Grau“ zeigt die Fläche ohne Ton. */
+function zeichneFlaechenwahl(){
+  const kasten = document.getElementById('flaechenwahl');
+  if (!kasten || typeof FLAECHEN_FARBEN === 'undefined') return;
+  const jetzt = FLAECHEN_FARBEN.some(f => f.id === SETTINGS.flaeche) ? SETTINGS.flaeche : FLAECHE_VORGABE;
+  if (!kasten.children.length){
+    kasten.innerHTML = FLAECHEN_FARBEN.map(f =>
+      '<button class="farbe" type="button" role="radio" data-flaeche="' + f.id + '" title="' + f.name + '">'
+      + '<span class="farbe-feld" style="background:' + (f.ton ? 'color-mix(in srgb, #1b1b1e, ' + f.ton + ' 35%)' : '#2a2a2f') + ';outline:1px solid var(--border)"></span>'
+      + '<span class="farbe-name">' + f.name + '</span></button>').join('');
+    kasten.addEventListener('click', (e) => {
+      const b = e.target.closest('.farbe');
+      if (!b) return;
+      SETTINGS.flaeche = wendeFlaecheAn(b.dataset.flaeche);
+      saveSettings();
+      zeichneFlaechenwahl();
+    });
+  }
+  kasten.querySelectorAll('.farbe').forEach(b =>
+    b.setAttribute('aria-checked', b.dataset.flaeche === jetzt ? 'true' : 'false'));
+}
+zeichneFlaechenwahl();

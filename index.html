@@ -5654,6 +5654,27 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .wk-alle::after{content:" →";}
 .wk-feld-ar{font-family:var(--font-ar);direction:rtl;font-size:calc(1.35rem * var(--ar-faktor));line-height:1.5;
   color:var(--text);text-align:center;overflow-wrap:anywhere;}
+
+/* ----- Stil-Schicht · Flächenfarbe (24.11.2026, aus Talib eb3c51f): die 30 % der Regel 60-30-10.
+   Elias, 24.11.2026: „startbildschirm, hören, hot bar, statistik und übung sollst du übernehmen. auch die
+   flächenfarben“. js/darstellung.js (wendeFlaecheAn) setzt data-flaeche und --fl-ton am html-Element; ohne Ton
+   (Grau) fehlt das Attribut und es gilt das Alte. Die Grundwerte unten sind die Flächen aus :root oben (wer sie
+   dort ändert, ändert sie hier mit). Der Grund (--bg, OLED-Schwarz) bleibt: das sind die 60 %. Anteile wie in
+   Talib (Claude dort, Nachtblau auf Schwarz: Karte etwa #151a30). Die App hat nur ein Erscheinungsbild (Elias zum
+   Hell/Dunkel aus Talib: „brauch ich nicht“), deshalb nur diese eine Regel. Ohne color-mix bleibt Grau. ----- */
+@supports (color: color-mix(in srgb, red, blue)){
+  :root[data-flaeche]{
+    --surface-1: color-mix(in srgb, #0b0b0c, var(--fl-ton) 12%);
+    --surface-2: color-mix(in srgb, #131315, var(--fl-ton) 20%);
+    --surface-3: color-mix(in srgb, #1b1b1e, var(--fl-ton) 28%);
+    --surface-4: color-mix(in srgb, #242428, var(--fl-ton) 38%);
+    --bg-elevated: var(--surface-2);
+    --bg-card: var(--surface-2);
+    --bg-card-2: var(--surface-3);
+    --border: color-mix(in srgb, #26262b, var(--fl-ton) 30%);
+    --border-strong: color-mix(in srgb, #33333a, var(--fl-ton) 34%);
+  }
+}
 </style>
 </head>
 <body>
@@ -7099,8 +7120,18 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
 
       <button class="einst-gruppe" id="grp-aussehen" type="button"
-              aria-expanded="true" aria-controls="grpInhalt-aussehen"><span class="ic">▸</span><span class="einst-gruppe-name">Aussehen</span><span class="einst-gruppe-zahl">3</span></button>
+              aria-expanded="true" aria-controls="grpInhalt-aussehen"><span class="ic">▸</span><span class="einst-gruppe-name">Aussehen</span><span class="einst-gruppe-zahl">4</span></button>
       <div class="einst-inhalt" id="grpInhalt-aussehen">
+      <!-- 24.11.2026, aus Talib übernommen (Elias: „auch die flächenfarben“): Farben nach 60-30-10, Flächen
+           Vorgabe Nachtblau. Die Knöpfe zeichnet zeichneFlaechenwahl() in js/einstellungen.js. -->
+      <div class="setting-row setting-row-block">
+        <div>
+          <div class="setting-title">Flächenfarbe</div>
+          <div class="setting-sub">Schöne Apps teilen ihre Farben etwa 60-30-10: 60 % Grund (hier OLED-Schwarz), 30 % Flächen wie Karten und Kästen, 10 % Akzent für Knöpfe. Hier wählst du die Flächen.</div>
+        </div>
+        <div class="farbwahl" id="flaechenwahl" role="radiogroup" aria-label="Flächenfarbe"></div>
+      </div>
+
       <!-- Akzentfarbe. Elias am 20.08.2026, nachdem er die Vergleichsseite
            durchgesehen hatte: „die farben die ich umrahmt habe gefallen mir,
            die anderen koennen verworfen werden. du sollst am besten alle die

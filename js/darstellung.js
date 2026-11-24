@@ -304,6 +304,39 @@ function wendeAkzentfarbeAn(hex){
   return gewaehlt;
 }
 
+/* ---- Flächenfarbe: die 30 % der Regel 60-30-10 (24.11.2026, aus Talib übernommen) ----
+   Elias, 24.11.2026, zur Liste der Unterschiede zu Talib: „startbildschirm, hören, hot bar, statistik und
+   übung sollst du übernehmen. auch die flächenfarben“. In Talib (Commits eb3c51f, 268f2f4) stammt die Wahl
+   von ihm: „das soll man auch übrigens in den einstellungen einstellen können welche farbe jene anteile haben
+   sollen“, Vorgabe Nachtblau („ich glaube nachtblau ist etwas besser“), und „biete wahrscheinlich noch mehr
+   flächenfarben an“. 60 % ist der Grund (OLED-Schwarz, bleibt), 10 % die Akzentfarbe.
+   Der Ton wird in die Flächen gemischt; die Anteile stehen im Block „Stil-Schicht · Flächenfarbe“ in
+   index.html. 'grau' = ohne Ton, das Aussehen vor dem 24.11.2026.
+   Welche Töne es gibt und ihre Werte: Claude in Talib, hier unverändert übernommen. */
+const FLAECHEN_FARBEN = [
+  { id: 'nachtblau', name: 'Nachtblau', ton: '#1d369c' },
+  { id: 'grau',      name: 'Grau',      ton: null },
+  { id: 'petrol',    name: 'Petrol',    ton: '#0086a1' },
+  { id: 'violett',   name: 'Violett',   ton: '#5a2a9c' },
+  { id: 'gruen',     name: 'Grün',      ton: '#1d7a3a' },
+  { id: 'weinrot',   name: 'Weinrot',   ton: '#8c1d3a' },
+  { id: 'ozean',     name: 'Ozean',     ton: '#1d5f9c' },
+  { id: 'tuerkis',   name: 'Türkis',    ton: '#13897a' },
+  { id: 'olive',     name: 'Olive',     ton: '#6b7a1d' },
+  { id: 'bernstein', name: 'Bernstein', ton: '#8c5a14' },
+  { id: 'rost',      name: 'Rost',      ton: '#9c3a1d' },
+  { id: 'pflaume',   name: 'Pflaume',   ton: '#7a1d6b' },
+  { id: 'schiefer',  name: 'Schiefer',  ton: '#4a5a78' }
+];
+const FLAECHE_VORGABE = 'nachtblau';
+function wendeFlaecheAn(id){
+  const f = FLAECHEN_FARBEN.find(x => x.id === id) || FLAECHEN_FARBEN.find(x => x.id === FLAECHE_VORGABE);
+  const r = document.documentElement;
+  if (f.ton){ r.dataset.flaeche = f.id; r.style.setProperty('--fl-ton', f.ton); }
+  else { delete r.dataset.flaeche; r.style.removeProperty('--fl-ton'); }
+  return f.id;
+}
+
 /* Sofort anwenden, nicht erst wenn die Einstellungen geöffnet werden.
    ⚠️ Direkt aus dem Speicher gelesen statt über SETTINGS: dieses Modul lädt
    nach js/kern.js, aber vor allem, was zeichnet — so gibt es kein Aufblitzen
@@ -311,4 +344,5 @@ function wendeAkzentfarbeAn(hex){
 try {
   const s = (typeof LS !== 'undefined' && LS.get) ? (LS.get('vt_settings', {}) || {}) : {};
   if (s.akzentFarbe) wendeAkzentfarbeAn(s.akzentFarbe);
+  wendeFlaecheAn(s.flaeche || FLAECHE_VORGABE);
 } catch (e) { /* gesperrter Speicher: dann bleibt die Voreinstellung, das ist der Rückweg */ }
