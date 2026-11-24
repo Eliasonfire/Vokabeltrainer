@@ -158,7 +158,9 @@ if (typeof window === 'undefined' || typeof localStorage === 'undefined'){
      js/navigation.js:11 schickt `learn` auf `home`, wenn keine Lernrunde
      laeuft. Hier steht nur ihr ERGEBNIS, nicht die Bedingung nachgebaut —
      sonst laufen beide Fassungen auseinander. [[vorabpruefung_kennt_ihr_tor_nicht]] */
-  const ERLAUBTE_UMLEITUNG = { learn: 'home' };
+  /* ⚠️ Seit 24.11.2026 eine zweite: `fertig` („Runde geschafft“, js/abschluss.js) gibt es nur mit dem Ergebnis
+     einer gerade beendeten Runde, sonst führt js/navigation.js auf `home`. */
+  const ERLAUBTE_UMLEITUNG = { learn: 'home', fertig: 'home' };
   for (const b of bildschirme){
     versuch(`Bildschirm "${b}" oeffnet`, ()=>{
       showScreen(b);

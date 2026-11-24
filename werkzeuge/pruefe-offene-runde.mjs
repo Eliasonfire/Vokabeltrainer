@@ -308,7 +308,8 @@ else {
    durchgeht. [[werkzeug_ohne_aufrufer]] */
 console.log('\nDie Aufrufe in der App:');
 pruefe('answer() sichert nach jeder Karte', true,
-  /tagZaehlen\(\);[\s\S]{0,600}?rundeSichern\(SESSION\.idx \+ 1\);/.test(lernen));
+  /* 1000 statt 600 seit 24.11.2026: dazwischen zählt jetzt „gewusst“ für die Seite „Runde geschafft“ mit. */
+  /tagZaehlen\(\);[\s\S]{0,1000}?rundeSichern\(SESSION\.idx \+ 1\);/.test(lernen));
 pruefe('das Rundenende vergisst sie wieder', true,
   /SESSION\.fertig = true;[\s\S]{0,400}?rundeVergessen\(\);/.test(lernen));
 pruefe('das X beendet sie endgültig', true,
