@@ -48,6 +48,7 @@ function renderHome(){
        : zeile('Heute dran'))
     : 'Alles erledigt für heute – super gemacht.';
   zeigeSerie(getStreak().count);
+  renderStartWahl();
 
   /* ⚠️ `bekannteVokabeln()` statt `buchVokabeln()` seit dem 17.08.2026: die
      Box-Zahlen zaehlten alle 311 Woerter des geladenen Buchs, also auch die
@@ -655,7 +656,32 @@ function rundenLeiste(balkenId, zahlId, erledigt, ziel){
 
    Der "Eigene"-Chip steht genau einmal ganz unten. Eigene Vokabeln gehoeren zu
    keinem Buch; ihn je Buch anzubieten waere dieselbe Einstellung mehrfach. */
+/* Die Zeile „Du lernst · <Buch> · <Kapitel>“ über der zugeklappten Auswahl (24.11.2026, aus Talib 41456dd;
+   Elias zur Liste der Unterschiede: „startbildschirm … sollst du übernehmen“). Sie LIEST nur, was die Knöpfe
+   darunter eingestellt haben, und stellt selbst nichts ein. Wortlaut und die Grenze „ab drei Büchern nur die
+   Zahl“ sind von Claude (in Talib). Gerufen von renderHome(), renderBuchChips() und renderChapterFilterChips(). */
+function renderStartWahl(){
+  const ziel = document.getElementById('startWahlText');
+  if (!ziel) return;
+  const buecher = (typeof aktiveBuecher === 'function') ? aktiveBuecher() : ['madina-1'];
+  const stueck = t => `<span>${escapeHtml(String(t))}</span>`;
+  /* Nur der vordere Teil eines Namens mit „ · “, sonst bricht die Zeile auf dem Handy mehrfach um. */
+  const kurz = s => String(typeof buchTitel === 'function' ? buchTitel(s) : s).split(' · ')[0];
+  const teile = [];
+  if (buecher.length > 2) teile.push(stueck(`${buecher.length} Bücher`));
+  else teile.push(buecher.map(s => stueck(kurz(s))).join(', '));
+  const gewaehlt = buecher.map(s => (typeof kapitelAuswahl === 'function') ? kapitelAuswahl(s).length : 0);
+  if (gewaehlt.every(n => n === 0)) teile.push(stueck('alle Kapitel'));
+  else if (buecher.length === 1) teile.push(stueck(`${gewaehlt[0]} Kapitel`));
+  else teile.push(stueck('ausgewählte Kapitel'));
+  if (SETTINGS.eigeneGewaehlt) teile.push(stueck('Eigene'));
+  /* Der Punkt hängt mit einem festen Leerzeichen am Stück DAVOR: so beginnt nach einem Umbruch keine Zeile
+     mit „·“. */
+  ziel.innerHTML = teile.join(' <span class="sw-punkt" aria-hidden="true">·</span> ');
+}
+
 function renderChapterFilterChips(){
+  renderStartWahl();
   const ziel = document.getElementById('chapterFilterChips');
   if (!ziel) return;
   const buecher = (typeof aktiveBuecher === 'function') ? aktiveBuecher() : ['madina-1'];

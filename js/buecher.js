@@ -999,6 +999,8 @@ function renderBuchChips(){
   /* ⚠️ Weiter NUR mit Verzeichnis: ohne BUECHER (kein data/, kein Paket) blieb die
      Zeile bisher unberührt — die Gruppe „Koran häufigste" allein ändert daran nichts. */
   if (!ziel || typeof BUECHER === 'undefined') return;
+  /* Die Zeile „Du lernst …“ über den Knöpfen nennt die gewählten Bücher (js/start.js, 24.11.2026). */
+  if (typeof renderStartWahl === 'function') renderStartWahl();
   /* Die Ueberschrift steht fest in index.html und muss mitverschwinden. Sonst
      bleibt sie ueber einer leeren Zeile stehen und die Startseite sieht kaputt
      aus - genau so war es live, solange data/ nicht ausgeliefert wird. */

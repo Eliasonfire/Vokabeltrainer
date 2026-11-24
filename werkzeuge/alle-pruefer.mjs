@@ -289,6 +289,8 @@ const PRUEFER = [
   ['test-serie-haelfte.mjs', []],
   /* 24.11.2026 — Wochen-Balken statt Übungskalender (aus Talib 35a0797), mit dem Fall „Karten pro Tag aus". */
   ['test-wochen-balken.mjs', []],
+  /* 24.11.2026 — Startseite aufgeräumt: Auswahl und Fortschritt zugeklappt (aus Talib 41456dd). */
+  ['test-startseite.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht
