@@ -78,9 +78,12 @@ function renderHome(){
      einmal hingeschrieben. Zwei Listen derselben Zahlen laufen sonst
      auseinander, sobald jemand eine davon ändert — und die Anzeige log dann,
      ohne dass es auffällt. */
+  /* „Tg.“ statt „Tage“ (24.11.2026, wie Talib 41456dd): mit 12 px Schrift (Block „Stil-Schicht · Lesbarkeit“)
+     passt das ausgeschriebene Wort bei sieben Boxen nebeneinander auf dem Handy nicht in den Kasten — gemessen
+     auf 375 px: „30 Tage“ 47 px breit, der Kasten 44 px. Abkürzung von Claude in Talib. */
   const intervallText = b => {
     const t = INTERVALS[b];
-    return t === 0 ? 'heute' : t === 1 ? '1 Tag' : `${t} Tage`;
+    return t === 0 ? 'heute' : `${t} Tg.`;
   };
   document.getElementById('boxOverview').innerHTML = boxCounts.map((n,i)=>`
     <div class="box-pip${BOX_TON[i+1] ? ' box-'+BOX_TON[i+1] : ''}" data-openlist="box:${i+1}"><div class="n">${n}</div><div class="l">Box ${i+1}</div><div class="iv">${intervallText(i+1)}</div></div>
