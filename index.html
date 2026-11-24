@@ -5675,6 +5675,13 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
     --border-strong: color-mix(in srgb, #33333a, var(--fl-ton) 34%);
   }
 }
+
+/* ----- Stil-Schicht · Kein Schein (24.11.2026, aus Talib 268f2f4 und 5735c85). Elias in Talib, mit Bild vom
+   Handy: „dieser schimmer ist immer noch da, der soll weg. der soll sich dem rest anpassen also entweder schwarz
+   oder weiß je nach einstellung halt“; hier zur Liste der Unterschiede: „ja ist gut“. Der rote Schein oben und
+   unten auf #app (weiter oben, schmal und im Breit-Block) ist damit aus, auf jeder Breite: diese Regel steht
+   zuletzt und hat dieselbe Gewichtung. Scheine INNERHALB von Karten (z. B. .due-card::before) bleiben. ----- */
+#app{background:var(--bg);}
 </style>
 </head>
 <body>

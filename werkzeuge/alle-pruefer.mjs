@@ -271,6 +271,8 @@ const PRUEFER = [
   /* 24.11.2026 — Flächenfarbe (30 % der Regel 60-30-10) aus Talib, Vorgabe Nachtblau. Elias: „auch die
      flächenfarben“. 22 Prüfungen, 9 Störtests. */
   ['test-flaechenfarbe.mjs', []],
+  /* 24.11.2026 — kein farbiger Schein hinter Kopfleiste und Hintergrund (aus Talib). Elias: „ja ist gut“. */
+  ['test-kein-schein.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht
