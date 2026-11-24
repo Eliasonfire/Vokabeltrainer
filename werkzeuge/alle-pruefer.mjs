@@ -287,6 +287,8 @@ const PRUEFER = [
   /* 24.11.2026 — ein Tag zählt für die Serie erst ab der Hälfte von „Karten pro Tag". Elias: „lasse bei den
      flammen erst der tag als ,,gelernt" markiert werden … wenn die hälfte durch geklickt ist". */
   ['test-serie-haelfte.mjs', []],
+  /* 24.11.2026 — Wochen-Balken statt Übungskalender (aus Talib 35a0797), mit dem Fall „Karten pro Tag aus". */
+  ['test-wochen-balken.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

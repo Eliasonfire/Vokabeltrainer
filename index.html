@@ -5832,6 +5832,30 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
    Liste der Unterschiede: „übernimm das in allen apps“. ----- */
 .streak.leer #streakCount{display:none;}
 .streak.leer .streak-flame{filter:grayscale(1);opacity:.6;}
+
+/* ----- Stil-Schicht · Wochen-Balken statt Kalender (24.11.2026, aus Talib 35a0797). Elias zur Liste der
+   Unterschiede: „… statistik … sollst du übernehmen“; in Talib: „ich finde statt dem kalender könnten wir sowas
+   einbauen, ich glaube das ist besser“. Sieben Balken (die Karten je Tag), eine gestrichelte Linie auf Höhe des
+   Tagesziels, heute hervorgehoben. Akzent für erreichte Tage, gedämpft für die übrigen. Gezeichnet in
+   js/statistik.js, renderUebungskalender(). Die Namen wz-tag … wz-fuss kommen im Wurzelmodus nicht vor. ----- */
+.wz-kopf{font-weight:800;font-size:var(--fs-sm, .9rem);color:var(--text-dim);margin-bottom:var(--sp-3);}
+.wz-kopf.wz-erreicht{color:var(--red-bright);}
+.wz-flaeche{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:var(--sp-2);}
+.wz-linie{position:absolute;left:0;right:0;bottom:calc(1.1rem + var(--sp-1) + 132px * var(--ziel));height:0;
+  border-top:2px dashed var(--red-bright);opacity:.7;pointer-events:none;z-index:1;}
+.wz-tag{display:flex;flex-direction:column;align-items:stretch;gap:var(--sp-1);padding:0;margin:0;
+  background:none;border:0;color:inherit;font:inherit;cursor:pointer;min-width:0;}
+.wz-spur{position:relative;display:block;height:132px;}
+.wz-saeule{position:absolute;left:0;right:0;bottom:0;border-radius:var(--r-1) var(--r-1) var(--r-0) var(--r-0);
+  background:var(--red);opacity:.5;transition:height .5s ease;}
+.wz-tag.wz-voll .wz-saeule{opacity:1;}
+.wz-tag.wz-unbekannt .wz-saeule{background:transparent;border:2px solid var(--red);opacity:.8;}
+.wz-tag.wz-heute .wz-saeule{opacity:1;box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--red-bright);}
+.wz-tag.wz-heute:not(.wz-voll) .wz-saeule{background:color-mix(in srgb, var(--red) 60%, transparent);}
+.wz-name{display:block;height:1.1rem;text-align:center;font-size:.75rem;font-weight:700;color:var(--text-dim);white-space:nowrap;}
+.wz-tag.wz-heute .wz-name{color:var(--red-bright);}
+.wz-fuss{margin-top:var(--sp-3);font-size:.8rem;font-weight:600;color:var(--text-dim);}
+.wz-fuss + .wz-fuss{margin-top:var(--sp-1);font-weight:400;}
 </style>
 </head>
 <body>
@@ -6174,7 +6198,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
            geht". Wird vollständig aus JS gefüllt; ohne den Kasten hier tut
            `renderUebungskalender()` nichts und meldet das auch nicht — der
            Kasten ist also Pflicht, nicht Zierde. -->
-      <h3 class="stats-titel">Wann du geübt hast</h3>
+      <h3 class="stats-titel">Tagesziel</h3>
       <div class="uebungskalender" id="uebungskalender"></div>
       <!-- ⭐ Trefferquote je Woche (07.09.2026). Elias hat sich entschieden,
            den Rauschversuch zu machen — „du hast recht, dann sollte ich das

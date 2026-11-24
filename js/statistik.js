@@ -334,27 +334,11 @@ document.addEventListener('click', (e)=>{
 
    Erschlossene Felder sind deshalb nur umrandet und nicht gefuellt. Ein
    zurueckgerechneter Tag darf nicht aussehen wie ein gemessener.
-   [[zahlen_ohne_beleg]] [[eingefrorenes_feld_ist_kein_zustand]] */
-const KAL_WOCHEN = 18;
+   [[zahlen_ohne_beleg]] [[eingefrorenes_feld_ist_kein_zustand]]
 
-/* Wie viele Karten sind viel? Die Stufen stammen von seiner damaligen
-   Sitzungsgroesse (20 je Runde): eine Runde war Stufe 2, drei Runden die
-   hoechste.
-
-   ⚠️ Die Einstellung gibt es seit dem 22.09.2026 nicht mehr — die Runde ist
-   jetzt die Tagesration („Karten pro Tag", Vorgabe 10). Der Satz „eine Runde
-   ist Stufe 2" stimmt also nicht mehr zwangslaeufig. Die Zahlen
-   bleiben trotzdem FEST und wandern NICHT mit der Einstellung mit: der
-   Kalender zeigt vergangene Tage, und ein vergangener Tag darf seine Farbe
-   nicht aendern, weil heute eine Einstellung anders steht. Es ist eine
-   absolute Skala „wie viel habe ich an dem Tag geschafft", keine relative.
-   [[eingefrorenes_feld_ist_kein_zustand]] */
-function kalStufe(n){
-  if (n >= 60) return 4;
-  if (n >= 30) return 3;
-  if (n >= 10) return 2;
-  return 1;
-}
+   ⭐ Seit 24.11.2026 stehen statt des Kalenders sieben Wochen-Balken (renderUebungskalender() unten, aus Talib).
+   Die zwei Sorten gelten weiter: ein erschlossener Tag bekommt einen umrandeten Balken. KAL_WOCHEN und
+   kalStufe() sind mit dem Kalender entfallen. */
 
 /* ⭐⭐ Trefferquote je Woche (07.09.2026) — die Grundlage für den
    Rauschversuch. Elias: „du hast recht, dann sollte ich das ausprobieren."
@@ -454,18 +438,6 @@ function tagesQuote(tag){
     quote: Math.round(richtig / gestellt * 100) };
 }
 
-/** Dieselbe Rechnung ueber alle aufgezeichneten Tage. `null`, solange nichts
- *  aufgezeichnet ist — ein „0 %" saehe aus wie eine schlechte Leistung statt
- *  wie eine fehlende Messung. */
-function gesamtQuote(){
-  let gestellt = 0, richtig = 0;
-  for (const q of Object.values((typeof QUOTE_TAGE === 'object' && QUOTE_TAGE) || {})){
-    if (!q) continue;
-    gestellt += (Number(q.kGestellt) || 0) + (Number(q.gestellt) || 0);
-    richtig  += (Number(q.kRichtig)  || 0) + (Number(q.richtig)  || 0);
-  }
-  return gestellt ? { gestellt, richtig, quote: Math.round(richtig / gestellt * 100) } : null;
-}
 
 /** Die Aufschluesselung als Text — nur dann, wenn es wirklich zwei Sorten
  *  gibt. Bei reinem Karteikartenlernen waere „(41 von 60 Karteikarten)" nur
@@ -481,40 +453,29 @@ function renderUebungskalender(){
   const tage = (typeof uebungstageAusSerieErgaenzen === 'function')
     ? uebungstageAusSerieErgaenzen() : (typeof getUebungstage === 'function' ? getUebungstage() : {});
 
-  /* Bis zum Sonntag der laufenden Woche auffuellen, damit die letzte Spalte
-     vollstaendig ist und „heute" nicht am Rand klebt. `todayStr` ist die
-     einzige Datumsquelle der App — eine eigene Rechnung hier waere eine
-     zweite Wahrheit ueber denselben Tag. */
+  /* ⭐ Wochen-Balken statt Kalender (24.11.2026, aus Talib 35a0797). Elias zur Liste der Unterschiede:
+     „startbildschirm, hören, hot bar, statistik und übung sollst du übernehmen“. In Talib, mit einem Bild
+     (sieben Balken, gestrichelte Ziellinie, „Heute: 13 von 10“, darunter Serie und Rekord): „ich finde statt dem
+     kalender könnten wir sowas einbauen, ich glaube das ist besser“.
+     Ein Balken = die Karten eines Tages (vt_uebungstage), die Linie = das Tagesziel (tagesDeckel()).
+     Von Claude (Talib): ein Tag, von dem nur bekannt ist, DASS geübt wurde (Wert 0, aus der Serie ergänzt), bekommt
+     einen kleinen Balken mit Rand statt keinen, damit er nicht wie ein ausgelassener Tag aussieht.
+     ⚠️ Anders als in Talib: steht „Karten pro Tag“ auf aus (tagesDeckel() = 0), gibt es kein Ziel — dann keine
+     Linie, kein „von …“, und die Höhe misst sich am größten Tag der Woche (in Talib würde durch 0 geteilt).
+     ⛔ Der Übungskalender mit 18 Wochen, seine Stufen (kalStufe) und die Zahl „richtig insgesamt“ sind damit weg,
+     wie in Talib. Die Kennzahlen „Tage geübt“ und „längste Serie“ stecken in „Rekord“. */
   const heute = todayStr(0);
-  const wtag = (new Date(heute).getDay() + 6) % 7;      // Mo=0 … So=6
-  const bisSonntag = 6 - wtag;
-  const felder = [];
-  for (let i = KAL_WOCHEN * 7 - 1 - bisSonntag; i >= -bisSonntag; i--)
-    felder.push(todayStr(-i));
-
-  const monate = ['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
-  let letzterMonat = -1;
-  const kopf = [];
-  for (let s = 0; s < KAL_WOCHEN; s++){
-    const d = new Date(felder[s * 7]);
-    const m = d.getMonth();
-    kopf.push(m !== letzterMonat ? (letzterMonat = m, monate[m]) : '');
+  const ziel = (typeof tagesDeckel === 'function') ? (Number(tagesDeckel()) || 0) : 10;
+  const WTAGE = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const woche = [];
+  for (let i = 6; i >= 0; i--){
+    const tag = todayStr(-i);
+    woche.push({ tag, wert: tage[tag], name: i === 0 ? 'Heute' : WTAGE[new Date(tag + 'T12:00:00').getDay()] });
   }
+  const hoechst = Math.max(ziel * 1.25, 1, ...woche.map(t => Number(t.wert) || 0));
+  const anteil = n => Math.round(Math.min(1, (Number(n) || 0) / hoechst) * 1000) / 10;
 
-  const zelle = (tag) => {
-    const wert = tage[tag];
-    const kommt = tag > heute;
-    const klasse = kommt ? 'kal-zelle kal-spaeter'
-      : wert === undefined ? 'kal-zelle'
-      : wert === 0 ? 'kal-zelle kal-erschlossen'
-      : 'kal-zelle kal-s' + kalStufe(wert);
-    return `<button class="${klasse}" data-kaltag="${tag}"${kommt ? ' disabled' : ''} aria-label="${tag}"></button>`;
-  };
-
-  /* Kennzahlen. Die laufende Serie kommt aus vt_streak (sie kennt den
-     Gnadentag), die uebrigen aus den aufgezeichneten Tagen — deshalb steht
-     unten, seit wann aufgezeichnet wird. Eine Bestzahl ohne ihren Zeitraum
-     ist keine Auskunft. [[trefferquote_ohne_preis]] */
+  /* Längste Serie aus den aufgezeichneten Tagen; die laufende kommt aus vt_streak (sie kennt den Gnadentag). */
   const alle = Object.keys(tage).sort();
   let laengste = 0, lauf = 0, vorher = null;
   for (const t of alle){
@@ -522,53 +483,30 @@ function renderUebungskalender(){
     if (lauf > laengste) laengste = lauf;
     vorher = t;
   }
-  const seit = alle.length ? new Date(alle[0]).toLocaleDateString('de-DE',
-    { day:'numeric', month:'long', year:'numeric' }) : null;
+  const serie = Number(getStreak().count) || 0;
+  const rekord = Math.max(laengste, serie);
+  const heuteN = Number(tage[heute]) || 0;
 
-  /* ⛔ Monatszeile, Wochentagsspalte und Gitter liegen in EINEM Raster, nicht
-     nebeneinander in drei Kaesten. Zuerst stand die Monatszeile fuer sich und
-     wurde mit `margin-left:calc(1.4rem + 6px)` an die Gitterkante gerechnet —
-     gemessen war die Wochentagsspalte aber 14 px breit, nicht 22. Es sah nur
-     deshalb richtig aus, weil sich zwei Fehler fast aufhoben (Versatz 1 px).
-     Bei anderer Schriftgroesse — und die stellt Elias selbst ein — waere es
-     auseinandergelaufen. Ein gemeinsames Raster kann gar nicht verrutschen.
-     [[handliste_neben_echter_quelle]] */
-  /* ⛔ Die vierte Kennzahl erscheint nur, wenn es sie GIBT. Vor dem
-     07.09.2026 wurde keine Quote aufgezeichnet, und eine leere Spalte an
-     dieser Stelle saehe aus wie ein Fehler. [[leere_liste_ist_keine_messung]] */
-  const gq = gesamtQuote();
-  /* ⛔⛔ HIER STANDEN ZWEI FUSSTEXTE. SIE SIND WEG — auf Elias' Wunsch vom
-     15.09.2026, mit Bild des rot umrandeten Blocks: „das kannst du
-     entfernen."
+  const saeule = t => {
+    const n = Number(t.wert) || 0;
+    const klasse = ['wz-tag', t.tag === heute ? 'wz-heute' : '', ziel > 0 && n >= ziel ? 'wz-voll' : '',
+      t.wert === 0 ? 'wz-unbekannt' : ''].filter(Boolean).join(' ');
+    return `<button class="${klasse}" data-kaltag="${t.tag}" aria-label="${t.tag}">`
+      + `<span class="wz-spur"><span class="wz-saeule" style="height:${t.wert === undefined ? 0 : Math.max(anteil(n), 4)}%"></span></span>`
+      + `<span class="wz-name">${t.name}</span></button>`;
+  };
 
-     Der erste erklaerte die zwei Regeln hinter der Serie (Toleranztag,
-     Tagesbeginn 8 Uhr), der zweite den Aufzeichnungsbeginn und die
-     umrandeten Felder.
-
-     ⚠️ Das ist KEINE Ruecknahme des Auftrags vom 14.09.2026, sondern sein
-     Abschluss. Der Anlass damals war, dass beide Regeln seit Wochen gebaut
-     und fuer ihn unsichtbar waren — der Toleranztag seit dem 29.07., die
-     8-Uhr-Grenze seit dem 08.09.; die einzige Spur war ein Toast im Moment
-     des Eintretens. Jetzt kennt er sie, und der Text kostet nur noch Platz.
-
-     ⛔ Nicht „wiederherstellen", weil eine Notiz von damals ihn verlangt.
-     Kommt die Frage nach der Serie wieder, ist der Weg ein anderer als
-     nochmal dieser Absatz — sonst steht er in vier Wochen wieder da und wird
-     wieder abbestellt. [[regel_gilt_nur_mit_begruendung]] */
+  const kopfText = ziel > 0 ? `Heute: ${heuteN} von ${ziel}` : `Heute: ${heuteN} ${heuteN === 1 ? 'Karte' : 'Karten'}`;
+  const fussText = serie === 1 ? `Serie: 1 Tag · Rekord ${rekord}` : `Serie: ${serie} Tage · Rekord ${rekord}`;
+  const leerText = alle.length ? '' : 'Die Balken füllen sich, sobald du das erste Mal übst.';
   kasten.innerHTML = `
-    <div class="kal-block">
-      <div></div>
-      <div class="kal-kopf">${kopf.map(m=>`<span>${m}</span>`).join('')}</div>
-      <div class="kal-wtage"><span>Mo</span><span></span><span>Mi</span><span></span><span>Fr</span><span></span><span>So</span></div>
-      <div class="kal-gitter">${felder.map(zelle).join('')}</div>
+    <div class="wz-kopf${ziel > 0 && heuteN >= ziel ? ' wz-erreicht' : ''}">${kopfText}</div>
+    <div class="wz-flaeche" style="--ziel:${ziel > 0 ? anteil(ziel) / 100 : 0}">
+      ${ziel > 0 ? '<span class="wz-linie" aria-hidden="true"></span>' : ''}
+      ${woche.map(saeule).join('')}
     </div>
-    <div class="kal-zahlen">
-      <div><b>${getStreak().count}</b><span>Tage am Stück</span></div>
-      <div><b>${laengste}</b><span>längste Serie</span></div>
-      <div><b>${alle.length}</b><span>Tage geübt</span></div>
-      ${gq ? `<div><b>${gq.quote} %</b><span>richtig insgesamt</span></div>` : ''}
-    </div>
-    ${seit ? '' : '<p class="kal-fuss">Der Kalender füllt sich, sobald du das erste Mal übst.</p>'}
+    <p class="wz-fuss">${fussText}</p>
+    ${leerText ? `<p class="wz-fuss">${leerText}</p>` : ''}
   `;
 }
 

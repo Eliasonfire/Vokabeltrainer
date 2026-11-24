@@ -94,11 +94,8 @@ const merke = c.__m, jeWoche = c.__w;
     r[r.length - 1].bis === '2026-09-13', r[r.length - 1].bis);
   pruefe('die Woche davor beginnt sieben Tage früher',
     r[r.length - 2].von === '2026-08-31', r[r.length - 2].von);
-  /* Gegenprobe: dieselbe Rechnung wie im Übungskalender (js/statistik.js). */
-  pruefe('GEGENPROBE — der Kalender rechnet den Wochentag genauso',
-    /\(new Date\(heute\)\.getDay\(\) \+ 6\) % 7/.test(fs.readFileSync(path.join(WURZEL,'js','statistik.js'),'utf8'))
-    && /\(new Date\(heute\)\.getDay\(\) \+ 6\) % 7/.test(kern),
-    'Formel steht nicht in beiden Dateien');
+  /* Die Gegenprobe gegen den Übungskalender ist seit 24.11.2026 weg: den Kalender ersetzen die Wochen-Balken
+     (aus Talib; Elias: „… statistik … sollst du übernehmen“), und die rechnen keine Kalenderwoche. */
 }
 
 /* ---------- 4. Zusammenfassen über Tage hinweg ---------- */
