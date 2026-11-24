@@ -280,6 +280,8 @@ const PRUEFER = [
      Elias: „übernimm das in beiden apps also russich und arabisch". */
   ['test-lesbarkeit.mjs', []],
   ['test-rundungen.mjs', []],
+  /* 24.11.2026 — Abstände im 4er-Raster, aus Talib (a21a33e). */
+  ['test-abstaende.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

@@ -395,7 +395,8 @@
   /* --- Abstände --- */
   --sp-1:4px;  --sp-2:8px;  --sp-3:12px; --sp-4:16px;
   --sp-5:20px; --sp-6:24px; --sp-7:32px; --sp-8:40px;
-  --gutter:18px;
+  /* 16 statt 18 px seit 24.11.2026 (Raster wie in Talib a21a33e; Elias: „übernimm das in beiden apps“). */
+  --gutter:16px;
 
   /* Höhe der Titelzeile im Quran-Leser. Sie steht hier als Variable, weil DREI
      Stellen sie kennen müssen: die Zeile selbst (über ihre Polsterung), das
@@ -1430,7 +1431,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
   /* sp-3 statt sp-4 seit dem 21.08.2026 — „den abstand zwischen beiden etwas
      verkleinern". Die Zahlen stehen bei `.flashcard-back`. */
   margin-bottom:var(--sp-3);
-  padding:5px var(--sp-3);border-radius:var(--r-full);
+  padding:4px var(--sp-3);border-radius:var(--r-full);
   font-size:var(--fs-sm);font-weight:600;
   color:var(--gender-role);
   background:color-mix(in srgb, var(--gender-role) 13%, transparent);
@@ -1453,10 +1454,10 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    dem, was sie sein soll. */
 .word-forms > span{
   background:var(--surface-3);border:1px solid var(--border);
-  border-radius:var(--r-2);padding:7px var(--sp-3);
+  border-radius:var(--r-2);padding:8px var(--sp-3);
   font-family:var(--font-ar);direction:rtl;color:#fff;
   font-size:1.55rem;line-height:1.7;
-  display:inline-flex;align-items:baseline;gap:9px;
+  display:inline-flex;align-items:baseline;gap:8px;
 }
 /* Die arabische Form bekommt einen eigenen inline-Kasten. Der Chip darueber ist
    inline-flex; jedes Kind darin wird ein eigener Flex-Kasten. Wird die Form
@@ -1838,7 +1839,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    vokabeln gehen nur bis medina 24, ich bin aber bayna yadayk". Leise wie eine
    Zwischenzeile, damit die Kapitel die Hauptsache bleiben. */
 .kap-buch{color:var(--text-dim);font-size:var(--fs-xs);font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;margin:18px 4px 6px;}
+  text-transform:uppercase;margin:16px 4px 6px;}
 
 /* Elias' eigene Kategorien, oben in der Wortfelder-Liste mit Stern
    („Möglichkeit B", seine Wahl vom 29.07.2026). Bewusst nur ein Stern und ein
@@ -1949,7 +1950,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
      Der deutsche Partner ist hier `.weak-de` mit --fs-sm, nicht --fs-md wie
      sonst - der Faktor haengt deshalb an --fs-sm. Sonst waere der Chip 2,25x
      statt 2x so gross wie das Deutsche daneben. */
-  border-radius:var(--r-2);padding:7px var(--sp-3);font-size:calc(var(--fs-sm) * var(--ar-faktor));color:#fff;
+  border-radius:var(--r-2);padding:8px var(--sp-3);font-size:calc(var(--fs-sm) * var(--ar-faktor));color:#fff;
   cursor:pointer;
   /* Die Geschichte dieser einen Zeile ist die Geschichte des Fehlers, den Elias
      dreimal melden musste. Sie stand auf `none` — das verbietet dem Browser JEDE
@@ -2108,7 +2109,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 .word-list-item.gewaehlt .wl-wahl .ic{opacity:1;color:#fff;}
 .wl-box{
   font-size:var(--fs-xs);font-weight:800;color:var(--red-bright);background:var(--red-wash);
-  border:1px solid var(--red-dim);border-radius:var(--r-full);padding:3px var(--sp-2);flex-shrink:0;
+  border:1px solid var(--red-dim);border-radius:var(--r-full);padding:4px var(--sp-2);flex-shrink:0;
 }
 
 /* ---------- Die Wortkarte als Ueberblendung (Elias, 18.08.2026) ----------
@@ -2404,7 +2405,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 /* Ein Treffer aus einem Kapitel, das noch nicht freigeschaltet ist. Gedämpft
    statt versteckt — er soll sehen, dass es das Wort gibt. */
 .wl-fremd{font-size:var(--fs-xs);color:var(--text-faint);border:1px solid var(--border);
-  border-radius:var(--r-full);padding:3px var(--sp-2);white-space:nowrap;}
+  border-radius:var(--r-full);padding:4px var(--sp-2);white-space:nowrap;}
 /* ⚠️ Solange gesucht wird, sind die Reiter-Flächen weg — aber NICHT über die
    Klasse `hidden`: die schaltet der Reiter-Umschalter selbst, und beide würden
    sich gegenseitig überschreiben. Zwei Regeln für dieselbe Sichtbarkeit sind
@@ -2797,7 +2798,7 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
 }
 .ueb-baustein{
   font:inherit;color:var(--text);background:var(--surface-2);
-  border:1px solid var(--border-strong);border-radius:var(--r-2);padding:2px 10px;cursor:pointer;
+  border:1px solid var(--border-strong);border-radius:var(--r-2);padding:2px 8px;cursor:pointer;
   transition:transform var(--dur-1) var(--ease-out);
 }
 .ueb-baustein:active{transform:scale(.94);}
@@ -4280,7 +4281,7 @@ button:disabled{cursor:default;}
   padding-inline-end:var(--sp-1);
 }
 .ayah-sprung{
-  min-width:38px;padding:5px var(--sp-2);text-align:center;
+  min-width:38px;padding:4px var(--sp-2);text-align:center;
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-full);
   color:var(--text-dim);font-family:var(--font-ui);font-size:var(--fs-sm);font-weight:700;
   font-variant-numeric:tabular-nums;cursor:pointer;
@@ -4602,7 +4603,7 @@ button:disabled{cursor:default;}
    Die Lücke gehört an den Ansicht-Knopf (siehe unten) — dann sitzt der Ring
    direkt hinter der Überschrift und das Zahnrad allein rechts. */
 .juz-ring{
-  display:flex; align-items:center; gap:7px;
+  display:flex; align-items:center; gap:8px;
   background:none; border:0; padding:2px 2px 2px 6px; cursor:pointer;
   color:var(--text-dim); font:inherit; font-size:var(--fs-xs);
   font-variant-numeric:tabular-nums;
@@ -4644,7 +4645,7 @@ button:disabled{cursor:default;}
 }
 .qa-zeile{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);}
 .qa-titel{font-size:var(--fs-sm);font-weight:700;color:var(--text-dim);}
-.qa-modi{display:flex;gap:var(--sp-1);background:var(--surface-3);border-radius:var(--r-full);padding:3px;}
+.qa-modi{display:flex;gap:var(--sp-1);background:var(--surface-3);border-radius:var(--r-full);padding:4px;}
 .qa-modus{
   border:none;background:none;border-radius:var(--r-full);
   padding:var(--sp-2) var(--sp-3);cursor:pointer;
@@ -4802,12 +4803,12 @@ button:disabled{cursor:default;}
    hoch und zeigte auf Donnerstag. Vom blossen Ansehen faellt das nicht auf.
    [[breite_null_ist_kein_layout]] */
 .kal-block{display:grid;grid-template-columns:auto 1fr;column-gap:6px;row-gap:4px;}
-.kal-wtage{display:grid;grid-template-rows:repeat(7,1fr);gap:3px;font-size:.58rem;
+.kal-wtage{display:grid;grid-template-rows:repeat(7,1fr);gap:4px;font-size:.58rem;
   color:var(--text-dim);text-align:right;}
 .kal-wtage span{display:flex;align-items:center;justify-content:flex-end;line-height:1;}
 .kal-gitter{min-width:0;display:grid;grid-template-rows:repeat(7,1fr);
-  grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;}
-.kal-kopf{display:grid;grid-template-columns:repeat(18,1fr);gap:3px;font-size:.58rem;
+  grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;}
+.kal-kopf{display:grid;grid-template-columns:repeat(18,1fr);gap:4px;font-size:.58rem;
   color:var(--text-dim);min-width:0;}
 .kal-kopf span{white-space:nowrap;}
 .kal-zelle{aspect-ratio:1;border-radius:3px;border:1px solid var(--border);
@@ -5037,9 +5038,9 @@ button:disabled{cursor:default;}
   grid-template-columns:repeat(5,1fr);
 }
 .farbe{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
   background:transparent;border:1.5px solid transparent;
-  border-radius:9px;padding:5px 3px;cursor:pointer;
+  border-radius:9px;padding:4px 4px;cursor:pointer;
   font:inherit;color:var(--text-dim);
   transition:border-color var(--dur-2) ease, color var(--dur-2) ease;
 }
@@ -5195,7 +5196,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
    Dünn und unter dem Namen, damit die Zeile ihr Raster behält: rechts stehen
    weiter Quote und „vor X Tagen". */
 .rz .rb{height:3px;background:var(--surface-4);border-radius:var(--r-full);
-  overflow:hidden;margin-top:5px;max-width:180px;}
+  overflow:hidden;margin-top:4px;max-width:180px;}
 .rz .rb > i{display:block;height:100%;border-radius:var(--r-full);
   background:var(--red-bright);transition:width var(--dur-4,.6s) var(--ease-out);}
 .rz.stark .rb > i{background:var(--green);}
@@ -5275,7 +5276,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 /* ---- Tagesring im Wurzelmodus (15.09.2026) ----
    Klein und still: er steht zwischen „Familie 2 von 7" und den Punkten, wo
    ohnehin der Blick hingeht, und soll den Schritt nicht überstrahlen. */
-.wz-ring{display:inline-flex;align-items:center;gap:5px;margin-left:auto;margin-right:var(--sp-2);
+.wz-ring{display:inline-flex;align-items:center;gap:4px;margin-left:auto;margin-right:var(--sp-2);
   text-transform:none;letter-spacing:0;font-variant-numeric:tabular-nums;}
 .wz-ring svg{width:20px;height:20px;display:block;}
 .wz-ring .spur{fill:none;stroke:var(--surface-4);stroke-width:4.5;}
@@ -5287,7 +5288,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 @media (prefers-reduced-motion:reduce){ .wz-ring .fuell{transition:none;} }
 
 .wz-punkte i{display:inline-block;width:7px;height:7px;border-radius:var(--r-full);
-  background:var(--surface-3);border:1px solid var(--border-strong);margin-left:5px;}
+  background:var(--surface-3);border:1px solid var(--border-strong);margin-left:4px;}
 .wz-punkte i.an{background:var(--red);border-color:var(--red);}
 
 .wz-wurzelkopf{text-align:center;position:relative;}
@@ -5358,8 +5359,8 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 
 /* Die gestapelte Familie. Rechtsbündig, damit die Verschiebung eine feste
    Bezugskante hat — zentriert wäre jede Zeile anders versetzt. */
-.wz-stapel{margin-top:var(--sp-4);padding-left:34px;}
-.wz-zeile{padding:7px 0;border-bottom:1px solid rgba(38,38,43,.7);}
+.wz-stapel{margin-top:var(--sp-4);padding-left:32px;}
+.wz-zeile{padding:8px 0;border-bottom:1px solid rgba(38,38,43,.7);}
 .wz-zeile:last-child{border-bottom:0;}
 .wz-zeile .wz-ar{font-size:2.05rem;text-align:right;white-space:nowrap;
   transition:transform .28s var(--ease-out,cubic-bezier(.2,.7,.3,1));}
@@ -5377,7 +5378,7 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
    Flex-Container — `display:block` mit text-align, nicht flex mit center. */
 .wz-korb{flex:1;display:block;text-align:center;background:var(--surface-2);
   border:1px solid var(--rand-korb);border-radius:var(--r-3);
-  padding:13px 4px;min-height:44px;cursor:pointer;
+  padding:12px 4px;min-height:44px;cursor:pointer;
   font-family:var(--font-ar);direction:rtl;font-size:1.35rem;
   letter-spacing:.1em;color:var(--text);}
 .wz-korb:active{background:var(--surface-3);}
@@ -5410,8 +5411,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
        Bauteile nur auseinanderzieht, ohne dass etwas lesbarer wird. */
     --fs-xs:.75rem; --fs-sm:.84rem; --fs-md:.95rem;
     --fs-lg:1.08rem; --fs-xl:1.35rem; --fs-2xl:1.9rem;
-    --sp-3:14px; --sp-4:18px; --sp-5:22px;
-    --sp-6:28px; --sp-7:36px; --sp-8:46px;
+    /* Im 4er-Raster seit 24.11.2026 (vorher 14/18/22/28/36/46), wie Talib a21a33e. */
+    --sp-3:16px; --sp-4:20px; --sp-5:24px;
+    --sp-6:28px; --sp-7:36px; --sp-8:48px;
     --gutter:24px;
     --inhalt-max:680px;
     --karte-max:480px;
@@ -5572,8 +5574,9 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   :root{
     --fs-xs:.8rem; --fs-sm:.9rem; --fs-md:1.02rem;
     --fs-lg:1.18rem; --fs-xl:1.5rem; --fs-2xl:2.1rem;
-    --sp-3:16px; --sp-4:20px; --sp-5:26px;
-    --sp-6:32px; --sp-7:42px; --sp-8:54px;
+    /* Im 4er-Raster seit 24.11.2026 (vorher 16/20/26/32/42/54), wie Talib a21a33e. */
+    --sp-3:16px; --sp-4:20px; --sp-5:24px;
+    --sp-6:32px; --sp-7:40px; --sp-8:56px;
     --gutter:32px;
     --inhalt-max:860px;
     /* 560 -> 680 am 17.08.2026. Elias mit zwei Tablet-Aufnahmen: "vielleicht
