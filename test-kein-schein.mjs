@@ -30,9 +30,10 @@ const schlecht = laufe(HTML, false);
 console.log('\nStörtest:');
 let alleRot = true;
 for (const [name, h] of [
-  ['Regel weg', HTML.replace('#app{background:var(--bg);}\n</style>', '</style>')],
-  ['Verlauf zurück', HTML.replace('#app{background:var(--bg);}\n</style>', '#app{background:radial-gradient(ellipse 130% 42% at 50% -4%, rgba(255,23,68,.10), transparent 62%), var(--bg);}\n</style>')],
-  ['danach ein neuer Schein', HTML.replace('#app{background:var(--bg);}\n</style>', '#app{background:var(--bg);}\n#app{background:radial-gradient(red,transparent),var(--bg);}\n</style>')]
+  /* Verankert am Ende des Blocks, nicht an </style>: seit 24.11.2026 stehen weitere Blöcke dahinter. */
+  ['Regel weg', HTML.replace('bleiben. ----- */\n#app{background:var(--bg);}', 'bleiben. ----- */')],
+  ['Verlauf zurück', HTML.replace('bleiben. ----- */\n#app{background:var(--bg);}', 'bleiben. ----- */\n#app{background:radial-gradient(ellipse 130% 42% at 50% -4%, rgba(255,23,68,.10), transparent 62%), var(--bg);}')],
+  ['danach ein neuer Schein', HTML.replace(/<\/style>(?![\s\S]*<\/style>)/, '#app{background:radial-gradient(red,transparent),var(--bg);}\n</style>')]
 ]){
   if (h === HTML){ alleRot = false; console.log('  ✘ ' + name + ' — Störung griff nicht'); continue; }
   const n = laufe(h, true);

@@ -4802,31 +4802,9 @@ button:disabled{cursor:default;}
    Texthoehe. Gemessen waren das 83 px gegen 122 px — „So" stand 36 px zu
    hoch und zeigte auf Donnerstag. Vom blossen Ansehen faellt das nicht auf.
    [[breite_null_ist_kein_layout]] */
-.kal-block{display:grid;grid-template-columns:auto 1fr;column-gap:6px;row-gap:4px;}
-.kal-wtage{display:grid;grid-template-rows:repeat(7,1fr);gap:4px;font-size:.58rem;
-  color:var(--text-dim);text-align:right;}
-.kal-wtage span{display:flex;align-items:center;justify-content:flex-end;line-height:1;}
-.kal-gitter{min-width:0;display:grid;grid-template-rows:repeat(7,1fr);
-  grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;}
-.kal-kopf{display:grid;grid-template-columns:repeat(18,1fr);gap:4px;font-size:.58rem;
-  color:var(--text-dim);min-width:0;}
-.kal-kopf span{white-space:nowrap;}
-.kal-zelle{aspect-ratio:1;border-radius:3px;border:1px solid var(--border);
-  background:var(--surface-2);padding:0;cursor:pointer;}
-.kal-zelle.kal-s1{background:rgba(255,77,106,.28);border-color:transparent;}
-.kal-zelle.kal-s2{background:rgba(255,77,106,.5);border-color:transparent;}
-.kal-zelle.kal-s3{background:rgba(255,77,106,.72);border-color:transparent;}
-.kal-zelle.kal-s4{background:var(--red-bright);border-color:transparent;}
-/* Erschlossen, nicht gemessen: umrandet statt gefuellt. Der Unterschied muss
-   man SEHEN, sonst sieht eine Rueckrechnung aus wie eine Messung. */
-.kal-zelle.kal-erschlossen{background:transparent;border-color:var(--red-bright);}
-.kal-zelle.kal-spaeter{background:transparent;border-color:transparent;cursor:default;}
-.kal-zahlen{display:flex;flex-wrap:wrap;gap:var(--sp-4) var(--sp-4);margin-top:var(--sp-4);}
-.kal-zahlen div{display:flex;flex-direction:column;}
-.kal-zahlen b{font-size:1.25rem;color:var(--red-bright);line-height:1.1;
-  font-variant-numeric:tabular-nums;}
-.kal-zahlen span{font-size:.7rem;color:var(--text-dim);}
-.kal-fuss{font-size:.7rem;color:var(--text-dim);margin-top:var(--sp-2);line-height:1.45;}
+/* ⛔ Die Regeln des Kalenders (.kal-block … .kal-fuss) sind seit 24.11.2026 weg: den Kalender ersetzen die
+   Wochen-Balken (ihr Block steht am Ende des Stylesheets). Der erschlossene Tag ist dort ein umrandeter
+   Balken — die Regel oben („umrandet statt gefuellt“) gilt weiter. Gemeldet von klassen-ohne-fundstelle.mjs. */
 .stat-card{
   background:var(--surface-2);border:1px solid var(--border);border-radius:var(--r-3);padding:var(--sp-4);
   box-shadow:inset 0 1px 0 var(--hairline);
@@ -5778,17 +5756,16 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .box-pip.box-schlecht .l,.box-pip.box-gut .l{opacity:1;}
 .learn-rolle{font-size:.75rem;}
 .wq-datum{font-size:.75rem;color:var(--text-dim);}
-.kal-wtage,.kal-kopf{font-size:.75rem;}
-.kal-zahlen span,.kal-fuss{font-size:.75rem;}
-.fm-hinweis,.farbe-name{font-size:.75rem;}
+/* Ohne die Talib-Namen, die es hier nicht gibt (Kalender, Farbmischer, Geschafft-Kacheln; gemeldet von
+   klassen-ohne-fundstelle.mjs). */
+.farbe-name{font-size:.75rem;}
 .farbe-marke,.farbe-kontrast{font-size:.75rem;letter-spacing:0;opacity:1;}
-.es-kachel em,.es-marke{font-size:.75rem;}
 .wk-aktionen .btn{min-height:44px;}
 .qs-knopf{min-width:44px;min-height:44px;}
 .bottombar .nav-btn{font-size:.75rem;}
 @media (min-width:1024px){.bottombar .nav-btn{font-size:.82rem;}}
 .chip-toggle{min-height:44px;min-width:44px;}
-.suche-feld input,.suche-leer-chip,.pool-schalter{min-height:44px;}
+.suche-feld input,.pool-schalter{min-height:44px;}
 /* Schalter, Stern und Haken sehen aus wie bisher (31 und 28 px); eine unsichtbare Fläche darum macht sie
    44 px hoch zum Treffen. Beim Stern und Haken der Surenliste nur wenig breiter, sie stehen nebeneinander. */
 .fav-stern,.hifz-check{position:relative;}
@@ -5810,22 +5787,15 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
 .rk-treffer,
 .ar-wort:focus-visible,
 .gram-underline,
-.kal-zelle,
 .farbe-feld,
 .wq-saeule{border-radius:var(--r-0);}
 .tipp-taste,
 .ueb-eingabe,
 .gram-popover .gp-bedeutung,
 .juz-ring:focus-visible,
-.farbe,
-.farb-mischer,
-.fm-code,
-.fm-probe,
-.fm-feld,
-.stimme-anleitung{border-radius:var(--r-1);}
-.suche-leer-bild{border-radius:var(--r-4);}
-.fm-ton,
-.fm-deck{border-radius:var(--r-full);}
+.farbe{border-radius:var(--r-1);}
+/* Ohne die Talib-Namen, die es hier nicht gibt (Farbmischer, Stimmen-Anleitung, Suchbild); gemeldet von
+   klassen-ohne-fundstelle.mjs. */
 
 /* ----- Stil-Schicht · Flamme ohne Null (24.11.2026, aus Talib f6a843c): bei Serie 0 steht keine Zahl neben der
    Flamme, und die Flamme ist grau, bis der erste Lerntag sie anzündet (zeigeSerie() in js/kern.js). Elias zur

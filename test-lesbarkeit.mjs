@@ -126,7 +126,8 @@ if (datei === join(HIER, 'index.html')) {
 
 // ---- 4. Tippflächen im Block ----
 const hoehe = text => { const m = text.match(/(?:^|;|\s)min-height:\s*([^;]+)/); return m ? inPx(m[1]) : null; };
-for (const sel of ['.chip-toggle', '.suche-feld input', '.suche-leer-chip', '.pool-schalter'])
+/* .suche-leer-chip gibt es im Vokabeltrainer nicht (Talib); geprüft nur, was im Stylesheet vorkommt. */
+for (const sel of ['.chip-toggle', '.suche-feld input', '.suche-leer-chip', '.pool-schalter'].filter(s => regeln.some(r => teile(r.sel).includes(s))))
   pruefe(imBlockMit(sel, t => (hoehe(t) || 0) >= 44), 'mindestens 44 px hoch: ' + sel);
 for (const sel of ['.switch::after', '.fav-stern::after', '.hifz-check::after'])
   pruefe(imBlockMit(sel, t => /(?:^|;|\s)height:\s*44px/.test(t) && /content:/.test(t)), 'unsichtbare Fläche von 44 px: ' + sel);
