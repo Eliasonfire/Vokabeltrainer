@@ -218,7 +218,8 @@ if (!Array.isArray(VOCAB_DATA) || VOCAB_DATA.length === 0){
     if (!/istZahlwort\(w\)\) return null;/.test(kernText)) fehlt.push('bauePluralKarte() laesst Zahlwoerter aus');
     /* Jede Anzeige einzeln — eine Summe verdeckt eine fehlende Stelle. */
     if (!anzeige.includes("label:(typeof plBeschriftung === 'function' ? plBeschriftung(w)")) fehlt.push('Lernkarte (js/lernen.js)');
-    if (!anzeige.includes("formen.push([(typeof plBeschriftung === 'function' ? plBeschriftung(w)")) fehlt.push('Wortkarte (js/kategorien.js)');
+    /* Seit der Vokabelkarte Fassung A (24.11.2026, Commit 2661c2f) steht der Plural als Feld (.wk-feldname). */
+    if (!anzeige.includes("<span class=\"wk-feldname\">${escapeHtml(typeof plBeschriftung === 'function' ? plBeschriftung(w) : 'Plural')}")) fehlt.push('Wortkarte (js/kategorien.js)');
     if (!anzeige.includes("feld('wkPl', (typeof plBeschriftung === 'function'")) fehlt.push('Bearbeiten-Feld (js/kategorien.js)');
     if (zahlMitPl.length && fehlt.length)
       warn(`${zahlMitPl.length} Zahlwort(e) mit pl-Feld, aber die Beschriftung „bei weiblichem Nomen" wirkt nicht — `
