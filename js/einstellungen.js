@@ -31,6 +31,23 @@ function renderSettings(){
   zeichneEinzelnFreiListe();
   loadVoices();
   zeigeArabischTest();
+  zaehleEinstGruppen();
+}
+
+/* Die Zahl im Kopf einer Gruppe: so viele Zeilen stehen darin (24.11.2026, aus Talib cf488a8). Gezählt, nicht
+   fest im Markup: in Talib stimmte sie am 23.11.2026 in vier von neun Gruppen nicht mehr. Elias zur Liste der
+   Unterschiede (Einstellungs-Gruppenköpfe mit Symbol und Zahl): „übernimm das in beiden apps“. Eine Zeile, die
+   ausgeblendet ist, zählt nicht. Gezählt wird am Attribut und an der Klasse, nicht an der Anzeige: eine
+   zugeklappte Gruppe behält ihre Zahl. */
+function zaehleEinstGruppen(){
+  document.querySelectorAll('.einst-gruppe').forEach(knopf => {
+    const inhalt = document.getElementById(knopf.getAttribute('aria-controls'));
+    const zahl = knopf.querySelector('.einst-gruppe-zahl');
+    if (!inhalt || !zahl) return;
+    const n = Array.from(inhalt.children).filter(z =>
+      z.classList.contains('setting-row') && !z.hidden && !z.classList.contains('hidden')).length;
+    zahl.textContent = String(n);
+  });
 }
 
 /* ---------- „Arabisch testen" (v575, 23.09.2026) ----------

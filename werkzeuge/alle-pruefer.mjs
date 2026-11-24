@@ -273,6 +273,9 @@ const PRUEFER = [
   ['test-flaechenfarbe.mjs', []],
   /* 24.11.2026 — kein farbiger Schein hinter Kopfleiste und Hintergrund (aus Talib). Elias: „ja ist gut“. */
   ['test-kein-schein.mjs', []],
+  /* 24.11.2026 — die Zahl im Kopf einer Einstellungsgruppe wird gezählt (aus Talib cf488a8). Vorher stand
+     „Karte 5" bei 3 Zeilen und „Lernen 3" bei 5. Elias: „übernimm das in beiden apps". */
+  ['test-einst-gruppen.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht
