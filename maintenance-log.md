@@ -10277,3 +10277,96 @@ Gemessen am 22.11.2026 und weiter offen:
 - F1 Kapitel 19 in seiner Auswahl · madina-2 Kapitel 1–24 nur in `FREIGESCHALTET`.
 - 8× `pl`, 2× `femSg` · 61 Satzkarten ohne Satz · Scheinlücke Übung 19 · 12 Entscheidungen auf seiner Warteseite · Tagesziel-Frage (jetzt 28 Tage).
 - Balance 7,6 %. Übung 17 Lücke huma-f (nicht neu gemessen, `test-verb-einsetzen.mjs` grün im Sammellauf).
+
+## 2026-11-25 22:20 – Wöchentliche Wartung (Mi-Check) — **nichts ausgeliefert**; Folge 35 neu, F1 erledigt
+
+Nichts veröffentlicht: dieser Lauf hat keine ausgelieferte Datei geändert. Live bleibt v789 (`sw.js` und `.deploy/sw.js` beide `vokabeltrainer-v789`).
+
+⚠️ **Fremde, nicht committete Änderungen im Arbeitsbaum** (nicht von diesem Lauf, nicht im Commit): `js/kern.js` (Hörmodus-Quote in `merkeQuote()`/`quoteJeWoche()`), `data/eselsbruecken.js` — beide byte-gleich mit `.deploy/`, also ausgeliefert —, `werkzeuge/alle-pruefer.mjs` und die ungetrackten Dateien wie am 22.11. (darunter `werkzeuge/qf-abgleich.mjs`).
+
+### Schritt 0 / 0a — Marke, Prompt-Wächter, vorige Läufe
+
+`git pull --ff-only`: „Already up to date." Marke gesetzt. `pruefe-volles-programm.mjs` Exit **0** (am Anfang und in Schritt 6).
+`pruefe-laeufe.mjs --tage 30` Exit **2**: **21 Lücken** (am 22.11.: 19). Diese Routine: 9 Soll, 3 ok, 4 abgebrochen (04.11. und 08.11. OAuth, 11.11. Sitzungslimit, 15.11. Fehlzählung wie bisher). **Neu seit dem 22.11.:** `eingang-einsortieren` 21.11. 19:00 und 23.11. 03:00, beide „You've hit your session limit". Keine „gar nicht gelaufen" neu. Dazu der Freigaben-Hinweis: `Vokabeltrainer/werkzeuge/qf-abgleich.mjs` „niemand startet es" (fremde, ungetrackte Datei). `Routinen-Status.md`: diese Routine 3 Tage, `gedaechtnis-review` 35 Tage zurück.
+
+### Schritt 0b / 4 — Samsung Notes
+
+`samsung-notes-sicherung.mjs`: „Ein anderer Lauf ist noch aktiv" → gewartet, bis die Sperre weg war. Letzte Zeilen: „Abgeholt: 0 Notiz(en) in 2 Runde(n), 169 s — Hintergrundteil lief nicht, gestartet"; Archiv „2 neu, 1 geändert, 1131 unverändert · 0 Fehler". `export-index.mjs --sicherung` Exit **0** (alle zehn Notizen in `Arabisch\Grammatik` unverändert) → **Samsung: nichts Neues**. `--abendlisten` Exit **0** (1b.9: keine neue Liste).
+
+### Schritt 1 — Aufzeichnungen
+
+`get_recordings`: **35 Einträge**. **Neu: Folge 35 „MB1 Kapitel 20 Zahlen 3 - 10"** (25.11.2026 19:35 UTC, https://youtu.be/7QkPRoyamNY, `sort_order` 69). In `transcripts/backlog.md` als `offen` nachgetragen, `.aufnahmen.json` ergänzt. Kein Transkript abgerufen.
+
+### Schritt 1b — Rückstand: **keiner**
+
+`rueckstand.mjs --knapp` Exit **0**: „kein Rueckstand. (1 ausser Wertung: 21)". Folge 34 hat eine Sitzung schon ausgewertet (d98dbb3: 12 Urteile, `adad-3-10-idafa-01`, `adad-3-10-genus-01`; v784, v787). `kandidaten-bewerten.mjs` Exit **0**: 275 Kandidaten aus 21 Folgen, 269 von mir entschieden (schon-regel 147, weg 122), 35 eingebaut, **0 einzubauen**, **6 für Elias** (abweichung 1, unbelegt 5). Keine Regel eingebaut, keine ausgeblendet.
+
+**1b.8 Satzmodus:** `pruefe-satzmodus-aktuell.mjs` Exit **2**, nur die bekannte Scheinlücke „19 mehrzahl-dinge" (`test-mehrzahl-dinge.mjs` grün). **Balance 7,6 % (44 von 580 Sätzen)**; Richtwert 20 % ist **mein** Vorschlag. 18 Wörter der neuesten Kapitel, 0 ohne Satz. Übung 17: 25 Aufgaben · Übung 18: 48 Aufgaben. Keine neue Regel aus diesem Lauf → kein Übungsvorschlag.
+**1b.10 Lernlast:** `lernlast.mjs` Exit **2**: „10 am Tag reichen nicht mehr: eine Wiederholung wartet seit 31 Tagen".
+
+| | |
+|---|---|
+| Karten je Box | Box 1 1222 · 2 2 · 3 25 · 4 21 · 5 71 · 6 30 · 7 9 |
+| **Schlange Box 1** | **1218** (1108 nie beantwortet · 110 falsch); am 22.11. waren es 1210 |
+| Heute fällig | Box 2–7 **117** (Box 3 19 · Box 4 16 · Box 5 47 · Box 6 25 · Box 7 8) |
+| Am spätesten | Box 5 25 Tage · Box 6 31 Tage |
+
+**Trefferquote je Box seit v603:** Box 1 41/227 = 18 % · Box 2 52/96 = 54 % · Box 3 49/182 = 27 % · Box 4 40/79 = 51 % · Box 5 26/129 = 20 % · **Box 6 und 7 noch keine Antwort**.
+**Vorgezogen:** 1 Karte markiert, 0 von 1; Box 4/5 noch keine Antwort auf früher vorgezogene Karten. Keine ⏰-Zeile. Tagesziel nicht angefasst; Zahlen in der To-Do nachgetragen.
+
+### Schritt 1c — Vorrat
+
+`get_unlocked_chapters`: **bayna-yadayk-1 1–4 · madina-1 1–19**, unverändert. `vorrat.mjs --stand .stand-roots.json --app auto` Exit 0: eigene Wörter **14**, auswendig **19 Suren + 1 Vers**, abgelehnt **84 an 37 Wörtern**, Leitner-Boxen **5809**. App-Auswahl aus dem KV (25.11.2026, 04:20:03): **madina-1 bis 19**, bayna-yadayk-1 bis 4. `FREIGESCHALTET` unverändert; kein Lernstand-Zuwachs.
+⚠️ „Nicht zugemacht": madina-2 Kapitel 1–24 bleiben stehen. `pruefe-buecher-aktuell.mjs` Exit **0** („aktuell"): **F1 erledigt** — seine Auswahl nennt jetzt selbst Kapitel 19; in der To-Do abgehakt. H1 madina-2 wie bisher (nur Hinweis).
+`get_learning_progress` (559.257 Zeichen) als Datei weitergereicht, nicht gelesen; `vorrat.mjs --lernstand`: „unveraendert". Tajweed: 43 Einträge im Abgleich, 0 neu, Archiv 47. `neue-kapitel.mjs`: kein Auftrag, nichts „aufgegeben".
+`vorrat.mjs --knapp`: **71 von 471** unvollständig — 0 Eselsbrücken, **61 Sätze**, 0 Markierungen, 0 Kategorien, **8× pl**, **2× femSg** — wie am 22.11. (die 61 Satzkarten sind die offene Sitzungsfrage vom 18.11.). Nichts geschrieben.
+**1c.5:** `pruefe-saetze.js` **0** (790 Sätze) · `pruefe-funktionen.js` **0** · `pruefe-duplikate.js` **0** · `pruefe-eigene-vorrang.mjs` **0** (alle 471) · `validate.js` **0** (36 Prüfungen, 2 Hinweise).
+**1c.5b `pruefe-plural.mjs`:** Exit **0**. A 0 · B 25 m / 27 w · C 33 (8 PLURAL_FERN, 12 warten, 13 nah, **0 NEU**) · D 2 (Endung fehlt) · E **10** — die acht bekannten plus بَعْضٌ (50285) und تَعَارُفٌ (50172), beide einzeln freigeschaltet; die Frage dazu steht seit dem 14.10.2026 in der To-Do, nicht doppelt eingetragen.
+**1c.5c `pruefe-de-mehrzahl.mjs`:** Exit **0**, 2146 gedeckt, **0** nachgetragen.
+
+**Seiten (jede unter IHRER Adresse, veröffentlichen braucht eine Sitzung):**
+- `aussenbelege.mjs`: 2 Feldbelege, 0 Taschkil-Belege. `woerterbuch-belege.mjs`: 11 Belege, vorher 11.
+- `wartungsfragen-artefakt.mjs`: **2 Fragen, 10 Wörter** (pl 8, femSg 2) → https://claude.ai/artifact/5ChpdN9n7PAiTY4B5ZHud3
+- `wartet-auf-elias.mjs` Exit **2**: **12 Entscheidungen** (3 mit Stückarbeit über 20 Einzelstücke, 9 nur ansehen); kein Artefakt-Wächter-Befund → https://claude.ai/artifact/Hukk2F5jbFqnLsnW5H9QfN
+- `freigabe-artefakt.mjs`: **6 von 275** für ihn → https://claude.ai/artifact/2GJFK49B8LvWJaBu337qU4
+- ⚠️ `regelauswahl.html` hat sich geändert (127 → **130 Regeln**) → neu veröffentlichen unter `da4af296-67c5-4055-a2e7-35defc375007`. `verschmelzung.html` unverändert; `artefakte/regelpruefung.html` „unverändert gegenüber dem letzten BAU".
+
+### Schritt 1d — Regelsammlung
+
+`regeln-holen.mjs` Exit 0: letzter Abgleich 25.11.2026, 04:20:03, keine Regelsammlung im Stand; `--merken`: „Nichts zu merken". `regelsammlung-wache.mjs` Exit **0** (35 Folgen, Wiedervorlage `asma-khamsa-vollstaendig-01` ohne Treffer bis Folge 34, 10 Grammatik-Notizen); `--merken` gesetzt.
+`satzmodus-sichtbar.mjs` Exit 0: App v789, **470 Sätze sichtbar**, 225 markiert, aber nicht sichtbar. `regelkategorien-seite.mjs` Exit **0**: **130 Regeln** in 15 Kategorien, kein „Nicht zuordbar", „zuerst" unverändert: Nominalsatz (47) · Plural (39) · اَلْ (38) · Schrift (34) → https://claude.ai/artifact/DHhYFwtTNJADVwE2tVUDz3 (Netzfassung `inhalt-0a22583082.js`).
+
+### Schritt 1e / 1f
+
+`pruefe-pflegeplan.mjs` Exit **0** (77 / 11 / 87, 0 Lücken).
+`fachbegriffe-finden.mjs` Exit **2**: fünf Kandidaten aus den Zahlen-Regeln (Folge 34), alle Beispielwörter/-wendungen → in `werkzeuge/fachbegriffe-entscheidungen.json` **abgelehnt**: مِنْ أَمْرِيكَا, بُيُوت, أَخٌ وَاحِدٌ, كُتُب, كِتَابَانِ. Danach Exit 0. `fachbegriffe-nachschlagen.mjs --zeigen`: nichts zu belegen. Keine neue Frage an Elias.
+
+### Schritt 2 / 2b — Vokabelabzug und Ersatzdatenbank
+
+`hole-vokabeln.mjs`: **4433 Einträge, 11 eigene**, `behalten: 0` überall; je Buch bayna-yadayk-1 231 · -2 552 · -3 445 · -4 881 · madina-1 298 · -2 445 · -3 1238 · quran 343 — wie am 22.11. `baue-vokabelpaket.mjs`: **UNVERAENDERT**. `pruefe-ersatz.mjs --knapp`: „ERSATZ VOLLSTÄNDIG: 4433 von 4433 Plätzen, 8 von 8 Büchern (davon 19 mit Grund nicht gefunden)", keine Zeile „Bestand geändert". `ersatz-wechsel.mjs --stand`: App läuft auf dem Abzug.
+
+### Schritt 3 / 5
+
+Schritt 3: `vocab-data.js` und `lehrbuch-saetze.js` nicht angefasst. Schritt 5: `get_personal_vocabulary` 11 Wörter, keines neu; `get_weak_vocabulary` (0,2) **17 Wörter**, dieselben wie am 22.11. Kein neues Muster.
+
+### Schritt 6 — Qualitätssicherung
+
+`alle-pruefer.mjs`: **227 Prüfer, 6 rot, kein Prüfer NEU rot.** Rot: `pruefe-taschkil` (Endung fehlt, wartet auf ihn), `pruefe-themen` (2 Punkte für ihn), `pruefe-satzmodus-aktuell` (Scheinlücke), `pruefe-beispielsaetze` (61), `pruefe-buchtausch` (21), `pruefe-gedaechtnis-zahlen` — **jetzt mit anderem Grund:** „r4: gesamtQuote existiert — Vault: true, GEMESSEN: false" (`gesamtQuote` steht weder im committeten noch im ausgelieferten `js/kern.js`) → Punkt für eine Sitzung in der To-Do.
+✅ **Seit dem 22.11. wieder grün:** `test-quran-sin-markierung.mjs` und `notiz-umraeumen.mjs`. `pruefe-erreichbarkeit.js` Exit **0**, `pruefe-ausgeliefert.mjs` Exit **0**. Alle einzeln benannten Prüfer und Eichungen aus Schritt 6 grün (im Sammellauf), außer `pruefe-taschkil.js` (wie bisher); `taschkil-belegen.mjs` Exit 0. ⚠️ `pruefe-oberflaeche.js` lief zuletzt am 27.10. (29 Tage).
+
+### Schritt 7 / 8
+
+Commit mit explizitem Pfad: `werkzeuge/fachbegriffe-entscheidungen.json`, `data/abgelehnt.json`, `data/auswendig.json`, `data/boxen.json`, `data/lernstand.json`, `data/tajweed-archiv.json`, `regelauswahl.html` und dieses Log. Die fremden Dateien oben bleiben unberührt. Vault: To-Do (F1 abgehakt, Lernlast neu gemessen, neuer Abschnitt 25.11. mit Nachmessung der Punkte vom 22.11.). Projektnotiz nicht geändert (kein neuer Stand der App).
+
+### ⬜ Offen nach diesem Lauf
+
+Neu:
+- `pruefe-gedaechtnis-zahlen.mjs` r4 `gesamtQuote` — Vault-Aussage nachziehen, Sitzung.
+- Folge 35 wartet auf Rohmaterial (Backfill-Retry).
+- `regelauswahl.html` (130 Regeln) und Regelkategorien-Seite neu veröffentlichen — Sitzung.
+- Fremde, ausgelieferte, aber nicht committete Änderungen in `js/kern.js`, `data/eselsbruecken.js`, dazu `werkzeuge/alle-pruefer.mjs` und `qf-abgleich.mjs` ohne Aufrufer — Sitzung.
+
+Gemessen am 25.11.2026 und weiter offen:
+- madina-2 Kapitel 1–24 nur in `FREIGESCHALTET`.
+- 8× `pl`, 2× `femSg` · 61 Satzkarten ohne Satz · Scheinlücke Übung 19 · 12 Entscheidungen auf seiner Warteseite · 6 Regelkandidaten für ihn · Tagesziel-Frage (jetzt 31 Tage).
+- Box-1-Schlange 1218 (Herkunft des Sprungs vom 22.11. weiter ungeklärt) · Dual أَخَوَانِ nicht nachgemessen · Balance 7,6 %.

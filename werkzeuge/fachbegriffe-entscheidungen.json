@@ -719,6 +719,31 @@
       "entscheidung": "abgelehnt",
       "grund": "Beispielform (laka/laki, dir) in li-mit-suffix-01, mansub-nach-kam-01 und muthanna-bildung-01, kein Fachbegriff — die Form selbst erklärt li-mit-suffix-01",
       "am": "2026-11-22"
+    },
+    "من امريكا": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwendung (min amrīkā, aus Amerika) in alif-maqsura-unveraenderlich-01, jam-ghayr-aqil-01 und adad-3-10-genus-01, kein Fachbegriff",
+      "am": "2026-11-25"
+    },
+    "بيوت": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (buyūt, Häuser — Mehrzahl von bayt) in nakira-marifa-01, adad-3-10-idafa-01 und adad-3-10-genus-01, kein Fachbegriff",
+      "am": "2026-11-25"
+    },
+    "اخ واحد": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwendung (akhun wāḥidun, ein Bruder) in li-mit-suffix-01, mansub-nach-kam-01 und adad-1-2-nat-01, kein Fachbegriff",
+      "am": "2026-11-25"
+    },
+    "كتب": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (kutub, Bücher — Mehrzahl von kitāb) in jam-taksir-01, jam-ghayr-aqil-01 und adad-3-10-idafa-01, kein Fachbegriff",
+      "am": "2026-11-25"
+    },
+    "كتابان": {
+      "entscheidung": "abgelehnt",
+      "grund": "Beispielwort (kitābāni, zwei Bücher — Dual von kitāb) in muthanna-bildung-01, adad-3-10-idafa-01 und adad-1-2-nat-01, kein Fachbegriff",
+      "am": "2026-11-25"
     }
   }
 }
