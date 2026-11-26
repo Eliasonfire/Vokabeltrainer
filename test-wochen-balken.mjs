@@ -92,7 +92,12 @@ if (quelle){
   pruefe('ohne Tagesziel und nur ein erschlossener Tag: kein Teilen durch 0 (Balken 4 %)', e.tasten[6].hoehe === 4, e.h.slice(0, 400));
 }
 const logo = (html.match(/Stil-Schicht · Form[\s\S]*?(?=\/\* -----|<\/style>)/) || [''])[0];
-pruefe('Logo: Marke und VOKABELTRAINER mittig übereinander', /\.brand\{align-items:center;\}/.test(logo) && /\.brand-de\{padding-left:\.1em;\}/.test(logo) && /\.brand-mark\{align-self:center;\}/.test(logo), 'fehlt');
+/* Seit 26.11.2026 wieder LINKS. Elias: „und mache das talibun logo wieder nach links und nicht zentriert“ und
+   „aber das gilt nur für vokabeltrainer, talib bleibt gleich“. Keine Regel im ganzen Stylesheet darf das Logo
+   mittig stellen. */
+const stil = html.replace(/\/\*[\s\S]*?\*\//g, ' ');
+pruefe('Logo: Marke und VOKABELTRAINER stehen links (keine Regel stellt sie mittig)',
+  !/\.brand\{align-items:center;\}/.test(stil) && !/\.brand-mark\{align-self:center;\}/.test(stil) && !/\.brand-de\{padding-left:\.1em;\}/.test(stil), 'mittig');
 
 console.log('\n' + (schlecht ? '✘ ' : '✔ ') + ok + ' bestanden, ' + schlecht + ' gescheitert');
 process.exit(schlecht ? 1 : 0);

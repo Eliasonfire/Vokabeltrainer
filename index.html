@@ -5750,14 +5750,10 @@ body[data-wurzelfarbe="aus"]    .wz-ar .fm{color:var(--text);text-shadow:none;}
   transition:transform var(--dur-1) var(--ease-out),background var(--dur-2) ease,border-color var(--dur-2) ease;}
 .hoer-option:active{transform:scale(.98);}
 .geh-titel{font-weight:800;color:var(--text-stark);}
-/* Logo mittig. Elias in Talib: „mach die beiden zentriert, das sieht so assymetrisch aus“ — Schriftzug und
-   VOKABELTRAINER stehen mittig übereinander. Der Sperrabstand hängt auch hinter dem letzten Buchstaben; der
-   gleiche Abstand vorn gleicht das aus. */
-.brand{align-items:center;}
-.brand-de{padding-left:.1em;}
-/* Anders als in Talib ist hier die Unterzeile (VOKABELTRAINER) breiter als die Marke; die Marke trägt weiter oben
-   align-self:flex-start und bliebe links stehen. center verhindert das Strecken genauso (siehe .brand-mark). */
-.brand-mark{align-self:center;}
+/* Hier stand „Logo mittig“ (aus Talib, 24.11.2026). Elias, 26.11.2026: „und mache das talibun logo wieder nach
+   links und nicht zentriert“, und dazu (in der Talib-Sitzung): „aber das gilt nur für vokabeltrainer, talib bleibt
+   gleich“. Im Vokabeltrainer stehen Schriftzug und VOKABELTRAINER darum wieder links (die Regeln für .brand und
+   .brand-mark weiter oben gelten). Bewacht von test-wochen-balken.mjs. */
 
 /* ----- Stil-Schicht · Lesbarkeit (24.11.2026, aus Talib 41456dd): keine Schrift unter 12 px, Tippflächen
    mindestens 44 px hoch. Elias zur Liste der Unterschiede (Punkt 6, „12 px / 44 px“): „übernimm das in beiden
