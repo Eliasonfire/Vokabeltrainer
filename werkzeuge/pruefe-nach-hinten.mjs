@@ -75,7 +75,15 @@ function laufe(kern, kat, still){
     const f = lege('neu', 60);
     pruefe(f && ctx.PROGRESS.neu && ctx.PROGRESS.neu.box === 7, 'ein Wort ohne Lernstand bekommt einen', ctx.PROGRESS.neu);
   }
+  /* Am 26.11.2026 landete der Block in Russisch beim Übertragen mitten in einem Kommentar: die Funktion
+     allein lief hier grün, die App startete nicht. Darum werden beide Dateien ganz übersetzt. */
+  const uebersetzbar = text => { try { new vm.Script(text); return true; } catch (e) { return false; } };
+  pruefe(uebersetzbar(kern), 'js/kern.js ist als Ganzes gültiges JavaScript');
+  pruefe(uebersetzbar(kat), 'js/kategorien.js ist als Ganzes gültiges JavaScript');
   pruefe(/data-wkhinten="\$\{n\}"/.test(kat) && /NACH_HINTEN_TAGE\.map/.test(kat), 'die Wortkarte zeigt je Länge einen Knopf');
+  // Elias beim Ansehen: „mach das am besten ganz nach unten“ — als letztes Stück vor beiden Ausgängen der Karte.
+  const unten = (kat.match(/t\.push\(wkHinten\);\s*return t\.join\(''\);/g) || []).length;
+  pruefe(unten === 2, 'der Kasten steht ganz unten auf der Karte (auch auf der Mehrzahlkarte)', unten);
   pruefe(/closest\('\[data-wkhinten\]'\)[\s\S]{0,300}legeNachHinten\(WK_WORT\.id/.test(kat), 'der Klick ruft legeNachHinten() für das Wort der Karte');
   return fehler;
 }
@@ -87,10 +95,12 @@ const stoerungen = [
   ['Box fällt (min statt max)', KERN.replace('p.box = Math.max(Number(p.box) || 1,', 'p.box = Math.min(Number(p.box) || 1,'), KAT],
   ['Tage nicht übernommen', KERN.replace('p.nextReview = todayStr(n);', 'p.nextReview = todayStr(INTERVALS[p.box]);'), KAT],
   ['bleibt in der Lerngruppe', KERN.replace('delete p.gruppe; delete p.gruppeArt; delete p.zurueck;', ''), KAT],
-  ['kein Zeitstempel', KERN.replace('  p.ts = Date.now();\n  saveProgress();\n  return true;\n}\n\nfunction addPersonalVocab', '  saveProgress();\n  return true;\n}\n\nfunction addPersonalVocab'), KAT],
+  ['kein Zeitstempel', (f => KERN.replace(f, f.replace('p.ts = Date.now();', '')))(schneide(KERN, 'function legeNachHinten(')), KAT],
   ['jede Länge erlaubt', KERN.replace('if (!NACH_HINTEN_TAGE.includes(n)) return false;', ''), KAT],
   ['Knöpfe fehlen', KERN, KAT.replace('data-wkhinten="${n}"', 'data-wk-weg="${n}"')],
-  ['Klick ohne Wirkung', KERN, KAT.replace('if (legeNachHinten(WK_WORT.id, tage)){', 'if (false){')]
+  ['Klick ohne Wirkung', KERN, KAT.replace('if (legeNachHinten(WK_WORT.id, tage)){', 'if (false){')],
+  ['nicht mehr ganz unten', KERN, KAT.replace("t.push(wkHinten);\n  return t.join('');", "return t.join('') + wkHinten;")],
+  ['Block mitten in einem Kommentar', KERN.replace('/* ⭐ NACH HINTEN LEGEN', '/* Kopf eines anderen Kommentars\n   Er hatte recht.\n\n/* ⭐ NACH HINTEN LEGEN').replace('function addPersonalVocab(', 'Er hatte recht. */\nfunction addPersonalVocab('), KAT]
 ];
 let alleRot = true;
 for (const [name, k, c] of stoerungen){

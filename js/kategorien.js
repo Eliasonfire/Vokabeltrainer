@@ -722,18 +722,21 @@ function baueWortKarte(w){
 
   /* ⭐ NACH HINTEN (26.11.2026) — Elias: „ich möchte vokabeln frei nach hinten packen so das ich sie
      ertsmal lange nicht sehen muss“, zur Länge: „Länge selbst wählen“. Der Platz zwischen Vorschlag und
-     Notiz war der, den ich ihm vorher als Beispiel gezeigt hatte. Die Rechnung steht in legeNachHinten()
-     (js/kern.js). Nicht bei einem Wort, das er noch gar nicht hat: das käme ohnehin nicht dran. */
+     Notiz war der, den ich ihm vorher als Beispiel gezeigt hatte. Beim Ansehen dann, mit einem Bild des
+     Kastens: „mach das am besten ganz nach unten“ — darum wird er hier nur gebaut und steht als LETZTES auf
+     der Karte (zweimal angehängt, weil die Mehrzahlkarte früher zurückkehrt). Die Rechnung steht in
+     legeNachHinten() (js/kern.js). Nicht bei einem Wort, das er noch gar nicht hat: das käme ohnehin nicht dran. */
+  let wkHinten = '';
   if (!wkNochNicht && typeof NACH_HINTEN_TAGE !== 'undefined'){
     const naechst = PROGRESS[w.id] && PROGRESS[w.id].nextReview;
     const spaeter = naechst && naechst > todayStr(0);
     const datum = spaeter ? naechst.split('-').reverse().join('.') : '';
-    t.push(`<div class="wk-abschnitt wk-hinten">
+    wkHinten = `<div class="wk-abschnitt wk-hinten">
       <div class="wk-marke"><span>Nach hinten</span>${spaeter ? `<span class="wk-hinten-stand">wieder am ${datum}</span>` : ''}</div>
       <div class="de">Erst wieder abfragen in …</div>
       <div class="wk-hinten-wahl">${NACH_HINTEN_TAGE.map(n =>
         `<button class="kat-ziel" data-wkhinten="${n}">${n} Tagen</button>`).join('')}</div>
-    </div>`);
+    </div>`;
   }
 
   /* ⭐⭐ EIGENE NOTIZ — Elias am 20.08.2026: „ich will am besten eine notiz
@@ -884,6 +887,7 @@ function baueWortKarte(w){
       ${geaendert ? `<button class="btn btn-secondary btn-klein" data-wkzuruecksetzen>Auf Original zurück</button>` : ''}
     </div>
     <div class="wk-hinweis">Diese Karte hängt am Singular: Änderst du dort die Bedeutung, ändert sie sich hier mit.</div>`);
+    t.push(wkHinten);
     return t.join('');
   }
 
@@ -921,6 +925,7 @@ function baueWortKarte(w){
   else if (wkEinzeln)
     t.push(`<div class="wk-hinweis">Dieses Wort hast du einzeln freigeschaltet, obwohl sein Kapitel noch zu ist.</div>`);
 
+  t.push(wkHinten);
   return t.join('');
 }
 
