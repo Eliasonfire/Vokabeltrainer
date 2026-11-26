@@ -2032,6 +2032,10 @@ html.neuladen-wartet #screen-home{visibility:hidden;}
    auf den, in dem das Wort schon liegt. */
 .wk-boxziele{display:flex;flex-wrap:wrap;gap:var(--sp-2);}
 .wk-boxziele .kat-ziel{padding:var(--sp-2) var(--sp-3);}
+/* Nach hinten (26.11.2026, legeNachHinten() in js/kern.js): drei gleich breite Knöpfe, rechts im Kopf das Datum. */
+.wk-hinten-wahl{display:flex;gap:var(--sp-2);}
+.wk-hinten-wahl .kat-ziel{flex:1;min-width:0;min-height:44px;padding:var(--sp-2) var(--sp-3);justify-content:center;}
+.wk-hinten-stand{text-transform:none;letter-spacing:0;font-weight:600;color:var(--text-dim);}
 .wk-boxziele .kat-ziel.ist-drin{
   background:var(--red-bright);border-color:var(--red-bright);color:#fff;
   box-shadow:var(--sh-glow);

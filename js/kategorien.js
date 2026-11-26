@@ -720,6 +720,22 @@ function baueWortKarte(w){
      nur noch im Kern: ein Vorschlag überschreibt seine eigene nie. */
   t.push(wkEselsbruecke(w));
 
+  /* ⭐ NACH HINTEN (26.11.2026) — Elias: „ich möchte vokabeln frei nach hinten packen so das ich sie
+     ertsmal lange nicht sehen muss“, zur Länge: „Länge selbst wählen“. Der Platz zwischen Vorschlag und
+     Notiz war der, den ich ihm vorher als Beispiel gezeigt hatte. Die Rechnung steht in legeNachHinten()
+     (js/kern.js). Nicht bei einem Wort, das er noch gar nicht hat: das käme ohnehin nicht dran. */
+  if (!wkNochNicht && typeof NACH_HINTEN_TAGE !== 'undefined'){
+    const naechst = PROGRESS[w.id] && PROGRESS[w.id].nextReview;
+    const spaeter = naechst && naechst > todayStr(0);
+    const datum = spaeter ? naechst.split('-').reverse().join('.') : '';
+    t.push(`<div class="wk-abschnitt wk-hinten">
+      <div class="wk-marke"><span>Nach hinten</span>${spaeter ? `<span class="wk-hinten-stand">wieder am ${datum}</span>` : ''}</div>
+      <div class="de">Erst wieder abfragen in …</div>
+      <div class="wk-hinten-wahl">${NACH_HINTEN_TAGE.map(n =>
+        `<button class="kat-ziel" data-wkhinten="${n}">${n} Tagen</button>`).join('')}</div>
+    </div>`);
+  }
+
   /* ⭐⭐ EIGENE NOTIZ — Elias am 20.08.2026: „ich will am besten eine notiz
      funktion haben ähnlich wie die vorschlag funktion … ich wollte eben zu
      ‚die Besitzendung mein‘ als notiz dazu schreiben, dass es das vorherige
@@ -1225,6 +1241,19 @@ document.getElementById('wortKarte').addEventListener('click', (e)=>{
     if (typeof renderHome === 'function') renderHome();
     toast(bewegt ? `In Box ${ziel} gelegt — ${ziel === 1 ? 'sofort wieder dran' : 'wieder dran ' + (INTERVALS[ziel] === 1 ? 'morgen' : 'in ' + INTERVALS[ziel] + ' Tagen')}.`
                  : `Steht schon in Box ${ziel}.`);
+    return;
+  }
+  const hintenKnopf = e.target.closest('[data-wkhinten]');
+  if (hintenKnopf && WK_WORT){
+    const tage = Number(hintenKnopf.getAttribute('data-wkhinten'));
+    const oben = karte.scrollTop;
+    if (legeNachHinten(WK_WORT.id, tage)){
+      karte.innerHTML = baueWortKarte(WK_WORT);
+      karte.scrollTop = oben;
+      if (typeof renderHome === 'function') renderHome();
+      zeichneHerkunftNeu();
+      toast(`Nach hinten gelegt — kommt erst in ${tage} Tagen wieder.`);
+    }
     return;
   }
   const einzelnKnopf = e.target.closest('[data-wkeinzeln]');

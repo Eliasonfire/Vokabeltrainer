@@ -296,6 +296,9 @@ const PRUEFER = [
   /* 24.11.2026 — kein Knopf „Lernfortschritt zurücksetzen" (alle Karten auf Box 1). Elias, in der Talib-Sitzung:
      „das brauchen wir nicht, in keinen meiner apps“ und „Ja, raus“. Drei Störtests. */
   ['werkzeuge/pruefe-kein-zuruecksetzen.mjs', []],
+  /* 26.11.2026 — „Nach hinten“ auf der Wortkarte: 30, 60 oder 90 Tage. Elias: „ich möchte vokabeln frei nach
+     hinten packen so das ich sie ertsmal lange nicht sehen muss“, zur Länge: „Länge selbst wählen“. Sieben Störtests. */
+  ['werkzeuge/pruefe-nach-hinten.mjs', []],
   ['werkzeuge/pruefe-schreibanlass.mjs', []],
   /* ⭐⭐ Neu am 09.09.2026, aus dem Konfetti-Fall heraus: der Fehler sass in
      einem leeren `catch {}` und war auf Elias' Geraet deshalb nicht

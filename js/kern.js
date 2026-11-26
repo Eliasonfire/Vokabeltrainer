@@ -1569,6 +1569,31 @@ function addPersonalVocab({ar, de, sentAr, sentDe, root, pl}){
    „vorallem will ich auch die möglichkeit haben meine eigenen vokabeln auch
    wieder zu löschen. das kann ich aktuell nicht."
 
+/* ⭐ NACH HINTEN LEGEN (26.11.2026). Elias, mit dem Bild der Wortkarte von سِتَارَةٌ (Box 3): „ich möchte
+   vokabeln frei nach hinten packen so das ich sie ertsmal lange nicht sehen muss“. Auf die Frage, ob ein
+   Knopf das Wort immer 60 Tage nach hinten legt oder ob er die Länge jedes Mal wählt (Beispiel 30, 60 oder
+   90 Tage): „Länge selbst wählen“.
+   Was passiert: `nextReview` = heute + die gewählten Tage. Die Box steigt auf die höchste, deren Abstand
+   nicht länger ist (30 → Box 6, 60 und 90 → Box 7), fällt aber nie: ein Wort aus Box 7 bleibt in Box 7.
+   Kommt es danach dran, läuft alles wie bei jeder anderen Karte (richtig → Box 7, falsch → zurück).
+   Aus der Lerngruppe geht es heraus (wie nach „gut“ in stufeErgebnis(), js/lernen.js), sonst nähme es
+   beim nächsten Rückfall in Box 1 sofort wieder einen Platz ein, ohne sich anzustellen.
+   Drei Dinge wie in verschiebeInBox(): box, nextReview, ts. Bewacht von werkzeuge/pruefe-nach-hinten.mjs. */
+const NACH_HINTEN_TAGE = [30, 60, 90];
+function legeNachHinten(id, tage){
+  const n = Number(tage);
+  if (!NACH_HINTEN_TAGE.includes(n)) return false;
+  if (!PROGRESS[id]) PROGRESS[id] = { box:1, nextReview: todayStr(0), correct:0, wrong:0 };
+  const p = PROGRESS[id];
+  const passend = Object.keys(INTERVALS).map(Number).filter(b => INTERVALS[b] <= n);
+  p.box = Math.max(Number(p.box) || 1, Math.max(...passend));
+  p.nextReview = todayStr(n);
+  delete p.gruppe; delete p.gruppeArt; delete p.zurueck;
+  p.ts = Date.now();
+  saveProgress();
+  return true;
+}
+
    Er hatte recht: es gab `addPersonalVocab`, aber kein Gegenstueck. Wer sich
    vertippte, hatte das Wort fuer immer im Stapel.
 
